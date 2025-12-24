@@ -7,6 +7,7 @@ import { ProductGrid, ProductList } from '@/components/marketplace/ProductGrid';
 import { ProductFilters as ProductFiltersComponent } from '@/components/marketplace/ProductFilters';
 import { useMarketplace } from '@/contexts/MarketplaceContext';
 import { ProductFilters as ProductFiltersType, Product } from '@/shared/types';
+import PageHeader from '@/shared/components/PageHeader';
 
 type ViewMode = 'grid' | 'list';
 
@@ -56,25 +57,12 @@ export default function MarketplacePage() {
   const displayProducts = getDisplayProducts();
 
   return (
-    <div className="min-h-screen bg-background dark:bg-neutral-900 pt-20 lg:pt-24">
-      {/* Header */}
-      <div className="bg-surface dark:bg-neutral-800 border-b border-soft dark:border-neutral-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="py-6">
-            <div className="flex items-center justify-center">
-              <div className="text-center">
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                  Explora nuestros productos más destacados
-                </h1>
-              </div>
-              
-              
-              {/* User Info and Actions - Removed as requested */}
-
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen bg-background dark:bg-neutral-900">
+      <PageHeader
+        title="Explora nuestros productos más destacados"
+        description="Descubre nuestra colección exclusiva de modelos y diseños 3D de alta calidad"
+        image="/images/placeholder-innovation.svg"
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
