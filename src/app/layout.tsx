@@ -5,6 +5,7 @@ import { Providers } from '../contexts/Providers';
 import ConditionalNavbar from '../shared/components/layout/ConditionalNavbar';
 import ConditionalFooter from '../shared/components/layout/ConditionalFooter';
 import PageTransition from '../shared/components/ui/PageTransition';
+import { getAppUrl } from '@/lib/url-utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,7 +15,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://ddreams3d.com'),
+  metadataBase: new URL(getAppUrl()),
   title: {
     default: 'Ddreams 3D - Servicios profesionales de impresión 3D',
     template: '%s | Ddreams 3D',

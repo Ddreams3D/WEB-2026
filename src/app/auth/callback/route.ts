@@ -1,12 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getAppUrl } from '@/lib/url-utils';
 
 // Configuración para rutas dinámicas
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 export async function GET(request: NextRequest) {
-  const { searchParams, origin } = new URL(request.url);
+  let requestUrl: URL;
+  try {
+    requestUrl = new URL(request.url);
+  } catch (e) {
+    console.error('Invalid request URL in auth callback:', request.url);
+    // Fallback seguro si la URL de la request está malformada
+    return NextResponse.redirect(`${getAppUrl()}/auth/auth-code-error`);
+  }
+
+  const { searchParams, origin } = requestUrl;
   const code = searchParams.get('code');
   // if "next" is in param, use it as the redirect URL
   const next = searchParams.get('next') ?? '/protegido';
