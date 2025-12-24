@@ -8,18 +8,18 @@ import { getTransitionClasses, getIconClasses, getGradientClasses } from '../sty
 const benefits = [
   {
     icon: Award,
-    title: "Calidad Garantizada",
-    description: "Utilizamos tecnología de vanguardia y materiales premium para asegurar resultados excepcionales en cada proyecto."
+    title: "Precisión en cada proyecto",
+    description: "Cada pieza se diseña y fabrica con atención técnica al detalle, priorizando la funcionalidad, el acabado y el uso final del proyecto."
   },
   {
     icon: Users,
-    title: "Equipo Experto",
-    description: "Nuestro equipo de profesionales especializados te acompañará desde la conceptualización hasta la entrega final."
+    title: "Trato directo y personalizado",
+    description: "Trabajas directamente con quien diseña y fabrica tu proyecto, lo que permite comunicación clara, ajustes rápidos y mejores resultados."
   },
   {
     icon: Shield,
-    title: "Confianza Total",
-    description: "Con años de experiencia y cientos de proyectos exitosos, somos tu socio confiable en impresión 3D."
+    title: "Experiencia en proyectos reales",
+    description: "Más de 3 años desarrollando modelos médicos, prototipos funcionales, trofeos y productos personalizados para distintos usos y sectores."
   }
 ];
 

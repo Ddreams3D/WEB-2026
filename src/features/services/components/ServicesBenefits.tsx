@@ -1,29 +1,30 @@
 import React from 'react';
 
-import { Clock, Shield, Award, Users } from '@/lib/icons';
+import { Clock, Shield, Users, Printer } from '@/lib/icons';
 
 const benefits = [
   {
     icon: Clock,
-    title: 'Entrega Rápida',
-    description: 'Tiempos de entrega optimizados sin comprometer la calidad',
+    title: 'Entrega rápida',
+    description: 'Optimizamos tiempos de producción y procesos para cumplir plazos claros sin comprometer la calidad del resultado final.',
   },
   {
     icon: Shield,
-    title: 'Calidad Garantizada',
+    title: 'Calidad garantizada',
     description:
-      'Todos nuestros productos pasan por rigurosos controles de calidad',
-  },
-  {
-    icon: Award,
-    title: 'Experiencia Comprobada',
-    description: 'Más de 1000 proyectos exitosos nos respaldan',
+      'Cada pieza pasa por revisión técnica y control de acabado para asegurar precisión, funcionalidad y buena presentación.',
   },
   {
     icon: Users,
-    title: 'Soporte Personalizado',
+    title: 'Soporte personalizado',
     description:
-      'Acompañamiento completo desde la idea hasta el producto final',
+      'Acompañamiento directo durante todo el proyecto: desde la idea inicial hasta la entrega de la pieza terminada.',
+  },
+  {
+    icon: Printer,
+    title: 'Prototipado funcional',
+    description:
+      'Desarrollo de prototipos y piezas funcionales para pruebas reales, validación de diseño y mejora antes de producción final.',
   },
 ];
 
