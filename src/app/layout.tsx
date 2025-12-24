@@ -5,6 +5,7 @@ import './globals.css';
 import { Providers } from '../contexts/Providers';
 import ConditionalNavbar from '../shared/components/layout/ConditionalNavbar';
 import ConditionalFooter from '../shared/components/layout/ConditionalFooter';
+import WhatsAppFloatingButton from '../shared/components/layout/WhatsAppFloatingButton';
 import PageTransition from '../shared/components/ui/PageTransition';
 import { getAppUrl } from '@/lib/url-utils';
 
@@ -104,6 +105,7 @@ export default function RootLayout({
               <PageTransition>{children}</PageTransition>
             </main>
             <ConditionalFooter />
+            <WhatsAppFloatingButton />
           </div>
         </Providers>
       </body>

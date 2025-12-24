@@ -14,13 +14,14 @@ export default function AboutMisionVision() {
                 Nuestra Misión
               </h3>
             </div>
-            <p className="text-primary-100 leading-relaxed text-base">
-              <strong>Democratizar el acceso a la tecnología 3D</strong> para
-              todos. Creamos soluciones innovadoras y de máxima calidad que{' '}
-              <em>impulsan el crecimiento</em> y fortalecen la competitividad de
-              nuestros clientes, convirtiendo cada idea en una realidad
-              extraordinaria.
-            </p>
+            <div className="text-primary-100 leading-relaxed text-base space-y-4">
+              <p>
+                Materializar ideas a través del diseño y la impresión 3D, desarrollando piezas funcionales, educativas, médicas y creativas, adaptadas a las necesidades reales de cada proyecto y cliente.
+              </p>
+              <p>
+                Trabajamos con enfoque técnico, atención personalizada y procesos claros para convertir cada idea en un resultado concreto y bien ejecutado.
+              </p>
+            </div>
           </div>
         </div>
 
@@ -33,13 +34,14 @@ export default function AboutMisionVision() {
                 Nuestra Visión
               </h3>
             </div>
-            <p className="text-secondary-100 leading-relaxed text-base">
-              <strong>Ser la empresa líder en tecnología 3D</strong> de América
-              Latina. Aspiramos a ser reconocidos mundialmente por nuestra{' '}
-              <em>excelencia excepcional</em>, innovación disruptiva y
-              compromiso inquebrantable con el desarrollo tecnológico sostenible
-              de toda la región.
-            </p>
+            <div className="text-secondary-100 leading-relaxed text-base space-y-4">
+              <p>
+                Consolidarnos como un estudio creativo de referencia en impresión y modelado 3D, reconocido por la calidad de sus proyectos, la cercanía con sus clientes y la capacidad de adaptarse a distintos sectores y desafíos técnicos.
+              </p>
+              <p>
+                Apostamos por crecer de forma responsable, ampliando nuestras capacidades y colaboraciones sin perder el trato directo ni el control del proceso.
+              </p>
+            </div>
           </div>
         </div>
       </div>

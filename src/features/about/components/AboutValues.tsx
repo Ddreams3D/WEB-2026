@@ -3,33 +3,33 @@ import {
   getIconClasses,
   getTransitionClasses,
 } from '@/shared/styles';
-import { Heart, Lightbulb, Rocket, Target } from 'lucide-react';
+import { Heart, Rocket, Target, TrendingUp } from 'lucide-react';
 import React from 'react';
 
 const values = [
   {
     icon: Target,
-    title: 'Precisión Excepcional',
+    title: 'Precisión y cuidado en los detalles',
     description:
-      'Cada proyecto se ejecuta con precisión milimétrica y atención obsesiva al detalle, garantizando resultados que superan las expectativas más exigentes.',
+      'Cada pieza se desarrolla con atención técnica y cuidado en los detalles, priorizando la funcionalidad, el acabado y el uso final del proyecto.',
   },
   {
-    icon: Lightbulb,
-    title: 'Innovación Constante',
+    icon: TrendingUp,
+    title: 'Aprendizaje y mejora constante',
     description:
-      'Adoptamos y desarrollamos las tecnologías más avanzadas para crear soluciones revolucionarias que transforman industrias completas.',
+      'Nos mantenemos en constante aprendizaje para mejorar procesos, materiales y resultados, adaptándonos a nuevos retos y tipos de proyectos.',
   },
   {
     icon: Heart,
-    title: 'Pasión Genuina',
+    title: 'Pasión por crear',
     description:
-      'Nuestro amor por la tecnología 3D se refleja en cada diseño, cada impresión y cada sonrisa de satisfacción de nuestros clientes.',
+      'Disfrutamos el proceso de diseñar y fabricar piezas únicas. Esa motivación se refleja en la dedicación que ponemos en cada trabajo.',
   },
   {
     icon: Rocket,
-    title: 'Eficiencia Inteligente',
+    title: 'Eficiencia responsable',
     description:
-      'Procesos optimizados con inteligencia artificial y metodologías ágiles que entregan resultados extraordinarios en tiempo récord.',
+      'Optimizamos tiempos y procesos sin sacrificar calidad, priorizando soluciones realistas y bien ejecutadas según cada encargo.',
   },
 ];
 
@@ -39,25 +39,23 @@ export default function AboutValues() {
       <div className="text-center mb-12">
         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
           <span className="bg-gradient-to-r from-primary-500 to-secondary-500 bg-clip-text text-transparent">
-            Nuestros Valores
+            Nuestros valores
           </span>
         </h2>
         <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-          <strong>Los pilares fundamentales</strong> que definen nuestra
-          identidad y guían cada decisión, acción e innovación en nuestra
-          empresa. Estos valores son el <em>corazón de todo lo que hacemos</em>.
+          Los principios que guían nuestra forma de trabajar en cada proyecto.
         </p>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
         {values.map((value, index) => {
           const IconComponent = value.icon;
           return (
             <div key={index} className="group">
               <div
-                className={`bg-surface dark:bg-neutral-800 rounded-xl shadow-lg p-6 text-center border border-gray-100 dark:border-neutral-700 hover:shadow-xl ${getTransitionClasses(
+                className={`h-full bg-surface dark:bg-neutral-800 rounded-xl shadow-lg p-6 text-center border border-gray-100 dark:border-neutral-700 hover:shadow-xl ${getTransitionClasses(
                   'transform'
-                )} hover:-translate-y-1 relative overflow-hidden`}
+                )} hover:-translate-y-1 relative overflow-hidden flex flex-col items-center`}
               >
                 <div
                   className={`absolute inset-0 ${getGradientClasses(
@@ -66,7 +64,7 @@ export default function AboutValues() {
                     'opacity'
                   )}`}
                 ></div>
-                <div className="relative z-10">
+                <div className="relative z-10 flex flex-col items-center flex-grow">
                   <div
                     className={`inline-flex items-center justify-center w-16 h-16 ${getGradientClasses(
                       'backgroundLight'
