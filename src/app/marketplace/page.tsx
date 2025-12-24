@@ -61,10 +61,10 @@ export default function MarketplacePage() {
       <div className="bg-surface dark:bg-neutral-800 border-b border-soft dark:border-neutral-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="py-6">
-            <div className="flex items-center justify-between">
-              <div>
+            <div className="flex items-center justify-center">
+              <div className="text-center">
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                  Explora nuestros productos destacados
+                  Explora nuestros productos más destacados
                 </h1>
               </div>
               
