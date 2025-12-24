@@ -24,16 +24,15 @@ export default function ProcessCallAction() {
               id="cta-heading"
               className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-6 drop-shadow-lg"
             >
-              ¿Listo para comenzar tu proyecto?
+              ¿Tienes un proyecto en mente?
             </h2>
             <p className="text-sm sm:text-base text-white/90 mb-10 max-w-3xl mx-auto leading-relaxed opacity-95">
-              Contáctanos hoy y descubre cómo podemos hacer realidad tu visión con
-              nuestro proceso probado
+              Te acompañamos desde la idea hasta la pieza terminada, con un proceso claro y personalizado.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <Link href="/contact" aria-label="Ir a la página de contacto">
                 <ButtonPrincipal
-                  msgLg="Contactar Ahora"
+                  msgLg="Contactar ahora"
                   iconRight={
                     <ArrowRight
                       className={` text-white ml-2  ${getIconClasses('md')}`}
