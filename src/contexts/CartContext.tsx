@@ -4,10 +4,15 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { CartItem, Cart, Product } from '../shared/types';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://mqixllpuxgldwlqgetck.supabase.co',
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xaXhsbHB1eGdsZHdscWdldGNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5NzkwMzYsImV4cCI6MjA3MTU1NTAzNn0.M5JiZvMS_Q-NTsuxCxqBWB_hezorqy2L8YbijO6gOmI'
-);
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+const isSupabaseConfigured = supabaseUrl && supabaseKey && 
+  !supabaseUrl.includes('placeholder');
+
+const supabase = isSupabaseConfigured
+  ? createClient(supabaseUrl!, supabaseKey!)
+  : null;
 
 // Interfaz para compatibilidad con base de datos existente
 interface CartItemFromDB {
@@ -140,6 +145,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const loadCart = async () => {
     try {
       setIsLoading(true);
+      
+      if (!supabase) {
+        throw new Error('Supabase no está configurado');
+      }
+
       const { data: cartItems, error } = await supabase
         .from('cart_items')
         .select(`
@@ -249,6 +259,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         saveCartToLocalStorage(updatedCart);
       } else {
         // Modo Supabase
+        if (!supabase) throw new Error('Supabase no está configurado');
+
         const { data: existingItem } = await supabase
           .from('cart_items')
           .select()
@@ -300,6 +312,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         saveCartToLocalStorage(updatedCart);
       } else {
         // Modo Supabase
+        if (!supabase) throw new Error('Supabase no está configurado');
+
         const { error } = await supabase
           .from('cart_items')
           .delete()
@@ -351,6 +365,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         saveCartToLocalStorage(updatedCart);
       } else {
         // Modo Supabase
+        if (!supabase) throw new Error('Supabase no está configurado');
+        
         const { error } = await supabase
           .from('cart_items')
           .update({ quantity })
@@ -386,6 +402,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         saveCartToLocalStorage(emptyCart);
       } else {
         // Modo Supabase
+        if (!supabase) throw new Error('Supabase no está configurado');
+
         const { error } = await supabase
           .from('cart_items')
           .delete()

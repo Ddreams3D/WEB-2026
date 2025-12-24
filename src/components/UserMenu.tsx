@@ -7,19 +7,16 @@ import Image from 'next/image';
 import { User, Settings, LogOut, Bell } from '@/lib/icons';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from './ui/ToastManager';
-import { supabase } from '../shared/lib/supabase';
 
 export default function UserMenu() {
   const [isOpen, setIsOpen] = useState(false);
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const router = useRouter();
   const { showToast } = useToast();
 
   const handleLogout = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      router.push('/');
+      await logout();
       showToast('success', 'Sesión cerrada', '¡Hasta pronto!');
     } catch (error) {
       console.error('Error during logout:', error);
