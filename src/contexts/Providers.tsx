@@ -5,7 +5,6 @@ import { ThemeProvider } from './ThemeContext';
 import { AuthProvider } from './AuthContext';
 import { CartProvider } from './CartContext';
 import { MarketplaceProvider } from './MarketplaceContext';
-import { AuthMockProvider } from './AuthMockContext';
 import { B2BProvider } from './B2BContext';
 import { OrderTrackingProvider } from './OrderTrackingContext';
 import { BillingProvider } from './BillingContext';
@@ -19,28 +18,26 @@ interface ProvidersProps {
 
 export function Providers({ children }: ProvidersProps) {
   return (
-    <AuthMockProvider>
-      <ThemeProvider>
-        <ToastProvider>
-          <AuthProvider>
-            <B2BProvider>
-              <OrderTrackingProvider>
-                <BillingProvider>
-                  <QuoteProvider>
-                    <LegalProvider>
-                      <MarketplaceProvider>
-                        <CartProvider>
-                          {children}
-                        </CartProvider>
-                      </MarketplaceProvider>
-                    </LegalProvider>
-                  </QuoteProvider>
-                </BillingProvider>
-              </OrderTrackingProvider>
-            </B2BProvider>
-          </AuthProvider>
-        </ToastProvider>
-      </ThemeProvider>
-    </AuthMockProvider>
+    <ThemeProvider>
+      <ToastProvider>
+        <AuthProvider>
+          <B2BProvider>
+            <OrderTrackingProvider>
+              <BillingProvider>
+                <QuoteProvider>
+                  <LegalProvider>
+                    <MarketplaceProvider>
+                      <CartProvider>
+                        {children}
+                      </CartProvider>
+                    </MarketplaceProvider>
+                  </LegalProvider>
+                </QuoteProvider>
+              </BillingProvider>
+            </OrderTrackingProvider>
+          </B2BProvider>
+        </AuthProvider>
+      </ToastProvider>
+    </ThemeProvider>
   );
 }
