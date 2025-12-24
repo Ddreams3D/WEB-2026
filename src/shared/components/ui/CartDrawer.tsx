@@ -10,9 +10,11 @@ import {
   ArrowRight,
   ShoppingBag,
 } from '@/lib/icons';
+import { MessageSquare } from 'lucide-react';
 import { useCart } from '../../../contexts/CartContext';
 import Link from 'next/link';
 import { ProductImage } from './DefaultImage';
+import { PHONE_BUSINESS } from '@/shared/constants/infoBusiness';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -51,6 +53,30 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     } else {
       updateQuantity(productId, newQuantity);
     }
+  };
+
+  const handleWhatsAppCheckout = () => {
+    let message = "Hola Ddreams3D, me gustaría realizar el siguiente pedido:\n\n";
+    items.forEach(item => {
+      message += `* ${item.product.name} (x${item.quantity}) - S/ ${(item.product.price * item.quantity).toFixed(2)}\n`;
+      
+      // Incluir personalizaciones si existen
+      if (item.customizations && item.customizations.length > 0) {
+        item.customizations.forEach(cust => {
+          message += `  - ${cust.name}: ${cust.value}\n`;
+        });
+      }
+      
+      // Incluir notas si existen
+      if (item.notes) {
+        message += `  - Nota: ${item.notes}\n`;
+      }
+    });
+    message += `\n*Total a pagar: S/ ${total.toFixed(2)}*\n\n`;
+    message += "Quedo atento para coordinar el pago y envío. ¡Gracias!";
+
+    const encodedMessage = encodeURIComponent(message);
+    window.open(`https://wa.me/${PHONE_BUSINESS}?text=${encodedMessage}`, '_blank');
   };
 
   if (!isOpen) return null;
@@ -260,14 +286,13 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
             {/* Action Buttons */}
             <div className="space-y-3">
-              <Link
-                href="/checkout"
-                onClick={onClose}
-                className="w-full flex items-center justify-center px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02] group"
+              <button
+                onClick={handleWhatsAppCheckout}
+                className="w-full flex items-center justify-center px-6 py-4 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02] group"
               >
-                Proceder al Pago
-                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-200" />
-              </Link>
+                <MessageSquare className="mr-2 h-5 w-5" />
+                Finalizar pedido en WhatsApp
+              </button>
 
               <Link
                 href="/cart"

@@ -96,35 +96,27 @@ export function ProductCard({
             {product.shortDescription || product.description}
           </p>
 
-          {/* Rating and Downloads */}
+          {/* Rating */}
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center space-x-1">
               <Star className="w-4 h-4 text-yellow-400 fill-current" />
               <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 {product.rating?.toFixed(1) || '0.0'}
               </span>
-              <span className="text-xs text-gray-500 dark:text-gray-400">
-                ({product.reviewCount || 0})
-              </span>
             </div>
             
-            <div className="flex items-center space-x-1 text-gray-500 dark:text-gray-400">
-              <Download className="w-4 h-4" />
-              <span className="text-xs">
-                {product.downloadCount || 0}
-              </span>
-            </div>
+            {/* Download count removed */}
           </div>
 
           {/* Price */}
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <span className="text-lg font-bold text-gray-900 dark:text-white">
-                ${product.price.toFixed(2)}
+                S/ {product.price.toFixed(2)}
               </span>
               {hasDiscount && (
                 <span className="text-sm text-gray-500 dark:text-gray-400 line-through">
-                  ${product.originalPrice!.toFixed(2)}
+                  S/ {product.originalPrice!.toFixed(2)}
                 </span>
               )}
             </div>
@@ -134,10 +126,12 @@ export function ProductCard({
             </span>
           </div>
 
-          {/* Seller */}
+          {/* Seller - Removed as per user request */}
+          {/*
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
             Por {product.sellerName}
           </p>
+          */}
         </div>
       </Link>
 

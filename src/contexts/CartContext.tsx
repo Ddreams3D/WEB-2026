@@ -162,7 +162,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           id: item.product_id,
           name: item.products[0]?.name || 'Producto sin nombre',
           price: item.products[0]?.price || 0,
-          currency: 'USD',
+          currency: 'PEN',
           description: '',
           sku: '',
           categoryId: '',

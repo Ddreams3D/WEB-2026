@@ -199,7 +199,7 @@ export function ProductList({
             </p>
             <div className="flex items-center justify-between">
               <span className="text-lg font-bold text-gray-900 dark:text-white">
-                ${product.price.toFixed(2)}
+                S/ {product.price.toFixed(2)}
               </span>
               {showAddToCart && (
                 <button className="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg text-sm font-medium transition-colors">

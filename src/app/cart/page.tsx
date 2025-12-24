@@ -3,10 +3,11 @@
 import React from 'react';
 import { useCart } from '../../contexts/CartContext';
 import { useAuthMock } from '../../contexts/AuthMockContext';
-import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft } from '@/lib/icons';
+import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft, MessageSquare } from '@/lib/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { PHONE_BUSINESS } from '@/shared/constants/infoBusiness';
 
 export default function CartPage() {
   const {
@@ -29,12 +30,16 @@ export default function CartPage() {
     }
   };
 
-  const handleCheckout = () => {
-    if (!isAuthenticated) {
-      router.push('/login?redirect=/checkout');
-    } else {
-      router.push('/checkout');
-    }
+  const handleWhatsAppCheckout = () => {
+    let message = "Hola Ddreams3D, me gustaría realizar el siguiente pedido:\n\n";
+    items.forEach(item => {
+      message += `* ${item.product.name} (x${item.quantity}) - S/ ${(item.product.price * item.quantity).toFixed(2)}\n`;
+    });
+    message += `\n*Total a pagar: S/ ${total.toFixed(2)}*\n\n`;
+    message += "Quedo atento para coordinar el pago y envío. ¡Gracias!";
+
+    const encodedMessage = encodeURIComponent(message);
+    window.open(`https://wa.me/${PHONE_BUSINESS}?text=${encodedMessage}`, '_blank');
   };
 
   if (isLoading) {
@@ -102,26 +107,14 @@ export default function CartPage() {
                       >
                         {/* Imagen del producto */}
                         <div className="flex-shrink-0">
-                          <div className="w-20 h-20 bg-gray-200 rounded-lg overflow-hidden">
-                            {item.product.images && item.product.images[0] ? (
-                              <Image
-                                src={item.product.images[0].url}
-                                alt={item.product.images[0].alt}
-                                width={80}
-                                height={80}
-                                className="w-full h-full object-cover"
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement;
-                                  target.style.display = 'none';
-                                  target.nextElementSibling?.classList.remove(
-                                    'hidden'
-                                  );
-                                }}
-                              />
-                            ) : null}
-                            <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
-                              <ShoppingBag className="h-8 w-8 text-gray-400" />
-                            </div>
+                          <div className="w-20 h-20 bg-gray-200 rounded-lg overflow-hidden relative">
+                            <ProductImage
+                              src={item.product.images?.[0]?.url}
+                              alt={item.product.name}
+                              width={80}
+                              height={80}
+                              className="w-full h-full object-cover"
+                            />
                           </div>
                         </div>
 
@@ -228,13 +221,12 @@ export default function CartPage() {
                   </div>
 
                   <button
-                    onClick={handleCheckout}
+                    onClick={handleWhatsAppCheckout}
                     disabled={isLoading || items.length === 0}
-                    className="w-full mt-6 bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                    className="w-full mt-6 bg-green-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
                   >
-                    {isAuthenticated
-                      ? 'Proceder al Checkout'
-                      : 'Iniciar Sesión para Continuar'}
+                    <MessageSquare className="h-5 w-5" />
+                    Finalizar pedido en WhatsApp
                   </button>
 
                   <Link

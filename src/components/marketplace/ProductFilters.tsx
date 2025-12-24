@@ -19,7 +19,7 @@ export function ProductFilters({
   isCollapsible = true
 }: ProductFiltersProps) {
   const { categories, filters, applyFilters, clearFilters, searchQuery, setSearchQuery } = useMarketplace();
-  const [isExpanded, setIsExpanded] = useState(!isCollapsible);
+  const [isExpanded, setIsExpanded] = useState(true);
   const [localFilters, setLocalFilters] = useState<ProductFiltersType>(filters);
   const [priceRange, setPriceRange] = useState({
     min: filters.minPrice || 0,
@@ -118,7 +118,7 @@ export function ProductFilters({
   );
 
   return (
-    <div className={`bg-white dark:bg-gray-800 backdrop-blur-sm rounded-lg border border-gray-200 dark:border-gray-700 shadow-lg relative z-30 ${className}`} style={{backgroundColor: 'white', backdropFilter: 'blur(8px)'}}>
+    <div className={`bg-white dark:bg-gray-800 backdrop-blur-sm rounded-lg border border-gray-200 dark:border-gray-700 shadow-lg relative z-30 ${className}`}>
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center space-x-2">

@@ -3,6 +3,7 @@
 import React from 'react';
 import { ThemeProvider } from './ThemeContext';
 import { AuthProvider } from './AuthContext';
+import { AuthMockProvider } from './AuthMockContext';
 import { CartProvider } from './CartContext';
 import { MarketplaceProvider } from './MarketplaceContext';
 import { B2BProvider } from './B2BContext';
@@ -21,21 +22,23 @@ export function Providers({ children }: ProvidersProps) {
     <ThemeProvider>
       <ToastProvider>
         <AuthProvider>
-          <B2BProvider>
-            <OrderTrackingProvider>
-              <BillingProvider>
-                <QuoteProvider>
-                  <LegalProvider>
-                    <MarketplaceProvider>
-                      <CartProvider>
-                        {children}
-                      </CartProvider>
-                    </MarketplaceProvider>
-                  </LegalProvider>
-                </QuoteProvider>
-              </BillingProvider>
-            </OrderTrackingProvider>
-          </B2BProvider>
+          <AuthMockProvider>
+            <B2BProvider>
+              <OrderTrackingProvider>
+                <BillingProvider>
+                  <QuoteProvider>
+                    <LegalProvider>
+                      <MarketplaceProvider>
+                        <CartProvider>
+                          {children}
+                        </CartProvider>
+                      </MarketplaceProvider>
+                    </LegalProvider>
+                  </QuoteProvider>
+                </BillingProvider>
+              </OrderTrackingProvider>
+            </B2BProvider>
+          </AuthMockProvider>
         </AuthProvider>
       </ToastProvider>
     </ThemeProvider>

@@ -127,7 +127,8 @@ export default function MarketplacePage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar - Filters */}
+          {/* Sidebar - Filters (Hidden temporarily) */}
+          {/*
           <div className="lg:w-80 lg:sticky lg:top-8 lg:max-h-[calc(100vh-4rem)] lg:overflow-y-auto">
             <ProductFiltersComponent
               onFiltersChange={handleFiltersChange}
@@ -135,6 +136,7 @@ export default function MarketplacePage() {
               isCollapsible={true}
             />
           </div>
+          */}
 
           {/* Main Content */}
           <div className="flex-1">
@@ -256,7 +258,8 @@ export default function MarketplacePage() {
         </div>
       </div>
 
-      {/* Mobile Filters Overlay */}
+      {/* Mobile Filters Overlay (Hidden temporarily) */}
+      {/* 
       {showFilters && (
         <div className="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50" onClick={() => setShowFilters(false)}>
           <div className="absolute right-0 top-0 h-full w-80 bg-surface dark:bg-neutral-800 shadow-xl overflow-y-auto" onClick={(e) => e.stopPropagation()}>
@@ -281,6 +284,7 @@ export default function MarketplacePage() {
           </div>
         </div>
       )}
+      */}
     </div>
   );
 }
