@@ -61,6 +61,18 @@ export const mockCategories: Category[] = [
     sortOrder: 5,
     createdAt: new Date('2024-01-01'),
     updatedAt: new Date('2024-01-01')
+  },
+  {
+    id: '6',
+    name: 'Medicina',
+    description: 'Modelos anatómicos y médicos',
+    slug: 'medicina',
+    imageUrl: '/images/categories/medical.jpg',
+    productCount: 15,
+    isActive: true,
+    sortOrder: 6,
+    createdAt: new Date('2024-01-01'),
+    updatedAt: new Date('2024-01-01')
   }
 ];
 
@@ -132,80 +144,45 @@ export const mockReviews: Review[] = [
 export const mockProducts: Product[] = [
   {
     id: '1',
-    name: 'Casa Moderna Minimalista',
-    description: 'Modelo 3D de una casa moderna con diseño minimalista, perfecta para visualizaciones arquitectónicas y presentaciones de proyectos.',
-    shortDescription: 'Casa moderna con diseño minimalista',
-    price: 49.99,
-    originalPrice: 69.99,
+    name: 'Pelvis Anatómica – Escala Real',
+    description: 'Modelo anatómico físico impreso en 3D listo para uso educativo. Fabricación bajo pedido.',
+    shortDescription: 'Modelo anatómico físico impreso en 3D listo para uso educativo',
+    price: 260.00,
     currency: 'PEN',
-    categoryId: '1',
-    categoryName: 'Arquitectura 3D',
-    sellerId: '2',
-    sellerName: 'Ana García',
+    categoryId: '6',
+    categoryName: 'Medicina',
+    sellerId: '3',
+    sellerName: 'Miguel Rodríguez',
     images: [
       {
         id: '1',
         productId: '1',
-        url: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&q=80&w=600',
-        alt: 'Casa moderna vista frontal',
+        url: '/images/products/pelvis-anatomica.jpg',
+        alt: 'Pelvis Anatómica Escala Real',
         isPrimary: true,
-        sortOrder: 1,
-        order: 1
-      },
-      {
-        id: '2',
-        productId: '1',
-        url: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80&w=600',
-        alt: 'Casa moderna vista lateral',
-        isPrimary: false,
-        sortOrder: 2,
-        order: 2
-      },
-      {
-        id: '3',
-        productId: '1',
-        url: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80&w=600',
-        alt: 'Casa moderna interior',
-        isPrimary: false,
-        sortOrder: 3,
-        order: 3
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-01-01'),
+        updatedAt: new Date('2024-01-01')
       }
     ],
     specifications: [
-      {
-        id: '1',
-        name: 'Formato',
-        value: '.blend, .fbx, .obj'
-      },
-      {
-        id: '2',
-        name: 'Polígonos',
-        value: '45,000'
-      },
-      {
-        id: '3',
-        name: 'Texturas',
-        value: '4K PBR'
-      },
-      {
-        id: '4',
-        name: 'Dimensiones',
-        value: '12m x 8m x 3m'
-      }
+      { name: 'Categoría', value: 'ANATOMÍA 3D' },
+      { name: 'Escala', value: 'Real' },
+      { name: 'Material', value: 'PLA Premium' },
+      { name: 'Uso', value: 'Educativo / Médico' }
     ],
-    tags: ['casa', 'moderna', 'minimalista', 'arquitectura', 'residencial'],
-    sku: 'HOUSE-MOD-001',
-    stock: 999,
-    minQuantity: 1,
-    materials: ['PLA', 'ABS', 'PETG'],
-    complexity: 'high',
-    rating: 4.5,
-    reviewCount: 12,
-    downloadCount: 156,
-    isActive: true,
+    format: 'Físico',
+    fileSize: 'N/A',
+    license: 'Standard',
+    tags: ['anatomía', 'medicina', 'pelvis', 'educación', 'modelo 3d'],
+    downloadCount: 0,
+    rating: 4.8,
+    reviewCount: 15,
     isFeatured: true,
-    createdAt: new Date('2024-01-10'),
-    updatedAt: new Date('2024-01-15')
+    isActive: true,
+    createdAt: new Date('2024-01-01'),
+    updatedAt: new Date('2024-01-01')
   },
   {
     id: '2',

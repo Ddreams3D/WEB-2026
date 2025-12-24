@@ -108,45 +108,48 @@ export function ProductCard({
             {/* Download count removed */}
           </div>
 
-          {/* Price */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
+          <div className="flex items-end justify-between">
+            <div className="flex flex-col">
               <span className="text-lg font-bold text-gray-900 dark:text-white">
                 S/ {product.price.toFixed(2)}
               </span>
-              {hasDiscount && (
-                <span className="text-sm text-gray-500 dark:text-gray-400 line-through">
-                  S/ {product.originalPrice!.toFixed(2)}
-                </span>
-              )}
+              <span className="text-[10px] text-gray-500 dark:text-gray-400 font-medium">
+                IGV incluido
+              </span>
             </div>
-            
-            <span className="text-xs text-gray-500 dark:text-gray-400 uppercase">
-              {product.currency}
-            </span>
+            {hasDiscount && (
+              <span className="text-sm text-gray-500 dark:text-gray-400 line-through mb-1">
+                S/ {product.originalPrice!.toFixed(2)}
+              </span>
+            )}
           </div>
 
-          {/* Seller - Removed as per user request */}
-          {/*
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-            Por {product.sellerName}
-          </p>
-          */}
+          <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 flex items-center">
+            <span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5"></span>
+            Fabricación bajo pedido
+          </div>
         </div>
       </Link>
 
-      {/* Add to Cart Button */}
-      {showAddToCart && (
-        <div className="p-4 pt-0">
+      {/* Buttons */}
+      <div className="p-4 pt-0 space-y-2">
+        <Link 
+          href={`/marketplace/product/${product.id}`}
+          className="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 py-2 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center text-sm"
+        >
+          Ver detalles
+        </Link>
+        
+        {showAddToCart && (
           <button
             onClick={handleAddToCart}
-            className="w-full bg-primary-500 hover:bg-primary-600 text-white py-2 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center space-x-2 group/btn"
+            className="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center space-x-2 group/btn text-sm"
           >
             <ShoppingCart className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
             <span>Agregar al Carrito</span>
           </button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
