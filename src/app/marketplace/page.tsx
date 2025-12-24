@@ -1,13 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, Filter, Grid, List, Search, LogOut } from '@/lib/icons';
+import { Filter, Grid, List, Search } from '@/lib/icons';
 import Link from 'next/link';
 import { ProductGrid, ProductList } from '@/components/marketplace/ProductGrid';
 import { ProductFilters as ProductFiltersComponent } from '@/components/marketplace/ProductFilters';
 import { useMarketplace } from '@/contexts/MarketplaceContext';
-import { useCart } from '@/contexts/CartContext';
-import { useAuthMock } from '@/contexts/AuthMockContext';
 import { ProductFilters as ProductFiltersType, Product } from '@/shared/types';
 
 type ViewMode = 'grid' | 'list';
@@ -24,8 +22,6 @@ export default function MarketplacePage() {
     loadFeaturedProducts
   } = useMarketplace();
   
-  const { itemCount } = useCart();
-  const { user, isAuthenticated, logout } = useAuthMock();
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [showFilters, setShowFilters] = useState(false);
   const [activeTab, setActiveTab] = useState<'all' | 'featured' | 'search'>('all');
@@ -72,51 +68,9 @@ export default function MarketplacePage() {
                 </h1>
               </div>
               
-              {/* User Info and Actions */}
-              <div className="flex items-center space-x-4">
-                {isAuthenticated && user ? (
-                  <div className="flex items-center space-x-3">
-                    <div className="text-right">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">
-                        {user.name}
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {user.email}
-                      </p>
-                    </div>
-                    <button 
-                      onClick={logout}
-                      className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
-                      title="Cerrar sesión"
-                    >
-                      <LogOut className="w-5 h-5" />
-                    </button>
-                  </div>
-                ) : (
-                  <a 
-                    href="/login" 
-                    className="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 font-medium"
-                  >
-                    Iniciar Sesión
-                  </a>
-                )}
-                
-                {/* Cart Button */}
-                <div className="relative">
-                  <Link 
-                    href="/cart"
-                    className="flex items-center space-x-2 bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-                  >
-                    <ShoppingCart className="w-5 h-5" />
-                    <span>Carrito</span>
-                    {itemCount > 0 && (
-                      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                        {itemCount}
-                      </span>
-                    )}
-                  </Link>
-                </div>
-              </div>
+              
+              {/* User Info and Actions - Removed as requested */}
+
             </div>
           </div>
         </div>
