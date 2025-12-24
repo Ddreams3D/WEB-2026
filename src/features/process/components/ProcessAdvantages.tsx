@@ -60,9 +60,12 @@ export default function ProcessAdvantages() {
           </div>
           <h2
             id="advantages-heading"
-            className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-secondary-500 to-primary-500 bg-clip-text text-transparent"
+            className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white"
           >
-            ¿Por qué elegir Ddreams3D?
+            ¿Por qué elegir{' '}
+            <span className="bg-gradient-to-r from-secondary-500 to-primary-500 bg-clip-text text-transparent">
+              Ddreams3D?
+            </span>
           </h2>
         </div>
         <p className="text-base md:text-lg text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
