@@ -6,6 +6,8 @@ import ConditionalNavbar from '../shared/components/layout/ConditionalNavbar';
 import ConditionalFooter from '../shared/components/layout/ConditionalFooter';
 import PageTransition from '../shared/components/ui/PageTransition';
 
+export const dynamic = 'force-dynamic';
+
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
