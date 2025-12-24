@@ -31,7 +31,10 @@ export default function BenefitsSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <header className="text-center mb-16">
           <h2 id="benefits-heading" className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-900 dark:text-white mb-6">
-            ¿Por Qué Elegirnos?
+            ¿Por Qué{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
+              Elegirnos?
+            </span>
           </h2>
           <p className="text-base sm:text-lg lg:text-xl text-neutral-600 dark:text-neutral-300 max-w-3xl mx-auto">
             Descubre las ventajas que nos convierten en tu mejor opción para proyectos de impresión 3D

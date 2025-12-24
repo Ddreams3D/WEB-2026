@@ -56,7 +56,10 @@ export default function HomePageClient() {
               id="projects-heading"
               className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-900 dark:text-white mb-6"
             >
-              Proyectos Destacados
+              Proyectos{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
+                Destacados
+              </span>
             </h2>
             <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-300 max-w-3xl mx-auto">
               Explora algunos de nuestros trabajos más innovadores y creativos
