@@ -1,18 +1,8 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '../shared/lib/supabase';
 import { CartItem, Cart, Product } from '../shared/types';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-const isSupabaseConfigured = supabaseUrl && supabaseKey && 
-  !supabaseUrl.includes('placeholder');
-
-const supabase = isSupabaseConfigured
-  ? createClient(supabaseUrl!, supabaseKey!)
-  : null;
 
 // Interfaz para compatibilidad con base de datos existente
 interface CartItemFromDB {

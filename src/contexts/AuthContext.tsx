@@ -2,12 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import { supabase } from '../shared/lib/supabase';
 
 interface User {
   id: string;
@@ -64,26 +59,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     checkStoredAuth();
     
     // Escuchar cambios de autenticación de Supabase
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (event === 'SIGNED_IN' && session?.user) {
-          const userData = {
-            id: session.user.id,
-            username: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Usuario',
-            email: session.user.email || ''
-          };
-          setUser(userData);
-          localStorage.setItem(AUTH_USER_KEY, JSON.stringify(userData));
-        } else if (event === 'SIGNED_OUT') {
-          setUser(null);
-          localStorage.removeItem(AUTH_TOKEN_KEY);
-          localStorage.removeItem(AUTH_USER_KEY);
-        }
-        setIsLoading(false);
-      }
-    );
+    let subscription: { unsubscribe: () => void } | null = null;
 
-    return () => subscription.unsubscribe();
+    if (supabase) {
+      const { data } = supabase.auth.onAuthStateChange(
+        async (event, session) => {
+          if (event === 'SIGNED_IN' && session?.user) {
+            const userData = {
+              id: session.user.id,
+              username: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Usuario',
+              email: session.user.email || ''
+            };
+            setUser(userData);
+            localStorage.setItem(AUTH_USER_KEY, JSON.stringify(userData));
+          } else if (event === 'SIGNED_OUT') {
+            setUser(null);
+            localStorage.removeItem(AUTH_TOKEN_KEY);
+            localStorage.removeItem(AUTH_USER_KEY);
+          }
+          setIsLoading(false);
+        }
+      );
+      subscription = data.subscription;
+    } else {
+      // Si no hay Supabase, terminamos la carga
+      setIsLoading(false);
+    }
+
+    return () => {
+      if (subscription) subscription.unsubscribe();
+    };
   }, []);
 
   const checkStoredAuth = () => {
@@ -142,6 +147,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginWithGoogle = async (): Promise<void> => {
     try {
+      if (!supabase) {
+        console.warn('Supabase no está configurado. Login con Google no disponible.');
+        return;
+      }
       setIsLoading(true);
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -168,7 +177,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = async () => {
     try {
       // Logout de Supabase
-      await supabase.auth.signOut();
+      if (supabase) {
+        await supabase.auth.signOut();
+      }
       
       // Limpiar localStorage
       localStorage.removeItem(AUTH_TOKEN_KEY);
