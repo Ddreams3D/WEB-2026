@@ -60,7 +60,7 @@ export default function MarketplacePage() {
   const displayProducts = getDisplayProducts();
 
   return (
-    <div className="min-h-screen bg-background dark:bg-neutral-900">
+    <div className="min-h-screen bg-background dark:bg-neutral-900 pt-20 lg:pt-24">
       {/* Header */}
       <div className="bg-surface dark:bg-neutral-800 border-b border-soft dark:border-neutral-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -68,11 +68,8 @@ export default function MarketplacePage() {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                  Marketplace 3D
+                  Explora nuestros productos destacados
                 </h1>
-                <p className="mt-2 text-gray-600 dark:text-gray-400">
-                  Descubre y descarga modelos 3D de alta calidad
-                </p>
               </div>
               
               {/* User Info and Actions */}
