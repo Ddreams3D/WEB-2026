@@ -78,8 +78,8 @@ const Footer = () => {
               />
             </div>
             <p className="text-neutral-300 dark:text-neutral-300 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
-              Transformando ideas en realidad con tecnología de impresión 3D de
-              vanguardia. Más de 1000 proyectos exitosos nos respaldan.
+              Estudio creativo de impresión y modelado 3D. Proyectos
+              personalizados, trato directo y soluciones técnicas a medida.
             </p>
           </div>
 
