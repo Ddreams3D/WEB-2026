@@ -55,7 +55,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background dark:bg-neutral-900">
+    <div className="min-h-screen bg-background dark:bg-neutral-900 pt-20 lg:pt-24">
       {/* Header consistente con Marketplace */}
       <div className="bg-surface dark:bg-neutral-800 border-b border-soft dark:border-neutral-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
