@@ -33,14 +33,17 @@ export default function ServicesBenefits() {
     <section className="mb-12 sm:mb-16 lg:mb-20" aria-labelledby="benefits">
       <h2
         id="benefits"
-        className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center mb-8 sm:mb-12 text-neutral-900 dark:text-white"
+        className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center mb-4 sm:mb-6 text-neutral-900 dark:text-white"
       >
-        ¿Por qué{' '}
+        ¿Cómo{' '}
         <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
-          elegirnos
+          trabajamos
         </span>
         ?
       </h2>
+      <p className="text-center text-neutral-600 dark:text-neutral-300 max-w-3xl mx-auto mb-8 sm:mb-12 text-base sm:text-lg px-4">
+        Trabajamos cada proyecto de forma personalizada, cuidando el diseño, la fabricación y los acabados según el uso final de la pieza.
+      </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
         {benefits.map((benefit, index) => (
           <article
