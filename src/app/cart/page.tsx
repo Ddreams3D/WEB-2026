@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { PHONE_BUSINESS } from '@/shared/constants/infoBusiness';
+import { ProductImage } from '@/shared/components/ui/DefaultImage';
 
 export default function CartPage() {
   const {
