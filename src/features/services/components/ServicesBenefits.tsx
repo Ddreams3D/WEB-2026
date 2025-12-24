@@ -37,9 +37,8 @@ export default function ServicesBenefits() {
       >
         ¿Cómo{' '}
         <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
-          trabajamos
+          trabajamos?
         </span>
-        ?
       </h2>
       <p className="text-center text-neutral-600 dark:text-neutral-300 max-w-3xl mx-auto mb-8 sm:mb-12 text-base sm:text-lg px-4">
         Trabajamos cada proyecto de forma personalizada, cuidando el diseño, la fabricación y los acabados según el uso final de la pieza.
