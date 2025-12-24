@@ -54,9 +54,9 @@ const nextConfig = {
   reactStrictMode: true,
   
   // Configuración de ESLint para build
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  // eslint: {
+  //   ignoreDuringBuilds: true,
+  // },
   
   // Configuraciones adicionales para reducir advertencias
   // modularizeImports deshabilitado para evitar conflictos con alias
