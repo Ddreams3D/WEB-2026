@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { X, ChevronLeft, ChevronRight } from '@/lib/icons';
+import { X, Eye, FileText } from '@/lib/icons';
 import Image from 'next/image';
-import { useStaggeredItemsAnimation, getAnimationClasses } from '../hooks/useIntersectionAnimation';
-import { getTransitionClasses, getGradientClasses } from '../styles';
+import Link from 'next/link';
+import { useStaggeredItemsAnimation } from '../hooks/useIntersectionAnimation';
 
 interface Project {
   id: string;
@@ -19,41 +19,39 @@ interface Project {
 const projects: Project[] = [
   {
     id: '1',
-    title: 'Prototipo Automotriz',
-    description: 'Desarrollo de componentes personalizados para la industria automotriz con alta precisión y resistencia.',
-    category: 'Prototipado',
-    image: '/images/placeholder-modeling.svg',
-    client: 'Industria Automotriz',
+    title: 'Modelo Médico Anatómico Personalizado',
+    description: 'Desarrollo de modelos anatómicos impresos en 3D a partir de referencias reales para estudio, enseñanza y planificación médica.',
+    category: 'Medicina',
+    image: '/images/placeholder-medical.svg',
+    client: 'Sector Médico',
     date: '2024'
   },
   {
     id: '2',
-    title: 'Maqueta Arquitectónica',
-    description: 'Maqueta detallada de proyecto residencial con interiores y acabados realistas.',
-    category: 'Arquitectura',
-    image: '/images/placeholder-precision.svg',
-    client: 'Estudio de Arquitectura',
+    title: 'Trofeo 3D Personalizado',
+    description: 'Diseño y fabricación de trofeos y piezas personalizadas impresas en 3D para eventos, marcas y reconocimientos especiales.',
+    category: 'Trofeos y Regalos',
+    image: '/images/placeholder-modeling.svg',
+    client: 'Eventos Corporativos',
     date: '2024'
   },
   {
     id: '3',
-    title: 'Modelo Médico',
-    description: 'Modelo anatómico personalizado para planificación quirúrgica.',
-    category: 'Medicina',
-    image: '/images/placeholder-medical.svg',
-    client: 'Hospital Regional',
-    date: '2023'
+    title: 'Prototipo Funcional a Medida',
+    description: 'Creación de prototipos y piezas funcionales impresas en 3D para pruebas, validación y uso técnico específico.',
+    category: 'Prototipado',
+    image: '/images/placeholder-precision.svg',
+    client: 'Industria',
+    date: '2024'
   }
 ];
 
 export default function ProjectGallery() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const { ref, visibleItems } = useStaggeredItemsAnimation(projects.length, 150);
 
   const openModal = useCallback((project: Project) => {
     setSelectedProject(project);
-    setSelectedIndex(projects.findIndex(p => p.id === project.id));
     document.body.style.overflow = 'hidden';
   }, []);
 
@@ -62,33 +60,13 @@ export default function ProjectGallery() {
     document.body.style.overflow = 'unset';
   }, []);
 
-  const nextProject = useCallback(() => {
-    const newIndex = (selectedIndex + 1) % projects.length;
-    setSelectedIndex(newIndex);
-    setSelectedProject(projects[newIndex]);
-  }, [selectedIndex]);
-
-  const prevProject = useCallback(() => {
-    const newIndex = (selectedIndex - 1 + projects.length) % projects.length;
-    setSelectedIndex(newIndex);
-    setSelectedProject(projects[newIndex]);
-  }, [selectedIndex]);
-
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (!selectedProject) return;
     
-    switch (e.key) {
-      case 'Escape':
-        closeModal();
-        break;
-      case 'ArrowLeft':
-        prevProject();
-        break;
-      case 'ArrowRight':
-        nextProject();
-        break;
+    if (e.key === 'Escape') {
+      closeModal();
     }
-  }, [selectedProject, closeModal, prevProject, nextProject]);
+  }, [selectedProject, closeModal]);
 
   useEffect(() => {
     if (selectedProject) {
@@ -105,105 +83,114 @@ export default function ProjectGallery() {
 
   return (
     <div ref={ref}>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
         {projects.map((project, index) => (
-          <div
+          <article
             key={project.id}
-            className={`bg-white dark:bg-neutral-800 rounded-xl shadow-lg hover:shadow-xl ${getTransitionClasses('transform')} overflow-hidden cursor-pointer group hover:scale-105 ${getAnimationClasses(visibleItems?.[index] || false, index)}`}
-            onClick={() => openModal(project)}
+            className={`group bg-white dark:bg-neutral-800 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden transform hover:-translate-y-2 hover-lift hover-glow ${
+              visibleItems[index] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+            style={{ transitionDelay: `${index * 150}ms` }}
           >
-            <div className="relative h-48 sm:h-56 lg:h-64">
+            <figure className="relative overflow-hidden">
               <Image
                 src={project.image}
-                alt={project.title}
-                fill
-                className={`object-cover ${getTransitionClasses('transform')} group-hover:scale-105`}
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                alt={`Proyecto: ${project.title}`}
+                width={400}
+                height={300}
+                className="w-full h-48 sm:h-56 object-cover group-hover:scale-110 group-hover:rotate-1 transition-all duration-500"
               />
-              <div className={`absolute inset-0 ${getGradientClasses('overlayDark')} opacity-0 group-hover:opacity-100 ${getTransitionClasses('opacity')}`} />
-            </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute top-3 sm:top-4 right-3 sm:right-4">
+                <span className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-medium shadow-lg">
+                  {project.category}
+                </span>
+              </div>
+              <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 opacity-0 group-hover:opacity-100">
+                <button
+                  onClick={() => openModal(project)}
+                  className="w-full bg-white/90 backdrop-blur-sm text-neutral-900 py-2 px-4 rounded-lg font-medium hover:bg-white transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base shadow-lg btn-enhanced hover:scale-105"
+                >
+                  <Eye className="w-3 h-3 sm:w-4 sm:h-4" aria-hidden="true" />
+                  Ver Detalles
+                </button>
+              </div>
+            </figure>
             <div className="p-4 sm:p-6">
-              <h3 className="text-lg sm:text-xl font-bold mb-2">{project.title}</h3>
-              <p className="text-neutral-600 dark:text-neutral-300 mb-3 sm:mb-4 line-clamp-2 text-sm sm:text-base">
+              <h3 className="text-lg sm:text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-150">
+                {project.title}
+              </h3>
+              <p className="text-neutral-600 dark:text-neutral-400 mb-4 text-sm sm:text-base line-clamp-2 leading-relaxed">
                 {project.description}
               </p>
-              <span className={`inline-block ${getGradientClasses('primary')} text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium shadow-sm`}>
-                {project.category}
-              </span>
+              <Link
+                href="/contact"
+                className="mt-4 w-full bg-neutral-100 dark:bg-neutral-700 text-neutral-900 dark:text-white py-2 px-4 rounded-lg font-medium hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base"
+              >
+                <FileText className="w-4 h-4" />
+                Cotizar proyecto similar
+              </Link>
             </div>
-          </div>
+          </article>
         ))}
       </div>
 
       {/* Modal */}
       {selectedProject && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
           onClick={closeModal}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="modal-title"
-          aria-describedby="modal-description"
         >
           <div 
-            className="relative w-full max-w-4xl bg-white dark:bg-neutral-800 rounded-lg shadow-xl max-h-[90vh] overflow-y-auto"
+            className="bg-white dark:bg-neutral-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative animate-scale-in"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={closeModal}
-              className="absolute top-2 sm:top-4 right-2 sm:right-4 p-2 text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 z-10 bg-white/80 dark:bg-neutral-800/80 rounded-full transition-colors"
-              aria-label="Cerrar modal"
+              className="absolute top-4 right-4 p-2 rounded-full bg-neutral-100 dark:bg-neutral-700 text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 transition-colors z-10"
+              aria-label="Cerrar detalles"
             >
-              <X className="h-5 w-5 sm:h-6 sm:w-6" />
+              <X className="w-5 h-5" />
             </button>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2">
-              <div className="relative h-64 sm:h-80 lg:h-96">
-                <Image
-                  src={selectedProject.image}
-                  alt={selectedProject.title}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                />
-                <button
-                  onClick={(e) => { e.stopPropagation(); prevProject(); }}
-                  className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 p-1.5 sm:p-2 bg-white/20 hover:bg-white/30 rounded-full text-white transition-colors focus:outline-none focus:ring-2 focus:ring-white/50"
-                  aria-label="Proyecto anterior"
-                >
-                  <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
-                </button>
-                <button
-                  onClick={(e) => { e.stopPropagation(); nextProject(); }}
-                  className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 p-1.5 sm:p-2 bg-white/20 hover:bg-white/30 rounded-full text-white transition-colors focus:outline-none focus:ring-2 focus:ring-white/50"
-                  aria-label="Proyecto siguiente"
-                >
-                  <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
-                </button>
+            <div className="relative h-64 sm:h-80 w-full">
+              <Image
+                src={selectedProject.image}
+                alt={selectedProject.title}
+                fill
+                className="object-cover"
+              />
+              <div className="absolute top-4 left-4">
+                <span className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg">
+                  {selectedProject.category}
+                </span>
               </div>
-              <div className="p-4 sm:p-6">
-                <h3 id="modal-title" className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">{selectedProject.title}</h3>
-                <p id="modal-description" className="text-neutral-600 dark:text-neutral-300 mb-4 sm:mb-6 text-sm sm:text-base">
+            </div>
+
+            <div className="p-6 sm:p-8">
+              <h3 className="text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-white mb-4">
+                {selectedProject.title}
+              </h3>
+
+              <div className="prose dark:prose-invert max-w-none">
+                <p className="text-neutral-600 dark:text-neutral-300 text-base sm:text-lg leading-relaxed">
                   {selectedProject.description}
                 </p>
-                <div className="space-y-3 sm:space-y-4">
-                  <div className="text-sm sm:text-base">
-                    <span className="font-semibold">Categoría:</span>
-                    <span className="ml-2">{selectedProject.category}</span>
-                  </div>
-                  {selectedProject.client && (
-                    <div className="text-sm sm:text-base">
-                      <span className="font-semibold">Cliente:</span>
-                      <span className="ml-2">{selectedProject.client}</span>
+                {selectedProject.client && (
+                    <div className="mt-4 text-sm sm:text-base text-neutral-500 dark:text-neutral-400">
+                      <span className="font-semibold text-neutral-700 dark:text-neutral-200">Cliente:</span> {selectedProject.client}
                     </div>
-                  )}
-                  {selectedProject.date && (
-                    <div className="text-sm sm:text-base">
-                      <span className="font-semibold">Año:</span>
-                      <span className="ml-2">{selectedProject.date}</span>
-                    </div>
-                  )}
-                </div>
+                )}
+              </div>
+
+              <div className="mt-8 flex justify-end">
+                <Link
+                  href="/contact"
+                  className="w-full sm:w-auto bg-primary-600 text-white py-3 px-6 rounded-xl font-medium hover:bg-primary-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                >
+                  <FileText className="w-5 h-5" />
+                  Cotizar proyecto similar
+                </Link>
               </div>
             </div>
           </div>

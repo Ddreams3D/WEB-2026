@@ -8,7 +8,6 @@ import ServicesBenefits from '@/features/services/components/ServicesBenefits';
 import ServicesGalery from '@/features/services/components/ServicesGalery';
 import ServicesCalculatorPrice from '@/features/services/components/ServicesCalculatorPrice';
 import ServicesFAQ from '@/features/services/components/ServicesFAQ';
-import ServicesIndustries from '@/features/services/components/ServicesIndustries';
 import ServicesCTA from '@/features/services/components/ServicesCTA';
 
 export default function ServicesPageClient() {
@@ -32,8 +31,7 @@ export default function ServicesPageClient() {
         {/* Testimonials Section */}
         <Testimonials />
 
-        {/* Industrias que Servimos */}
-        <ServicesIndustries />
+
 
         {/* FAQ Section */}
         <ServicesFAQ />

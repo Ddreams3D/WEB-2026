@@ -66,7 +66,7 @@ export default function HomePageClient() {
 
           <div className="text-center mt-12">
             <Link
-              href="/marketplace"
+              href="/services#gallery"
               className="inline-flex items-center bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-secondary-500 hover:to-primary-500 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-300 transform hover:scale-105"
             >
               Ver Todos los Proyectos

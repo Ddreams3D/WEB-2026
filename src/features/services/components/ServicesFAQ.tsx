@@ -49,12 +49,12 @@ const faqData = [
   {
     question: '¿Trabajan con proyectos médicos o industriales?',
     answer:
-      'Sí, tenemos experiencia en aplicaciones médicas e industriales. Utilizamos materiales biocompatibles certificados para aplicaciones médicas y seguimos estrictos protocolos de calidad. Para aplicaciones industriales, trabajamos con materiales de alta resistencia y precisión dimensional.',
+      'Sí. Tenemos experiencia desarrollando proyectos para los sectores médico e industrial. En el área médica realizamos modelos anatómicos, maquetas y prototipos impresos en 3D para visualización, educación y demostración. Para aplicaciones industriales, desarrollamos prototipos funcionales y piezas personalizadas según los requerimientos de cada proyecto.',
   },
   {
     question: '¿Cómo funciona el proceso de cotización?',
     answer:
-      'Puede obtener una cotización inicial usando nuestra calculadora en línea. Para cotizaciones precisas, envíenos sus archivos 3D o especificaciones del proyecto. Analizamos los requisitos técnicos, materiales, tiempo de producción y post-procesado para proporcionar un presupuesto detallado en 24 horas.',
+      'Puedes solicitar una cotización a través de nuestro formulario o contactándonos directamente por WhatsApp. Una vez recibida la información del proyecto (archivos, referencias o descripción), evaluamos los requerimientos y te enviamos una propuesta personalizada según el tipo de trabajo.',
   },
 ];
 

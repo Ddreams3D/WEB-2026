@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import './globals.css';
 import { Providers } from '../contexts/Providers';
 import ConditionalNavbar from '../shared/components/layout/ConditionalNavbar';
@@ -78,6 +79,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={inter.variable} suppressHydrationWarning>
+      <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || ''} />
       <head>
         <script
           dangerouslySetInnerHTML={{
