@@ -17,6 +17,7 @@ import {
   getGradientClasses,
 } from '../shared/styles';
 import ButtonPrincipal from '@/shared/components/ButtonPrincipal';
+import ButtonRedirectWhatsapp from '@/shared/components/ButtonRedirectWhatsapp';
 
 export default function HomePageClient() {
   const [isMounted, setIsMounted] = useState(false);
@@ -99,14 +100,12 @@ export default function HomePageClient() {
                 ¿Listo para dar vida a tus ideas?
               </h2>
               <p className="text-sm sm:text-base text-white/90 mb-10 max-w-3xl mx-auto leading-relaxed opacity-95">
-                Nuestro equipo de expertos está preparado para ayudarte a
-                convertir tus ideas en realidad con la más alta calidad en
-                impresión 3D y tecnología de vanguardia.
+                Diseñamos y fabricamos piezas personalizadas en 3D, adaptadas a tu proyecto y uso final.
               </p>
               <div className="flex flex-col sm:flex-row gap-6 justify-center">
                 <Link href="/contact" aria-describedby="cta-heading">
                   <ButtonPrincipal
-                    msgLg=" Comenzar Proyecto"
+                    msgLg="Solicitar cotización"
                     iconRight={
                       <ArrowRight
                         className={` text-white ml-2  ${getIconClasses('md')}`}
@@ -115,17 +114,7 @@ export default function HomePageClient() {
                     }
                   />
                 </Link>
-                <Link href="/marketplace">
-                  <ButtonPrincipal
-                    msgLg=" Explorar Productos"
-                    iconRight={
-                      <ArrowRight
-                        className={` text-white ml-2  ${getIconClasses('md')}`}
-                        aria-hidden="true"
-                      />
-                    }
-                  />
-                </Link>
+                <ButtonRedirectWhatsapp />
               </div>
             </div>
           </div>
