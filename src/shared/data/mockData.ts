@@ -205,7 +205,7 @@ export const mockProducts: Product[] = [
       {
         id: '1',
         productId: '1',
-        url: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&q=80&w=600',
+        url: '/images/marketplace/product-1-a.png',
         alt: 'Pelvis Anatómica Escala Real',
         isPrimary: true,
         width: 800,
@@ -367,7 +367,7 @@ export const mockProducts: Product[] = [
   {
     id: '2',
     name: 'Copa Pistón 3D – 20 cm',
-    description: 'Detalle impreso en 3D inspirado en pistones de motor, ideal como regalo para fanáticos de los autos y las carreras.',
+    description: 'Detalle impreso en 3D inspirado en pistones de motor. Ideal para amantes de los autos y la mecánica.',
     shortDescription: 'Detalle impreso en 3D inspirado en pistones de motor',
     price: 79.00,
     currency: 'PEN',
@@ -379,13 +379,50 @@ export const mockProducts: Product[] = [
       {
         id: '2',
         productId: '2',
-        url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=80&w=600',
-        alt: 'Copa Pistón 3D',
+        url: '/images/marketplace/product-2-a.png',
+        alt: 'Copa Pistón 3D – 20 cm',
         isPrimary: true,
         width: 800,
         height: 600,
         createdAt: new Date('2024-01-01'),
         updatedAt: new Date('2024-01-01')
+      },
+      {
+        id: '2-b',
+        productId: '2',
+        url: '/images/marketplace/product-2-b.png',
+        alt: 'Copa Pistón 3D – 20 cm - Vista Detalle',
+        isPrimary: false,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-01-01'),
+        updatedAt: new Date('2024-01-01')
+      }
+    ],
+    options: [
+      {
+        id: 'opt-sticker',
+        name: 'Sticker personalizado',
+        type: 'checkbox',
+        values: [
+          {
+            id: 'sticker-yes',
+            name: 'Sticker personalizado (nombre o frase)',
+            priceModifier: 20
+          }
+        ]
+      },
+      {
+        id: 'opt-engraving',
+        name: 'Grabado 3D',
+        type: 'checkbox',
+        values: [
+          {
+            id: 'engraving-yes',
+            name: 'Grabado 3D impreso (texto integrado en la pieza)',
+            priceModifier: 40
+          }
+        ]
       }
     ],
     specifications: [
@@ -396,7 +433,7 @@ export const mockProducts: Product[] = [
       },
       {
         id: '6',
-        name: 'Colores',
+        name: 'Color',
         value: 'A elección (según disponibilidad)'
       },
       {
@@ -407,13 +444,18 @@ export const mockProducts: Product[] = [
       {
         id: '8',
         name: 'Tiempo estimado de fabricación',
-        value: '2–4 días hábiles'
+        value: 'Fabricación bajo pedido (2–4 días hábiles)'
       }
     ],
     format: 'Físico',
     fileSize: 'N/A',
     license: 'Standard',
     tags: ['trofeo', 'copa pistón', 'regalo', 'autos', 'carreras'],
+    sku: 'COPA-20CM-001',
+    stock: 50,
+    minQuantity: 1,
+    materials: ['PLA'],
+    complexity: 'medium',
     downloadCount: 0,
     rating: 4.8,
     reviewCount: 12,
@@ -437,13 +479,50 @@ export const mockProducts: Product[] = [
       {
         id: '3',
         productId: '3',
-        url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=80&w=600',
-        alt: 'Copa Pistón 3D Grande',
+        url: '/images/marketplace/product-3-a.png',
+        alt: 'Copa Pistón 3D – 30 cm',
         isPrimary: true,
         width: 800,
         height: 600,
         createdAt: new Date('2024-01-01'),
         updatedAt: new Date('2024-01-01')
+      },
+      {
+        id: '3-b',
+        productId: '3',
+        url: '/images/marketplace/product-3-b.png',
+        alt: 'Copa Pistón 3D – 30 cm - Vista Detalle',
+        isPrimary: false,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-01-01'),
+        updatedAt: new Date('2024-01-01')
+      }
+    ],
+    options: [
+      {
+        id: 'opt-sticker',
+        name: 'Sticker personalizado',
+        type: 'checkbox',
+        values: [
+          {
+            id: 'sticker-yes',
+            name: 'Sticker personalizado (nombre o frase)',
+            priceModifier: 20
+          }
+        ]
+      },
+      {
+        id: 'opt-engraving',
+        name: 'Grabado 3D',
+        type: 'checkbox',
+        values: [
+          {
+            id: 'engraving-yes',
+            name: 'Grabado 3D impreso (texto integrado en la pieza)',
+            priceModifier: 40
+          }
+        ]
       }
     ],
     specifications: [
@@ -567,7 +646,7 @@ export const mockProducts: Product[] = [
       {
         id: '17',
         name: 'Opcional',
-        value: 'Grabado 3D personalizado (nombre o frase): + S/ 40\n📌 Grabado integrado en la pieza (no sticker).'
+        value: 'Grabado 3D personalizado (nombre o frase): + S/ 40\nGrabado integrado en la pieza (no sticker).'
       },
       {
         id: '19',
@@ -607,9 +686,42 @@ export const mockProducts: Product[] = [
       {
         id: '10',
         productId: '5',
-        url: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=600',
-        alt: 'Cooler Motor 3D V8',
+        url: '/images/marketplace/product-5-a.png',
+        alt: 'Cooler Motor 3D V8 - Vista Principal',
         isPrimary: true,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-01-15'),
+        updatedAt: new Date('2024-01-15')
+      },
+      {
+        id: '10-b',
+        productId: '5',
+        url: '/images/marketplace/product-5-b.png',
+        alt: 'Cooler Motor 3D V8 - Detalle',
+        isPrimary: false,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-01-15'),
+        updatedAt: new Date('2024-01-15')
+      },
+      {
+        id: '10-c',
+        productId: '5',
+        url: '/images/marketplace/product-5-c.png',
+        alt: 'Cooler Motor 3D V8 - Vista Superior',
+        isPrimary: false,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-01-15'),
+        updatedAt: new Date('2024-01-15')
+      },
+      {
+        id: '10-d',
+        productId: '5',
+        url: '/images/marketplace/product-5-d.png',
+        alt: 'Cooler Motor 3D V8 - Uso',
+        isPrimary: false,
         width: 800,
         height: 600,
         createdAt: new Date('2024-01-15'),
@@ -630,7 +742,7 @@ export const mockProducts: Product[] = [
       {
         id: '23',
         name: 'Opcional',
-        value: 'Grabado 3D personalizado (nombre o frase): + S/ 40\n📌 Grabado permanente impreso junto con la pieza.'
+        value: 'Grabado 3D personalizado (nombre o frase): + S/ 40\nGrabado permanente impreso junto con la pieza.'
       },
       {
         id: '25',

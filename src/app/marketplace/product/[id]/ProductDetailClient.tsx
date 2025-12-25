@@ -24,14 +24,73 @@ export default function ProductDetailClient({ product }: Props) {
   const [selectedImageId, setSelectedImageId] = useState<string>(
     product.images.find(img => img.isPrimary)?.id || product.images[0]?.id
   );
+  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [isAdding, setIsAdding] = useState(false);
 
   const selectedImage = product.images.find(img => img.id === selectedImageId) || product.images[0];
 
+  // Helper para ajustar el encuadre de imágenes específicas
+  const getImageClassName = (imageId: string | undefined, isThumbnail: boolean = false) => {
+    const baseClass = "object-cover";
+    
+    // Fix para product-2-b que está muy alejada (zoomed out)
+    if (imageId === '2-b') {
+       // Aplicar escala para hacer zoom
+       if (isThumbnail) {
+         return `${baseClass} scale-125`;
+       }
+       return `${baseClass} transition-transform duration-500 scale-125 hover:scale-[1.35]`;
+    }
+    
+    if (isThumbnail) {
+      return baseClass;
+    }
+    
+    return `${baseClass} transition-transform duration-500 hover:scale-105`;
+  };
+
+  // Calcular precio total incluyendo opciones
+  const currentPrice = product.price + Object.entries(selectedOptions).reduce((total, [optionId, valueId]) => {
+    const option = product.options?.find(o => o.id === optionId);
+    const value = option?.values.find(v => v.id === valueId);
+    return total + (value?.priceModifier || 0);
+  }, 0);
+
+  const handleOptionChange = (optionId: string, valueId: string, checked: boolean) => {
+    setSelectedOptions(prev => {
+      const next = { ...prev };
+      if (checked) {
+        next[optionId] = valueId;
+      } else {
+        delete next[optionId];
+      }
+      return next;
+    });
+  };
+
   const handleAddToCart = async () => {
     try {
       setIsAdding(true);
-      await addToCart(product, 1);
+      
+      // Crear producto con precio actualizado y metadatos de opciones
+      const productWithOptions = {
+        ...product,
+        price: currentPrice
+      };
+
+      // Preparar lista de customizaciones para el carrito
+      const customizations = Object.entries(selectedOptions).map(([optionId, valueId]) => {
+        const option = product.options?.find(o => o.id === optionId);
+        const value = option?.values.find(v => v.id === valueId);
+        return {
+          id: optionId,
+          name: option?.name,
+          value: value?.name,
+          priceModifier: value?.priceModifier
+        };
+      });
+
+      await addToCart(productWithOptions, 1, customizations);
       showToast('success', 'Producto agregado', `${product.name} se añadió al carrito correctamente.`);
     } catch (error) {
       showToast('error', 'Error', 'No se pudo agregar el producto al carrito.');
@@ -73,7 +132,7 @@ export default function ProductDetailClient({ product }: Props) {
               src={selectedImage?.url}
               alt={selectedImage?.alt || product.name}
               fill
-              className="object-cover transition-transform duration-500 hover:scale-105"
+              className={getImageClassName(selectedImage?.id)}
               priority
             />
             {product.isFeatured && (
@@ -98,7 +157,7 @@ export default function ProductDetailClient({ product }: Props) {
                     src={image.url}
                     alt={image.alt}
                     fill
-                    className="object-cover"
+                    className={getImageClassName(image.id, true)}
                     sizes="(max-width: 768px) 25vw, 15vw"
                   />
                 </div>
@@ -162,6 +221,41 @@ export default function ProductDetailClient({ product }: Props) {
               {product.description}
             </p>
           </div>
+
+          {/* Opciones del Producto */}
+          {product.options && product.options.length > 0 && (
+            <div className="space-y-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl p-5 border border-gray-100 dark:border-gray-800">
+              <h3 className="font-bold text-gray-900 dark:text-white">Opciones de Personalización</h3>
+              <div className="space-y-3">
+                {product.options.map((option) => (
+                  <div key={option.id} className="space-y-2">
+                    {option.type === 'checkbox' && option.values.map((value) => (
+                      <label key={value.id} className="flex items-start space-x-3 cursor-pointer group">
+                        <div className="relative flex items-center">
+                          <input
+                            type="checkbox"
+                            className="peer h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary dark:border-gray-600 dark:bg-gray-700"
+                            checked={selectedOptions[option.id] === value.id}
+                            onChange={(e) => handleOptionChange(option.id, value.id, e.target.checked)}
+                          />
+                        </div>
+                        <div className="flex-1 text-sm">
+                          <span className="font-medium text-gray-900 dark:text-white group-hover:text-primary transition-colors">
+                            {value.name}
+                          </span>
+                          {value.priceModifier > 0 && (
+                            <span className="ml-2 text-primary font-bold">
+                              + S/ {value.priceModifier.toFixed(2)}
+                            </span>
+                          )}
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {product.specifications?.map((spec, idx) => (

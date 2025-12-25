@@ -79,12 +79,12 @@ export function ProductCard({
 
       <Link href={`/marketplace/product/${product.id}`} className="flex-1 flex flex-col">
         {/* Product Image */}
-        <div className="relative aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-gray-700">
+        <div className="relative aspect-[4/3] overflow-hidden bg-gray-50 dark:bg-gray-800/50">
           <ProductImage
             src={primaryImage?.url}
             alt={primaryImage?.alt || `Imagen del producto ${product.name}`}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            className="object-contain p-8 group-hover:scale-105 transition-transform duration-300"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </div>

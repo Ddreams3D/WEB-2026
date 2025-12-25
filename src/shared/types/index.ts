@@ -109,6 +109,7 @@ export interface Product {
   sellerName?: string;
   images: ProductImage[];
   specifications: ProductSpecification[];
+  options?: ProductOption[];
   tags: string[];
   stock?: number;
   minQuantity?: number;
@@ -142,6 +143,20 @@ export interface ProductImage {
   order?: number;
   createdAt?: Date;
   updatedAt?: Date;
+}
+
+export interface ProductOptionValue {
+  id: string;
+  name: string;
+  priceModifier: number;
+}
+
+export interface ProductOption {
+  id: string;
+  name: string;
+  type: 'select' | 'radio' | 'checkbox';
+  values: ProductOptionValue[];
+  required?: boolean;
 }
 
 export interface ProductSpecification {

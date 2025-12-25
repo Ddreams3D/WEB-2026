@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
-import { X, ShoppingCart } from 'lucide-react';
+import { X, ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Product } from '../../shared/types';
 import { useCart } from '../../contexts/CartContext';
 import { useToast } from '../ui/ToastManager';
@@ -14,6 +14,32 @@ interface ProductDetailsModalProps {
 export function ProductDetailsModal({ product, isOpen, onClose }: ProductDetailsModalProps) {
   const { addToCart } = useCart();
   const { showToast } = useToast();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Reset image index when product changes or modal opens
+  React.useEffect(() => {
+    if (isOpen && product) {
+      const primaryIndex = product.images.findIndex(img => img.isPrimary);
+      setCurrentImageIndex(primaryIndex >= 0 ? primaryIndex : 0);
+    }
+  }, [isOpen, product]);
+
+  // Handle ESC key to close modal
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
 
   if (!isOpen || !product) return null;
 
@@ -23,7 +49,17 @@ export function ProductDetailsModal({ product, isOpen, onClose }: ProductDetails
     onClose();
   };
 
-  const primaryImage = product.images.find(img => img.isPrimary) || product.images[0];
+  const nextImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentImageIndex((prev) => (prev + 1) % product.images.length);
+  };
+
+  const prevImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentImageIndex((prev) => (prev - 1 + product.images.length) % product.images.length);
+  };
+
+  const currentImage = product.images[currentImageIndex] || product.images[0];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
@@ -36,13 +72,48 @@ export function ProductDetailsModal({ product, isOpen, onClose }: ProductDetails
           <X className="w-5 h-5" />
         </button>
 
-        <div className="relative h-64 sm:h-80 w-full">
+        <div className="relative h-48 sm:h-64 w-full group">
           <Image
-            src={primaryImage?.url || '/images/placeholder-product.svg'}
-            alt={product.name}
+            src={currentImage?.url || '/images/placeholder-product.svg'}
+            alt={currentImage?.alt || product.name}
             fill
-            className="object-cover"
+            className="object-contain bg-neutral-100 dark:bg-neutral-900"
           />
+          
+          {/* Navigation Arrows */}
+          {product.images.length > 1 && (
+            <>
+              <button
+                onClick={prevImage}
+                className="absolute left-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/80 dark:bg-neutral-800/80 text-neutral-700 dark:text-neutral-200 hover:bg-white dark:hover:bg-neutral-700 shadow-md opacity-0 group-hover:opacity-100 transition-all duration-200"
+                aria-label="Imagen anterior"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+              <button
+                onClick={nextImage}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/80 dark:bg-neutral-800/80 text-neutral-700 dark:text-neutral-200 hover:bg-white dark:hover:bg-neutral-700 shadow-md opacity-0 group-hover:opacity-100 transition-all duration-200"
+                aria-label="Siguiente imagen"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
+              
+              {/* Image Indicators */}
+              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
+                {product.images.map((_, index) => (
+                  <div
+                    key={index}
+                    className={`w-2 h-2 rounded-full transition-all ${
+                      index === currentImageIndex 
+                        ? 'bg-primary-500 w-4' 
+                        : 'bg-neutral-400/50 hover:bg-neutral-400'
+                    }`}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+
           <div className="absolute top-4 left-4">
             <span className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg">
               {product.categoryName}

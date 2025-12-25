@@ -34,7 +34,7 @@ export default function DefaultImage({
   fill = false,
   sizes,
   priority = false,
-  quality = 80,
+  quality = 75,
   onError
 }: DefaultImageProps) {
   const [hasError, setHasError] = useState(false);
@@ -85,7 +85,7 @@ export default function DefaultImage({
   };
 
   return (
-    <div className="relative">
+    <div className={`relative ${fill ? 'w-full h-full' : ''}`}>
       {/* Loading skeleton */}
       {isLoading && (
         <div className={`absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700 animate-pulse ${className}`} />
