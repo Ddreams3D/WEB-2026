@@ -435,8 +435,8 @@ export const mockProducts: Product[] = [
   {
     id: '2',
     name: 'Regalo Personalizado para Fanáticos de Autos – Copa Pistón 3D (20 cm)',
-    description: 'Detalle impreso en 3D inspirado en pistones de motor. Ideal para amantes de los autos y la mecánica.',
-    shortDescription: 'Detalle impreso en 3D inspirado en pistones de motor',
+    description: 'Regalo personalizado ideal para fanáticos de los autos, perfecto para sorprender a hijos, jóvenes o adultos amantes de la velocidad. Esta copa pistón fabricada en impresión 3D es una excelente opción para cumpleaños, logros o fechas especiales, e incluye personalización con nombre o frase.',
+    shortDescription: 'Regalo personalizado ideal para fanáticos de los autos',
     price: 79.00,
     currency: 'PEN',
     categoryId: '7',
