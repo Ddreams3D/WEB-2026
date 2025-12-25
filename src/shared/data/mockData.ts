@@ -856,8 +856,8 @@ export const mockProducts: Product[] = [
   {
     id: '5',
     name: 'Cooler Motor 3D – V8',
-    description: 'Versión más amplia y robusta de nuestro cooler estilo motor. Ideal para reuniones, parrillas y regalos especiales.',
-    shortDescription: 'Versión más amplia y robusta de nuestro cooler estilo motor',
+    description: 'Cooler funcional impreso en 3D con diseño robusto inspirado en motores V8. Pensado para quienes buscan mayor capacidad y presencia visual, ideal para reuniones, eventos pequeños, parrillas o como regalo premium para amantes del mundo automotor.\n\nFabricado en impresión 3D de alta calidad con PLA Premium, ofrece mayor espacio para bebidas y un diseño más imponente, manteniendo el estilo mecánico como protagonista.',
+    shortDescription: 'Cooler funcional impreso en 3D con diseño robusto inspirado en motores V8',
     price: 260.00,
     currency: 'PEN',
     categoryId: '7',
@@ -958,13 +958,13 @@ export const mockProducts: Product[] = [
       {
         id: '25',
         name: 'Tiempo estimado de fabricación',
-        value: '4–6 días hábiles'
+        value: '3–5 días hábiles'
       }
     ],
     format: 'Físico',
     fileSize: 'N/A',
     license: 'Standard',
-    tags: ['cooler3D', 'coolerMotor', 'regaloParaFanaticosDeAutos', 'regaloOriginal', 'impresion3D', 'parrilla', 'Arequipa'],
+    tags: ['cooler3D', 'coolerMotorV8', 'regaloParaFanaticosDeAutos', 'regaloPremium', 'impresion3D', 'cerveza', 'Arequipa'],
     sku: 'COOLER-V8-001',
     stock: 15,
     minQuantity: 1,
