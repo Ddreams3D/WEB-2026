@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Marketplace de Diseños 3D | Ddreams 3D',
-  description: 'Explora nuestra colección exclusiva de diseños 3D listos para imprimir. Encuentra modelos únicos para decoración, cosplay, utilitarios y más.',
+  title: 'Marketplace de Regalos e Impresión 3D | Ddreams 3D',
+  description: 'Explora nuestra colección exclusiva de regalos personalizados, trofeos y productos impresos en 3D. Diseños únicos hechos en Arequipa.',
   openGraph: {
-    title: 'Marketplace de Diseños 3D | Ddreams 3D',
-    description: 'Explora nuestra colección exclusiva de diseños 3D listos para imprimir. Encuentra modelos únicos para decoración, cosplay, utilitarios y más.',
+    title: 'Marketplace de Regalos e Impresión 3D | Ddreams 3D',
+    description: 'Explora nuestra colección exclusiva de regalos personalizados, trofeos y productos impresos en 3D. Diseños únicos hechos en Arequipa.',
     type: 'website',
   },
 };

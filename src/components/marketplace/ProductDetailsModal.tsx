@@ -4,6 +4,7 @@ import { X, ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Product } from '../../shared/types';
 import { useCart } from '../../contexts/CartContext';
 import { useToast } from '../ui/ToastManager';
+import { ProductImage } from '../../shared/components/ui/DefaultImage';
 
 interface ProductDetailsModalProps {
   product: Product | null;
@@ -73,8 +74,8 @@ export function ProductDetailsModal({ product, isOpen, onClose }: ProductDetails
         </button>
 
         <div className="relative h-48 sm:h-64 w-full group">
-          <Image
-            src={currentImage?.url || '/images/placeholder-product.svg'}
+          <ProductImage
+            src={currentImage?.url}
             alt={currentImage?.alt || product.name}
             fill
             className="object-contain bg-neutral-100 dark:bg-neutral-900"

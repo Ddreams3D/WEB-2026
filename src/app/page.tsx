@@ -2,9 +2,9 @@ import { Metadata } from 'next';
 import HomePageClient from './HomePageClient';
 
 export const metadata: Metadata = {
-  title: 'Ddreams 3D - Impresión 3D Profesional | Prototipado y Fabricación Digital',
-  description: 'Servicios profesionales de impresión 3D, prototipado rápido y fabricación digital. Transformamos tus ideas en realidad con la más alta calidad y tecnología de vanguardia.',
-  keywords: 'impresión 3D, prototipado, fabricación digital, diseño 3D, modelado, prototipado rápido, manufactura aditiva',
+  title: 'Ddreams 3D | Impresión 3D y Regalos Personalizados en Arequipa',
+  description: 'Especialistas en regalos personalizados y servicios de impresión 3D en Arequipa. Creamos piezas únicas, trofeos, maquetas y prototipos con la mejor calidad.',
+  keywords: 'impresión 3D arequipa, regalos personalizados, trofeos 3d, maquetas, prototipado rápido, diseño 3D, regalos corporativos',
   authors: [{ name: 'Ddreams 3D' }],
   creator: 'Ddreams 3D',
   publisher: 'Ddreams 3D',
@@ -14,16 +14,16 @@ export const metadata: Metadata = {
     telephone: false,
   },
   openGraph: {
-    title: 'Ddreams 3D - Impresión 3D Profesional',
-    description: 'Servicios profesionales de impresión 3D, prototipado rápido y fabricación digital. Transformamos tus ideas en realidad.',
+    title: 'Ddreams 3D | Impresión 3D y Regalos Personalizados en Arequipa',
+    description: 'Especialistas en regalos personalizados y servicios de impresión 3D en Arequipa. Creamos piezas únicas, trofeos, maquetas y prototipos con la mejor calidad.',
     type: 'website',
-    locale: 'es_ES',
+    locale: 'es_PE',
     siteName: 'Ddreams 3D',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Ddreams 3D - Impresión 3D Profesional',
-    description: 'Servicios profesionales de impresión 3D, prototipado rápido y fabricación digital.',
+    title: 'Ddreams 3D | Regalos Personalizados e Impresión 3D en Arequipa',
+    description: 'Especialistas en regalos personalizados y servicios de impresión 3D en Arequipa.',
   },
   robots: {
     index: true,

@@ -208,7 +208,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
       if (isMockMode) {
         // Modo mock - usar localStorage
-        const existingItemIndex = items.findIndex(item => item.productId === product.id);
+        // Buscar item existente considerando personalizaciones
+        const existingItemIndex = items.findIndex(item => 
+          item.productId === product.id && 
+          JSON.stringify(item.customizations || []) === JSON.stringify(customizations || [])
+        );
+        
         let updatedItems: CartItem[];
 
         if (existingItemIndex >= 0) {

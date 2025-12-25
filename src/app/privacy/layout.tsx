@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Preguntas Frecuentes',
-  description: 'Respuestas a las dudas más comunes sobre nuestros servicios de impresión 3D.',
+  title: 'Política de Privacidad',
+  description: 'Conoce cómo protegemos y utilizamos tus datos personales.',
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {

@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Preguntas Frecuentes',
-  description: 'Respuestas a las dudas más comunes sobre nuestros servicios de impresión 3D.',
+  title: 'Términos y Condiciones',
+  description: 'Términos y condiciones de uso de nuestros servicios.',
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {

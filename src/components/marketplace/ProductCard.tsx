@@ -15,6 +15,11 @@ interface ProductCardProps {
   showAddToCart?: boolean;
   showWishlist?: boolean;
   onViewDetails?: (product: Product) => void;
+  customAction?: {
+    label: string;
+    href: string;
+    icon?: React.ReactNode;
+  };
 }
 
 export function ProductCard({ 
@@ -22,7 +27,8 @@ export function ProductCard({
   className = '', 
   showAddToCart = true, 
   showWishlist = true,
-  onViewDetails
+  onViewDetails,
+  customAction
 }: ProductCardProps) {
   const { addToCart } = useCart();
   const { showToast } = useToast();
@@ -167,7 +173,15 @@ export function ProductCard({
           </Link>
         )}
         
-        {showAddToCart && (
+        {customAction ? (
+          <Link
+            href={customAction.href}
+            className="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center space-x-2 group/btn text-sm"
+          >
+            {customAction.icon}
+            <span>{customAction.label}</span>
+          </Link>
+        ) : showAddToCart && (
           <button
             onClick={handleAddToCart}
             className="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center space-x-2 group/btn text-sm"

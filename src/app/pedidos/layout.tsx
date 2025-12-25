@@ -1,8 +1,12 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Preguntas Frecuentes',
-  description: 'Respuestas a las dudas más comunes sobre nuestros servicios de impresión 3D.',
+  title: 'Mis Pedidos',
+  description: 'Historial y seguimiento de tus pedidos de impresión 3D.',
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {

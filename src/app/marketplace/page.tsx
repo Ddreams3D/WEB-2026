@@ -1,12 +1,14 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Filter, Grid, List, Search } from '@/lib/icons';
+import { Filter, Grid, List, Search, FileText, X } from '@/lib/icons';
 import Link from 'next/link';
 import { ProductGrid, ProductList } from '@/components/marketplace/ProductGrid';
 import { ProductFilters as ProductFiltersComponent } from '@/components/marketplace/ProductFilters';
+import { B2BServicesView } from '@/components/marketplace/B2BServicesView';
 import { useMarketplace } from '@/contexts/MarketplaceContext';
 import { ProductFilters as ProductFiltersType, Product } from '@/shared/types';
+import { mockProducts } from '@/shared/data/mockData';
 import PageHeader from '@/shared/components/PageHeader';
 
 type ViewMode = 'grid' | 'list';
@@ -14,112 +16,91 @@ type ViewMode = 'grid' | 'list';
 export default function MarketplacePage() {
   const {
     products,
-    featuredProducts,
     categories,
     searchQuery,
     searchResults,
     isLoading,
     setSearchQuery,
-    loadFeaturedProducts
   } = useMarketplace();
   
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
+  // Removed section state as Services are moved to /services
   const [showFilters, setShowFilters] = useState(false);
-  const [activeTab, setActiveTab] = useState<'all' | 'featured' | 'search'>('featured');
-
-  useEffect(() => {
-    loadFeaturedProducts();
-  }, [loadFeaturedProducts]);
-
-  useEffect(() => {
-    if (searchQuery.trim()) {
-      setActiveTab('search');
-    } else if (activeTab === 'search') {
-      setActiveTab('all');
-    }
-  }, [searchQuery, activeTab]);
-
+  // Removed activeTab state as we only show products here
+  
   const handleFiltersChange = (filters: ProductFiltersType) => {
     // Filters are automatically applied through the MarketplaceContext
   };
 
   const getDisplayProducts = () => {
-    switch (activeTab) {
-      case 'featured':
-        return featuredProducts;
-      case 'search':
-        return searchResults.map(result => products.find(p => p.id === result.id)).filter((product): product is Product => product !== undefined);
-      default:
-        return products;
+    // If searching, show search results
+    if (searchQuery.trim()) {
+       return searchResults.map(result => products.find(p => p.id === result.id)).filter((product): product is Product => product !== undefined);
     }
+    // Otherwise show only products (not services)
+    return products.filter(p => !p.customPriceDisplay);
   };
 
+  // Calculate base products for filter counts (only products, no services)
+  const baseProducts = React.useMemo(() => {
+    let filtered = mockProducts;
+    
+    // If searching, restrict to search results
+    if (searchQuery.trim()) {
+       const searchIds = searchResults.map(r => r.id);
+       filtered = filtered.filter(p => searchIds.includes(p.id));
+    }
+
+    // Always filter out services (customPriceDisplay)
+    return filtered.filter(p => !p.customPriceDisplay);
+  }, [searchQuery, searchResults]);
+
   const displayProducts = getDisplayProducts();
+  const productCount = products.filter(p => !p.customPriceDisplay).length;
 
   return (
     <div className="min-h-screen bg-background dark:bg-neutral-900">
       <PageHeader
-        title="Explora nuestros productos más destacados"
-        description="Descubre nuestra colección exclusiva de modelos y diseños 3D de alta calidad"
+        title="Catálogo de Productos"
+        description="Descubre nuestra colección de productos de impresión 3D listos para ti"
         image="/images/placeholder-innovation.svg"
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar - Filters (Hidden temporarily) */}
-          {/*
-          <div className="lg:w-80 lg:sticky lg:top-8 lg:max-h-[calc(100vh-4rem)] lg:overflow-y-auto">
-            <ProductFiltersComponent
-              onFiltersChange={handleFiltersChange}
-              showSearch={true}
-              isCollapsible={true}
-            />
-          </div>
-          */}
+            {/* Filters Sidebar - Desktop */}
+            <div className="hidden lg:block w-64 flex-shrink-0">
+              <div className="sticky top-24">
+                <ProductFiltersComponent 
+                  onFiltersChange={handleFiltersChange}
+                  showSearch={false}
+                  availableProducts={baseProducts}
+                />
+              </div>
+            </div>
 
-          {/* Main Content */}
-          <div className="flex-1">
+            {/* Main Content */}
+            <div className="flex-1">
             {/* Tabs and Controls */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 space-y-4 sm:space-y-0">
-              {/* Tabs */}
+              {/* Product Count / Header */}
               <div className="flex space-x-2 bg-neutral-100 dark:bg-neutral-800/50 p-1.5 rounded-xl self-start sm:self-auto">
-                <button
-                  onClick={() => setActiveTab('featured')}
-                  className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
-                    activeTab === 'featured'
-                      ? 'bg-white dark:bg-neutral-700 text-primary-600 dark:text-primary-400 shadow-md ring-1 ring-black/5 dark:ring-white/10'
-                      : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-neutral-700/50'
-                  }`}
+                <div
+                  className="px-6 py-2.5 rounded-lg text-sm font-semibold bg-white dark:bg-neutral-700 text-primary-600 dark:text-primary-400 shadow-md ring-1 ring-black/5 dark:ring-white/10 transition-all duration-200"
                 >
-                  Destacados
+                  Productos
                   <span className="ml-2 text-xs opacity-80 bg-primary-100 dark:bg-primary-900/30 px-2 py-0.5 rounded-full text-primary-700 dark:text-primary-300">
-                    {featuredProducts.length}
+                    {productCount}
                   </span>
-                </button>
-                <button
-                  onClick={() => setActiveTab('all')}
-                  className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
-                    activeTab === 'all'
-                      ? 'bg-white dark:bg-neutral-700 text-primary-600 dark:text-primary-400 shadow-md ring-1 ring-black/5 dark:ring-white/10'
-                      : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-neutral-700/50'
-                  }`}
-                >
-                  Todos
-                  <span className="ml-2 text-xs opacity-80 bg-neutral-200 dark:bg-neutral-700 px-2 py-0.5 rounded-full text-neutral-700 dark:text-neutral-300">
-                    {products.length}
-                  </span>
-                </button>
+                </div>
+                
                 {searchQuery.trim() && (
-                  <button
-                    onClick={() => setActiveTab('search')}
-                    className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
-                      activeTab === 'search'
-                        ? 'bg-white dark:bg-neutral-700 text-primary-600 dark:text-primary-400 shadow-md ring-1 ring-black/5 dark:ring-white/10'
-                        : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-neutral-700/50'
-                    }`}
+                  <div
+                    className="px-6 py-2.5 rounded-lg text-sm font-semibold text-neutral-600 dark:text-neutral-400 bg-white/50 dark:bg-neutral-700/50 transition-all duration-200"
                   >
                     Búsqueda ({searchResults.length})
-                  </button>
+                  </div>
                 )}
               </div>
 
@@ -163,15 +144,15 @@ export default function MarketplacePage() {
             </div>
 
             {/* Search Results Info */}
-            {activeTab === 'search' && searchQuery.trim() && (
+            {searchQuery.trim() && (
               <div className="mb-6 p-4 bg-primary/10 dark:bg-primary/20 border border-primary/20 dark:border-primary/30 rounded-lg">
                 <div className="flex items-center space-x-2">
                   <Search className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                   <span className="text-primary-800 dark:text-primary-200">
-                    Resultados para: <strong>&quot;{searchQuery}&quot;</strong>
-                  </span>
-                  <span className="text-primary-600 dark:text-primary-400">
-                    ({searchResults.length} encontrados)
+                    Resultados para "{searchQuery}"
+                    <span className="ml-1 text-sm text-primary-600 dark:text-primary-400">
+                      ({searchResults.length} encontrados)
+                    </span>
                   </span>
                 </div>
               </div>
@@ -185,10 +166,8 @@ export default function MarketplacePage() {
                 showAddToCart={true}
                 showWishlist={true}
                 emptyMessage={
-                  activeTab === 'search'
-                    ? `No se encontraron productos para "${searchQuery}"`
-                    : activeTab === 'featured'
-                    ? 'No hay productos destacados disponibles'
+                  searchQuery.trim()
+                    ? `No se encontraron resultados para "${searchQuery}"`
                     : 'No hay productos disponibles'
                 }
               />
@@ -203,11 +182,10 @@ export default function MarketplacePage() {
         </div>
       </div>
 
-      {/* Mobile Filters Overlay (Hidden temporarily) */}
-      {/* 
+      {/* Mobile Filters Overlay */}
       {showFilters && (
-        <div className="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50" onClick={() => setShowFilters(false)}>
-          <div className="absolute right-0 top-0 h-full w-80 bg-surface dark:bg-neutral-800 shadow-xl overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+        <div className="lg:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" onClick={() => setShowFilters(false)}>
+          <div className="absolute right-0 top-0 h-full w-80 bg-white dark:bg-neutral-800 shadow-xl overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="p-4">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -217,19 +195,19 @@ export default function MarketplacePage() {
                   onClick={() => setShowFilters(false)}
                   className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                 >
-                  ×
+                  <X className="w-5 h-5" />
                 </button>
               </div>
               <ProductFiltersComponent
                 onFiltersChange={handleFiltersChange}
                 showSearch={false}
                 isCollapsible={false}
+                availableProducts={baseProducts}
               />
             </div>
           </div>
         </div>
       )}
-      */}
     </div>
   );
 }

@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Preguntas Frecuentes',
-  description: 'Respuestas a las dudas más comunes sobre nuestros servicios de impresión 3D.',
+  title: 'Administración - Usuarios | Ddreams 3D',
+  description: 'Gestión de usuarios y permisos.',
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {

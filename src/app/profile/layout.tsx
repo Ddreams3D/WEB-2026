@@ -1,8 +1,12 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Preguntas Frecuentes',
-  description: 'Respuestas a las dudas más comunes sobre nuestros servicios de impresión 3D.',
+  title: 'Mi Perfil | Ddreams 3D',
+  description: 'Gestiona tu información personal y preferencias.',
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
