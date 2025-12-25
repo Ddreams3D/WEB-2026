@@ -479,7 +479,8 @@ export const mockProducts: Product[] = [
           { id: 'color-bronze', name: 'Bronce', priceModifier: 0 },
           { id: 'color-red', name: 'Rojo', priceModifier: 0 },
           { id: 'color-blue', name: 'Azul', priceModifier: 0 },
-          { id: 'color-yellow', name: 'Amarillo', priceModifier: 0 }
+          { id: 'color-yellow', name: 'Amarillo', priceModifier: 0 },
+          { id: 'color-other', name: 'Otro', priceModifier: 0, hasInput: true }
         ]
       },
       {
@@ -593,7 +594,8 @@ export const mockProducts: Product[] = [
           { id: 'color-bronze', name: 'Bronce', priceModifier: 0 },
           { id: 'color-red', name: 'Rojo', priceModifier: 0 },
           { id: 'color-blue', name: 'Azul', priceModifier: 0 },
-          { id: 'color-yellow', name: 'Amarillo', priceModifier: 0 }
+          { id: 'color-yellow', name: 'Amarillo', priceModifier: 0 },
+          { id: 'color-other', name: 'Otro', priceModifier: 0, hasInput: true }
         ]
       },
       {

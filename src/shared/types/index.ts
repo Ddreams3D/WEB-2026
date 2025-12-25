@@ -149,6 +149,7 @@ export interface ProductOptionValue {
   id: string;
   name: string;
   priceModifier: number;
+  hasInput?: boolean;
 }
 
 export interface ProductOption {

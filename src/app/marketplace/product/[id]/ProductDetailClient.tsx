@@ -25,6 +25,7 @@ export default function ProductDetailClient({ product }: Props) {
     product.images.find(img => img.isPrimary)?.id || product.images[0]?.id
   );
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
+  const [customInputs, setCustomInputs] = useState<Record<string, string>>({});
   const [isAdding, setIsAdding] = useState(false);
 
   const selectedImage = product.images.find(img => img.id === selectedImageId) || product.images[0];
@@ -70,6 +71,17 @@ export default function ProductDetailClient({ product }: Props) {
 
   const handleAddToCart = async () => {
     try {
+      // Validar inputs personalizados requeridos
+      for (const [optionId, valueId] of Object.entries(selectedOptions)) {
+        const option = product.options?.find(o => o.id === optionId);
+        const value = option?.values.find(v => v.id === valueId);
+        
+        if (value?.hasInput && (!customInputs[optionId] || customInputs[optionId].trim() === '')) {
+          showToast('error', 'Faltan datos', `Por favor especifica tu ${option?.name.toLowerCase()}.`);
+          return;
+        }
+      }
+
       setIsAdding(true);
       
       // Crear producto con precio actualizado y metadatos de opciones
@@ -82,10 +94,17 @@ export default function ProductDetailClient({ product }: Props) {
       const customizations = Object.entries(selectedOptions).map(([optionId, valueId]) => {
         const option = product.options?.find(o => o.id === optionId);
         const value = option?.values.find(v => v.id === valueId);
+        
+        let displayValue = value?.name;
+        // Si la opción tiene input personalizado (como "Otro color"), agregarlo al valor
+        if (value?.hasInput && customInputs[optionId]) {
+          displayValue = `${value.name}: ${customInputs[optionId]}`;
+        }
+
         return {
           id: optionId,
           name: option?.name,
-          value: value?.name,
+          value: displayValue,
           priceModifier: value?.priceModifier
         };
       });
@@ -254,29 +273,56 @@ export default function ProductDetailClient({ product }: Props) {
                     )}
 
                     {option.type === 'radio' && (
-                      <div className="flex flex-wrap gap-2">
-                        {option.values.map((value) => (
-                          <label key={value.id} className={`
-                            cursor-pointer rounded-lg border px-3 py-2 transition-all duration-200 flex items-center gap-2
-                            ${selectedOptions[option.id] === value.id 
-                              ? 'border-primary bg-primary/5 text-primary ring-1 ring-primary' 
-                              : 'border-gray-200 dark:border-gray-700 hover:border-primary/50 text-gray-600 dark:text-gray-300'}
-                          `}>
-                            <input
-                              type="radio"
-                              name={`option-${option.id}`}
-                              className="sr-only"
-                              checked={selectedOptions[option.id] === value.id}
-                              onChange={() => handleOptionChange(option.id, value.id, true)}
-                            />
-                            <span className="font-medium text-sm">{value.name}</span>
-                            {value.priceModifier > 0 && (
-                              <span className="text-xs font-bold bg-primary/10 px-1.5 py-0.5 rounded text-primary">
-                                +S/{value.priceModifier}
-                              </span>
-                            )}
-                          </label>
-                        ))}
+                      <div className="flex flex-col gap-3">
+                        <div className="flex flex-wrap gap-2">
+                          {option.values.map((value) => (
+                            <label key={value.id} className={`
+                              cursor-pointer rounded-lg border px-3 py-2 transition-all duration-200 flex items-center gap-2
+                              ${selectedOptions[option.id] === value.id 
+                                ? 'border-primary bg-primary/5 text-primary ring-1 ring-primary' 
+                                : 'border-gray-200 dark:border-gray-700 hover:border-primary/50 text-gray-600 dark:text-gray-300'}
+                            `}>
+                              <input
+                                type="radio"
+                                name={`option-${option.id}`}
+                                className="sr-only"
+                                checked={selectedOptions[option.id] === value.id}
+                                onChange={() => handleOptionChange(option.id, value.id, true)}
+                              />
+                              <span className="font-medium text-sm">{value.name}</span>
+                              {value.priceModifier > 0 && (
+                                <span className="text-xs font-bold bg-primary/10 px-1.5 py-0.5 rounded text-primary">
+                                  +S/{value.priceModifier}
+                                </span>
+                              )}
+                            </label>
+                          ))}
+                        </div>
+                        
+                        {/* Input para opción personalizada (ej: Otro color) */}
+                        {(() => {
+                          const selectedValueId = selectedOptions[option.id];
+                          const selectedValue = option.values.find(v => v.id === selectedValueId);
+                          
+                          if (selectedValue?.hasInput) {
+                            return (
+                              <div className="mt-1 animate-in fade-in slide-in-from-top-2 duration-200">
+                                <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1.5 ml-1">
+                                  Especificar {option.name.toLowerCase()}:
+                                </label>
+                                <input
+                                  type="text"
+                                  className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-gray-400"
+                                  placeholder={`Escribe tu ${option.name.toLowerCase()} aquí...`}
+                                  value={customInputs[option.id] || ''}
+                                  onChange={(e) => setCustomInputs(prev => ({ ...prev, [option.id]: e.target.value }))}
+                                  autoFocus
+                                />
+                              </div>
+                            );
+                          }
+                          return null;
+                        })()}
                       </div>
                     )}
 
