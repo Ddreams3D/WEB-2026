@@ -764,8 +764,8 @@ export const mockProducts: Product[] = [
   {
     id: '4',
     name: 'Cooler Motor 3D – V6',
-    description: 'Cooler funcional impreso en 3D con diseño inspirado en motores. Ideal para cervezas, gaseosas y reuniones pequeñas.',
-    shortDescription: 'Cooler funcional impreso en 3D con diseño inspirado en motores',
+    description: 'Cooler funcional impreso en 3D con diseño inspirado en motores V6. Ideal para mantener bebidas frías en reuniones pequeñas, escritorios, espacios gamer o como regalo original para fanáticos de los autos y la mecánica.\n\nFabricado mediante impresión 3D en PLA Premium, combina diseño llamativo con funcionalidad real. Su formato compacto lo hace perfecto para cervezas, gaseosas o bebidas individuales, aportando un toque automotriz único al espacio.',
+    shortDescription: 'Cooler funcional impreso en 3D con diseño inspirado en motores V6',
     price: 210.00,
     currency: 'PEN',
     categoryId: '7',
@@ -815,8 +815,8 @@ export const mockProducts: Product[] = [
           },
           {
             id: 'cust-engraving',
-            name: 'Grabado 3D personalizado (nombre o frase) - Grabado permanente impreso junto con la pieza.',
-            priceModifier: 40,
+            name: 'Grabado 3D personalizado (nombre o frase) – grabado permanente integrado en la pieza',
+            priceModifier: 20,
             hasInput: true,
             maxLength: 50,
             inputPlaceholder: 'Escribe aquí el texto para el grabado (máx. 50 caracteres)...'
@@ -839,7 +839,7 @@ export const mockProducts: Product[] = [
     format: 'Físico',
     fileSize: 'N/A',
     license: 'Standard',
-    tags: ['cooler', 'motor', 'v6', 'regalo', 'cerveza'],
+    tags: ['cooler3D', 'coolerMotor', 'regaloParaFanaticosDeAutos', 'regaloOriginal', 'impresion3D', 'cerveza', 'Arequipa'],
     sku: 'COOLER-V6-001',
     stock: 20,
     minQuantity: 1,
@@ -940,8 +940,8 @@ export const mockProducts: Product[] = [
           },
           {
             id: 'cust-engraving',
-            name: 'Grabado 3D personalizado (nombre o frase) - Grabado permanente impreso junto con la pieza.',
-            priceModifier: 40,
+            name: 'Grabado 3D personalizado (nombre o frase) – grabado permanente integrado en la pieza',
+            priceModifier: 20,
             hasInput: true,
             maxLength: 50,
             inputPlaceholder: 'Escribe aquí el texto para el grabado (máx. 50 caracteres)...'
@@ -964,7 +964,7 @@ export const mockProducts: Product[] = [
     format: 'Físico',
     fileSize: 'N/A',
     license: 'Standard',
-    tags: ['cooler', 'motor', 'v8', 'regalo', 'parrilla'],
+    tags: ['cooler3D', 'coolerMotor', 'regaloParaFanaticosDeAutos', 'regaloOriginal', 'impresion3D', 'parrilla', 'Arequipa'],
     sku: 'COOLER-V8-001',
     stock: 15,
     minQuantity: 1,
