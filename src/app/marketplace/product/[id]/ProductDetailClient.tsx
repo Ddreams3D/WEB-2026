@@ -307,15 +307,19 @@ export default function ProductDetailClient({ product }: Props) {
                           if (selectedValue?.hasInput) {
                             return (
                               <div className="mt-1 animate-in fade-in slide-in-from-top-2 duration-200">
-                                <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1.5 ml-1">
-                                  Especificar {option.name.toLowerCase()}:
+                                <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1.5 ml-1 flex justify-between">
+                                  <span>Especificar {option.name.toLowerCase()}:</span>
+                                  <span className="text-xs text-gray-400">
+                                    {(customInputs[option.id] || '').length}/30
+                                  </span>
                                 </label>
                                 <input
                                   type="text"
                                   className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-gray-400"
-                                  placeholder={`Escribe tu ${option.name.toLowerCase()} aquí...`}
+                                  placeholder={`Escribe tu ${option.name.toLowerCase()} aquí (máx. 30 caracteres)...`}
                                   value={customInputs[option.id] || ''}
                                   onChange={(e) => setCustomInputs(prev => ({ ...prev, [option.id]: e.target.value }))}
+                                  maxLength={30}
                                   autoFocus
                                 />
                               </div>
