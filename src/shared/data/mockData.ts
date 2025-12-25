@@ -469,6 +469,20 @@ export const mockProducts: Product[] = [
     ],
     options: [
       {
+        id: 'opt-color',
+        name: 'Color',
+        type: 'radio',
+        required: true,
+        values: [
+          { id: 'color-gold', name: 'Oro', priceModifier: 0 },
+          { id: 'color-silver', name: 'Plata', priceModifier: 0 },
+          { id: 'color-bronze', name: 'Bronce', priceModifier: 0 },
+          { id: 'color-red', name: 'Rojo', priceModifier: 0 },
+          { id: 'color-blue', name: 'Azul', priceModifier: 0 },
+          { id: 'color-yellow', name: 'Amarillo', priceModifier: 0 }
+        ]
+      },
+      {
         id: 'opt-sticker',
         name: 'Sticker personalizado',
         type: 'checkbox',
@@ -568,6 +582,20 @@ export const mockProducts: Product[] = [
       }
     ],
     options: [
+      {
+        id: 'opt-color',
+        name: 'Color',
+        type: 'radio',
+        required: true,
+        values: [
+          { id: 'color-gold', name: 'Oro', priceModifier: 0 },
+          { id: 'color-silver', name: 'Plata', priceModifier: 0 },
+          { id: 'color-bronze', name: 'Bronce', priceModifier: 0 },
+          { id: 'color-red', name: 'Rojo', priceModifier: 0 },
+          { id: 'color-blue', name: 'Azul', priceModifier: 0 },
+          { id: 'color-yellow', name: 'Amarillo', priceModifier: 0 }
+        ]
+      },
       {
         id: 'opt-sticker',
         name: 'Sticker personalizado',

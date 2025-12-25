@@ -226,12 +226,63 @@ export default function ProductDetailClient({ product }: Props) {
           {product.options && product.options.length > 0 && (
             <div className="space-y-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl p-5 border border-gray-100 dark:border-gray-800">
               <h3 className="font-bold text-gray-900 dark:text-white">Opciones de Personalización</h3>
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {product.options.map((option) => (
                   <div key={option.id} className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300 block mb-1">
+                      {option.name} {option.required && <span className="text-red-500">*</span>}
+                    </label>
+                    
+                    {option.type === 'select' && (
+                      <div className="relative">
+                        <select
+                          className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all appearance-none cursor-pointer"
+                          value={selectedOptions[option.id] || ''}
+                          onChange={(e) => handleOptionChange(option.id, e.target.value, true)}
+                        >
+                          <option value="" disabled>Seleccionar {option.name}</option>
+                          {option.values.map((value) => (
+                            <option key={value.id} value={value.id}>
+                              {value.name} {value.priceModifier > 0 ? `(+ S/ ${value.priceModifier.toFixed(2)})` : ''}
+                            </option>
+                          ))}
+                        </select>
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                          <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                      </div>
+                    )}
+
+                    {option.type === 'radio' && (
+                      <div className="flex flex-wrap gap-2">
+                        {option.values.map((value) => (
+                          <label key={value.id} className={`
+                            cursor-pointer rounded-lg border px-3 py-2 transition-all duration-200 flex items-center gap-2
+                            ${selectedOptions[option.id] === value.id 
+                              ? 'border-primary bg-primary/5 text-primary ring-1 ring-primary' 
+                              : 'border-gray-200 dark:border-gray-700 hover:border-primary/50 text-gray-600 dark:text-gray-300'}
+                          `}>
+                            <input
+                              type="radio"
+                              name={`option-${option.id}`}
+                              className="sr-only"
+                              checked={selectedOptions[option.id] === value.id}
+                              onChange={() => handleOptionChange(option.id, value.id, true)}
+                            />
+                            <span className="font-medium text-sm">{value.name}</span>
+                            {value.priceModifier > 0 && (
+                              <span className="text-xs font-bold bg-primary/10 px-1.5 py-0.5 rounded text-primary">
+                                +S/{value.priceModifier}
+                              </span>
+                            )}
+                          </label>
+                        ))}
+                      </div>
+                    )}
+
                     {option.type === 'checkbox' && option.values.map((value) => (
-                      <label key={value.id} className="flex items-start space-x-3 cursor-pointer group">
-                        <div className="relative flex items-center">
+                      <label key={value.id} className="flex items-start space-x-3 cursor-pointer group p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+                        <div className="relative flex items-center mt-0.5">
                           <input
                             type="checkbox"
                             className="peer h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary dark:border-gray-600 dark:bg-gray-700"
