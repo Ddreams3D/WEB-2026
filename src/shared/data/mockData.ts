@@ -324,13 +324,81 @@ export const mockProducts: Product[] = [
     sellerName: 'Ddreams 3D',
     images: [
       {
-        id: '13',
+        id: '7-a',
         productId: '7',
-        url: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=600',
-        alt: 'Proyectos Anatómicos 3D',
+        url: '/images/marketplace/product-7-a.jpg',
+        alt: 'Proyectos Anatómicos 3D - Vista Principal',
         isPrimary: true,
-        sortOrder: 1,
-        order: 1
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-02-05'),
+        updatedAt: new Date('2024-02-05')
+      },
+      {
+        id: '7-b',
+        productId: '7',
+        url: '/images/marketplace/product-7-b.jpg',
+        alt: 'Proyectos Anatómicos 3D - Detalle 1',
+        isPrimary: false,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-02-05'),
+        updatedAt: new Date('2024-02-05')
+      },
+      {
+        id: '7-c',
+        productId: '7',
+        url: '/images/marketplace/product-7-c.jpg',
+        alt: 'Proyectos Anatómicos 3D - Detalle 2',
+        isPrimary: false,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-02-05'),
+        updatedAt: new Date('2024-02-05')
+      },
+      {
+        id: '7-d',
+        productId: '7',
+        url: '/images/marketplace/product-7-d.jpg',
+        alt: 'Proyectos Anatómicos 3D - Detalle 3',
+        isPrimary: false,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-02-05'),
+        updatedAt: new Date('2024-02-05')
+      },
+      {
+        id: '7-e',
+        productId: '7',
+        url: '/images/marketplace/product-7-e.jpg',
+        alt: 'Proyectos Anatómicos 3D - Detalle 4',
+        isPrimary: false,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-02-05'),
+        updatedAt: new Date('2024-02-05')
+      },
+      {
+        id: '7-f',
+        productId: '7',
+        url: '/images/marketplace/product-7-f.jpg',
+        alt: 'Proyectos Anatómicos 3D - Detalle 5',
+        isPrimary: false,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-02-05'),
+        updatedAt: new Date('2024-02-05')
+      },
+      {
+        id: '7-g',
+        productId: '7',
+        url: '/images/marketplace/product-7-g.jpg',
+        alt: 'Proyectos Anatómicos 3D - Detalle 6',
+        isPrimary: false,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-02-05'),
+        updatedAt: new Date('2024-02-05')
       }
     ],
     specifications: [
@@ -578,13 +646,26 @@ export const mockProducts: Product[] = [
     sellerName: 'Ddreams 3D',
     images: [
       {
-        id: '14',
+        id: '8-a',
         productId: '8',
-        url: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&q=80&w=600',
-        alt: 'Trofeos y Medallas 3D',
+        url: '/images/marketplace/product-8-a.jpg',
+        alt: 'Trofeos y Medallas 3D - Vista Principal',
         isPrimary: true,
-        sortOrder: 1,
-        order: 1
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-02-10'),
+        updatedAt: new Date('2024-02-10')
+      },
+      {
+        id: '8-b',
+        productId: '8',
+        url: '/images/marketplace/product-8-b.jpg',
+        alt: 'Trofeos y Medallas 3D - Detalle',
+        isPrimary: false,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-02-10'),
+        updatedAt: new Date('2024-02-10')
       }
     ],
     specifications: [
@@ -781,13 +862,15 @@ export const mockProducts: Product[] = [
     sellerName: 'Ddreams 3D',
     images: [
       {
-        id: '15',
+        id: '9-a',
         productId: '9',
-        url: 'https://images.unsplash.com/photo-1513201099705-a9746e1e201f?auto=format&fit=crop&q=80&w=600',
+        url: '/images/marketplace/product-9-a.jpg',
         alt: 'Regalos Personalizados en Impresión 3D',
         isPrimary: true,
-        sortOrder: 1,
-        order: 1
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-02-15'),
+        updatedAt: new Date('2024-02-15')
       }
     ],
     specifications: [
