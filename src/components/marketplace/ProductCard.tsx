@@ -14,13 +14,15 @@ interface ProductCardProps {
   className?: string;
   showAddToCart?: boolean;
   showWishlist?: boolean;
+  onViewDetails?: (product: Product) => void;
 }
 
 export function ProductCard({ 
   product, 
   className = '', 
   showAddToCart = true, 
-  showWishlist = true 
+  showWishlist = true,
+  onViewDetails
 }: ProductCardProps) {
   const { addToCart } = useCart();
   const { showToast } = useToast();
@@ -48,11 +50,19 @@ export function ProductCard({
     : 0;
 
   return (
-    <div className={`group relative bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-200 dark:border-gray-700 ${className}`}>
+    <div className={`group relative bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700/50 hover:border-primary-100 dark:hover:border-primary-900/50 flex flex-col h-full ${className}`}>
       {/* Discount Badge */}
       {hasDiscount && (
-        <div className="absolute top-3 left-3 z-10 bg-red-500 text-white px-2 py-1 rounded-md text-xs font-semibold">
+        <div className="absolute top-3 left-3 z-10 bg-red-500 text-white px-2.5 py-1 rounded-full text-xs font-bold shadow-md">
           -{discountPercentage}%
+        </div>
+      )}
+
+      {/* Featured Badge - Only show if not in featured view (optional, but good for "All" view) */}
+      {product.isFeatured && (
+        <div className={`absolute top-3 ${hasDiscount ? 'left-16' : 'left-3'} z-10 bg-amber-400 text-white px-2.5 py-1 rounded-full text-xs font-bold shadow-md flex items-center gap-1`}>
+          <Star className="w-3 h-3 fill-current" />
+          <span>Destacado</span>
         </div>
       )}
 
@@ -67,7 +77,7 @@ export function ProductCard({
         </button>
       )}
 
-      <Link href={`/marketplace/product/${product.id}`} className="block">
+      <Link href={`/marketplace/product/${product.id}`} className="flex-1 flex flex-col">
         {/* Product Image */}
         <div className="relative aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-gray-700">
           <ProductImage
@@ -80,7 +90,7 @@ export function ProductCard({
         </div>
 
         {/* Product Info */}
-        <div className="p-4">
+        <div className="p-4 flex-1 flex flex-col">
           {/* Category */}
           <p className="text-xs text-primary-600 dark:text-primary-400 font-medium mb-1 uppercase tracking-wide">
             {product.categoryName}
@@ -92,12 +102,12 @@ export function ProductCard({
           </h3>
 
           {/* Short Description */}
-          <p className="text-sm text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">
+          <p className="text-sm text-gray-600 dark:text-gray-300 mb-3 line-clamp-2 flex-1">
             {product.shortDescription || product.description}
           </p>
 
           {/* Rating */}
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-3 mt-auto">
             <div className="flex items-center space-x-1">
               <Star className="w-4 h-4 text-yellow-400 fill-current" />
               <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -110,14 +120,22 @@ export function ProductCard({
 
           <div className="flex items-end justify-between">
             <div className="flex flex-col">
-              <span className="text-lg font-bold text-gray-900 dark:text-white">
-                S/ {product.price.toFixed(2)}
-              </span>
-              <span className="text-[10px] text-gray-500 dark:text-gray-400 font-medium">
-                IGV incluido
-              </span>
+              {product.customPriceDisplay ? (
+                <span className="text-sm font-bold text-gray-900 dark:text-white whitespace-pre-line">
+                  {product.customPriceDisplay}
+                </span>
+              ) : (
+                <>
+                  <span className="text-lg font-bold text-gray-900 dark:text-white">
+                    S/ {product.price.toFixed(2)}
+                  </span>
+                  <span className="text-[10px] text-gray-500 dark:text-gray-400 font-medium">
+                    IGV incluido
+                  </span>
+                </>
+              )}
             </div>
-            {hasDiscount && (
+            {hasDiscount && !product.customPriceDisplay && (
               <span className="text-sm text-gray-500 dark:text-gray-400 line-through mb-1">
                 S/ {product.originalPrice!.toFixed(2)}
               </span>
@@ -133,12 +151,21 @@ export function ProductCard({
 
       {/* Buttons */}
       <div className="p-4 pt-0 space-y-2">
-        <Link 
-          href={`/marketplace/product/${product.id}`}
-          className="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 py-2 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center text-sm"
-        >
-          Ver detalles
-        </Link>
+        {onViewDetails ? (
+          <button
+            onClick={() => onViewDetails(product)}
+            className="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 py-2 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center text-sm"
+          >
+            Ver detalles
+          </button>
+        ) : (
+          <Link 
+            href={`/marketplace/product/${product.id}`}
+            className="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 py-2 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center text-sm"
+          >
+            Ver detalles
+          </Link>
+        )}
         
         {showAddToCart && (
           <button
@@ -157,12 +184,12 @@ export function ProductCard({
 // Skeleton component for loading states
 export function ProductCardSkeleton({ className = '' }: { className?: string }) {
   return (
-    <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden animate-pulse ${className}`}>
+    <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden animate-pulse flex flex-col h-full ${className}`}>
       {/* Image Skeleton */}
       <div className="aspect-[4/3] bg-gray-200 dark:bg-gray-700" />
       
       {/* Content Skeleton */}
-      <div className="p-4">
+      <div className="p-4 flex-1">
         <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded mb-2 w-20" />
         <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded mb-2" />
         <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-3 w-3/4" />
@@ -185,7 +212,7 @@ export function ProductCardSkeleton({ className = '' }: { className?: string }) 
       </div>
       
       {/* Button Skeleton */}
-      <div className="p-4 pt-0">
+      <div className="p-4 pt-0 mt-auto">
         <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded-lg" />
       </div>
     </div>

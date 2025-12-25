@@ -25,7 +25,7 @@ export default function MarketplacePage() {
   
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [showFilters, setShowFilters] = useState(false);
-  const [activeTab, setActiveTab] = useState<'all' | 'featured' | 'search'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'featured' | 'search'>('featured');
 
   useEffect(() => {
     loadFeaturedProducts();
@@ -80,36 +80,42 @@ export default function MarketplacePage() {
           {/* Main Content */}
           <div className="flex-1">
             {/* Tabs and Controls */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 space-y-4 sm:space-y-0">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 space-y-4 sm:space-y-0">
               {/* Tabs */}
-              <div className="flex space-x-1 bg-background dark:bg-neutral-800 rounded-lg p-1">
-                <button
-                  onClick={() => setActiveTab('all')}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                    activeTab === 'all'
-                      ? 'bg-surface dark:bg-neutral-700 text-neutral-900 dark:text-white shadow-sm'
-                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-                  }`}
-                >
-                  Todos ({products.length})
-                </button>
+              <div className="flex space-x-2 bg-neutral-100 dark:bg-neutral-800/50 p-1.5 rounded-xl self-start sm:self-auto">
                 <button
                   onClick={() => setActiveTab('featured')}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                  className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
                     activeTab === 'featured'
-                      ? 'bg-surface dark:bg-neutral-700 text-neutral-900 dark:text-white shadow-sm'
-                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                      ? 'bg-white dark:bg-neutral-700 text-primary-600 dark:text-primary-400 shadow-md ring-1 ring-black/5 dark:ring-white/10'
+                      : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-neutral-700/50'
                   }`}
                 >
-                  Destacados ({featuredProducts.length})
+                  Destacados
+                  <span className="ml-2 text-xs opacity-80 bg-primary-100 dark:bg-primary-900/30 px-2 py-0.5 rounded-full text-primary-700 dark:text-primary-300">
+                    {featuredProducts.length}
+                  </span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('all')}
+                  className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                    activeTab === 'all'
+                      ? 'bg-white dark:bg-neutral-700 text-primary-600 dark:text-primary-400 shadow-md ring-1 ring-black/5 dark:ring-white/10'
+                      : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-neutral-700/50'
+                  }`}
+                >
+                  Todos
+                  <span className="ml-2 text-xs opacity-80 bg-neutral-200 dark:bg-neutral-700 px-2 py-0.5 rounded-full text-neutral-700 dark:text-neutral-300">
+                    {products.length}
+                  </span>
                 </button>
                 {searchQuery.trim() && (
                   <button
                     onClick={() => setActiveTab('search')}
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
                       activeTab === 'search'
-                        ? 'bg-surface dark:bg-neutral-700 text-neutral-900 dark:text-white shadow-sm'
-                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                        ? 'bg-white dark:bg-neutral-700 text-primary-600 dark:text-primary-400 shadow-md ring-1 ring-black/5 dark:ring-white/10'
+                        : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-neutral-700/50'
                     }`}
                   >
                     Búsqueda ({searchResults.length})

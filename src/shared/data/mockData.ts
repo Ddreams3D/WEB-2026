@@ -64,13 +64,61 @@ export const mockCategories: Category[] = [
   },
   {
     id: '6',
-    name: 'Medicina',
-    description: 'Modelos anatómicos y médicos',
+    name: 'Medicina / Educación',
+    description: 'Modelos anatómicos y médicos para educación',
     slug: 'medicina',
     imageUrl: '/images/categories/medical.jpg',
     productCount: 15,
     isActive: true,
     sortOrder: 6,
+    createdAt: new Date('2024-01-01'),
+    updatedAt: new Date('2024-01-01')
+  },
+  {
+    id: '7',
+    name: 'Trofeos, Merchandising & Regalos',
+    description: 'Trofeos, copas, regalos personalizados y merchandising',
+    slug: 'trofeos-regalos',
+    imageUrl: '/images/categories/trophies.jpg',
+    productCount: 20,
+    isActive: true,
+    sortOrder: 7,
+    createdAt: new Date('2024-01-01'),
+    updatedAt: new Date('2024-01-01')
+  },
+  {
+    id: '10',
+    name: 'Servicios 3D',
+    description: 'Servicios de impresión y diseño 3D bajo demanda',
+    slug: 'servicios-3d',
+    imageUrl: '/images/categories/services.jpg',
+    productCount: 10,
+    isActive: true,
+    sortOrder: 8,
+    createdAt: new Date('2024-01-01'),
+    updatedAt: new Date('2024-01-01')
+  },
+  {
+    id: '11',
+    name: 'Arte 3D & Coleccionables',
+    description: 'Figuras, arte y coleccionables impresos en 3D',
+    slug: 'arte-coleccionables',
+    imageUrl: '/images/categories/art.jpg',
+    productCount: 12,
+    isActive: true,
+    sortOrder: 9,
+    createdAt: new Date('2024-01-01'),
+    updatedAt: new Date('2024-01-01')
+  },
+  {
+    id: '12',
+    name: 'Diseño 3D',
+    description: 'Servicios de modelado y diseño digital',
+    slug: 'diseno-3d',
+    imageUrl: '/images/categories/design.jpg',
+    productCount: 8,
+    isActive: true,
+    sortOrder: 10,
     createdAt: new Date('2024-01-01'),
     updatedAt: new Date('2024-01-01')
   }
@@ -145,19 +193,19 @@ export const mockProducts: Product[] = [
   {
     id: '1',
     name: 'Pelvis Anatómica – Escala Real',
-    description: 'Modelo anatómico físico impreso en 3D listo para uso educativo. Fabricación bajo pedido.',
-    shortDescription: 'Modelo anatómico físico impreso en 3D listo para uso educativo',
-    price: 260.00,
+    description: 'Modelo anatómico físico impreso en 3D con base incluida lista para uso educativo',
+    shortDescription: 'Modelo anatómico físico impreso en 3D con base incluida lista para uso educativo',
+    price: 300.00,
     currency: 'PEN',
     categoryId: '6',
-    categoryName: 'Medicina',
+    categoryName: 'Medicina / Educación',
     sellerId: '3',
     sellerName: 'Miguel Rodríguez',
     images: [
       {
         id: '1',
         productId: '1',
-        url: '/images/products/pelvis-anatomica.jpg',
+        url: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&q=80&w=600',
         alt: 'Pelvis Anatómica Escala Real',
         isPrimary: true,
         width: 800,
@@ -185,286 +233,77 @@ export const mockProducts: Product[] = [
     updatedAt: new Date('2024-01-01')
   },
   {
-    id: '2',
-    name: 'Silla Ergonómica Oficina',
-    description: 'Modelo 3D de silla ergonómica para oficina con materiales PBR y múltiples variaciones de color.',
-    shortDescription: 'Silla ergonómica para oficina',
-    price: 19.99,
-    currency: 'PEN',
-    categoryId: '2',
-    categoryName: 'Diseño Industrial',
-    sellerId: '1',
-    sellerName: 'Carlos Mendoza',
-    images: [
-      {
-        id: '3',
-        productId: '2',
-        url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=80&w=600',
-        alt: 'Silla de oficina vista frontal',
-        isPrimary: true,
-        sortOrder: 1,
-        order: 1
-      },
-      {
-        id: '4',
-        productId: '2',
-        url: 'https://images.unsplash.com/photo-1549497538-303791108f95?auto=format&fit=crop&q=80&w=600',
-        alt: 'Silla de oficina vista lateral',
-        isPrimary: false,
-        sortOrder: 2,
-        order: 2
-      }
-    ],
-    specifications: [
-      {
-        id: '5',
-        name: 'Formato',
-        value: '.blend, .max, .fbx'
-      },
-      {
-        id: '6',
-        name: 'Polígonos',
-        value: '8,500'
-      },
-      {
-        id: '7',
-        name: 'Texturas',
-        value: '2K PBR'
-      }
-    ],
-    tags: ['silla', 'oficina', 'ergonómica', 'mueble', 'industrial'],
-    sku: 'CHAIR-OFF-001',
-    stock: 999,
-    minQuantity: 1,
-    materials: ['PLA', 'PETG'],
-    complexity: 'medium',
-    rating: 4.2,
-    reviewCount: 8,
-    downloadCount: 89,
-    isActive: true,
-    isFeatured: false,
-    createdAt: new Date('2024-01-12'),
-    updatedAt: new Date('2024-01-12')
-  },
-  {
-    id: '3',
-    name: 'Escultura Abstracta',
-    description: 'Escultura digital abstracta con formas orgánicas, ideal para arte conceptual y decoración virtual.',
-    shortDescription: 'Escultura digital abstracta',
-    price: 29.99,
-    currency: 'PEN',
-    categoryId: '3',
-    categoryName: 'Arte Digital',
-    sellerId: '3',
-    sellerName: 'Miguel Rodríguez',
-    images: [
-      {
-        id: '6',
-        productId: '3',
-        url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?auto=format&fit=crop&q=80&w=600',
-        alt: 'Escultura abstracta vista principal',
-        isPrimary: true,
-        sortOrder: 1,
-        order: 1
-      },
-      {
-        id: '7',
-        productId: '3',
-        url: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?auto=format&fit=crop&q=80&w=600',
-        alt: 'Escultura abstracta detalle',
-        isPrimary: false,
-        sortOrder: 2,
-        order: 2
-      }
-    ],
-    specifications: [
-      {
-        id: '8',
-        name: 'Formato',
-        value: '.blend, .obj, .stl'
-      },
-      {
-        id: '9',
-        name: 'Polígonos',
-        value: '25,000'
-      }
-    ],
-    tags: ['escultura', 'abstracta', 'arte', 'digital', 'decoración'],
-    sku: 'SCULP-ABS-001',
-    stock: 999,
-    minQuantity: 1,
-    materials: ['PLA', 'Resin'],
-    complexity: 'high',
-    rating: 4.8,
-    reviewCount: 15,
-    downloadCount: 203,
-    isActive: true,
-    isFeatured: true,
-    createdAt: new Date('2024-01-08'),
-    updatedAt: new Date('2024-01-08')
-  },
-  {
-    id: '4',
-    name: 'Espada Medieval Fantasy',
-    description: 'Espada medieval para videojuegos con texturas detalladas y optimizada para engines de juego.',
-    shortDescription: 'Espada medieval para videojuegos',
-    price: 15.99,
-    currency: 'PEN',
-    categoryId: '4',
-    categoryName: 'Videojuegos',
-    sellerId: '1',
-    sellerName: 'Carlos Mendoza',
-    images: [
-      {
-        id: '8',
-        productId: '4',
-        url: 'https://images.unsplash.com/photo-1593118247619-e2d6f056869e?auto=format&fit=crop&q=80&w=600',
-        alt: 'Espada medieval completa',
-        isPrimary: true,
-        sortOrder: 1,
-        order: 1
-      }
-    ],
-    specifications: [
-      {
-        id: '10',
-        name: 'Formato',
-        value: '.fbx, .unity, .unreal'
-      },
-      {
-        id: '11',
-        name: 'Polígonos',
-        value: '3,200 (Game Ready)'
-      },
-      {
-        id: '12',
-        name: 'Texturas',
-        value: '1K Diffuse, Normal, Metallic'
-      }
-    ],
-    tags: ['espada', 'medieval', 'fantasy', 'videojuego', 'arma'],
-    sku: 'SWORD-MED-001',
-    stock: 999,
-    minQuantity: 1,
-    materials: ['PLA', 'ABS'],
-    complexity: 'medium',
-    rating: 4.6,
-    reviewCount: 22,
-    downloadCount: 334,
-    isActive: true,
-    isFeatured: false,
-    createdAt: new Date('2024-01-14'),
-    updatedAt: new Date('2024-01-14')
-  },
-  {
-    id: '5',
-    name: 'Personaje Animado Robot',
-    description: 'Personaje robot completamente rigeado y listo para animación con múltiples expresiones faciales.',
-    shortDescription: 'Robot rigeado para animación',
-    price: 79.99,
-    currency: 'PEN',
-    categoryId: '5',
-    categoryName: 'Animación',
-    sellerId: '3',
-    sellerName: 'Miguel Rodríguez',
-    images: [
-      {
-        id: '10',
-        productId: '5',
-        url: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=600',
-        alt: 'Robot character vista frontal',
-        isPrimary: true,
-        sortOrder: 1,
-        order: 1
-      },
-      {
-        id: '11',
-        productId: '5',
-        url: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?auto=format&fit=crop&q=80&w=600',
-        alt: 'Robot character vista trasera',
-        isPrimary: false,
-        sortOrder: 2,
-        order: 2
-      }
-    ],
-    specifications: [
-      {
-        id: '13',
-        name: 'Formato',
-        value: '.blend, .ma, .fbx'
-      },
-      {
-        id: '14',
-        name: 'Polígonos',
-        value: '18,500'
-      },
-      {
-        id: '15',
-        name: 'Rig',
-        value: 'Completo con IK/FK'
-      },
-      {
-        id: '16',
-        name: 'Animaciones',
-        value: '12 poses básicas incluidas'
-      }
-    ],
-    tags: ['robot', 'personaje', 'animación', 'rigging', 'sci-fi'],
-    sku: 'ROBOT-CHAR-001',
-    stock: 999,
-    minQuantity: 1,
-    materials: ['PLA', 'ABS'],
-    complexity: 'high',
-    rating: 4.9,
-    reviewCount: 31,
-    downloadCount: 187,
-    isActive: true,
-    isFeatured: true,
-    createdAt: new Date('2024-01-06'),
-    updatedAt: new Date('2024-01-16')
-  },
-  {
     id: '6',
-    name: 'Lámpara Geométrica 3D',
-    description: 'Lámpara de diseño moderno impresa en 3D con patrones geométricos complejos.',
-    shortDescription: 'Lámpara moderna impresa en 3D',
-    price: 35.00,
+    name: 'Columna Vertebral Anatómica – Escala Real (Ensamblada)',
+    description: 'Modelo anatómico físico impreso en 3D, compuesto por vértebras individuales ensambladas manualmente. Incluye pelvis como base de soporte, ideal para uso educativo y demostrativo.',
+    shortDescription: 'Modelo anatómico físico impreso en 3D',
+    price: 450.00,
     currency: 'PEN',
-    categoryId: '2',
-    categoryName: 'Diseño Industrial',
-    sellerId: '2',
-    sellerName: 'Ana García',
+    categoryId: '6',
+    categoryName: 'Medicina / Educación',
+    sellerId: '1',
+    sellerName: 'Ddreams 3D',
     images: [
       {
         id: '12',
         productId: '6',
-        url: 'https://images.unsplash.com/photo-1513506003013-19434d685d94?auto=format&fit=crop&q=80&w=600',
-        alt: 'Lámpara geométrica',
+        url: 'https://images.unsplash.com/photo-1530210124550-912dc1381cb8?auto=format&fit=crop&q=80&w=600',
+        alt: 'Columna Vertebral Anatómica',
         isPrimary: true,
-        sortOrder: 1,
-        order: 1
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-02-01'),
+        updatedAt: new Date('2024-02-01')
       }
     ],
     specifications: [
       {
-        id: '17',
-        name: 'Material',
-        value: 'PLA Translucido'
+        id: '26',
+        name: 'Categoría',
+        value: 'Modelos Anatómicos'
       },
       {
-        id: '18',
-        name: 'Altura',
-        value: '25cm'
+        id: '27',
+        name: 'Escala',
+        value: 'Real'
+      },
+      {
+        id: '28',
+        name: 'Material',
+        value: 'PLA Premium'
+      },
+      {
+        id: '29',
+        name: 'Configuración',
+        value: 'Vértebras impresas por separado y ensambladas manualmente'
+      },
+      {
+        id: '30',
+        name: 'Base',
+        value: 'Pelvis incluida'
+      },
+      {
+        id: '31',
+        name: 'Uso',
+        value: 'Educativo / Didáctico'
+      },
+      {
+        id: '32',
+        name: 'Tiempo de fabricación',
+        value: '7–10 días hábiles'
       }
     ],
-    tags: ['lámpara', 'decoración', 'iluminación', 'hogar'],
-    sku: 'LAMP-GEO-001',
-    stock: 50,
+    format: 'Físico',
+    fileSize: 'N/A',
+    license: 'Standard',
+    tags: ['anatomía', 'medicina', 'columna', 'educativo', '3d'],
+    sku: 'ANAT-SPINE-001',
+    stock: 10,
     minQuantity: 1,
-    materials: ['PLA'],
-    complexity: 'medium',
-    rating: 4.7,
-    reviewCount: 45,
+    materials: ['PLA Premium'],
+    complexity: 'high',
+    rating: 4.8,
+    reviewCount: 5,
     downloadCount: 0,
     isActive: true,
     isFeatured: true,
@@ -473,108 +312,386 @@ export const mockProducts: Product[] = [
   },
   {
     id: '7',
-    name: 'Soporte Auriculares Gamer',
-    description: 'Soporte resistente y estilizado para auriculares, ideal para setups gamer.',
-    shortDescription: 'Soporte para auriculares',
-    price: 18.50,
+    name: 'Proyectos Anatómicos 3D – Especializados (B2B)',
+    description: 'Desarrollo, modelado y fabricación de modelos anatómicos personalizados impresos en 3D, orientados a instituciones educativas, centros de salud, universidades y proyectos académicos o médicos.\n\nCada proyecto se diseña a medida según requerimientos técnicos, escala, nivel de detalle, material y uso final.',
+    shortDescription: 'Desarrollo, modelado y fabricación de modelos anatómicos personalizados',
+    price: 0,
+    customPriceDisplay: 'Cotización personalizada según proyecto',
     currency: 'PEN',
-    categoryId: '4',
-    categoryName: 'Videojuegos',
+    categoryId: '6',
+    categoryName: 'Medicina / Educación',
     sellerId: '1',
-    sellerName: 'Carlos Mendoza',
+    sellerName: 'Ddreams 3D',
     images: [
       {
         id: '13',
         productId: '7',
-        url: 'https://images.unsplash.com/photo-1612157777902-5382bc6e864b?auto=format&fit=crop&q=80&w=600',
-        alt: 'Soporte auriculares',
+        url: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=600',
+        alt: 'Proyectos Anatómicos 3D',
         isPrimary: true,
         sortOrder: 1,
         order: 1
       }
     ],
-    specifications: [],
-    tags: ['gamer', 'setup', 'accesorios', 'audio'],
-    sku: 'HEAD-STAND-001',
-    stock: 100,
+    specifications: [
+      {
+        id: 'spec-7-1',
+        name: 'Incluye',
+        value: '• Análisis del requerimiento\n• Modelado 3D anatómico personalizado\n• Fabricación en impresión 3D\n• Ensamblaje (cuando aplica)\n• Adaptación para uso educativo o institucional'
+      },
+      {
+        id: 'spec-7-2',
+        name: 'Información importante',
+        value: '• Fabricación bajo pedido\n• Precio sujeto a cotización según proyecto\n• Servicio B2B / institucional'
+      },
+      {
+        id: 'spec-7-3',
+        name: 'Sectores',
+        value: 'Universidades, institutos, colegios, centros de salud, proyectos de investigación y empresas del sector educativo o médico.'
+      }
+    ],
+    tags: ['anatomía', 'medicina', 'educación', 'b2b', 'modelos3D', 'impresión3D'],
+    sku: 'ANATOMY-B2B-001',
+    stock: 999,
     minQuantity: 1,
-    materials: ['ABS', 'PLA+'],
-    complexity: 'low',
-    rating: 4.5,
-    reviewCount: 28,
+    materials: ['PLA', 'Resina', 'Filamento Flexible'],
+    complexity: 'high',
+    rating: 4.9,
+    reviewCount: 12,
     downloadCount: 0,
     isActive: true,
-    isFeatured: false,
+    isFeatured: true,
     createdAt: new Date('2024-02-05'),
     updatedAt: new Date('2024-02-05')
   },
   {
-    id: '8',
-    name: 'Maceta Poligonal',
-    description: 'Maceta de diseño low-poly para suculentas y plantas pequeñas.',
-    shortDescription: 'Maceta diseño low-poly',
-    price: 12.00,
+    id: '2',
+    name: 'Copa Pistón 3D – 20 cm',
+    description: 'Detalle impreso en 3D inspirado en pistones de motor, ideal como regalo para fanáticos de los autos y las carreras.',
+    shortDescription: 'Detalle impreso en 3D inspirado en pistones de motor',
+    price: 79.00,
     currency: 'PEN',
-    categoryId: '3',
-    categoryName: 'Arte Digital',
-    sellerId: '2',
-    sellerName: 'Ana García',
+    categoryId: '7',
+    categoryName: 'Trofeos, Merchandising & Regalos',
+    sellerId: '1',
+    sellerName: 'Ddreams 3D',
+    images: [
+      {
+        id: '2',
+        productId: '2',
+        url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=80&w=600',
+        alt: 'Copa Pistón 3D',
+        isPrimary: true,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-01-01'),
+        updatedAt: new Date('2024-01-01')
+      }
+    ],
+    specifications: [
+      {
+        id: '5',
+        name: 'Tamaño',
+        value: '20 cm'
+      },
+      {
+        id: '6',
+        name: 'Colores',
+        value: 'A elección (según disponibilidad)'
+      },
+      {
+        id: '7',
+        name: 'Adicionales',
+        value: 'Sticker personalizado (nombre o frase): + S/ 20\nGrabado 3D impreso (texto integrado en la pieza): + S/ 40'
+      },
+      {
+        id: '8',
+        name: 'Tiempo estimado de fabricación',
+        value: '2–4 días hábiles'
+      }
+    ],
+    format: 'Físico',
+    fileSize: 'N/A',
+    license: 'Standard',
+    tags: ['trofeo', 'copa pistón', 'regalo', 'autos', 'carreras'],
+    downloadCount: 0,
+    rating: 4.8,
+    reviewCount: 12,
+    isFeatured: true,
+    isActive: true,
+    createdAt: new Date('2024-01-05'),
+    updatedAt: new Date('2024-01-05')
+  },
+  {
+    id: '3',
+    name: 'Copa Pistón 3D – 30 cm',
+    description: 'Versión grande y más llamativa de nuestra copa pistón, pensada para regalos especiales y ocasiones importantes.',
+    shortDescription: 'Versión grande y más llamativa de nuestra copa pistón',
+    price: 129.00,
+    currency: 'PEN',
+    categoryId: '7',
+    categoryName: 'Trofeos, Merchandising & Regalos',
+    sellerId: '1',
+    sellerName: 'Ddreams 3D',
+    images: [
+      {
+        id: '3',
+        productId: '3',
+        url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=80&w=600',
+        alt: 'Copa Pistón 3D Grande',
+        isPrimary: true,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-01-01'),
+        updatedAt: new Date('2024-01-01')
+      }
+    ],
+    specifications: [
+      {
+        id: '9',
+        name: 'Tamaño',
+        value: '30 cm'
+      },
+      {
+        id: '10',
+        name: 'Color',
+        value: 'A elección (según disponibilidad)'
+      },
+      {
+        id: '12',
+        name: 'Opcionales',
+        value: 'Sticker personalizado (nombre o frase): + S/ 20\nGrabado 3D impreso (texto integrado en la pieza): + S/ 40'
+      },
+      {
+        id: '13',
+        name: 'Tiempo estimado de fabricación',
+        value: '3–5 días hábiles'
+      }
+    ],
+    format: 'Físico',
+    fileSize: 'N/A',
+    license: 'Standard',
+    tags: ['trofeo', 'copa pistón', 'grande', 'regalo', 'premium'],
+    sku: 'COPA-30CM-001',
+    stock: 50,
+    minQuantity: 1,
+    materials: ['PLA'],
+    complexity: 'medium',
+    rating: 4.9,
+    reviewCount: 5,
+    downloadCount: 0,
+    isActive: true,
+    isFeatured: true,
+    createdAt: new Date('2024-01-08'),
+    updatedAt: new Date('2024-01-08')
+  },
+  {
+    id: '8',
+    name: 'Trofeos y Medallas 3D – Personalizados (B2B)',
+    description: 'Fabricación de trofeos y medallas personalizadas en impresión 3D para eventos deportivos, instituciones, empresas y competencias.',
+    shortDescription: 'Fabricación de trofeos y medallas personalizadas',
+    price: 0,
+    customPriceDisplay: 'Precio sujeto a cotización según cantidad y diseño',
+    currency: 'PEN',
+    categoryId: '7',
+    categoryName: 'Trofeos, Merchandising & Regalos',
+    sellerId: '1',
+    sellerName: 'Ddreams 3D',
     images: [
       {
         id: '14',
         productId: '8',
-        url: 'https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&q=80&w=600',
-        alt: 'Maceta poligonal',
+        url: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&q=80&w=600',
+        alt: 'Trofeos y Medallas 3D',
         isPrimary: true,
         sortOrder: 1,
         order: 1
       }
     ],
-    specifications: [],
-    tags: ['jardín', 'plantas', 'decoración', 'maceta'],
-    sku: 'POT-POLY-001',
-    stock: 200,
+    specifications: [
+      {
+        id: 'spec-8-1',
+        name: 'Información importante',
+        value: 'Fabricación bajo pedido\nPrecio sujeto a cotización según cantidad y diseño'
+      }
+    ],
+    tags: ['trofeos', 'medallas', 'b2b', 'eventos', 'corporativo'],
+    sku: 'TROPHY-B2B-001',
+    stock: 999,
     minQuantity: 1,
-    materials: ['Wood PLA', 'Marble PLA'],
-    complexity: 'low',
+    materials: ['PLA', 'Resina', 'Filamento Metálico'],
+    complexity: 'medium',
     rating: 4.8,
-    reviewCount: 56,
+    reviewCount: 15,
     downloadCount: 0,
     isActive: true,
-    isFeatured: false,
+    isFeatured: true,
     createdAt: new Date('2024-02-10'),
     updatedAt: new Date('2024-02-10')
   },
   {
-    id: '9',
-    name: 'Set Ajedrez Moderno',
-    description: 'Juego de piezas de ajedrez con diseño minimalista y moderno.',
-    shortDescription: 'Piezas de ajedrez modernas',
-    price: 45.00,
+    id: '4',
+    name: 'Cooler Motor 3D – V6',
+    description: 'Cooler funcional impreso en 3D con diseño inspirado en motores. Ideal para cervezas, gaseosas y reuniones pequeñas.',
+    shortDescription: 'Cooler funcional impreso en 3D con diseño inspirado en motores',
+    price: 210.00,
     currency: 'PEN',
-    categoryId: '3',
-    categoryName: 'Arte Digital',
-    sellerId: '3',
-    sellerName: 'Miguel Rodríguez',
+    categoryId: '7',
+    categoryName: 'Trofeos, Merchandising & Regalos',
+    sellerId: '1',
+    sellerName: 'Ddreams 3D',
+    images: [
+      {
+        id: '8',
+        productId: '4',
+        url: 'https://images.unsplash.com/photo-1593118247619-e2d6f056869e?auto=format&fit=crop&q=80&w=600',
+        alt: 'Cooler Motor 3D V6',
+        isPrimary: true,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-01-14'),
+        updatedAt: new Date('2024-01-14')
+      }
+    ],
+    specifications: [
+      {
+        id: '14',
+        name: 'Tamaño',
+        value: 'V6 (6 espacios)'
+      },
+      {
+        id: '15',
+        name: 'Color',
+        value: 'A elección (según disponibilidad)'
+      },
+      {
+        id: '17',
+        name: 'Opcional',
+        value: 'Grabado 3D personalizado (nombre o frase): + S/ 40\n📌 Grabado integrado en la pieza (no sticker).'
+      },
+      {
+        id: '19',
+        name: 'Tiempo estimado de fabricación',
+        value: '3–5 días hábiles'
+      }
+    ],
+    format: 'Físico',
+    fileSize: 'N/A',
+    license: 'Standard',
+    tags: ['cooler', 'motor', 'v6', 'regalo', 'cerveza'],
+    sku: 'COOLER-V6-001',
+    stock: 20,
+    minQuantity: 1,
+    materials: ['PLA'],
+    complexity: 'medium',
+    rating: 4.8,
+    reviewCount: 15,
+    downloadCount: 0,
+    isActive: true,
+    isFeatured: true,
+    createdAt: new Date('2024-01-14'),
+    updatedAt: new Date('2024-01-14')
+  },
+  {
+    id: '5',
+    name: 'Cooler Motor 3D – V8',
+    description: 'Versión más amplia y robusta de nuestro cooler estilo motor. Ideal para reuniones, parrillas y regalos especiales.',
+    shortDescription: 'Versión más amplia y robusta de nuestro cooler estilo motor',
+    price: 260.00,
+    currency: 'PEN',
+    categoryId: '7',
+    categoryName: 'Trofeos, Merchandising & Regalos',
+    sellerId: '1',
+    sellerName: 'Ddreams 3D',
+    images: [
+      {
+        id: '10',
+        productId: '5',
+        url: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=600',
+        alt: 'Cooler Motor 3D V8',
+        isPrimary: true,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-01-15'),
+        updatedAt: new Date('2024-01-15')
+      }
+    ],
+    specifications: [
+      {
+        id: '20',
+        name: 'Tamaño',
+        value: 'V8 (8 espacios)'
+      },
+      {
+        id: '21',
+        name: 'Color',
+        value: 'A elección (según disponibilidad)'
+      },
+      {
+        id: '23',
+        name: 'Opcional',
+        value: 'Grabado 3D personalizado (nombre o frase): + S/ 40\n📌 Grabado permanente impreso junto con la pieza.'
+      },
+      {
+        id: '25',
+        name: 'Tiempo estimado de fabricación',
+        value: '4–6 días hábiles'
+      }
+    ],
+    format: 'Físico',
+    fileSize: 'N/A',
+    license: 'Standard',
+    tags: ['cooler', 'motor', 'v8', 'regalo', 'parrilla'],
+    sku: 'COOLER-V8-001',
+    stock: 15,
+    minQuantity: 1,
+    materials: ['PLA'],
+    complexity: 'high',
+    rating: 4.9,
+    reviewCount: 20,
+    downloadCount: 0,
+    isActive: true,
+    isFeatured: true,
+    createdAt: new Date('2024-01-15'),
+    updatedAt: new Date('2024-01-15')
+  },
+  {
+    id: '9',
+    name: 'Regalos Personalizados en Impresión 3D',
+    description: 'Diseño y fabricación de regalos personalizados impresos en 3D con nombres, frases o detalles únicos. Ideales para ocasiones especiales y regalos originales.',
+    shortDescription: 'Diseño y fabricación de regalos personalizados impresos en 3D',
+    price: 0,
+    customPriceDisplay: 'Personalización mediante grabado 3D integrado',
+    currency: 'PEN',
+    categoryId: '7',
+    categoryName: 'Trofeos, Merchandising & Regalos',
+    sellerId: '1',
+    sellerName: 'Ddreams 3D',
     images: [
       {
         id: '15',
         productId: '9',
-        url: 'https://images.unsplash.com/photo-1529699211952-734e80c4d42b?auto=format&fit=crop&q=80&w=600',
-        alt: 'Ajedrez moderno',
+        url: 'https://images.unsplash.com/photo-1513201099705-a9746e1e201f?auto=format&fit=crop&q=80&w=600',
+        alt: 'Regalos Personalizados en Impresión 3D',
         isPrimary: true,
         sortOrder: 1,
         order: 1
       }
     ],
-    specifications: [],
-    tags: ['juegos', 'ajedrez', 'estrategia', 'diseño'],
-    sku: 'CHESS-MOD-001',
-    stock: 30,
+    specifications: [
+      {
+        id: 'spec-9-1',
+        name: 'Información importante',
+        value: 'Fabricación bajo pedido\nPersonalización mediante grabado 3D integrado'
+      }
+    ],
+    tags: ['regalos', 'personalizado', '3d', 'grabado', 'original'],
+    sku: 'GIFT-CUSTOM-001',
+    stock: 999,
     minQuantity: 1,
-    materials: ['Resin'],
+    materials: ['PLA', 'Resina'],
     complexity: 'medium',
-    rating: 4.9,
+    rating: 4.8,
     reviewCount: 12,
     downloadCount: 0,
     isActive: true,
@@ -584,40 +701,155 @@ export const mockProducts: Product[] = [
   },
   {
     id: '10',
-    name: 'Llavero Personalizable',
-    description: 'Llavero resistente personalizable con nombre o logo.',
-    shortDescription: 'Llavero con texto personalizado',
-    price: 8.00,
+    name: 'Impresión 3D Personalizada – Proyectos a Medida',
+    description: 'Servicio de impresión 3D para proyectos personalizados según requerimiento del cliente. Ideal para piezas funcionales, decorativas, técnicas o prototipos.',
+    shortDescription: 'Desarrollo e impresión de piezas personalizadas según requerimiento del cliente',
+    price: 0,
+    customPriceDisplay: 'Precio sujeto a cotización según proyecto',
     currency: 'PEN',
-    categoryId: '2',
-    categoryName: 'Diseño Industrial',
+    categoryId: '10',
+    categoryName: 'Servicios 3D',
     sellerId: '1',
-    sellerName: 'Carlos Mendoza',
+    sellerName: 'Ddreams 3D',
     images: [
       {
         id: '16',
         productId: '10',
-        url: 'https://images.unsplash.com/photo-1589365278144-c9e705f843ba?auto=format&fit=crop&q=80&w=600',
-        alt: 'Llavero 3D',
+        url: 'https://images.unsplash.com/photo-1631541909061-71e349d1f203?auto=format&fit=crop&q=80&w=600',
+        alt: 'Impresión 3D Personalizada',
         isPrimary: true,
         sortOrder: 1,
         order: 1
       }
     ],
-    specifications: [],
-    tags: ['accesorios', 'regalo', 'personalizado', 'llavero'],
-    sku: 'KEY-CUST-001',
-    stock: 500,
-    minQuantity: 5,
-    materials: ['PLA', 'PETG'],
-    complexity: 'low',
-    rating: 4.6,
-    reviewCount: 89,
+    specifications: [
+      {
+        id: 'spec-10-1',
+        name: 'Incluye',
+        value: 'Revisión básica del proyecto\nFabricación bajo pedido\nImpresión en tecnología FDM'
+      },
+      {
+        id: 'spec-10-2',
+        name: 'Información importante',
+        value: 'El precio se determina según tamaño, material y complejidad\nEl proyecto se cotiza antes de iniciar la fabricación\nNo se inicia producción sin aprobación del cliente'
+      }
+    ],
+    tags: ['impresión 3d', 'personalizado', 'proyectos', 'servicios'],
+    sku: 'SERV-PRINT-001',
+    stock: 999,
+    minQuantity: 1,
+    materials: ['PLA', 'PETG', 'Resina'],
+    complexity: 'high',
+    rating: 4.8,
+    reviewCount: 45,
     downloadCount: 0,
     isActive: true,
     isFeatured: false,
     createdAt: new Date('2024-02-20'),
     updatedAt: new Date('2024-02-20')
+  },
+  {
+    id: '11',
+    name: 'Figuras, Máscaras, Cascos y Dioramas 3D – Personalizados',
+    description: 'Diseño e impresión 3D de figuras, máscaras, cascos y dioramas personalizados para colección, exhibición o proyectos especiales.',
+    shortDescription: 'Diseño e impresión 3D de piezas personalizadas para colección',
+    price: 250.00,
+    customPriceDisplay: 'Desde S/ 250.00 – IGV incluido\n(El precio varía según tamaño y complejidad)',
+    currency: 'PEN',
+    categoryId: '11',
+    categoryName: 'Arte 3D & Coleccionables',
+    sellerId: '1',
+    sellerName: 'Ddreams 3D',
+    images: [
+      {
+        id: '17',
+        productId: '11',
+        url: 'https://images.unsplash.com/photo-1614728263952-84ea256f9679?auto=format&fit=crop&q=80&w=600',
+        alt: 'Figuras y Coleccionables 3D',
+        isPrimary: true,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-03-01'),
+        updatedAt: new Date('2024-03-01')
+      }
+    ],
+    specifications: [
+      {
+        id: 'spec-11-1',
+        name: 'Información importante',
+        value: 'Precio desde S/ 250\nEl valor final depende del tamaño, nivel de detalle y complejidad\nProducto fabricado bajo pedido\nNo incluye pintura (salvo coordinación previa)'
+      }
+    ],
+    format: 'Físico',
+    fileSize: 'N/A',
+    license: 'Standard',
+    tags: ['arte', 'coleccionables', 'cascos', 'figuras', 'dioramas'],
+    sku: 'ART-COLL-001',
+    stock: 50,
+    minQuantity: 1,
+    materials: ['PLA', 'Resina'],
+    complexity: 'high',
+    rating: 4.8,
+    reviewCount: 32,
+    downloadCount: 0,
+    isActive: true,
+    isFeatured: false,
+    createdAt: new Date('2024-03-01'),
+    updatedAt: new Date('2024-03-01')
+  },
+  {
+    id: '12',
+    name: 'Modelado 3D – Diseño Digital Personalizado',
+    description: 'Servicio de modelado 3D a medida para impresión 3D, visualización o desarrollo de productos personalizados.',
+    shortDescription: 'Servicio de modelado 3D a medida',
+    price: 0,
+    customPriceDisplay: 'Precio sujeto a cotización según proyecto',
+    currency: 'PEN',
+    categoryId: '12',
+    categoryName: 'Diseño 3D',
+    sellerId: '1',
+    sellerName: 'Ddreams 3D',
+    images: [
+      {
+        id: '18',
+        productId: '12',
+        url: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&q=80&w=600',
+        alt: 'Modelado 3D Digital',
+        isPrimary: true,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-03-02'),
+        updatedAt: new Date('2024-03-02')
+      }
+    ],
+    specifications: [
+      {
+        id: 'spec-12-1',
+        name: 'Incluye',
+        value: 'Modelado digital según requerimiento\nEntrega de archivo digital final'
+      },
+      {
+        id: 'spec-12-2',
+        name: 'Información importante',
+        value: 'Servicio digital (no incluye impresión)\nPrecio sujeto a cotización según alcance del proyecto\nEl tiempo de entrega depende de la complejidad del modelo'
+      }
+    ],
+    format: 'Digital',
+    fileSize: 'N/A',
+    license: 'Standard',
+    tags: ['diseño', 'modelado 3d', 'digital', 'personalizado'],
+    sku: 'SERV-DESIGN-001',
+    stock: 999,
+    minQuantity: 1,
+    materials: ['Digital'],
+    complexity: 'high',
+    rating: 4.7,
+    reviewCount: 28,
+    downloadCount: 0,
+    isActive: true,
+    isFeatured: false,
+    createdAt: new Date('2024-03-02'),
+    updatedAt: new Date('2024-03-02')
   }
 ];
 

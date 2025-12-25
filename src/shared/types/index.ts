@@ -98,9 +98,10 @@ export interface Product {
   shortDescription?: string;
   price: number;
   originalPrice?: number;
+  customPriceDisplay?: string;
   discount?: number;
   currency: string;
-  sku: string;
+  sku?: string;
   categoryId: string;
   category?: Category;
   categoryName?: string;
@@ -109,14 +110,17 @@ export interface Product {
   images: ProductImage[];
   specifications: ProductSpecification[];
   tags: string[];
-  stock: number;
-  minQuantity: number;
+  stock?: number;
+  minQuantity?: number;
   maxQuantity?: number;
   weight?: number;
   dimensions?: ProductDimensions;
-  materials: string[];
+  materials?: string[];
   printTime?: number; // en horas
-  complexity: 'low' | 'medium' | 'high';
+  complexity?: 'low' | 'medium' | 'high';
+  format?: string;
+  fileSize?: string;
+  license?: string;
   isActive: boolean;
   isFeatured: boolean;
   rating: number;
@@ -131,13 +135,17 @@ export interface ProductImage {
   productId: string;
   url: string;
   alt: string;
+  width?: number;
+  height?: number;
   isPrimary: boolean;
-  sortOrder: number;
+  sortOrder?: number;
   order?: number;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface ProductSpecification {
-  id: string;
+  id?: string;
   name: string;
   value: string;
   unit?: string;

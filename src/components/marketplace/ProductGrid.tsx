@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { Product } from '../../shared/types';
 import { ProductCard, ProductCardSkeleton } from './ProductCard';
+import { ProductDetailsModal } from './ProductDetailsModal';
 
 interface ProductGridProps {
   products: Product[];
@@ -24,10 +25,12 @@ export function ProductGrid({
   emptyMessage = 'No se encontraron productos',
   skeletonCount = 8
 }: ProductGridProps) {
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
   // Loading state
   if (isLoading) {
     return (
-      <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 ${className}`}>
+      <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 ${className}`}>
         {Array.from({ length: skeletonCount }).map((_, index) => (
           <ProductCardSkeleton key={`skeleton-${index}`} />
         ))}
@@ -68,16 +71,25 @@ export function ProductGrid({
 
   // Products grid
   return (
-    <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 ${className}`}>
-      {products.map((product) => (
-        <ProductCard
-          key={product.id}
-          product={product}
-          showAddToCart={showAddToCart}
-          showWishlist={showWishlist}
-        />
-      ))}
-    </div>
+    <>
+      <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 ${className}`}>
+        {products.map((product) => (
+          <ProductCard
+            key={product.id}
+            product={product}
+            showAddToCart={showAddToCart}
+            showWishlist={showWishlist}
+            onViewDetails={setSelectedProduct}
+          />
+        ))}
+      </div>
+
+      <ProductDetailsModal 
+        product={selectedProduct}
+        isOpen={!!selectedProduct}
+        onClose={() => setSelectedProduct(null)}
+      />
+    </>
   );
 }
 
@@ -99,7 +111,7 @@ export function CompactProductGrid({
 
   if (isLoading) {
     return (
-      <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 ${className}`}>
+      <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 ${className}`}>
         {Array.from({ length: maxItems }).map((_, index) => (
           <ProductCardSkeleton key={`compact-skeleton-${index}`} />
         ))}
@@ -118,7 +130,7 @@ export function CompactProductGrid({
   }
 
   return (
-    <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 ${className}`}>
+    <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 ${className}`}>
       {displayProducts.map((product) => (
         <ProductCard
           key={product.id}
