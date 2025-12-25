@@ -453,20 +453,22 @@ export default function ProductDetailClient({ product }: Props) {
             )}
           </div>
           
-          <div className="pt-8 mt-4">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-white mb-4">Etiquetas Relacionadas</h3>
-            <div className="flex flex-wrap gap-2.5">
-              {product.tags.map((tag) => (
-                <Badge 
-                  key={tag} 
-                  variant="secondary" 
-                  className="px-3.5 py-1.5 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-primary transition-colors text-sm font-medium rounded-full cursor-pointer"
-                >
-                  #{tag}
-                </Badge>
-              ))}
+          {product.id !== '7' && (
+            <div className="pt-8 mt-4">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-white mb-4">Etiquetas Relacionadas</h3>
+              <div className="flex flex-wrap gap-2.5">
+                {product.tags.map((tag) => (
+                  <Badge 
+                    key={tag} 
+                    variant="secondary" 
+                    className="px-3.5 py-1.5 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-primary transition-colors text-sm font-medium rounded-full cursor-pointer"
+                  >
+                    #{tag}
+                  </Badge>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

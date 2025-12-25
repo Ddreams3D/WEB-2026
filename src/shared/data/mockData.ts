@@ -464,7 +464,7 @@ export const mockProducts: Product[] = [
         value: 'Universidades, institutos, colegios, centros de salud, proyectos de investigación y empresas del sector educativo o médico.'
       }
     ],
-    tags: ['anatomía', 'medicina', 'educación', 'b2b', 'modelos3D', 'impresión3D'],
+    tags: ['proyectosAnatomicos3D', 'modelosAnatomicos3D', 'anatomiaHumana3D', 'modeladoAnatomico', 'educacionMedica', 'modelosEducativos3D', 'serviciosB2B', 'fabricacionPersonalizada', 'impresion3DProfesional', 'prototipado3D', 'Arequipa', 'Peru'],
     sku: 'ANATOMY-B2B-001',
     stock: 999,
     minQuantity: 1,
