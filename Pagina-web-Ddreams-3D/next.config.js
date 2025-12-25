@@ -35,6 +35,7 @@ const nextConfig = {
   
   // Configuración de Turbopack (estable)
   turbopack: {
+    root: __dirname,
     rules: {
       '*.svg': {
         loaders: ['@svgr/webpack'],
