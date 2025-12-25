@@ -1,12 +1,18 @@
 [build]
+  base = "Pagina-web-Ddreams-3D"
   command = "npm run build"
-  publish = ".next"
 
 [build.environment]
-  NODE_VERSION = "22"
+  NODE_VERSION = "20"
   NPM_FLAGS = "--production=false"
-  NEXT_PUBLIC_GOOGLE_CLIENT_ID = "YOUR_GOOGLE_CLIENT_ID"
-  GOOGLE_CLIENT_SECRET = "YOUR_GOOGLE_CLIENT_SECRET"
+  # Variables de entorno para Supabase
+  NEXT_PUBLIC_SUPABASE_URL = "https://ncnkmrjfmxxncqqhdqcz.supabase.co"
+  NEXT_PUBLIC_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jbmttcmpmbXh4bmNxcWhkcWN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc2ODAyMTEsImV4cCI6MjA1MzI1NjIxMX0.XWmqIeTNmIYLOKQm90L7NwKHPuEiXQDJZ8K9QbSXdNw"
+  # Variables de entorno para Google OAuth
+  # Secrets should be configured in Netlify UI
+# NEXT_PUBLIC_GOOGLE_CLIENT_ID = "..."
+# GOOGLE_CLIENT_SECRET = "..."
+  # URL de la aplicación (se actualizará con el dominio de Netlify)
   NEXT_PUBLIC_APP_URL = "https://ddreams3d.netlify.app"
 
 [[plugins]]
@@ -23,7 +29,7 @@
     Referrer-Policy = "origin-when-cross-origin"
     X-XSS-Protection = "1; mode=block"
 
-# Cache para assets estáticos
+# Cache para archivos estáticos
 [[headers]]
   for = "/static/*"
   [headers.values]
