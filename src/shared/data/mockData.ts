@@ -1010,7 +1010,8 @@ export const mockProducts: Product[] = [
         value: '• Fabricación bajo pedido\n• Diseño 3D totalmente personalizado\n• Grabado 3D integrado en la pieza\n• Precio sujeto a cotización según diseño y complejidad\n• Servicio orientado a regalos únicos y personalizados'
       }
     ],
-    tags: ['regalos', 'personalizado', '3d', 'grabado', 'original'],
+    tags: ['regalosPersonalizados', 'regalos3D', 'impresion3D', 'regalosOriginales', 'regalosUnicos', 'regalosHechosAMedida', 'detallePersonalizado', 'regalosEspeciales', 'Arequipa', 'regalosArequipa'],
+    seoKeywords: ['regalos personalizados impresión 3d', 'regalos con nombre grabado', 'regalos personalizados arequipa', 'impresión 3d regalos', 'regalos a medida 3d'],
     sku: 'GIFT-CUSTOM-001',
     stock: 999,
     minQuantity: 1,

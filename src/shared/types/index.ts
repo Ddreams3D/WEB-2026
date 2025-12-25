@@ -112,6 +112,7 @@ export interface Product {
   specifications: ProductSpecification[];
   options?: ProductOption[];
   tags: string[];
+  seoKeywords?: string[];
   stock?: number;
   minQuantity?: number;
   maxQuantity?: number;
