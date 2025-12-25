@@ -484,27 +484,22 @@ export const mockProducts: Product[] = [
         ]
       },
       {
-        id: 'opt-sticker',
-        name: 'Sticker personalizado',
-        type: 'checkbox',
+        id: 'opt-customization',
+        name: 'Personalización',
+        type: 'radio',
+        required: true,
         values: [
           {
-            id: 'sticker-yes',
+            id: 'cust-sticker',
             name: 'Sticker personalizado (nombre o frase)',
             priceModifier: 0,
             hasInput: true,
             maxLength: 50,
-            inputPlaceholder: 'Escribe aquí el nombre o frase (máx. 50 caracteres)...'
-          }
-        ]
-      },
-      {
-        id: 'opt-engraving',
-        name: 'Grabado 3D',
-        type: 'checkbox',
-        values: [
+            inputPlaceholder: 'Escribe aquí el nombre o frase (máx. 50 caracteres)...',
+            isDefault: true
+          },
           {
-            id: 'engraving-yes',
+            id: 'cust-engraving',
             name: 'Grabado 3D impreso (texto integrado en la pieza)',
             priceModifier: 20,
             hasInput: true,
@@ -600,27 +595,22 @@ export const mockProducts: Product[] = [
         ]
       },
       {
-        id: 'opt-sticker',
-        name: 'Sticker personalizado',
-        type: 'checkbox',
+        id: 'opt-customization',
+        name: 'Personalización',
+        type: 'radio',
+        required: true,
         values: [
           {
-            id: 'sticker-yes',
+            id: 'cust-sticker',
             name: 'Sticker personalizado (nombre o frase)',
             priceModifier: 0,
             hasInput: true,
             maxLength: 50,
-            inputPlaceholder: 'Escribe aquí el nombre o frase (máx. 50 caracteres)...'
-          }
-        ]
-      },
-      {
-        id: 'opt-engraving',
-        name: 'Grabado 3D',
-        type: 'checkbox',
-        values: [
+            inputPlaceholder: 'Escribe aquí el nombre o frase (máx. 50 caracteres)...',
+            isDefault: true
+          },
           {
-            id: 'engraving-yes',
+            id: 'cust-engraving',
             name: 'Grabado 3D impreso (texto integrado en la pieza)',
             priceModifier: 20,
             hasInput: true,

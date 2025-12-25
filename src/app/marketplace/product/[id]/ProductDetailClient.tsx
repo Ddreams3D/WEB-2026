@@ -24,7 +24,19 @@ export default function ProductDetailClient({ product }: Props) {
   const [selectedImageId, setSelectedImageId] = useState<string>(
     product.images.find(img => img.isPrimary)?.id || product.images[0]?.id
   );
-  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
+  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(() => {
+    // Inicializar opciones por defecto
+    const defaults: Record<string, string> = {};
+    if (product.options) {
+      product.options.forEach(option => {
+        const defaultVal = option.values.find(v => v.isDefault);
+        if (defaultVal) {
+          defaults[option.id] = defaultVal.id;
+        }
+      });
+    }
+    return defaults;
+  });
   const [customInputs, setCustomInputs] = useState<Record<string, string>>({});
   const [isAdding, setIsAdding] = useState(false);
 

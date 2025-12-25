@@ -152,6 +152,7 @@ export interface ProductOptionValue {
   hasInput?: boolean;
   maxLength?: number;
   inputPlaceholder?: string;
+  isDefault?: boolean;
 }
 
 export interface ProductOption {
