@@ -459,7 +459,7 @@ export const mockProducts: Product[] = [
         id: '2-b',
         productId: '2',
         url: '/images/marketplace/product-2-b.png',
-        alt: 'Regalo Personalizado para Fanáticos de Autos – Copa Pistón 3D (20 cm) - Vista Detalle',
+        alt: 'Regalo Personalizado para Fanáticos de Autos – Copa Pistón 3D - Vista Detalle',
         isPrimary: false,
         width: 800,
         height: 600,
