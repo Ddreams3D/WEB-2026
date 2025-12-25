@@ -809,6 +809,20 @@ export const mockProducts: Product[] = [
         updatedAt: new Date('2024-01-15')
       }
     ],
+    options: [
+      {
+        id: 'opt-engraving',
+        name: 'Opcional',
+        type: 'checkbox',
+        values: [
+          {
+            id: 'engraving-yes',
+            name: 'Grabado 3D personalizado (nombre o frase) - Grabado permanente impreso junto con la pieza.',
+            priceModifier: 40
+          }
+        ]
+      }
+    ],
     specifications: [
       {
         id: '20',
