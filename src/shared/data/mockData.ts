@@ -787,14 +787,39 @@ export const mockProducts: Product[] = [
     ],
     options: [
       {
-        id: 'opt-engraving',
-        name: 'Opcional',
-        type: 'checkbox',
+        id: 'opt-color',
+        name: 'Color',
+        type: 'radio',
+        required: true,
+        values: [
+          { id: 'color-gold', name: 'Oro', priceModifier: 0 },
+          { id: 'color-silver', name: 'Plata', priceModifier: 0 },
+          { id: 'color-bronze', name: 'Bronce', priceModifier: 0 },
+          { id: 'color-red', name: 'Rojo', priceModifier: 0 },
+          { id: 'color-blue', name: 'Azul', priceModifier: 0 },
+          { id: 'color-yellow', name: 'Amarillo', priceModifier: 0 },
+          { id: 'color-other', name: 'Otro', priceModifier: 0, hasInput: true, maxLength: 30, inputPlaceholder: 'Escribe tu color aquí (máx. 30 caracteres)...' }
+        ]
+      },
+      {
+        id: 'opt-customization',
+        name: '',
+        type: 'radio',
+        required: true,
         values: [
           {
-            id: 'engraving-yes',
+            id: 'cust-none',
+            name: 'Sin grabado personalizado',
+            priceModifier: 0,
+            isDefault: true
+          },
+          {
+            id: 'cust-engraving',
             name: 'Grabado 3D personalizado (nombre o frase) - Grabado permanente impreso junto con la pieza.',
-            priceModifier: 40
+            priceModifier: 40,
+            hasInput: true,
+            maxLength: 50,
+            inputPlaceholder: 'Escribe aquí el texto para el grabado (máx. 50 caracteres)...'
           }
         ]
       }
@@ -804,11 +829,6 @@ export const mockProducts: Product[] = [
         id: '14',
         name: 'Tamaño',
         value: 'V6 (6 espacios)'
-      },
-      {
-        id: '15',
-        name: 'Color',
-        value: 'A elección (según disponibilidad)'
       },
       {
         id: '19',
@@ -892,14 +912,39 @@ export const mockProducts: Product[] = [
     ],
     options: [
       {
-        id: 'opt-engraving',
-        name: 'Opcional',
-        type: 'checkbox',
+        id: 'opt-color',
+        name: 'Color',
+        type: 'radio',
+        required: true,
+        values: [
+          { id: 'color-gold', name: 'Oro', priceModifier: 0 },
+          { id: 'color-silver', name: 'Plata', priceModifier: 0 },
+          { id: 'color-bronze', name: 'Bronce', priceModifier: 0 },
+          { id: 'color-red', name: 'Rojo', priceModifier: 0 },
+          { id: 'color-blue', name: 'Azul', priceModifier: 0 },
+          { id: 'color-yellow', name: 'Amarillo', priceModifier: 0 },
+          { id: 'color-other', name: 'Otro', priceModifier: 0, hasInput: true, maxLength: 30, inputPlaceholder: 'Escribe tu color aquí (máx. 30 caracteres)...' }
+        ]
+      },
+      {
+        id: 'opt-customization',
+        name: '',
+        type: 'radio',
+        required: true,
         values: [
           {
-            id: 'engraving-yes',
+            id: 'cust-none',
+            name: 'Sin grabado personalizado',
+            priceModifier: 0,
+            isDefault: true
+          },
+          {
+            id: 'cust-engraving',
             name: 'Grabado 3D personalizado (nombre o frase) - Grabado permanente impreso junto con la pieza.',
-            priceModifier: 40
+            priceModifier: 40,
+            hasInput: true,
+            maxLength: 50,
+            inputPlaceholder: 'Escribe aquí el texto para el grabado (máx. 50 caracteres)...'
           }
         ]
       }
@@ -909,11 +954,6 @@ export const mockProducts: Product[] = [
         id: '20',
         name: 'Tamaño',
         value: 'V8 (8 espacios)'
-      },
-      {
-        id: '21',
-        name: 'Color',
-        value: 'A elección (según disponibilidad)'
       },
       {
         id: '25',
