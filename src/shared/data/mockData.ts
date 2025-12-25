@@ -525,7 +525,7 @@ export const mockProducts: Product[] = [
     format: 'Físico',
     fileSize: 'N/A',
     license: 'Standard',
-    tags: ['trofeo', 'copa pistón', 'regalo', 'autos', 'carreras'],
+    tags: ['regaloPersonalizado', 'regaloParaFanaticosDeAutos', 'regaloParaHijos', 'trofeoPersonalizado', 'impresion3D', 'regalosArequipa', 'Arequipa'],
     sku: 'COPA-20CM-001',
     stock: 50,
     minQuantity: 1,
