@@ -627,11 +627,6 @@ export const mockProducts: Product[] = [
         value: '30 cm'
       },
       {
-        id: '12',
-        name: 'Opcionales',
-        value: 'Sticker personalizado (nombre o frase): Incluido\nGrabado 3D impreso (texto integrado en la pieza): + S/ 20'
-      },
-      {
         id: '13',
         name: 'Tiempo estimado de fabricación',
         value: '3–5 días hábiles'
