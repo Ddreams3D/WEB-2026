@@ -146,10 +146,10 @@ export default function ProductDetailClient({ product }: Props) {
   };
 
   return (
-    <div className="container mx-auto px-4 py-12 lg:py-20 max-w-7xl font-sans text-gray-900 dark:text-gray-100 min-h-screen">
+    <div className="container mx-auto px-4 pt-24 pb-12 lg:pt-32 lg:pb-20 max-w-7xl font-sans text-gray-900 dark:text-gray-100 min-h-screen">
       <Link 
         href="/marketplace" 
-        className="inline-flex items-center text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-primary mb-8 transition-colors group"
+        className="inline-flex items-center px-4 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 rounded-full text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-primary hover:text-primary hover:bg-primary/5 transition-all group shadow-sm mb-8"
       >
         <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
         Volver al Marketplace
