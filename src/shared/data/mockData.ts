@@ -485,13 +485,13 @@ export const mockProducts: Product[] = [
       },
       {
         id: 'opt-customization',
-        name: 'Personalización',
+        name: '',
         type: 'radio',
         required: true,
         values: [
           {
             id: 'cust-sticker',
-            name: 'Sticker personalizado (nombre o frase)',
+            name: 'Sticker personalizado (nombre o frase Incluida)',
             priceModifier: 0,
             hasInput: true,
             maxLength: 50,
@@ -592,13 +592,13 @@ export const mockProducts: Product[] = [
       },
       {
         id: 'opt-customization',
-        name: 'Personalización',
+        name: '',
         type: 'radio',
         required: true,
         values: [
           {
             id: 'cust-sticker',
-            name: 'Sticker personalizado (nombre o frase)',
+            name: 'Sticker personalizado (nombre o frase Incluida)',
             priceModifier: 0,
             hasInput: true,
             maxLength: 50,

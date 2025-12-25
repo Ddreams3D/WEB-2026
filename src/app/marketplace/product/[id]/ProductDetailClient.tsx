@@ -260,9 +260,11 @@ export default function ProductDetailClient({ product }: Props) {
               <div className="space-y-4">
                 {product.options.map((option) => (
                   <div key={option.id} className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300 block mb-1">
-                      {option.name} {option.required && <span className="text-red-500">*</span>}
-                    </label>
+                    {option.name && (
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300 block mb-1">
+                        {option.name} {option.required && <span className="text-red-500">*</span>}
+                      </label>
+                    )}
                     
                     {option.type === 'select' && (
                       <div className="relative">
