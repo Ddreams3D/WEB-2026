@@ -491,7 +491,7 @@ export const mockProducts: Product[] = [
           {
             id: 'sticker-yes',
             name: 'Sticker personalizado (nombre o frase)',
-            priceModifier: 20
+            priceModifier: 0
           }
         ]
       },
@@ -503,7 +503,7 @@ export const mockProducts: Product[] = [
           {
             id: 'engraving-yes',
             name: 'Grabado 3D impreso (texto integrado en la pieza)',
-            priceModifier: 40
+            priceModifier: 20
           }
         ]
       }
@@ -522,7 +522,7 @@ export const mockProducts: Product[] = [
       {
         id: '7',
         name: 'Adicionales',
-        value: 'Sticker personalizado (nombre o frase): + S/ 20\nGrabado 3D impreso (texto integrado en la pieza): + S/ 40'
+        value: 'Sticker personalizado (nombre o frase): Incluido\nGrabado 3D impreso (texto integrado en la pieza): + S/ 20'
       },
       {
         id: '8',
@@ -606,7 +606,7 @@ export const mockProducts: Product[] = [
           {
             id: 'sticker-yes',
             name: 'Sticker personalizado (nombre o frase)',
-            priceModifier: 20
+            priceModifier: 0
           }
         ]
       },
@@ -618,7 +618,7 @@ export const mockProducts: Product[] = [
           {
             id: 'engraving-yes',
             name: 'Grabado 3D impreso (texto integrado en la pieza)',
-            priceModifier: 40
+            priceModifier: 20
           }
         ]
       }
@@ -637,7 +637,7 @@ export const mockProducts: Product[] = [
       {
         id: '12',
         name: 'Opcionales',
-        value: 'Sticker personalizado (nombre o frase): + S/ 20\nGrabado 3D impreso (texto integrado en la pieza): + S/ 40'
+        value: 'Sticker personalizado (nombre o frase): Incluido\nGrabado 3D impreso (texto integrado en la pieza): + S/ 20'
       },
       {
         id: '13',
