@@ -291,8 +291,8 @@ export default function ProductDetailClient({ product }: Props) {
                             <label key={value.id} className={`
                               cursor-pointer rounded-lg border px-3 py-2 transition-all duration-200 flex items-center gap-2
                               ${selectedOptions[option.id] === value.id 
-                                ? 'border-primary bg-primary/5 text-primary ring-1 ring-primary' 
-                                : 'border-gray-200 dark:border-gray-700 hover:border-primary/50 text-gray-600 dark:text-gray-300'}
+                                ? 'border-transparent bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-md transform scale-[1.02]' 
+                                : 'border-gray-200 dark:border-gray-700 hover:border-primary/50 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'}
                             `}>
                               <input
                                 type="radio"
@@ -303,7 +303,11 @@ export default function ProductDetailClient({ product }: Props) {
                               />
                               <span className="font-medium text-sm">{value.name}</span>
                               {value.priceModifier > 0 && (
-                                <span className="text-xs font-bold bg-primary/10 px-1.5 py-0.5 rounded text-primary">
+                                <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${
+                                  selectedOptions[option.id] === value.id 
+                                    ? 'bg-white/20 text-white' 
+                                    : 'bg-primary/10 text-primary'
+                                }`}>
                                   +S/{value.priceModifier}
                                 </span>
                               )}
