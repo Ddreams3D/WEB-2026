@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { mockProducts } from '@/shared/data/mockData';
 import ProductDetailClient from './ProductDetailClient';
 
@@ -41,6 +41,11 @@ export default async function ProductPage({ params }: Props) {
 
   if (!product) {
     notFound();
+  }
+
+  // Redirect to slug URL if accessing by ID or different slug
+  if (product.slug && id !== product.slug) {
+    redirect(`/marketplace/product/${product.slug}`);
   }
 
   return <ProductDetailClient product={product} />;

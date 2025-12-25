@@ -137,7 +137,7 @@ export function MarketplaceProvider({ children }: MarketplaceProviderProps) {
         title: product.name,
         description: product.shortDescription || product.description,
         type: 'product',
-        url: `/marketplace/product/${product.id}`,
+        url: `/marketplace/product/${product.slug || product.id}`,
         imageUrl: product.images[0]?.url,
         price: product.price,
         currency: product.currency,

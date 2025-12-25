@@ -24,7 +24,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // Rutas dinámicas de productos
   const products = mockProducts.map((product) => ({
-    url: `${baseUrl}/marketplace/product/${product.id}`,
+    url: `${baseUrl}/marketplace/product/${product.slug || product.id}`,
     lastModified: product.updatedAt || new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.7,
