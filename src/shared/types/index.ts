@@ -150,6 +150,8 @@ export interface ProductOptionValue {
   name: string;
   priceModifier: number;
   hasInput?: boolean;
+  maxLength?: number;
+  inputPlaceholder?: string;
 }
 
 export interface ProductOption {

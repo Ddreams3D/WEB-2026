@@ -305,21 +305,22 @@ export default function ProductDetailClient({ product }: Props) {
                           const selectedValue = option.values.find(v => v.id === selectedValueId);
                           
                           if (selectedValue?.hasInput) {
+                            const limit = selectedValue.maxLength || 30;
                             return (
                               <div className="mt-1 animate-in fade-in slide-in-from-top-2 duration-200">
                                 <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1.5 ml-1 flex justify-between">
                                   <span>Especificar {option.name.toLowerCase()}:</span>
                                   <span className="text-xs text-gray-400">
-                                    {(customInputs[option.id] || '').length}/30
+                                    {(customInputs[option.id] || '').length}/{limit}
                                   </span>
                                 </label>
                                 <input
                                   type="text"
                                   className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-gray-400"
-                                  placeholder={`Escribe tu ${option.name.toLowerCase()} aquí (máx. 30 caracteres)...`}
+                                  placeholder={selectedValue.inputPlaceholder || `Escribe tu ${option.name.toLowerCase()} aquí (máx. ${limit} caracteres)...`}
                                   value={customInputs[option.id] || ''}
                                   onChange={(e) => setCustomInputs(prev => ({ ...prev, [option.id]: e.target.value }))}
-                                  maxLength={30}
+                                  maxLength={limit}
                                   autoFocus
                                 />
                               </div>
@@ -331,26 +332,48 @@ export default function ProductDetailClient({ product }: Props) {
                     )}
 
                     {option.type === 'checkbox' && option.values.map((value) => (
-                      <label key={value.id} className="flex items-start space-x-3 cursor-pointer group p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
-                        <div className="relative flex items-center mt-0.5">
-                          <input
-                            type="checkbox"
-                            className="peer h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary dark:border-gray-600 dark:bg-gray-700"
-                            checked={selectedOptions[option.id] === value.id}
-                            onChange={(e) => handleOptionChange(option.id, value.id, e.target.checked)}
-                          />
-                        </div>
-                        <div className="flex-1 text-sm">
-                          <span className="font-medium text-gray-900 dark:text-white group-hover:text-primary transition-colors">
-                            {value.name}
-                          </span>
-                          {value.priceModifier > 0 && (
-                            <span className="ml-2 text-primary font-bold">
-                              + S/ {value.priceModifier.toFixed(2)}
+                      <div key={value.id} className="flex flex-col">
+                        <label className="flex items-start space-x-3 cursor-pointer group p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+                          <div className="relative flex items-center mt-0.5">
+                            <input
+                              type="checkbox"
+                              className="peer h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary dark:border-gray-600 dark:bg-gray-700"
+                              checked={selectedOptions[option.id] === value.id}
+                              onChange={(e) => handleOptionChange(option.id, value.id, e.target.checked)}
+                            />
+                          </div>
+                          <div className="flex-1 text-sm">
+                            <span className="font-medium text-gray-900 dark:text-white group-hover:text-primary transition-colors">
+                              {value.name}
                             </span>
-                          )}
-                        </div>
-                      </label>
+                            {value.priceModifier > 0 && (
+                              <span className="ml-2 text-primary font-bold">
+                                + S/ {value.priceModifier.toFixed(2)}
+                              </span>
+                            )}
+                          </div>
+                        </label>
+                        
+                        {selectedOptions[option.id] === value.id && value.hasInput && (
+                          <div className="ml-10 mr-2 mb-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                            <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1.5 flex justify-between">
+                              <span>Detalles:</span>
+                              <span className="text-xs text-gray-400">
+                                {(customInputs[option.id] || '').length}/{value.maxLength || 30}
+                              </span>
+                            </label>
+                            <input
+                              type="text"
+                              className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-gray-400"
+                              placeholder={value.inputPlaceholder || `Escribe los detalles aquí (máx. ${value.maxLength || 30} caracteres)...`}
+                              value={customInputs[option.id] || ''}
+                              onChange={(e) => setCustomInputs(prev => ({ ...prev, [option.id]: e.target.value }))}
+                              maxLength={value.maxLength || 30}
+                              autoFocus
+                            />
+                          </div>
+                        )}
+                      </div>
                     ))}
                   </div>
                 ))}

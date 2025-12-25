@@ -480,7 +480,7 @@ export const mockProducts: Product[] = [
           { id: 'color-red', name: 'Rojo', priceModifier: 0 },
           { id: 'color-blue', name: 'Azul', priceModifier: 0 },
           { id: 'color-yellow', name: 'Amarillo', priceModifier: 0 },
-          { id: 'color-other', name: 'Otro', priceModifier: 0, hasInput: true }
+          { id: 'color-other', name: 'Otro', priceModifier: 0, hasInput: true, maxLength: 30, inputPlaceholder: 'Escribe tu color aquí (máx. 30 caracteres)...' }
         ]
       },
       {
@@ -491,7 +491,10 @@ export const mockProducts: Product[] = [
           {
             id: 'sticker-yes',
             name: 'Sticker personalizado (nombre o frase)',
-            priceModifier: 0
+            priceModifier: 0,
+            hasInput: true,
+            maxLength: 50,
+            inputPlaceholder: 'Escribe aquí el nombre o frase (máx. 50 caracteres)...'
           }
         ]
       },
@@ -503,7 +506,10 @@ export const mockProducts: Product[] = [
           {
             id: 'engraving-yes',
             name: 'Grabado 3D impreso (texto integrado en la pieza)',
-            priceModifier: 20
+            priceModifier: 20,
+            hasInput: true,
+            maxLength: 50,
+            inputPlaceholder: 'Escribe aquí el texto para el grabado (máx. 50 caracteres)...'
           }
         ]
       }
@@ -590,7 +596,7 @@ export const mockProducts: Product[] = [
           { id: 'color-red', name: 'Rojo', priceModifier: 0 },
           { id: 'color-blue', name: 'Azul', priceModifier: 0 },
           { id: 'color-yellow', name: 'Amarillo', priceModifier: 0 },
-          { id: 'color-other', name: 'Otro', priceModifier: 0, hasInput: true }
+          { id: 'color-other', name: 'Otro', priceModifier: 0, hasInput: true, maxLength: 30, inputPlaceholder: 'Escribe tu color aquí (máx. 30 caracteres)...' }
         ]
       },
       {
@@ -601,7 +607,10 @@ export const mockProducts: Product[] = [
           {
             id: 'sticker-yes',
             name: 'Sticker personalizado (nombre o frase)',
-            priceModifier: 0
+            priceModifier: 0,
+            hasInput: true,
+            maxLength: 50,
+            inputPlaceholder: 'Escribe aquí el nombre o frase (máx. 50 caracteres)...'
           }
         ]
       },
@@ -613,7 +622,10 @@ export const mockProducts: Product[] = [
           {
             id: 'engraving-yes',
             name: 'Grabado 3D impreso (texto integrado en la pieza)',
-            priceModifier: 20
+            priceModifier: 20,
+            hasInput: true,
+            maxLength: 50,
+            inputPlaceholder: 'Escribe aquí el texto para el grabado (máx. 50 caracteres)...'
           }
         ]
       }
