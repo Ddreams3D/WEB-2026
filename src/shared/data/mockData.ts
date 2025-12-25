@@ -357,6 +357,7 @@ export const mockProducts: Product[] = [
   },
   {
     id: '7',
+    slug: 'proyectos-anatomicos-3d-especializados',
     name: 'Proyectos Anatómicos 3D – Especializados (B2B)',
     description: 'Desarrollo, modelado y fabricación de modelos anatómicos personalizados impresos en 3D, orientados a instituciones educativas, centros de salud, universidades y proyectos académicos o médicos.\n\nCada proyecto se diseña a medida según requerimientos técnicos, escala, nivel de detalle, material y uso final.',
     shortDescription: 'Desarrollo, modelado y fabricación de modelos anatómicos personalizados',
@@ -537,7 +538,7 @@ export const mockProducts: Product[] = [
         values: [
           {
             id: 'cust-sticker',
-            name: 'Personalización incluida (nombre o frase)',
+            name: 'Sticker personalizado (nombre o frase Incluida)',
             priceModifier: 0,
             hasInput: true,
             maxLength: 50,
@@ -645,7 +646,7 @@ export const mockProducts: Product[] = [
         values: [
           {
             id: 'cust-sticker',
-            name: 'Personalización incluida (nombre o frase)',
+            name: 'Sticker personalizado (nombre o frase Incluida)',
             priceModifier: 0,
             hasInput: true,
             maxLength: 50,
