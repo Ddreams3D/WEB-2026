@@ -980,11 +980,11 @@ export const mockProducts: Product[] = [
   },
   {
     id: '9',
-    name: 'Regalos Personalizados en Impresión 3D',
-    description: 'Diseño y fabricación de regalos personalizados impresos en 3D con nombres, frases o detalles únicos. Ideales para ocasiones especiales y regalos originales.',
+    name: 'Regalos Personalizados en Impresión 3D – Diseño a Medida',
+    description: 'Diseño y fabricación de regalos personalizados impresos en 3D, desarrollados a medida según nombre, frase, temática o idea especial del cliente. Cada pieza es única y se crea desde cero, integrando el diseño directamente en el modelo mediante grabado 3D para un acabado duradero y exclusivo.\n\nEste servicio es ideal para quienes buscan un regalo original y diferente, adaptado completamente a la persona u ocasión. Permite personalizar forma, tamaño, estilo y nivel de detalle según el concepto del regalo.\n\nPerfecto para aniversarios, cumpleaños, reconocimientos, recuerdos especiales, piezas decorativas personalizadas o regalos con alto valor emocional.\n\nCada proyecto se evalúa de forma individual para garantizar un resultado único, funcional y alineado con la idea del cliente.',
     shortDescription: 'Diseño y fabricación de regalos personalizados impresos en 3D',
     price: 0,
-    customPriceDisplay: 'Personalización mediante grabado 3D integrado',
+    customPriceDisplay: 'Precio sujeto a cotización según diseño y complejidad',
     currency: 'PEN',
     categoryId: '7',
     categoryName: 'Trofeos, Merchandising & Regalos',
@@ -1007,7 +1007,7 @@ export const mockProducts: Product[] = [
       {
         id: 'spec-9-1',
         name: 'Información importante',
-        value: 'Fabricación bajo pedido\nPersonalización mediante grabado 3D integrado'
+        value: '• Fabricación bajo pedido\n• Diseño 3D totalmente personalizado\n• Grabado 3D integrado en la pieza\n• Precio sujeto a cotización según diseño y complejidad\n• Servicio orientado a regalos únicos y personalizados'
       }
     ],
     tags: ['regalos', 'personalizado', '3d', 'grabado', 'original'],
