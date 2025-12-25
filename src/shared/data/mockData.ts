@@ -721,7 +721,7 @@ export const mockProducts: Product[] = [
         values: [
           {
             id: 'engraving-yes',
-            name: 'Grabado 3D personalizado (nombre o frase)',
+            name: 'Grabado 3D personalizado (nombre o frase) - Grabado permanente impreso junto con la pieza.',
             priceModifier: 40
           }
         ]
@@ -737,11 +737,6 @@ export const mockProducts: Product[] = [
         id: '15',
         name: 'Color',
         value: 'A elección (según disponibilidad)'
-      },
-      {
-        id: '17',
-        name: 'Opcional',
-        value: 'Grabado 3D personalizado (nombre o frase): + S/ 40\nGrabado integrado en la pieza (no sticker).'
       },
       {
         id: '19',
@@ -831,7 +826,7 @@ export const mockProducts: Product[] = [
         values: [
           {
             id: 'engraving-yes',
-            name: 'Grabado 3D personalizado (nombre o frase)',
+            name: 'Grabado 3D personalizado (nombre o frase) - Grabado permanente impreso junto con la pieza.',
             priceModifier: 40
           }
         ]
@@ -847,11 +842,6 @@ export const mockProducts: Product[] = [
         id: '21',
         name: 'Color',
         value: 'A elección (según disponibilidad)'
-      },
-      {
-        id: '23',
-        name: 'Opcional',
-        value: 'Grabado 3D personalizado (nombre o frase): + S/ 40\nGrabado permanente impreso junto con la pieza.'
       },
       {
         id: '25',
