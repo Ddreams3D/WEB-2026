@@ -515,11 +515,6 @@ export const mockProducts: Product[] = [
         value: '20 cm'
       },
       {
-        id: '6',
-        name: 'Color',
-        value: 'A elección (según disponibilidad)'
-      },
-      {
         id: '7',
         name: 'Adicionales',
         value: 'Sticker personalizado (nombre o frase): Incluido\nGrabado 3D impreso (texto integrado en la pieza): + S/ 20'
