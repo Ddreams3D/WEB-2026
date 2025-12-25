@@ -491,7 +491,7 @@ export const mockProducts: Product[] = [
         values: [
           {
             id: 'cust-sticker',
-            name: 'Sticker personalizado (nombre o frase Incluida)',
+            name: 'Personalización incluida (nombre o frase)',
             priceModifier: 0,
             hasInput: true,
             maxLength: 50,
@@ -598,7 +598,7 @@ export const mockProducts: Product[] = [
         values: [
           {
             id: 'cust-sticker',
-            name: 'Sticker personalizado (nombre o frase Incluida)',
+            name: 'Personalización incluida (nombre o frase)',
             priceModifier: 0,
             hasInput: true,
             maxLength: 50,
