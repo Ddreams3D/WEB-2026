@@ -453,7 +453,7 @@ export default function ProductDetailClient({ product }: Props) {
             )}
           </div>
           
-          {product.id !== '7' && (
+          {product.id !== '7' && product.id !== '8' && (
             <div className="pt-8 mt-4">
               <h3 className="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-white mb-4">Etiquetas Relacionadas</h3>
               <div className="flex flex-wrap gap-2.5">

@@ -695,9 +695,10 @@ export const mockProducts: Product[] = [
   },
   {
     id: '8',
-    name: 'Trofeos y Medallas 3D – Personalizados (B2B)',
-    description: 'Fabricación de trofeos y medallas personalizadas en impresión 3D para eventos deportivos, instituciones, empresas y competencias.',
-    shortDescription: 'Fabricación de trofeos y medallas personalizadas',
+    slug: 'trofeos-medallas-3d-personalizados-eventos-empresas-b2b',
+    name: 'Trofeos y Medallas 3D Personalizados para Eventos y Empresas (B2B)',
+    description: 'Fabricación de trofeos y medallas personalizados mediante impresión 3D, diseñados a medida para eventos deportivos, instituciones educativas, empresas, competencias y reconocimientos corporativos.\n\nCada proyecto se desarrolla desde cero según la identidad del evento o marca, permitiendo personalizar forma, tamaño, textos, logotipos y acabados. Ideal para premiaciones institucionales, torneos, aniversarios empresariales y campañas de reconocimiento.',
+    shortDescription: 'Fabricación de trofeos y medallas personalizados mediante impresión 3D',
     price: 0,
     customPriceDisplay: 'Precio sujeto a cotización según cantidad y diseño',
     currency: 'PEN',
@@ -710,7 +711,7 @@ export const mockProducts: Product[] = [
         id: '8-a',
         productId: '8',
         url: '/images/marketplace/product-8-a.jpg',
-        alt: 'Trofeos y Medallas 3D - Vista Principal',
+        alt: 'Trofeos y Medallas 3D Personalizados - Vista Principal',
         isPrimary: true,
         width: 800,
         height: 600,
@@ -721,7 +722,7 @@ export const mockProducts: Product[] = [
         id: '8-b',
         productId: '8',
         url: '/images/marketplace/product-8-b.jpg',
-        alt: 'Trofeos y Medallas 3D - Detalle',
+        alt: 'Trofeos y Medallas 3D Personalizados - Detalle',
         isPrimary: false,
         width: 800,
         height: 600,
@@ -732,8 +733,18 @@ export const mockProducts: Product[] = [
     specifications: [
       {
         id: 'spec-8-1',
+        name: 'Incluye',
+        value: '• Análisis del requerimiento y objetivo del evento\n• Diseño 3D personalizado (trofeos, medallas o piezas conmemorativas)\n• Fabricación en impresión 3D de alta calidad\n• Opciones de acabado (pintura, colores institucionales, placas)\n• Producción por unidad o en volumen\n• Adaptación a uso institucional o corporativo'
+      },
+      {
+        id: 'spec-8-2',
         name: 'Información importante',
-        value: 'Fabricación bajo pedido\nPrecio sujeto a cotización según cantidad y diseño'
+        value: '• Fabricación bajo pedido\n• Precio sujeto a cotización según cantidad, diseño y complejidad\n• Servicio orientado a clientes B2B / institucionales\n• Entregas coordinadas según cronograma del evento'
+      },
+      {
+        id: 'spec-8-3',
+        name: 'Sectores atendidos',
+        value: 'Empresas y marcas, Instituciones educativas, Clubes deportivos y ligas, Municipalidades y organizaciones, Eventos corporativos y competencias.'
       }
     ],
     tags: ['trofeos', 'medallas', 'b2b', 'eventos', 'corporativo'],
