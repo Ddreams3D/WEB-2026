@@ -980,6 +980,7 @@ export const mockProducts: Product[] = [
   },
   {
     id: '9',
+    slug: 'regalos-personalizados-impresion-3d',
     name: 'Regalos Personalizados en Impresión 3D – Diseño a Medida',
     description: 'Diseño y fabricación de regalos personalizados impresos en 3D, desarrollados a medida según nombre, frase, temática o idea especial del cliente. Cada pieza es única y se crea desde cero, integrando el diseño directamente en el modelo mediante grabado 3D para un acabado duradero y exclusivo.\n\nEste servicio es ideal para quienes buscan un regalo original y diferente, adaptado completamente a la persona u ocasión. Permite personalizar forma, tamaño, estilo y nivel de detalle según el concepto del regalo.\n\nPerfecto para aniversarios, cumpleaños, reconocimientos, recuerdos especiales, piezas decorativas personalizadas o regalos con alto valor emocional.\n\nCada proyecto se evalúa de forma individual para garantizar un resultado único, funcional y alineado con la idea del cliente.',
     shortDescription: 'Diseño y fabricación de regalos personalizados impresos en 3D',
