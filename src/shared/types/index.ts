@@ -93,6 +93,7 @@ export interface Category {
 // Productos del marketplace
 export interface Product {
   id: string;
+  slug?: string;
   name: string;
   description: string;
   shortDescription?: string;

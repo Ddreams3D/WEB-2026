@@ -77,7 +77,7 @@ export function ProductCard({
         </button>
       )}
 
-      <Link href={`/marketplace/product/${product.id}`} className="flex-1 flex flex-col">
+      <Link href={`/marketplace/product/${product.slug || product.id}`} className="flex-1 flex flex-col">
         {/* Product Image */}
         <div className="relative aspect-[4/3] overflow-hidden bg-gray-50 dark:bg-gray-800/50">
           <ProductImage

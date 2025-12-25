@@ -8,7 +8,7 @@ interface Props {
 }
 
 async function getProduct(id: string) {
-  return mockProducts.find((p) => p.id === id);
+  return mockProducts.find((p) => p.id === id || p.slug === id);
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

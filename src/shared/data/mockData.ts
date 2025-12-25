@@ -434,6 +434,7 @@ export const mockProducts: Product[] = [
   },
   {
     id: '2',
+    slug: 'regalo-personalizado-fanaticos-autos-copa-piston',
     name: 'Regalo Personalizado para Fanáticos de Autos – Copa Pistón 3D',
     description: 'Regalo personalizado ideal para fanáticos de los autos, perfecto para sorprender a hijos, jóvenes o adultos amantes de la velocidad. Esta copa pistón fabricada en impresión 3D es una excelente opción para cumpleaños, logros o fechas especiales, e incluye personalización con nombre o frase.',
     shortDescription: 'Regalo personalizado ideal para fanáticos de los autos',
@@ -541,6 +542,7 @@ export const mockProducts: Product[] = [
   },
   {
     id: '3',
+    slug: 'regalo-personalizado-fanaticos-autos-copa-piston-grande',
     name: 'Copa Pistón 3D – 30 cm',
     description: 'Versión grande y más llamativa de nuestra copa pistón, pensada para regalos especiales y ocasiones importantes.',
     shortDescription: 'Versión grande y más llamativa de nuestra copa pistón',
@@ -1081,7 +1083,7 @@ export const mockProducts: Product[] = [
 
 // Helper functions
 export const getProductById = (id: string): Product | undefined => {
-  return mockProducts.find(product => product.id === id);
+  return mockProducts.find(product => product.id === id || product.slug === id);
 };
 
 export const getProductsByCategory = (categoryId: string): Product[] => {
