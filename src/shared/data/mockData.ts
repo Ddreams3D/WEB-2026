@@ -192,15 +192,16 @@ export const mockReviews: Review[] = [
 export const mockProducts: Product[] = [
   {
     id: '1',
-    name: 'Pelvis Anatómica – Escala Real',
-    description: 'Modelo anatómico físico impreso en 3D con base incluida lista para uso educativo',
-    shortDescription: 'Modelo anatómico físico impreso en 3D con base incluida lista para uso educativo',
+    slug: 'modelo-anatomico-pelvis-humana-escala-real',
+    name: 'Modelo Anatómico de Pelvis Humana – Escala Real (Impresión 3D)',
+    description: 'Modelo anatómico físico de pelvis humana impreso en 3D a escala real, diseñado para uso educativo y médico.\n\nEsta pieza reproduce con precisión las principales estructuras óseas de la pelvis, siendo ideal para estudiantes de medicina, enfermería, obstetricia, fisioterapia y carreras afines.\n\nFabricado mediante impresión 3D de alta precisión en PLA Premium, el modelo incluye base de soporte, lo que facilita su correcta exhibición y manipulación en entornos académicos, educativos o clínicos.\n\nEs una herramienta didáctica ideal para el aprendizaje, la enseñanza y la demostración anatómica.',
+    shortDescription: 'Modelo anatómico físico de pelvis humana impreso en 3D a escala real',
     price: 300.00,
     currency: 'PEN',
     categoryId: '6',
     categoryName: 'Medicina / Educación',
-    sellerId: '3',
-    sellerName: 'Miguel Rodríguez',
+    sellerId: '1',
+    sellerName: 'Ddreams 3D',
     images: [
       {
         id: '1',
@@ -259,15 +260,15 @@ export const mockProducts: Product[] = [
       }
     ],
     specifications: [
-      { name: 'Categoría', value: 'ANATOMÍA 3D' },
-      { name: 'Escala', value: 'Real' },
-      { name: 'Material', value: 'PLA Premium' },
-      { name: 'Uso', value: 'Educativo / Médico' }
+      { name: 'Categoría', value: 'Anatomía Humana 3D' },
+      { name: 'Escala', value: 'Escala 1:1 (Tamaño real)' },
+      { name: 'Material', value: 'PLA Premium (impresión 3D de alta precisión)' },
+      { name: 'Uso', value: 'Educativo y Médico' }
     ],
     format: 'Físico',
     fileSize: 'N/A',
     license: 'Standard',
-    tags: ['anatomía', 'medicina', 'pelvis', 'educación', 'modelo 3d'],
+    tags: ['modeloAnatomico', 'pelvisHumana', 'anatomiaHumana', 'educacionMedica', 'modeloEducativo', 'impresion3D', 'anatomia3D', 'Arequipa'],
     downloadCount: 0,
     rating: 4.8,
     reviewCount: 15,
