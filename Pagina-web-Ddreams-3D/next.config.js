@@ -10,6 +10,9 @@ const nextConfig = {
   skipTrailingSlashRedirect: true,
   images: {
     unoptimized: false, // Optimización de imágenes habilitada
+    dangerouslyAllowSVG: true, // Permitir SVGs
+    contentDispositionType: 'attachment', // Seguridad para SVGs
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;", // CSP para SVGs
     remotePatterns: [
       {
         protocol: 'https',
@@ -90,6 +93,7 @@ const nextConfig = {
             name: 'lucide-icons',
             chunks: 'all',
             priority: 20,
+            reuseExistingChunk: true,
           },
           supabase: {
             test: /[\/]node_modules[\/]@supabase[\/]/,
