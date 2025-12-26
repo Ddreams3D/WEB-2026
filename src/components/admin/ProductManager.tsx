@@ -18,6 +18,7 @@ interface ProductFormData {
   price: number;
   stock: number;
   image_url: string;
+  customPriceDisplay?: string; // Para servicios
 }
 
 export default function ProductManager() {
@@ -38,9 +39,8 @@ export default function ProductManager() {
       setLoading(true);
       const fetchedProducts = await ProductService.getAllProducts();
       
-      // Filtramos servicios igual que en MarketplaceContext
-      const marketplaceProducts = fetchedProducts.filter(p => !p.customPriceDisplay);
-      setProducts(marketplaceProducts);
+      // Mostrar todos los productos, incluidos los servicios (que tienen customPriceDisplay)
+      setProducts(fetchedProducts);
     } catch (error) {
       console.error('Error loading products:', error);
       showToast('error', 'Error', 'Error al cargar los productos');
@@ -114,6 +114,7 @@ export default function ProductManager() {
           currency: 'PEN',
           categoryId: 'general', // Default category ID if not mapped
           categoryName: formData.category,
+          customPriceDisplay: formData.customPriceDisplay, // Guardar campo de servicio
           sellerId: 'admin',
           sellerName: 'Admin',
           images: [{
