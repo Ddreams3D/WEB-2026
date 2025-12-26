@@ -244,6 +244,8 @@ export const ProductService = {
       return categories;
     } catch (error) {
       console.error('Error fetching categories:', error);
+      // Cache mock categories on error too
+      categoriesCache = { data: mockCategories, timestamp: Date.now() };
       return mockCategories;
     }
   },
