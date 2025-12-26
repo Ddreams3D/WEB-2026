@@ -14,44 +14,26 @@ type ViewMode = 'grid' | 'list';
 export default function MarketplacePage() {
   const {
     products,
-    featuredProducts,
-    categories,
     searchQuery,
     searchResults,
     isLoading,
-    setSearchQuery,
-    loadFeaturedProducts
+    setSearchQuery
   } = useMarketplace();
   
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [showFilters, setShowFilters] = useState(false);
-  const [activeTab, setActiveTab] = useState<'all' | 'featured' | 'search'>('featured');
-
-  useEffect(() => {
-    loadFeaturedProducts();
-  }, [loadFeaturedProducts]);
-
-  useEffect(() => {
-    if (searchQuery.trim()) {
-      setActiveTab('search');
-    } else if (activeTab === 'search') {
-      setActiveTab('all');
-    }
-  }, [searchQuery, activeTab]);
 
   const handleFiltersChange = (filters: ProductFiltersType) => {
     // Filters are automatically applied through the MarketplaceContext
   };
 
   const getDisplayProducts = () => {
-    switch (activeTab) {
-      case 'featured':
-        return featuredProducts;
-      case 'search':
-        return searchResults.map(result => products.find(p => p.id === result.id)).filter((product): product is Product => product !== undefined);
-      default:
-        return products;
+    if (searchQuery.trim()) {
+      return searchResults
+        .map(result => products.find(p => p.id === result.id))
+        .filter((product): product is Product => product !== undefined);
     }
+    return products;
   };
 
   const displayProducts = getDisplayProducts();
@@ -59,69 +41,29 @@ export default function MarketplacePage() {
   return (
     <div className="min-h-screen bg-background dark:bg-neutral-900">
       <PageHeader
-        title="Explora nuestros productos más destacados"
+        title="Marketplace"
         description="Descubre nuestra colección exclusiva de modelos y diseños 3D de alta calidad"
         image="/images/placeholder-innovation.svg"
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar - Filters (Hidden temporarily) */}
-          {/*
-          <div className="lg:w-80 lg:sticky lg:top-8 lg:max-h-[calc(100vh-4rem)] lg:overflow-y-auto">
+          {/* Sidebar - Filters */}
+          <div className="hidden lg:block lg:w-80 lg:sticky lg:top-8 lg:max-h-[calc(100vh-4rem)] lg:overflow-y-auto">
             <ProductFiltersComponent
               onFiltersChange={handleFiltersChange}
               showSearch={true}
               isCollapsible={true}
             />
           </div>
-          */}
 
           {/* Main Content */}
           <div className="flex-1">
-            {/* Tabs and Controls */}
+            {/* Controls */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 space-y-4 sm:space-y-0">
-              {/* Tabs */}
-              <div className="flex space-x-2 bg-neutral-100 dark:bg-neutral-800/50 p-1.5 rounded-xl self-start sm:self-auto">
-                <button
-                  onClick={() => setActiveTab('featured')}
-                  className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
-                    activeTab === 'featured'
-                      ? 'bg-white dark:bg-neutral-700 text-primary-600 dark:text-primary-400 shadow-md ring-1 ring-black/5 dark:ring-white/10'
-                      : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-neutral-700/50'
-                  }`}
-                >
-                  Destacados
-                  <span className="ml-2 text-xs opacity-80 bg-primary-100 dark:bg-primary-900/30 px-2 py-0.5 rounded-full text-primary-700 dark:text-primary-300">
-                    {featuredProducts.length}
-                  </span>
-                </button>
-                <button
-                  onClick={() => setActiveTab('all')}
-                  className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
-                    activeTab === 'all'
-                      ? 'bg-white dark:bg-neutral-700 text-primary-600 dark:text-primary-400 shadow-md ring-1 ring-black/5 dark:ring-white/10'
-                      : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-neutral-700/50'
-                  }`}
-                >
-                  Todos
-                  <span className="ml-2 text-xs opacity-80 bg-neutral-200 dark:bg-neutral-700 px-2 py-0.5 rounded-full text-neutral-700 dark:text-neutral-300">
-                    {products.length}
-                  </span>
-                </button>
-                {searchQuery.trim() && (
-                  <button
-                    onClick={() => setActiveTab('search')}
-                    className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
-                      activeTab === 'search'
-                        ? 'bg-white dark:bg-neutral-700 text-primary-600 dark:text-primary-400 shadow-md ring-1 ring-black/5 dark:ring-white/10'
-                        : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-neutral-700/50'
-                    }`}
-                  >
-                    Búsqueda ({searchResults.length})
-                  </button>
-                )}
-              </div>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                Productos ({displayProducts.length})
+              </h2>
 
               {/* View Controls */}
               <div className="flex items-center space-x-2">
@@ -163,7 +105,7 @@ export default function MarketplacePage() {
             </div>
 
             {/* Search Results Info */}
-            {activeTab === 'search' && searchQuery.trim() && (
+            {searchQuery.trim() && (
               <div className="mb-6 p-4 bg-primary/10 dark:bg-primary/20 border border-primary/20 dark:border-primary/30 rounded-lg">
                 <div className="flex items-center space-x-2">
                   <Search className="w-5 h-5 text-primary-600 dark:text-primary-400" />
@@ -171,7 +113,7 @@ export default function MarketplacePage() {
                     Resultados para: <strong>&quot;{searchQuery}&quot;</strong>
                   </span>
                   <span className="text-primary-600 dark:text-primary-400">
-                    ({searchResults.length} encontrados)
+                    ({displayProducts.length} encontrados)
                   </span>
                 </div>
               </div>
@@ -185,11 +127,9 @@ export default function MarketplacePage() {
                 showAddToCart={true}
                 showWishlist={true}
                 emptyMessage={
-                  activeTab === 'search'
+                  searchQuery.trim()
                     ? `No se encontraron productos para "${searchQuery}"`
-                    : activeTab === 'featured'
-                    ? 'No hay productos destacados disponibles'
-                    : 'No hay productos disponibles'
+                    : 'No hay productos disponibles con los filtros seleccionados'
                 }
               />
             ) : (
@@ -203,8 +143,7 @@ export default function MarketplacePage() {
         </div>
       </div>
 
-      {/* Mobile Filters Overlay (Hidden temporarily) */}
-      {/* 
+      {/* Mobile Filters Overlay */}
       {showFilters && (
         <div className="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50" onClick={() => setShowFilters(false)}>
           <div className="absolute right-0 top-0 h-full w-80 bg-surface dark:bg-neutral-800 shadow-xl overflow-y-auto" onClick={(e) => e.stopPropagation()}>
@@ -222,14 +161,13 @@ export default function MarketplacePage() {
               </div>
               <ProductFiltersComponent
                 onFiltersChange={handleFiltersChange}
-                showSearch={false}
+                showSearch={true}
                 isCollapsible={false}
               />
             </div>
           </div>
         </div>
       )}
-      */}
     </div>
   );
 }

@@ -1177,6 +1177,123 @@ export const mockProducts: Product[] = [
     isFeatured: false,
     createdAt: new Date('2024-03-02'),
     updatedAt: new Date('2024-03-02')
+  },
+  {
+    id: '13',
+    name: 'Maquetas Arquitectónicas – Visualización de Proyectos',
+    description: 'Servicio de fabricación de maquetas arquitectónicas detalladas para inmobiliarias, arquitectos y estudiantes. Materializamos tus planos en modelos físicos precisos.',
+    shortDescription: 'Maquetas arquitectónicas detalladas y visualización de proyectos',
+    price: 0,
+    customPriceDisplay: 'Cotización según escala y detalle',
+    currency: 'PEN',
+    categoryId: '1',
+    categoryName: 'Arquitectura 3D',
+    sellerId: '1',
+    sellerName: 'Ddreams 3D',
+    images: [
+      {
+        id: '19',
+        productId: '13',
+        url: 'https://images.unsplash.com/photo-1486325212027-8081e485255e?auto=format&fit=crop&q=80&w=600',
+        alt: 'Maqueta Arquitectónica 3D',
+        isPrimary: true,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-03-05'),
+        updatedAt: new Date('2024-03-05')
+      }
+    ],
+    specifications: [
+      { name: 'Escala', value: 'Personalizable (1:50, 1:100, etc.)' },
+      { name: 'Material', value: 'PLA, Resina, Acabados texturizados' }
+    ],
+    format: 'Físico',
+    tags: ['arquitectura', 'maquetas', 'inmobiliaria', 'urbanismo'],
+    rating: 4.8,
+    reviewCount: 0,
+    downloadCount: 0,
+    isActive: true,
+    isFeatured: false,
+    createdAt: new Date('2024-03-05'),
+    updatedAt: new Date('2024-03-05')
+  },
+  {
+    id: '14',
+    name: 'Prototipado de Ingeniería – Piezas Funcionales',
+    description: 'Desarrollo de prototipos funcionales y componentes técnicos de alta precisión para validación de diseño y pruebas mecánicas.',
+    shortDescription: 'Prototipos funcionales y componentes técnicos de alta precisión',
+    price: 0,
+    customPriceDisplay: 'Cotización según requerimiento técnico',
+    currency: 'PEN',
+    categoryId: '2',
+    categoryName: 'Diseño Industrial',
+    sellerId: '1',
+    sellerName: 'Ddreams 3D',
+    images: [
+      {
+        id: '20',
+        productId: '14',
+        url: 'https://images.unsplash.com/photo-1581092921461-eab62e97a782?auto=format&fit=crop&q=80&w=600',
+        alt: 'Prototipo de Ingeniería 3D',
+        isPrimary: true,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-03-06'),
+        updatedAt: new Date('2024-03-06')
+      }
+    ],
+    specifications: [
+      { name: 'Precisión', value: 'Alta (hasta 0.05mm)' },
+      { name: 'Materiales Técnicos', value: 'PETG, ABS, Nylon, Flexible' }
+    ],
+    format: 'Físico',
+    tags: ['ingeniería', 'prototipos', 'piezas mecánicas', 'industrial'],
+    rating: 4.9,
+    reviewCount: 0,
+    downloadCount: 0,
+    isActive: true,
+    isFeatured: false,
+    createdAt: new Date('2024-03-06'),
+    updatedAt: new Date('2024-03-06')
+  },
+  {
+    id: '15',
+    name: 'Material Didáctico y Educativo Personalizado',
+    description: 'Diseño y fabricación de material didáctico interactivo y modelos educativos para colegios, universidades y centros de formación.',
+    shortDescription: 'Material didáctico interactivo y modelos educativos',
+    price: 0,
+    customPriceDisplay: 'Cotización según proyecto educativo',
+    currency: 'PEN',
+    categoryId: '6',
+    categoryName: 'Medicina / Educación',
+    sellerId: '1',
+    sellerName: 'Ddreams 3D',
+    images: [
+      {
+        id: '21',
+        productId: '15',
+        url: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&q=80&w=600',
+        alt: 'Material Educativo 3D',
+        isPrimary: true,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-03-07'),
+        updatedAt: new Date('2024-03-07')
+      }
+    ],
+    specifications: [
+      { name: 'Enfoque', value: 'Educativo / Interactivo' },
+      { name: 'Personalización', value: 'Adaptado a malla curricular' }
+    ],
+    format: 'Físico',
+    tags: ['educación', 'didáctico', 'escuelas', 'universidades'],
+    rating: 4.7,
+    reviewCount: 0,
+    downloadCount: 0,
+    isActive: true,
+    isFeatured: false,
+    createdAt: new Date('2024-03-07'),
+    updatedAt: new Date('2024-03-07')
   }
 ];
 

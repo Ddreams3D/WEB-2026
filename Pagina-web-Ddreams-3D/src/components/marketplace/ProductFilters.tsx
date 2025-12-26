@@ -21,19 +21,6 @@ export function ProductFilters({
   const { categories, filters, applyFilters, clearFilters, searchQuery, setSearchQuery } = useMarketplace();
   const [isExpanded, setIsExpanded] = useState(true);
   const [localFilters, setLocalFilters] = useState<ProductFiltersType>(filters);
-  const [priceRange, setPriceRange] = useState({
-    min: filters.minPrice || 0,
-    max: filters.maxPrice || 1000
-  });
-
-  // Available tags (extracted from mock data)
-  const availableTags = [
-    'casa', 'moderna', 'minimalista', 'arquitectura', 'residencial',
-    'silla', 'oficina', 'ergonómica', 'mueble', 'industrial',
-    'escultura', 'abstracta', 'arte', 'digital', 'decoración',
-    'espada', 'medieval', 'fantasy', 'videojuego', 'arma',
-    'robot', 'personaje', 'animación', 'rigging', 'sci-fi'
-  ];
 
   const sortOptions: { value: ProductSortOption; label: string }[] = [
     { value: 'createdAt', label: 'Más recientes' },
@@ -45,10 +32,6 @@ export function ProductFilters({
 
   useEffect(() => {
     setLocalFilters(filters);
-    setPriceRange({
-      min: filters.minPrice || 0,
-      max: filters.maxPrice || 1000
-    });
   }, [filters]);
 
   const handleCategoryChange = (categoryId: string, checked: boolean) => {
@@ -57,31 +40,6 @@ export function ProductFilters({
       : (localFilters.categoryIds || []).filter(id => id !== categoryId);
     
     const newFilters = { ...localFilters, categoryIds: newCategoryIds };
-    setLocalFilters(newFilters);
-    applyFilters(newFilters);
-    onFiltersChange?.(newFilters);
-  };
-
-  const handleTagChange = (tag: string, checked: boolean) => {
-    const newTags = checked
-      ? [...(localFilters.tags || []), tag]
-      : (localFilters.tags || []).filter(t => t !== tag);
-    
-    const newFilters = { ...localFilters, tags: newTags };
-    setLocalFilters(newFilters);
-    applyFilters(newFilters);
-    onFiltersChange?.(newFilters);
-  };
-
-  const handlePriceChange = (field: 'min' | 'max', value: number) => {
-    const newPriceRange = { ...priceRange, [field]: value };
-    setPriceRange(newPriceRange);
-    
-    const newFilters = {
-      ...localFilters,
-      minPrice: newPriceRange.min,
-      maxPrice: newPriceRange.max
-    };
     setLocalFilters(newFilters);
     applyFilters(newFilters);
     onFiltersChange?.(newFilters);
@@ -96,7 +54,6 @@ export function ProductFilters({
 
   const handleClearFilters = () => {
     clearFilters();
-    setPriceRange({ min: 0, max: 1000 });
     setSearchQuery('');
     onFiltersChange?.({
       categoryIds: [],
@@ -111,9 +68,6 @@ export function ProductFilters({
 
   const hasActiveFilters = (
     (localFilters.categoryIds && localFilters.categoryIds.length > 0) ||
-    (localFilters.tags && localFilters.tags.length > 0) ||
-    localFilters.minPrice !== 0 ||
-    localFilters.maxPrice !== 1000 ||
     searchQuery.trim() !== ''
   );
 
@@ -196,66 +150,6 @@ export function ProductFilters({
                   </span>
                   <span className="text-xs text-gray-500 dark:text-gray-400">
                     ({category.productCount})
-                  </span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* Price Range */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-              Rango de precio
-            </label>
-            <div className="space-y-3">
-              <div className="flex items-center space-x-3">
-                <div className="flex-1">
-                  <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Mínimo</label>
-                  <input
-                    type="number"
-                    value={priceRange.min}
-                    onChange={(e) => handlePriceChange('min', Number(e.target.value))}
-                    min="0"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                  />
-                </div>
-                <div className="flex-1">
-                  <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Máximo</label>
-                  <input
-                    type="number"
-                    value={priceRange.max}
-                    onChange={(e) => handlePriceChange('max', Number(e.target.value))}
-                    min="0"
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                  />
-                </div>
-              </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">
-                ${priceRange.min} - ${priceRange.max}
-              </div>
-            </div>
-          </div>
-
-          {/* Tags */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-              Tags
-            </label>
-            <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
-              {availableTags.map((tag) => (
-                <label key={tag} className="flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={localFilters.tags?.includes(tag) || false}
-                    onChange={(e) => handleTagChange(tag, e.target.checked)}
-                    className="sr-only"
-                  />
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                    localFilters.tags?.includes(tag)
-                      ? 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 border border-blue-300 dark:border-blue-700'
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600'
-                  }`}>
-                    {tag}
                   </span>
                 </label>
               ))}
