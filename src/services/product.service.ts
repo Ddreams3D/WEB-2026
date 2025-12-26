@@ -46,16 +46,22 @@ const convertCategoryData = (doc: DocumentData): Category => {
   } as Category;
 };
 
-// Helper to simulate network delay
-const simulateDelay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+// Simple in-memory cache
+let productsCache: { data: Product[], timestamp: number } | null = null;
+let categoriesCache: { data: Category[], timestamp: number } | null = null;
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 export const ProductService = {
   // Get all products
-  async getAllProducts(): Promise<Product[]> {
+  async getAllProducts(forceRefresh = false): Promise<Product[]> {
+    // Return cached data if valid
+    if (!forceRefresh && productsCache && (Date.now() - productsCache.timestamp < CACHE_DURATION)) {
+      return productsCache.data;
+    }
+
     // If Firebase is not configured, use mock data immediately
     if (!isFirebaseConfigured) {
       console.log('Firebase not configured, using mock data');
-      await simulateDelay(500);
       return mockProducts;
     }
 
@@ -72,6 +78,9 @@ export const ProductService = {
         return mockProducts;
       }
       
+      // Update cache
+      productsCache = { data: products, timestamp: Date.now() };
+      
       return products;
     } catch (error) {
       console.error('Error fetching products:', error);
@@ -86,8 +95,13 @@ export const ProductService = {
     // Helper to find in mock data
     const findInMock = () => mockProducts.find(p => p.id === idOrSlug || p.slug === idOrSlug);
 
+    // Try cache first
+    if (productsCache) {
+      const cachedProduct = productsCache.data.find(p => p.id === idOrSlug || p.slug === idOrSlug);
+      if (cachedProduct) return cachedProduct;
+    }
+
     if (!isFirebaseConfigured) {
-      await simulateDelay(300);
       return findInMock();
     }
 
@@ -122,8 +136,13 @@ export const ProductService = {
   async getProductsByCategory(categoryId: string): Promise<Product[]> {
     const getMockByCategory = () => mockProducts.filter(p => p.categoryId === categoryId);
 
+    // Try cache first
+    if (productsCache) {
+      const cachedProducts = productsCache.data.filter(p => p.categoryId === categoryId);
+      if (cachedProducts.length > 0) return cachedProducts;
+    }
+
     if (!isFirebaseConfigured) {
-      await simulateDelay(500);
       return getMockByCategory();
     }
 
@@ -150,6 +169,12 @@ export const ProductService = {
   // Get featured products
   async getFeaturedProducts(): Promise<Product[]> {
     const getMockFeatured = () => mockProducts.filter(p => p.isFeatured).slice(0, 10);
+
+    // Try cache first
+    if (productsCache) {
+        const cachedFeatured = productsCache.data.filter(p => p.isFeatured).slice(0, 10);
+        if (cachedFeatured.length > 0) return cachedFeatured;
+    }
 
     if (!isFirebaseConfigured) {
       return getMockFeatured();
@@ -196,15 +221,30 @@ export const ProductService = {
   },
 
   // Get all categories
-  async getCategories(): Promise<Category[]> {
-    if (!isFirebaseConfigured) return [];
+  async getCategories(forceRefresh = false): Promise<Category[]> {
+    if (!isFirebaseConfigured) return mockCategories;
+
+    // Return cached data if valid
+    if (!forceRefresh && categoriesCache && (Date.now() - categoriesCache.timestamp < CACHE_DURATION)) {
+        return categoriesCache.data;
+    }
+
     try {
       const q = query(collection(db, CATEGORIES_COLLECTION), orderBy('sortOrder', 'asc'));
       const snapshot = await getDocs(q);
-      return snapshot.docs.map(convertCategoryData);
+      const categories = snapshot.docs.map(convertCategoryData);
+      
+      if (categories.length === 0) {
+        return mockCategories;
+      }
+
+      // Update cache
+      categoriesCache = { data: categories, timestamp: Date.now() };
+
+      return categories;
     } catch (error) {
       console.error('Error fetching categories:', error);
-      return [];
+      return mockCategories;
     }
   },
 
@@ -281,6 +321,9 @@ export const ProductService = {
   async deleteProduct(id: string): Promise<void> {
     if (!isFirebaseConfigured) throw new Error('Firebase not configured');
     try {
+      // Invalidate cache
+      productsCache = null;
+      
       const productRef = doc(db, PRODUCTS_COLLECTION, id);
       await import('firebase/firestore').then(({ deleteDoc }) => deleteDoc(productRef));
     } catch (error) {
