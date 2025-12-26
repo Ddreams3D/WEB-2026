@@ -1,5 +1,5 @@
 [build]
-  base = "Pagina-web-Ddreams-3D"
+  base = "Pagina-web-Ddreams-3D/Pagina-web-Ddreams-3D"
   command = "npm run build"
   # publish = ".next" # Comentado: Dejar que @netlify/plugin-nextjs maneje el directorio de publicación
 

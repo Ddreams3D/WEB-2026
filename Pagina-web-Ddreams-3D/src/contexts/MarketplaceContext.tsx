@@ -4,14 +4,16 @@ import React, { createContext, useContext, useState, useEffect, useCallback, Rea
 import { Product, Category, ProductFilters, SearchResult, SearchResultItem } from '../shared/types';
 import {
   mockProducts,
-  mockCategories,
+  mockCategories
+} from '../shared/data/mockData';
+import {
   getProductById,
   getProductsByCategory,
   getFeaturedProducts,
   searchProducts,
   getProductsByPriceRange,
   getCategoryById
-} from '../shared/data/mockData';
+} from '../shared/data/mockDataHelpers';
 
 interface MarketplaceContextType {
   // Products
