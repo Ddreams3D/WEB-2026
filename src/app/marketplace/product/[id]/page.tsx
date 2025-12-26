@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
-import { mockProducts } from '@/shared/data/mockData';
+import { ProductService } from '@/services/product.service';
 import ProductDetailClient from './ProductDetailClient';
 
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
 }
 
 async function getProduct(id: string) {
-  return mockProducts.find((p) => p.id === id || p.slug === id);
+  return await ProductService.getProductById(id);
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

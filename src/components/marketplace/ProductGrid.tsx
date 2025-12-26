@@ -11,7 +11,6 @@ interface ProductGridProps {
   isLoading?: boolean;
   className?: string;
   showAddToCart?: boolean;
-  showWishlist?: boolean;
   emptyMessage?: string;
   skeletonCount?: number;
   customAction?: {
@@ -26,7 +25,6 @@ export function ProductGrid({
   isLoading = false,
   className = '',
   showAddToCart = true,
-  showWishlist = true,
   emptyMessage = 'No se encontraron productos',
   skeletonCount = 8,
   customAction
@@ -84,7 +82,6 @@ export function ProductGrid({
             key={product.id}
             product={product}
             showAddToCart={showAddToCart}
-            showWishlist={showWishlist}
             onViewDetails={setSelectedProduct}
             customAction={customAction}
           />
@@ -143,7 +140,6 @@ export function CompactProductGrid({
           key={product.id}
           product={product}
           showAddToCart={true}
-          showWishlist={false}
         />
       ))}
     </div>

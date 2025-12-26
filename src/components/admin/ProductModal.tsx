@@ -4,9 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { X, Upload, ImageIcon } from '@/lib/icons';
 import { useToast } from '@/components/ui/ToastManager';
 import ImageUpload from './ImageUpload';
+import { Product } from '@/shared/types';
 
-interface Product {
-  id: string;
+interface ProductFormData {
   name: string;
   description: string;
   category: string;
@@ -19,7 +19,7 @@ interface Product {
 interface ProductModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (product: Omit<Product, 'id' | 'created_at' | 'updated_at'>) => void;
+  onSave: (data: ProductFormData) => void;
   product?: Product | null;
 }
 
@@ -47,7 +47,7 @@ const materials = [
 ];
 
 export default function ProductModal({ isOpen, onClose, onSave, product }: ProductModalProps) {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ProductFormData>({
     name: '',
     description: '',
     category: '',
@@ -64,11 +64,11 @@ export default function ProductModal({ isOpen, onClose, onSave, product }: Produ
       setFormData({
         name: product.name,
         description: product.description,
-        category: product.category,
-        material: product.material,
+        category: product.categoryName || '',
+        material: product.materials?.[0] || '',
         price: product.price,
-        stock: product.stock,
-        image_url: product.image_url
+        stock: product.stock || 0,
+        image_url: product.images?.[0]?.url || ''
       });
     } else {
       setFormData({
@@ -94,6 +94,7 @@ export default function ProductModal({ isOpen, onClose, onSave, product }: Produ
     if (!formData.description.trim()) {
       newErrors.description = 'La descripción es requerida';
     }
+
 
     if (!formData.category) {
       newErrors.category = 'La categoría es requerida';

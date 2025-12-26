@@ -48,7 +48,7 @@ export default function LoginPage() {
         showSuccess('¡Bienvenido!', 'Has iniciado sesión correctamente');
         router.push('/protegido');
       } else {
-        setError('Credenciales incorrectas. Usa: admin / admin123');
+        setError('Credenciales incorrectas.');
         showError('Error de autenticación', 'Las credenciales proporcionadas no son válidas');
       }
     } catch (err) {
@@ -114,6 +114,7 @@ export default function LoginPage() {
             >
               Cuenta Personal
             </button>
+            {/* 
             <button
               type="button"
               onClick={() => setActiveTab('empresarial')}
@@ -125,6 +126,7 @@ export default function LoginPage() {
             >
               Cuenta Empresarial
             </button>
+            */}
           </div>
 
           <div className="p-8">
@@ -265,21 +267,16 @@ export default function LoginPage() {
               </div>
             )}
 
-            <div className="mt-6 p-4 bg-neutral-50 dark:bg-neutral-700 rounded-lg">
-              <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                {activeTab === 'normal' ? 'Credenciales de prueba:' : 'Información importante:'}
-              </h3>
-              <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                {activeTab === 'normal' ? (
-                  <>
-                    <strong>Usuario:</strong> admin<br />
-                    <strong>Contraseña:</strong> admin123
-                  </>
-                ) : (
-                  'Ingresa cualquier correo y contraseña para acceder al demo del portal empresarial.'
-                )}
-              </p>
-            </div>
+            {activeTab === 'empresarial' && (
+              <div className="mt-6 p-4 bg-neutral-50 dark:bg-neutral-700 rounded-lg">
+                <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                  Información importante:
+                </h3>
+                <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                  Ingresa cualquier correo y contraseña para acceder al demo del portal empresarial.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -66,14 +66,31 @@ export const B2BProvider: React.FC<B2BProviderProps> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<B2BUser | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Inicializar estado desde localStorage después del montaje para evitar errores de hidratación
+  useEffect(() => {
+    try {
+      const savedCompany = localStorage.getItem('b2b_company');
+      if (savedCompany) {
+        setCurrentCompany(JSON.parse(savedCompany));
+      }
+      
+      const savedUser = localStorage.getItem('b2b_user');
+      if (savedUser) {
+        setCurrentUser(JSON.parse(savedUser));
+      }
+    } catch (e) {
+      console.error('Error restoring B2B session:', e);
+    }
+  }, []);
+
   const isB2BUser = currentUser !== null && currentCompany !== null;
 
   // Simular carga inicial
   useEffect(() => {
     const initializeB2B = async () => {
       try {
-        // Solo verificar localStorage, no establecer automáticamente la sesión
-        // La sesión B2B debe ser activada explícitamente por el usuario
+        // Intentar restaurar sesión si existe
+        restoreB2BSession();
         setLoading(false);
       } catch (error) {
         console.error('Error initializing B2B:', error);

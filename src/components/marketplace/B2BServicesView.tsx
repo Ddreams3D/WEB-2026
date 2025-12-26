@@ -1,15 +1,44 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight, FileText } from 'lucide-react';
-import { mockProducts } from '@/shared/data/mockData';
+import { ProductService } from '@/services/product.service';
+import { isFirebaseConfigured } from '@/lib/firebase';
 import { ProductCard } from './ProductCard';
 
 import { Product } from '@/shared/types';
 
 export const B2BServicesView = () => {
+  const [b2bProducts, setB2BProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
   // IDs of B2B services/products
   const b2bProductIds = ['7', '8', '9'];
-  const b2bProducts = mockProducts.filter((product: Product) => b2bProductIds.includes(product.id));
+
+  useEffect(() => {
+    const loadB2BProducts = async () => {
+      try {
+        const allProducts = await ProductService.getAllProducts();
+        const filtered = allProducts.filter((product: Product) => b2bProductIds.includes(product.id));
+        setB2BProducts(filtered);
+      } catch (error) {
+        console.error('Error loading B2B products:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadB2BProducts();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-12 animate-fade-in">
@@ -40,7 +69,7 @@ export const B2BServicesView = () => {
             key={product.id} 
             product={product} 
             showAddToCart={false}
-            showWishlist={true}
+            source="services"
             customAction={{
               label: "Solicitar Cotización",
               href: "/contact",

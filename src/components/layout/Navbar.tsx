@@ -156,7 +156,7 @@ const Navbar: React.FC = () => {
 
           {/* Desktop Actions */}
           <div className="hidden lg:flex items-center space-x-3">
-            {/* B2B Menu */}
+            {/* B2B Menu - HIDDEN TEMPORARILY
             {isB2BUser ? (
               <div className="relative">
                 <button
@@ -172,7 +172,6 @@ const Navbar: React.FC = () => {
                   <span>Portal B2B</span>
                 </button>
 
-                {/* B2B Dropdown */}
                 {isB2BMenuOpen && (
                   <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-neutral-800 rounded-xl shadow-2xl border border-neutral-200 dark:border-neutral-700 py-2 z-50 navbar-menu">
                     {currentCompany && (
@@ -242,6 +241,7 @@ const Navbar: React.FC = () => {
                 <span>Acceso B2B</span>
               </Link>
             )}
+            */}
 
             {/* Quote Button */}
             <Link
@@ -372,7 +372,7 @@ const Navbar: React.FC = () => {
               ))}
             </div>
 
-            {/* Mobile B2B Section */}
+            {/* Mobile B2B Section - HIDDEN TEMPORARILY
             {isB2BUser ? (
               <div className="border-t border-neutral-200 dark:border-neutral-700 pt-4">
                 <div className="mb-3">
@@ -442,6 +442,7 @@ const Navbar: React.FC = () => {
                 </Link>
               </div>
             )}
+            */}
 
             {/* Mobile Quote Button */}
             <div className="pt-4">

@@ -80,7 +80,6 @@ const Navbar: React.FC = () => {
         !target.closest('.navbar-toggle') &&
         !target.closest('.user-menu-button')
       ) {
-        console.log('prueba');
         setIsOpen(false);
         setIsUserMenuOpen(false);
       }
@@ -169,6 +168,38 @@ const Navbar: React.FC = () => {
 
           {/* Desktop Actions */}
           <div className="hidden lg:flex items-center space-x-3">
+            {/* Google Login Icon */}
+            {!user && (
+              <Link
+                href="/login"
+                className={`flex items-center justify-center p-2 rounded-lg transition-all duration-300 ease-out transform hover:scale-105 ${
+                  isScrolled
+                    ? 'hover:bg-neutral-100'
+                    : 'hover:bg-white/20'
+                }`}
+                aria-label="Iniciar sesión con Google"
+              >
+                <svg className="w-6 h-6" viewBox="0 0 24 24">
+                  <path
+                    fill="#4285F4"
+                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                  />
+                  <path
+                    fill="#34A853"
+                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                  />
+                  <path
+                    fill="#EA4335"
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                  />
+                </svg>
+              </Link>
+            )}
+
             {/* Quote Button */}
             <Link
               href="/contact"
@@ -229,7 +260,7 @@ const Navbar: React.FC = () => {
                     <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-neutral-800 rounded-full animate-pulse"></div>
                   </div>
 
-                  <div className="hidden xl:flex xl:flex-col xl:items-start">
+                  <span className="hidden xl:flex xl:flex-col xl:items-start">
                     <span className="text-sm font-medium leading-tight">
                       {user.username || 'Usuario'}
                     </span>
@@ -242,7 +273,7 @@ const Navbar: React.FC = () => {
                     >
                       En línea
                     </span>
-                  </div>
+                  </span>
 
                   <ChevronDown
                     className={`w-4 h-4 ${getTransitionClasses('transform')} ${
@@ -260,83 +291,32 @@ const Navbar: React.FC = () => {
                     aria-labelledby="user-menu-button"
                     style={{ display: 'block' }}
                   >
-                    {/* User Info Header */}
-                    <div className="px-4 py-3 border-b border-neutral-200 dark:border-neutral-700">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
-                          <User className="w-5 h-5 text-primary-700 dark:text-primary-300" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-neutral-900 dark:text-white">
-                            {user.username || 'Usuario'}
-                          </p>
-                          <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                            {user.email || 'usuario@ejemplo.com'}
-                          </p>
+                    {/* User Header */}
+                    <Link href="/profile" onClick={() => setIsUserMenuOpen(false)}>
+                      <div className="px-4 py-3 border-b border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/50 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
+                            <span className="text-primary-700 dark:text-primary-300 font-bold text-lg">
+                              {(user.username || 'U')[0].toUpperCase()}
+                            </span>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-neutral-900 dark:text-white">
+                              {user.username || 'Usuario'}
+                            </p>
+                            <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                              {user.email || 'usuario@ejemplo.com'}
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    </Link>
 
                     {/* Menu Items */}
                     <div className="py-1">
-                      <Link
-                        href="/profile"
-                        className={`flex items-center space-x-3 px-4 py-3 text-sm text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 focus:bg-neutral-100 dark:focus:bg-neutral-700 focus:outline-none ${getTransitionClasses(
-                          'colors'
-                        )}`}
-                        onClick={() => setIsUserMenuOpen(false)}
-                        role="menuitem"
-                        tabIndex={0}
-                      >
-                        <UserCircle className={getIconClasses('sm')} />
-                        <div>
-                          <span className="font-medium">Perfil de usuario</span>
-                          <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                            Gestiona tu información personal
-                          </p>
-                        </div>
-                      </Link>
 
-                      <Link
-                        href="/wishlist"
-                        className={`flex items-center space-x-3 px-4 py-3 text-sm text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 focus:bg-neutral-100 dark:focus:bg-neutral-700 focus:outline-none ${getTransitionClasses(
-                          'colors'
-                        )}`}
-                        onClick={() => setIsUserMenuOpen(false)}
-                        role="menuitem"
-                        tabIndex={0}
-                      >
-                        <Heart className={getIconClasses('sm')} />
-                        <div>
-                          <span className="font-medium">Lista de deseos</span>
-                          <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                            Productos que te interesan
-                          </p>
-                        </div>
-                      </Link>
-
-                      <Link
-                        href="/addresses"
-                        className={`flex items-center space-x-3 px-4 py-3 text-sm text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 focus:bg-neutral-100 dark:focus:bg-neutral-700 focus:outline-none ${getTransitionClasses(
-                          'colors'
-                        )}`}
-                        onClick={() => setIsUserMenuOpen(false)}
-                        role="menuitem"
-                        tabIndex={0}
-                      >
-                        <MapPin className={getIconClasses('sm')} />
-                        <div>
-                          <span className="font-medium">
-                            Direcciones guardadas
-                          </span>
-                          <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                            Gestiona tus direcciones de envío
-                          </p>
-                        </div>
-                      </Link>
-
-                      <Link
-                        href="/orders"
+                      {/* <Link
+                        href="/pedidos"
                         className={`flex items-center space-x-3 px-4 py-3 text-sm text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 focus:bg-neutral-100 dark:focus:bg-neutral-700 focus:outline-none ${getTransitionClasses(
                           'colors'
                         )}`}
@@ -351,7 +331,7 @@ const Navbar: React.FC = () => {
                             Historial de compras
                           </p>
                         </div>
-                      </Link>
+                      </Link> */}
 
                       {isAdmin && (
                         <Link
@@ -403,12 +383,12 @@ const Navbar: React.FC = () => {
                         tabIndex={0}
                       >
                         <LogOut className={getIconClasses('sm')} />
-                        <div>
+                        <span className="flex flex-col items-start">
                           <span className="font-medium">Cerrar sesión</span>
-                          <p className="text-xs text-red-500 dark:text-red-400">
+                          <span className="text-xs text-red-500 dark:text-red-400">
                             Salir de tu cuenta
-                          </p>
-                        </div>
+                          </span>
+                        </span>
                       </button>
                     </div>
                   </div>

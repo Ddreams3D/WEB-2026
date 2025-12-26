@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useCart } from '../../contexts/CartContext';
-import { useAuthMock } from '../../contexts/AuthMockContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft, MessageSquare } from '@/lib/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -20,7 +20,7 @@ export default function CartPage() {
     removeFromCart,
     isLoading,
   } = useCart();
-  const { isAuthenticated } = useAuthMock();
+  const { isAuthenticated } = useAuth();
   const router = useRouter();
 
   const handleQuantityChange = (productId: string, newQuantity: number) => {
@@ -35,6 +35,18 @@ export default function CartPage() {
     let message = "Hola Ddreams3D, me gustaría realizar el siguiente pedido:\n\n";
     items.forEach(item => {
       message += `* ${item.product.name} (x${item.quantity}) - S/ ${(item.product.price * item.quantity).toFixed(2)}\n`;
+      
+      // Incluir personalizaciones si existen
+      if (item.customizations && item.customizations.length > 0) {
+        item.customizations.forEach((cust: any) => {
+          message += `  - ${cust.name}: ${cust.value}\n`;
+        });
+      }
+      
+      // Incluir notas si existen
+      if (item.notes) {
+        message += `  - Nota: ${item.notes}\n`;
+      }
     });
     message += `\n*Total a pagar: S/ ${total.toFixed(2)}*\n\n`;
     message += "Quedo atento para coordinar el pago y envío. ¡Gracias!";

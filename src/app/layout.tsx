@@ -80,7 +80,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={inter.variable} suppressHydrationWarning>
-      <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || ''} />
+      {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID && (
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />
+      )}
       <head>
         <script
           dangerouslySetInnerHTML={{

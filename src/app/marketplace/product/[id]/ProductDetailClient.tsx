@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Product } from '@/shared/types';
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/components/ui/ToastManager';
@@ -17,13 +17,53 @@ interface Props {
   product: Product;
 }
 
-export default function ProductDetailClient({ product }: Props) {
+export default function ProductDetailClient({ product: initialProduct }: Props) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const fromSource = searchParams.get('from');
+
+  const [product, setProduct] = useState<Product>(initialProduct);
+
+  // Sync with localStorage for Admin Panel updates
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedProducts = localStorage.getItem('marketplace_products');
+      if (storedProducts) {
+        try {
+          const parsed = JSON.parse(storedProducts);
+          const found = parsed.find((p: any) => p.id === initialProduct.id);
+          if (found) {
+             // Hydrate dates
+             const hydrated = {
+               ...found,
+               createdAt: new Date(found.createdAt),
+               updatedAt: new Date(found.updatedAt),
+               images: found.images?.map((img: any) => ({
+                 ...img,
+                 createdAt: img.createdAt ? new Date(img.createdAt) : undefined,
+                 updatedAt: img.updatedAt ? new Date(img.updatedAt) : undefined
+               }))
+             };
+             setProduct(hydrated);
+          }
+        } catch (e) {
+          console.error('Error syncing product from storage:', e);
+        }
+      }
+    }
+  }, [initialProduct.id]);
+
   const { addToCart } = useCart();
   const { showToast } = useToast();
   const [selectedImageId, setSelectedImageId] = useState<string>(
     product.images.find(img => img.isPrimary)?.id || product.images[0]?.id
   );
+  
+  // Update selectedImageId if product changes (e.g. from storage sync)
+  useEffect(() => {
+     setSelectedImageId(product.images.find(img => img.isPrimary)?.id || product.images[0]?.id);
+  }, [product]);
+
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(() => {
     // Inicializar opciones por defecto
     const defaults: Record<string, string> = {};
@@ -148,11 +188,11 @@ export default function ProductDetailClient({ product }: Props) {
   return (
     <div className="container mx-auto px-4 pt-24 pb-12 lg:pt-32 lg:pb-20 max-w-7xl font-sans text-gray-900 dark:text-gray-100 min-h-screen">
       <Link 
-        href="/marketplace" 
+        href={fromSource === 'services' ? '/services' : '/marketplace'} 
         className="inline-flex items-center px-4 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 rounded-full text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-primary hover:text-primary hover:bg-primary/5 transition-all group shadow-sm mb-8"
       >
         <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
-        Volver al Marketplace
+        {fromSource === 'services' ? 'Volver a Servicios' : 'Volver al Marketplace'}
       </Link>
 
       <div className="grid grid-cols-1 lg:grid-cols-[45%_55%] gap-10 lg:gap-16 items-start">

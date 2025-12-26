@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 import { User, Mail, Phone, MapPin, Calendar, Edit3, Save, X, Camera } from '@/lib/icons';
-import { useAuthMock } from '@/contexts/AuthMockContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function ProfilePage() {
-  const { user, updateUser, isLoading } = useAuthMock();
+  const { user, isLoading, updateUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({

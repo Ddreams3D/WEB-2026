@@ -33,9 +33,9 @@ export default function AboutCTA() {
                 href="/contact"
                 aria-label="Solicitar cotización"
                 msgLg="Solicitar cotización"
-                iconRight={
+                icon={
                   <ArrowRight
-                    className={` text-white ml-2  ${getIconClasses('md')}`}
+                    className={getIconClasses('md', 'white')}
                     aria-hidden="true"
                   />
                 }

@@ -13,25 +13,27 @@ interface ProductCardProps {
   product: Product;
   className?: string;
   showAddToCart?: boolean;
-  showWishlist?: boolean;
   onViewDetails?: (product: Product) => void;
   customAction?: {
     label: string;
     href: string;
     icon?: React.ReactNode;
   };
+  source?: string;
 }
 
 export function ProductCard({ 
   product, 
   className = '', 
   showAddToCart = true, 
-  showWishlist = true,
   onViewDetails,
-  customAction
+  customAction,
+  source
 }: ProductCardProps) {
   const { addToCart } = useCart();
   const { showToast } = useToast();
+
+  const productUrl = `/marketplace/product/${product.slug || product.id}${source ? `?from=${source}` : ''}`;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -39,14 +41,6 @@ export function ProductCard({
     
     addToCart(product, 1);
     showToast('success', 'Producto agregado', `${product.name} agregado al carrito`);
-  };
-
-  const handleWishlist = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    // TODO: Implement wishlist functionality
-    showToast('info', 'Wishlist', 'Funcionalidad de wishlist próximamente');
   };
 
   const primaryImage = product.images.find((img: any) => img.isPrimary) || product.images[0];
@@ -72,18 +66,7 @@ export function ProductCard({
         </div>
       )}
 
-      {/* Wishlist Button */}
-      {showWishlist && (
-        <button
-          onClick={handleWishlist}
-          className="absolute top-3 right-3 z-10 p-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-white dark:hover:bg-gray-700"
-          aria-label="Agregar a wishlist"
-        >
-          <Heart className="w-4 h-4 text-gray-600 dark:text-gray-300 hover:text-red-500" />
-        </button>
-      )}
-
-      <Link href={`/marketplace/product/${product.slug || product.id}`} className="flex-1 flex flex-col">
+      <Link href={productUrl} className="flex-1 flex flex-col">
         {/* Product Image */}
         <div className="relative aspect-[4/3] overflow-hidden bg-gray-50 dark:bg-gray-800/50">
           <ProductImage
@@ -166,7 +149,7 @@ export function ProductCard({
           </button>
         ) : (
           <Link 
-            href={`/marketplace/product/${product.id}`}
+            href={productUrl}
             className="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 py-2 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center text-sm"
           >
             Ver detalles
@@ -176,7 +159,7 @@ export function ProductCard({
         {customAction ? (
           <Link
             href={customAction.href}
-            className="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center space-x-2 group/btn text-sm"
+            className="w-full bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-secondary-500 hover:to-primary-500 text-white py-2 px-4 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg flex items-center justify-center space-x-2 group/btn text-sm"
           >
             {customAction.icon}
             <span>{customAction.label}</span>
@@ -184,7 +167,7 @@ export function ProductCard({
         ) : showAddToCart && (
           <button
             onClick={handleAddToCart}
-            className="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center space-x-2 group/btn text-sm"
+            className="w-full bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-secondary-500 hover:to-primary-500 text-white py-2 px-4 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg flex items-center justify-center space-x-2 group/btn text-sm"
           >
             <ShoppingCart className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
             <span>Agregar al Carrito</span>

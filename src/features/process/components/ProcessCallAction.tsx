@@ -34,9 +34,9 @@ export default function ProcessCallAction() {
                 href="/contact"
                 aria-label="Ir a la página de contacto"
                 msgLg="Contactar ahora"
-                iconRight={
+                icon={
                   <ArrowRight
-                    className={` text-white ml-2  ${getIconClasses('md')}`}
+                    className={` text-white ${getIconClasses('md')}`}
                     aria-hidden="true"
                   />
                 }

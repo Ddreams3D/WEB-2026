@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { WHATSAPP_REDIRECT } from '@/shared/constants/infoBusiness';
 import ButtonRedirectWhatsapp from '@/shared/components/ButtonRedirectWhatsapp';
 import ButtonPrincipal from '@/shared/components/ButtonPrincipal';
-import { getGradientClasses } from '@/shared/styles';
+import { getGradientClasses, getIconClasses } from '@/shared/styles';
+import { ArrowRight } from '@/lib/icons';
 
 export default function ServicesCTA() {
   return (
@@ -34,7 +35,16 @@ export default function ServicesCTA() {
               className="flex flex-col sm:flex-row gap-6 justify-center"
               aria-label="Opciones de contacto"
             >
-              <ButtonPrincipal href="/contact" msgLg="Solicitar Cotización" />
+              <ButtonPrincipal
+                href="/contact"
+                msgLg="Solicitar Cotización"
+                icon={
+                  <ArrowRight
+                    className={getIconClasses('md', 'white')}
+                    aria-hidden="true"
+                  />
+                }
+              />
               <ButtonRedirectWhatsapp />
             </nav>
           </div>

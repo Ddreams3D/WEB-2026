@@ -3,7 +3,6 @@ import AboutHero from './components/AboutHero';
 import AboutStadistics from './components/AboutStadistics';
 import AboutHistory from './components/AboutHistory';
 import AboutValues from './components/AboutValues';
-import AboutTeam from './components/AboutTeam';
 import AboutMisionVision from './components/AboutMisionVision';
 import AboutCTA from './components/AboutCTA';
 
@@ -23,8 +22,6 @@ export default function AboutPageClient() {
 
         {/* Valores Mejorados */}
         <AboutValues />
-        {/* Equipo Mejorado */}
-        <AboutTeam />
         
         {/* CTA */}
         <AboutCTA />

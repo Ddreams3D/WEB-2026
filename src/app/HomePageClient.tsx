@@ -107,9 +107,9 @@ export default function HomePageClient() {
                   href="/contact"
                   aria-describedby="cta-heading"
                   msgLg="Solicitar cotización"
-                  iconRight={
+                  icon={
                     <ArrowRight
-                      className={` text-white ml-2  ${getIconClasses('md')}`}
+                      className={` text-white ${getIconClasses('md')}`}
                       aria-hidden="true"
                     />
                   }

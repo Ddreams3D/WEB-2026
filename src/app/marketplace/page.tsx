@@ -8,7 +8,6 @@ import { ProductFilters as ProductFiltersComponent } from '@/components/marketpl
 import { B2BServicesView } from '@/components/marketplace/B2BServicesView';
 import { useMarketplace } from '@/contexts/MarketplaceContext';
 import { ProductFilters as ProductFiltersType, Product } from '@/shared/types';
-import { mockProducts } from '@/shared/data/mockData';
 import PageHeader from '@/shared/components/PageHeader';
 
 type ViewMode = 'grid' | 'list';
@@ -16,6 +15,7 @@ type ViewMode = 'grid' | 'list';
 export default function MarketplacePage() {
   const {
     products,
+    allProducts,
     categories,
     searchQuery,
     searchResults,
@@ -46,7 +46,7 @@ export default function MarketplacePage() {
 
   // Calculate base products for filter counts (only products, no services)
   const baseProducts = React.useMemo(() => {
-    let filtered = mockProducts;
+    let filtered = allProducts;
     
     // If searching, restrict to search results
     if (searchQuery.trim()) {
@@ -56,7 +56,7 @@ export default function MarketplacePage() {
 
     // Always filter out services (customPriceDisplay)
     return filtered.filter(p => !p.customPriceDisplay);
-  }, [searchQuery, searchResults]);
+  }, [searchQuery, searchResults, allProducts]);
 
   const displayProducts = getDisplayProducts();
   const productCount = products.filter(p => !p.customPriceDisplay).length;
@@ -163,15 +163,14 @@ export default function MarketplacePage() {
 
             {/* Products Display */}
             {viewMode === 'grid' ? (
-              <ProductGrid
-                products={displayProducts}
+              <ProductGrid 
+                products={displayProducts} 
                 isLoading={isLoading}
                 showAddToCart={true}
-                showWishlist={true}
                 emptyMessage={
                   searchQuery.trim()
                     ? `No se encontraron resultados para "${searchQuery}"`
-                    : 'No hay productos disponibles'
+                    : 'No hay productos disponibles en esta categoría'
                 }
               />
             ) : (

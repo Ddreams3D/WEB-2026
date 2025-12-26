@@ -2,12 +2,32 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '../shared/lib/supabase';
+import { 
+  GoogleAuthProvider, 
+  signInWithPopup, 
+  signOut, 
+  onAuthStateChanged, 
+  User as FirebaseUser,
+  signInWithEmailAndPassword,
+  setPersistence,
+  browserLocalPersistence
+} from 'firebase/auth';
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { auth, db } from '@/lib/firebase';
+import { useToast } from '@/components/ui/ToastManager';
+import { isSuperAdmin } from '@/config/roles';
 
 interface User {
   id: string;
   username: string;
   email: string;
+  photoURL?: string;
+  role?: string;
+  // Campos extendidos de perfil
+  name?: string;
+  phone?: string;
+  address?: string;
+  birthDate?: string;
 }
 
 interface AuthContextType {
@@ -18,28 +38,21 @@ interface AuthContextType {
   loginWithGoogle: () => Promise<void>;
   logout: () => void;
   checkAuth: () => boolean;
+  updateUser: (data: Partial<User>) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Credenciales simuladas para el sistema sin backend
+// Credenciales simuladas para fallback (admin legacy)
 const MOCK_CREDENTIALS = [
   {
     username: 'admin',
     password: 'admin123',
     user: {
-      id: '1',
-      username: 'admin',
-      email: 'admin@ddreams3d.com'
-    }
-  },
-  {
-    username: 'dreamings.desings.3d@gmail.com',
-    password: 'cuentaadmin1',
-    user: {
-      id: '2',
-      username: 'dreamings.desings.3d',
-      email: 'dreamings.desings.3d@gmail.com'
+      id: 'admin-legacy',
+      username: 'Admin User',
+      email: 'admin@ddreams3d.com',
+      role: 'admin'
     }
   }
 ];
@@ -47,66 +60,194 @@ const MOCK_CREDENTIALS = [
 const AUTH_TOKEN_KEY = 'ddreams_auth_token';
 const AUTH_USER_KEY = 'ddreams_auth_user';
 
+// Variables globales para control de sincronización (Singleton pattern)
+let globalLastSync = 0;
+let globalIsSyncing = false;
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  const { showToast } = useToast();
 
   const isAuthenticated = !!user;
 
-  // Verificar autenticación al cargar la aplicación
-  useEffect(() => {
-    checkStoredAuth();
-    
-    // Escuchar cambios de autenticación de Supabase
-    let subscription: { unsubscribe: () => void } | null = null;
+  // Función auxiliar para comparar usuarios y evitar re-renders innecesarios
+  const setUserIfChanged = (newUser: User | null) => {
+    setUser(prevUser => {
+      if (JSON.stringify(prevUser) === JSON.stringify(newUser)) {
+        return prevUser;
+      }
+      return newUser;
+    });
+  };
 
-    if (supabase) {
-      const { data } = supabase.auth.onAuthStateChange(
-        async (event, session) => {
-          if (event === 'SIGNED_IN' && session?.user) {
-            const userData = {
-              id: session.user.id,
-              username: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Usuario',
-              email: session.user.email || ''
-            };
-            setUser(userData);
-            localStorage.setItem(AUTH_USER_KEY, JSON.stringify(userData));
-          } else if (event === 'SIGNED_OUT') {
-            setUser(null);
+  // Inicializar estado desde localStorage después del montaje para evitar errores de hidratación
+  useEffect(() => {
+    try {
+      const storedUser = localStorage.getItem(AUTH_USER_KEY);
+      if (storedUser) {
+        setUserIfChanged(JSON.parse(storedUser));
+      }
+    } catch (e) {
+      console.error('Error parsing stored user:', e);
+    }
+  }, []);
+
+
+  // Verificar autenticación al cargar la aplicación con Firebase
+  useEffect(() => {
+    // Asegurar persistencia local
+    setPersistence(auth, browserLocalPersistence)
+      .catch(error => console.error("Error setting persistence:", error));
+
+    // Escuchar cambios de autenticación de Firebase
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        // 1. Evitar sincronizaciones concurrentes (Global lock)
+        if (globalIsSyncing) return;
+        
+        // 2. Throttle global en memoria (5 segundos) para evitar rebotes rápidos
+        const now = Date.now();
+        if (now - globalLastSync < 5000) {
+           setIsLoading(false);
+           return;
+        }
+
+        // 3. Verificar si necesitamos sincronizar con Firestore (5 minutos persistente)
+        const lastSyncTimeStr = localStorage.getItem('last_auth_sync');
+        const lastSyncTime = lastSyncTimeStr ? parseInt(lastSyncTimeStr) : 0;
+        const shouldSync = !lastSyncTime || (now - lastSyncTime > 5 * 60 * 1000);
+        
+        // 4. Verificar caché local
+        const storedUserJson = localStorage.getItem(AUTH_USER_KEY);
+        let storedUser: User | null = null;
+        try {
+          if (storedUserJson) storedUser = JSON.parse(storedUserJson);
+        } catch (e) { console.error(e); }
+
+        // Si tenemos usuario local, coincide el ID y no toca sincronizar, usamos caché local
+        if (storedUser && storedUser.id === firebaseUser.uid && !shouldSync) {
+            setUserIfChanged(storedUser);
+            setIsLoading(false);
+            return;
+        }
+
+        // Iniciar sincronización
+        globalIsSyncing = true;
+
+        // Usuario base de Firebase
+        const userData: User = {
+          id: firebaseUser.uid,
+          username: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Usuario',
+          email: firebaseUser.email || '',
+          photoURL: firebaseUser.photoURL || '',
+        };
+
+        // Sincronizar con Firestore
+        try {
+          // Actualizar timestamps
+          if (shouldSync) {
+            globalLastSync = now;
+            localStorage.setItem('last_auth_sync', now.toString());
+          }
+
+          const userRef = doc(db, 'users', firebaseUser.uid);
+          
+          // Leer de Firestore
+          const userSnap = await getDoc(userRef);
+          
+          if (!userSnap.exists()) {
+            // Crear nuevo usuario
+            const initialRole = isSuperAdmin(firebaseUser.email) ? 'admin' : 'user';
+            
+            await setDoc(userRef, {
+              ...userData,
+              createdAt: serverTimestamp(),
+              lastLogin: serverTimestamp(),
+              role: initialRole,
+              isActive: true
+            });
+            userData.role = initialRole;
+          } else {
+            // Usuario existente
+            const currentData = userSnap.data();
+            let userRole = currentData.role || 'user';
+            
+            // Forzar admin si corresponde
+            if (isSuperAdmin(firebaseUser.email) && userRole !== 'admin') {
+              userRole = 'admin';
+              await setDoc(userRef, { role: 'admin' }, { merge: true });
+            }
+
+            userData.role = userRole; 
+            
+            // Completar datos del perfil
+            userData.name = currentData.name || userData.username;
+            userData.phone = currentData.phone;
+            userData.address = currentData.address;
+            userData.birthDate = currentData.birthDate;
+            
+            // Actualizar lastLogin si toca sync
+            if (shouldSync) {
+              await setDoc(userRef, {
+                lastLogin: serverTimestamp()
+              }, { merge: true });
+            }
+          }
+        } catch (error) {
+          console.error('Error syncing user to Firestore:', error);
+        } finally {
+          globalIsSyncing = false;
+        }
+
+        setUserIfChanged(userData);
+        localStorage.setItem(AUTH_USER_KEY, JSON.stringify(userData));
+        localStorage.setItem(AUTH_TOKEN_KEY, await firebaseUser.getIdToken());
+      } else {
+        // No hay usuario de Firebase
+        const token = localStorage.getItem(AUTH_TOKEN_KEY);
+        if (token && token.startsWith('mock_token_')) {
+          checkStoredAuth();
+        } else {
+          // Logout real
+          if (user) { 
             localStorage.removeItem(AUTH_TOKEN_KEY);
             localStorage.removeItem(AUTH_USER_KEY);
+            setUserIfChanged(null);
           }
-          setIsLoading(false);
         }
-      );
-      subscription = data.subscription;
-    } else {
-      // Si no hay Supabase, terminamos la carga
+      }
       setIsLoading(false);
-    }
+    });
 
-    return () => {
-      if (subscription) subscription.unsubscribe();
-    };
+    return () => unsubscribe();
   }, []);
 
   const checkStoredAuth = () => {
     try {
-      const token = localStorage.getItem(AUTH_TOKEN_KEY);
       const storedUser = localStorage.getItem(AUTH_USER_KEY);
+      const token = localStorage.getItem(AUTH_TOKEN_KEY);
       
-      if (token && storedUser) {
-        const userData = JSON.parse(storedUser);
-        setUser(userData);
+      if (storedUser && token) {
+        // Si hay datos en localStorage pero no en Firebase (o Firebase aún no cargó),
+        // podría ser una sesión mock.
+        // Pero si onAuthStateChanged disparó 'null', significa que Firebase ya verificó y no hay sesión real.
+        // Solo restauramos si parece ser una sesión mock (token empieza con mock_)
+        if (token.startsWith('mock_token_')) {
+          setUser(JSON.parse(storedUser));
+        } else {
+          // Si era token real pero Firebase dice null, limpiamos
+          localStorage.removeItem(AUTH_TOKEN_KEY);
+          localStorage.removeItem(AUTH_USER_KEY);
+          setUser(null);
+        }
+      } else {
+        setUser(null);
       }
     } catch (error) {
       console.error('Error checking stored auth:', error);
-      // Limpiar datos corruptos
-      localStorage.removeItem(AUTH_TOKEN_KEY);
-      localStorage.removeItem(AUTH_USER_KEY);
-    } finally {
-      setIsLoading(false);
+      setUser(null);
     }
   };
 
@@ -114,29 +255,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       setIsLoading(true);
       
-      // Simular delay de autenticación
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Validar credenciales
-      const validCredential = MOCK_CREDENTIALS.find(
-        cred => (cred.username === username || cred.user.email === username) && cred.password === password
-      );
-      
-      if (validCredential) {
-        // Generar token simulado
-        const token = `mock_token_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      // 1. Intentar Login con Firebase (Email/Password)
+      try {
+        await signInWithEmailAndPassword(auth, username, password);
+        return true; // onAuthStateChanged manejará el estado
+      } catch (firebaseError: any) {
+        // Si falla Firebase (ej: usuario no encontrado), intentar Mock
+        console.log('Firebase login failed, trying mock credentials...', firebaseError.code);
         
-        // Guardar en localStorage
-        localStorage.setItem(AUTH_TOKEN_KEY, token);
-        localStorage.setItem(AUTH_USER_KEY, JSON.stringify(validCredential.user));
+        // 2. Intentar Mock Credentials
+        const validCredential = MOCK_CREDENTIALS.find(
+          cred => (cred.username === username || cred.user.email === username) && cred.password === password
+        );
         
-        // Actualizar estado
-        setUser(validCredential.user);
-        
-        return true;
-      } else {
-        return false;
+        if (validCredential) {
+          const token = `mock_token_${Date.now()}`;
+          const userData = validCredential.user;
+          
+          localStorage.setItem(AUTH_TOKEN_KEY, token);
+          localStorage.setItem(AUTH_USER_KEY, JSON.stringify(userData));
+          setUser(userData);
+          return true;
+        }
       }
+      
+      return false;
     } catch (error) {
       console.error('Error during login:', error);
       return false;
@@ -147,48 +290,64 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginWithGoogle = async (): Promise<void> => {
     try {
-      if (!supabase) {
-        console.warn('Supabase no está configurado. Login con Google no disponible.');
-        return;
-      }
       setIsLoading(true);
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback?next=/protegido`
-        }
-      });
-      
-      if (error) {
-        console.error('Error during Google login:', error);
-        setIsLoading(false);
-        throw error;
-      }
-      
-      // En el navegador, signInWithOAuth redirige automáticamente
-      // No necesitamos hacer nada más aquí
-    } catch (error) {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+      // onAuthStateChanged manejará el resto
+      showToast('success', 'Bienvenido', 'Has iniciado sesión con Google correctamente');
+    } catch (error: any) {
       console.error('Google login failed:', error);
+      showToast('error', 'Error de inicio de sesión', error.message || 'No se pudo iniciar sesión con Google');
       setIsLoading(false);
       throw error;
     }
   };
 
+  const updateUser = async (data: Partial<User>): Promise<boolean> => {
+    if (!user) return false;
+    
+    try {
+      setIsLoading(true);
+      // Si es un usuario legacy (mock), solo actualizamos localStorage
+      if (user.id === 'admin-legacy' || user.id.startsWith('mock_')) {
+        const updatedUser = { ...user, ...data };
+        setUser(updatedUser);
+        localStorage.setItem(AUTH_USER_KEY, JSON.stringify(updatedUser));
+        showToast('success', 'Perfil actualizado', 'Datos guardados localmente (Modo Mock)');
+        return true;
+      }
+
+      // Usuario Firebase
+      const userRef = doc(db, 'users', user.id);
+      
+      // Update in Firestore
+      await setDoc(userRef, {
+        ...data,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+      
+      // Update local state
+      const updatedUser = { ...user, ...data };
+      setUser(updatedUser);
+      localStorage.setItem(AUTH_USER_KEY, JSON.stringify(updatedUser));
+      
+      showToast('success', 'Perfil actualizado', 'Tus datos se han guardado correctamente');
+      return true;
+    } catch (error: any) {
+      console.error('Error updating user:', error);
+      showToast('error', 'Error', error.message || 'No se pudo actualizar el perfil');
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const logout = async () => {
     try {
-      // Logout de Supabase
-      if (supabase) {
-        await supabase.auth.signOut();
-      }
-      
-      // Limpiar localStorage
+      await signOut(auth);
       localStorage.removeItem(AUTH_TOKEN_KEY);
       localStorage.removeItem(AUTH_USER_KEY);
-      
-      // Limpiar estado
       setUser(null);
-      
-      // Redirigir a login
       router.push('/login');
     } catch (error) {
       console.error('Error during logout:', error);
@@ -196,9 +355,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const checkAuth = (): boolean => {
-    const token = localStorage.getItem(AUTH_TOKEN_KEY);
-    const storedUser = localStorage.getItem(AUTH_USER_KEY);
-    return !!(token && storedUser);
+    return !!user;
   };
 
   const value: AuthContextType = {
@@ -208,7 +365,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     login,
     loginWithGoogle,
     logout,
-    checkAuth
+    checkAuth,
+    updateUser
   };
 
   return (

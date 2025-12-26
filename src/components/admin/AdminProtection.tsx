@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { isSuperAdmin, ADMIN_EMAILS } from '@/config/roles';
 import { ShieldAlert } from '@/lib/icons';
 
 interface AdminProtectionProps {
@@ -10,25 +11,21 @@ interface AdminProtectionProps {
   requiredRole?: 'admin' | 'moderator';
 }
 
-// Lista de usuarios administradores (en un entorno real esto vendría del backend)
-const ADMIN_EMAILS = [
-  'admin@mapasconceptuales.com',
-  'administrador@ejemplo.com',
-  'admin@test.com',
-  'dreamings.desings.3d@gmail.com'
-];
-
 // Función para verificar si un usuario es administrador
 function isUserAdmin(userEmail: string | undefined): boolean {
-  if (!userEmail) return false;
-  return ADMIN_EMAILS.includes(userEmail.toLowerCase());
+  return isSuperAdmin(userEmail);
 }
 
 // Función para verificar permisos desde localStorage
-function getUserPermissions(userEmail: string | undefined) {
+function getUserPermissions(userEmail: string | undefined, userRole: string | undefined) {
   if (!userEmail) return { isAdmin: false, role: 'user' };
   
-  // Verificar en la lista de administradores
+  // Verificar rol directo del usuario (desde AuthContext/Firestore)
+  if (userRole === 'admin') {
+    return { isAdmin: true, role: 'admin' };
+  }
+
+  // Verificar en la lista de administradores (config)
   if (isUserAdmin(userEmail)) {
     return { isAdmin: true, role: 'admin' };
   }
@@ -69,7 +66,7 @@ export default function AdminProtection({ children, requiredRole = 'admin' }: Ad
     }
 
     // Verificar permisos del usuario
-    const permissions = getUserPermissions(user.email);
+    const permissions = getUserPermissions(user.email, user.role);
     
     if (!permissions.isAdmin) {
       // Usuario sin permisos de administrador
@@ -169,7 +166,7 @@ export function useAdminPermissions() {
 
   useEffect(() => {
     if (user?.email) {
-      const userPermissions = getUserPermissions(user.email);
+      const userPermissions = getUserPermissions(user.email, user.role);
       setPermissions(userPermissions);
     } else {
       setPermissions({ isAdmin: false, role: 'user' });

@@ -37,7 +37,7 @@ export default function ButtonPrincipal({
   const content = isLoading ? (
     <>
       <div
-        className="rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-white mr-2 animate-spin"
+        className="rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-white animate-spin"
         aria-hidden="true"
       />
       <span>{msgLoading ? msgLoading : 'Cargando'}</span>
@@ -52,7 +52,7 @@ export default function ButtonPrincipal({
   );
 
   const buttonClasses =
-    'inline-flex items-center px-4 py-4 sm:px-6 sm:py-3 ' +
+    'inline-flex flex-row items-center justify-center gap-2 px-4 py-4 sm:px-6 sm:py-3 ' +
     'bg-gradient-to-r from-primary-500 to-secondary-500 ' +
     'hover:from-secondary-500 hover:to-primary-500 ' +
     'text-white text-sm sm:text-base ' +
@@ -72,7 +72,7 @@ export default function ButtonPrincipal({
         asChild
         {...otherProps}
       >
-        <Link href={href} target={target} rel={rel}>
+        <Link href={href} target={target} rel={rel} className="flex flex-row items-center justify-center gap-2 w-full h-full">
           {content}
         </Link>
       </Button>

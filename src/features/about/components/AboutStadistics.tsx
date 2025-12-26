@@ -33,9 +33,9 @@ const stats = [
   },
   {
     icon: Globe,
-    number: '15+',
-    label: 'Países Atendidos',
-    description: 'Presencia internacional en América Latina',
+    number: '20+',
+    label: 'Departamentos Atendidos',
+    description: 'Presencia en todo el Perú',
   },
   {
     icon: TrendingUp,
@@ -50,7 +50,7 @@ export default function AboutStadistics() {
   // Contadores animados para las estadísticas
   const counter1 = useCounterAnimation(500, 2000, { threshold: 0.3 });
   const counter2 = useCounterAnimation(1000, 2000, { threshold: 0.3 });
-  const counter3 = useCounterAnimation(15, 2000, { threshold: 0.3 });
+  const counter3 = useCounterAnimation(20, 2000, { threshold: 0.3 });
   const counter4 = useCounterAnimation(99, 2000, { threshold: 0.3 });
 
   const counters = [counter1, counter2, counter3, counter4];

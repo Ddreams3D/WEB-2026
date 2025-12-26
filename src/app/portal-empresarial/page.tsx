@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useB2B } from '@/contexts/B2BContext';
 import { useOrderTracking } from '@/contexts/OrderTrackingContext';
 import { useBilling } from '@/contexts/BillingContext';
@@ -35,11 +35,40 @@ export default function PortalEmpresarialPage() {
   const { orders, loadOrders, getOrdersByStatus } = useOrderTracking();
   const { invoices, loadInvoices, getOverdueInvoices } = useBilling();
   const { quotes, loadQuotes } = useQuote();
+  const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
 
   useEffect(() => {
     loadOrders();
     loadInvoices();
     loadQuotes();
+
+    // Actividad reciente simulada (cargada en cliente para evitar error de hidratación)
+    setRecentActivity([
+      {
+        id: '1',
+        type: 'order',
+        title: 'Orden DD3D-2024-001',
+        description: 'Progreso de impresión: 75% completado',
+        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+        status: 'info'
+      },
+      {
+        id: '2',
+        type: 'invoice',
+        title: 'Factura DD3D-202401-0001',
+        description: 'Factura enviada por S/ 1,121.00',
+        timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+        status: 'success'
+      },
+      {
+        id: '3',
+        type: 'quote',
+        title: 'Cotización Prototipos V2',
+        description: 'Nueva cotización pendiente de aprobación',
+        timestamp: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
+        status: 'warning'
+      }
+    ]);
   }, []);
 
   // Calcular estadísticas del dashboard
@@ -51,34 +80,6 @@ export default function PortalEmpresarialPage() {
     avgDeliveryTime: 5.2, // días promedio
     satisfactionScore: 4.8
   };
-
-  // Actividad reciente simulada
-  const recentActivity: RecentActivity[] = [
-    {
-      id: '1',
-      type: 'order',
-      title: 'Orden DD3D-2024-001',
-      description: 'Progreso de impresión: 75% completado',
-      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-      status: 'info'
-    },
-    {
-      id: '2',
-      type: 'invoice',
-      title: 'Factura DD3D-202401-0001',
-      description: 'Factura enviada por S/ 1,121.00',
-      timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
-      status: 'success'
-    },
-    {
-      id: '3',
-      type: 'quote',
-      title: 'Cotización Prototipos V2',
-      description: 'Nueva cotización pendiente de aprobación',
-      timestamp: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
-      status: 'warning'
-    }
-  ];
 
   const getStatusIcon = (status: string) => {
     switch (status) {

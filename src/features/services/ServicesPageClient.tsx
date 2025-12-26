@@ -5,7 +5,6 @@ import Testimonials from '../../shared/components/Testimonials';
 import './animations.css';
 import ServicesHero from '@/features/services/components/ServicesHero';
 import ServicesBenefits from '@/features/services/components/ServicesBenefits';
-import ServicesCalculatorPrice from '@/features/services/components/ServicesCalculatorPrice';
 import ServicesFAQ from '@/features/services/components/ServicesFAQ';
 import ServicesCTA from '@/features/services/components/ServicesCTA';
 import { GeneralServicesView } from '@/features/services/components/GeneralServicesView';
@@ -58,9 +57,6 @@ export default function ServicesPageClient() {
         <div className="mt-20 lg:mt-24">
           <ServicesBenefits />
         </div>
-
-        {/* Price Calculator */}
-        {/* <ServicesCalculatorPrice /> */}
 
         {/* Testimonials Section */}
         <Testimonials />

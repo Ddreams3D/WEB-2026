@@ -2,6 +2,7 @@ import React from 'react';
 import { WHATSAPP_REDIRECT } from '../constants/infoBusiness';
 import ButtonPrincipal from './ButtonPrincipal';
 import { MessageCircle } from 'lucide-react';
+import { getIconClasses } from '@/shared/styles';
 
 interface PropsButtonRedirectWhatsapp {
   msgRedirect?: string;
@@ -21,7 +22,7 @@ export default function ButtonRedirectWhatsapp({
       rel="noopener noreferrer"
       icon={
         <MessageCircle
-          className="h-4 w-4 sm:h-5 sm:w-5 mr-2"
+          className={getIconClasses('md', 'white')}
           aria-hidden="true"
         />
       }
