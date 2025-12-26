@@ -52,27 +52,45 @@ const simulateDelay = (ms: number) => new Promise(resolve => setTimeout(resolve,
 export const ProductService = {
   // Get all products
   async getAllProducts(): Promise<Product[]> {
+    // If Firebase is not configured, use mock data immediately
     if (!isFirebaseConfigured) {
+      console.log('Firebase not configured, using mock data');
       await simulateDelay(500);
       return mockProducts;
     }
+
     try {
       const q = query(collection(db, PRODUCTS_COLLECTION), orderBy('createdAt', 'desc'));
       const snapshot = await getDocs(q);
-      return snapshot.docs.map(convertProductData);
+      
+      const products = snapshot.docs.map(convertProductData);
+      
+      // If Firebase returns no products, fallback to mock data
+      // This handles cases where Firebase is configured but empty
+      if (products.length === 0) {
+        console.log('No products in Firebase, using mock data fallback');
+        return mockProducts;
+      }
+      
+      return products;
     } catch (error) {
       console.error('Error fetching products:', error);
-      return [];
+      // Fallback to mock data on error
+      console.log('Error fetching from Firebase, using mock data fallback');
+      return mockProducts;
     }
   },
 
   // Get product by ID or Slug
   async getProductById(idOrSlug: string): Promise<Product | undefined> {
+    // Helper to find in mock data
+    const findInMock = () => mockProducts.find(p => p.id === idOrSlug || p.slug === idOrSlug);
+
     if (!isFirebaseConfigured) {
       await simulateDelay(300);
-      const product = mockProducts.find(p => p.id === idOrSlug || p.slug === idOrSlug);
-      return product;
+      return findInMock();
     }
+
     try {
       // Try by ID first
       const docRef = doc(db, PRODUCTS_COLLECTION, idOrSlug);
@@ -90,19 +108,25 @@ export const ProductService = {
         return convertProductData(snapshot.docs[0]);
       }
 
-      return undefined;
+      // If not found in Firebase, try mock data
+      console.log('Product not found in Firebase, checking mock data');
+      return findInMock();
     } catch (error) {
       console.error('Error fetching product:', error);
-      return undefined;
+      // Fallback to mock data on error
+      return findInMock();
     }
   },
 
   // Get products by category
   async getProductsByCategory(categoryId: string): Promise<Product[]> {
+    const getMockByCategory = () => mockProducts.filter(p => p.categoryId === categoryId);
+
     if (!isFirebaseConfigured) {
       await simulateDelay(500);
-      return mockProducts.filter(p => p.categoryId === categoryId);
+      return getMockByCategory();
     }
+
     try {
       const q = query(
         collection(db, PRODUCTS_COLLECTION), 
@@ -110,15 +134,27 @@ export const ProductService = {
         orderBy('createdAt', 'desc')
       );
       const snapshot = await getDocs(q);
-      return snapshot.docs.map(convertProductData);
+      const products = snapshot.docs.map(convertProductData);
+      
+      if (products.length === 0) {
+        return getMockByCategory();
+      }
+      
+      return products;
     } catch (error) {
       console.error('Error fetching products by category:', error);
-      return [];
+      return getMockByCategory();
     }
   },
 
   // Get featured products
   async getFeaturedProducts(): Promise<Product[]> {
+    const getMockFeatured = () => mockProducts.filter(p => p.isFeatured).slice(0, 10);
+
+    if (!isFirebaseConfigured) {
+      return getMockFeatured();
+    }
+
     try {
       const q = query(
         collection(db, PRODUCTS_COLLECTION), 
@@ -126,10 +162,16 @@ export const ProductService = {
         limit(10)
       );
       const snapshot = await getDocs(q);
-      return snapshot.docs.map(convertProductData);
+      const products = snapshot.docs.map(convertProductData);
+      
+      if (products.length === 0) {
+        return getMockFeatured();
+      }
+      
+      return products;
     } catch (error) {
       console.error('Error fetching featured products:', error);
-      return [];
+      return getMockFeatured();
     }
   },
 
