@@ -36,6 +36,9 @@ const nextConfig = {
     scrollRestoration: true,
   },
   
+  // Configuración explícita de Turbopack vacía para silenciar advertencias
+  turbopack: {},
+  
   // Paquetes externos del servidor
   serverExternalPackages: ['@supabase/supabase-js'],
   // Optimizaciones de rendimiento
