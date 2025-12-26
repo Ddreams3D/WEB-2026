@@ -6,7 +6,6 @@ import Testimonials from '../../shared/components/Testimonials';
 import './animations.css';
 import ServicesHero from '@/features/services/components/ServicesHero';
 import ServicesBenefits from '@/features/services/components/ServicesBenefits';
-import ServicesGalery from '@/features/services/components/ServicesGalery';
 import ServicesCalculatorPrice from '@/features/services/components/ServicesCalculatorPrice';
 import ServicesFAQ from '@/features/services/components/ServicesFAQ';
 import ServicesCTA from '@/features/services/components/ServicesCTA';

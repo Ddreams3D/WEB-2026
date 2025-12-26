@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { X, ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Product } from '../../shared/types';
-import { useCart } from '../../contexts/CartContext';
-import { useToast } from '../ui/ToastManager';
-import { ProductImage } from '../../shared/components/ui/DefaultImage';
+import { Product } from '@/shared/types';
+import { useCart } from '@/contexts/CartContext';
+import { useToast } from '@/components/ui/ToastManager';
+import { ProductImage } from '@/shared/components/ui/DefaultImage';
 
 interface ProductDetailsModalProps {
   product: Product | null;

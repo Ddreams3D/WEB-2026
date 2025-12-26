@@ -3,11 +3,11 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Star, ShoppingCart, Download, Heart, ImageIcon } from '@/lib/icons';
-import { Product } from '../../shared/types';
-import { useCart } from '../../contexts/CartContext';
-import { useToast } from '../ui/ToastManager';
-import { ProductImage } from '../../shared/components/ui/DefaultImage';
+import { Star, ShoppingCart, Heart } from 'lucide-react';
+import { Product } from '@/shared/types';
+import { useCart } from '@/contexts/CartContext';
+import { useToast } from '@/components/ui/ToastManager';
+import { ProductImage } from '@/shared/components/ui/DefaultImage';
 
 interface ProductCardProps {
   product: Product;

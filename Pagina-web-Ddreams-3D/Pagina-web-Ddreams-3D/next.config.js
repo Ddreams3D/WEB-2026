@@ -10,6 +10,9 @@ const nextConfig = {
   skipTrailingSlashRedirect: true,
   images: {
     unoptimized: false, // Optimización de imágenes habilitada
+    dangerouslyAllowSVG: true, // Permitir SVGs
+    contentDispositionType: 'attachment', // Seguridad para SVGs
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;", // CSP para SVGs
     remotePatterns: [
       {
         protocol: 'https',
@@ -33,16 +36,8 @@ const nextConfig = {
     scrollRestoration: true,
   },
   
-  // Configuración de Turbopack (estable)
-  turbopack: {
-    root: __dirname,
-    rules: {
-      '*.svg': {
-        loaders: ['@svgr/webpack'],
-        as: '*.js',
-      },
-    },
-  },
+  // Configuración explícita de Turbopack vacía para silenciar advertencias
+  turbopack: {},
   
   // Paquetes externos del servidor
   serverExternalPackages: ['@supabase/supabase-js'],
@@ -90,6 +85,7 @@ const nextConfig = {
             name: 'lucide-icons',
             chunks: 'all',
             priority: 20,
+            reuseExistingChunk: true,
           },
           supabase: {
             test: /[\/]node_modules[\/]@supabase[\/]/,

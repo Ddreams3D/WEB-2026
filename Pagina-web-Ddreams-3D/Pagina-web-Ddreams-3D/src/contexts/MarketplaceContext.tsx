@@ -4,14 +4,16 @@ import React, { createContext, useContext, useState, useEffect, useCallback, Rea
 import { Product, Category, ProductFilters, SearchResult, SearchResultItem } from '../shared/types';
 import {
   mockProducts,
-  mockCategories,
+  mockCategories
+} from '../shared/data/mockData';
+import {
   getProductById,
   getProductsByCategory,
   getFeaturedProducts,
   searchProducts,
   getProductsByPriceRange,
   getCategoryById
-} from '../shared/data/mockData';
+} from '../shared/data/mockDataHelpers';
 
 interface MarketplaceContextType {
   // Products
@@ -58,10 +60,23 @@ const initialFilters: ProductFilters = {
 };
 
 export function MarketplaceProvider({ children }: MarketplaceProviderProps) {
-  const [products, setProducts] = useState<Product[]>(mockProducts);
+  // Filter out service products (IDs: 7, 8, 9, 10, 12, 13, 14, 15) from the marketplace
+  const marketplaceProducts = mockProducts.filter(p => !['7', '8', '9', '10', '12', '13', '14', '15'].includes(p.id));
+
+  const [products, setProducts] = useState<Product[]>(marketplaceProducts);
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [currentProduct, setCurrentProductState] = useState<Product | null>(null);
-  const [categories] = useState<Category[]>(mockCategories);
+  
+  // Calculate real product counts for categories based on marketplaceProducts
+  const categoriesWithRealCounts = mockCategories.map(category => {
+    const count = marketplaceProducts.filter(p => p.categoryId === category.id).length;
+    return {
+      ...category,
+      productCount: count
+    };
+  }).filter(category => category.productCount > 0); // Optional: Hide empty categories
+
+  const [categories] = useState<Category[]>(categoriesWithRealCounts);
   const [currentCategory, setCurrentCategoryState] = useState<Category | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [searchResults, setSearchResults] = useState<SearchResultItem[]>([]);
@@ -85,7 +100,7 @@ export function MarketplaceProvider({ children }: MarketplaceProviderProps) {
   const loadFeaturedProducts = useCallback(() => {
     setIsLoading(true);
     try {
-      const featured = getFeaturedProducts();
+      const featured = getFeaturedProducts().filter(p => !['7', '8', '9', '10', '12', '13', '14', '15'].includes(p.id));
       setFeaturedProducts(featured);
     } catch (error) {
       console.error('Error loading featured products:', error);
@@ -97,7 +112,7 @@ export function MarketplaceProvider({ children }: MarketplaceProviderProps) {
   const loadProductsByCategory = (categoryId: string) => {
     setIsLoading(true);
     try {
-      const categoryProducts = getProductsByCategory(categoryId);
+      const categoryProducts = getProductsByCategory(categoryId).filter(p => !['7', '8', '9', '10', '12', '13', '14', '15'].includes(p.id));
       setProducts(categoryProducts);
     } catch (error) {
       console.error('Error loading products by category:', error);
@@ -124,14 +139,14 @@ export function MarketplaceProvider({ children }: MarketplaceProviderProps) {
       }
     } else {
       setCurrentCategoryState(null);
-      setProducts(mockProducts);
+      setProducts(marketplaceProducts);
     }
   };
 
   const searchProductsAction = (query: string) => {
     setIsLoading(true);
     try {
-      const results = searchProducts(query);
+      const results = searchProducts(query).filter(p => !['7', '8', '9', '10', '12', '13', '14', '15'].includes(p.id));
       const searchResultsFormatted: SearchResultItem[] = results.map(product => ({
         id: product.id,
         title: product.name,
@@ -158,7 +173,7 @@ export function MarketplaceProvider({ children }: MarketplaceProviderProps) {
     setIsLoading(true);
     
     try {
-      let filteredProducts = [...mockProducts];
+      let filteredProducts = [...marketplaceProducts];
 
       // Filter by categories
       if (newFilters.categoryIds && newFilters.categoryIds.length > 0) {
@@ -237,7 +252,7 @@ export function MarketplaceProvider({ children }: MarketplaceProviderProps) {
 
   const clearFilters = () => {
     setFilters(initialFilters);
-    setProducts(mockProducts);
+    setProducts(marketplaceProducts);
   };
 
   const getProductsByFilters = (): Product[] => {

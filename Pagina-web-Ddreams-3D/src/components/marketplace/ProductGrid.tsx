@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { Product } from '../../shared/types';
+import { Product } from '@/shared/types';
 import { ProductCard, ProductCardSkeleton } from './ProductCard';
 import { ProductDetailsModal } from './ProductDetailsModal';
 

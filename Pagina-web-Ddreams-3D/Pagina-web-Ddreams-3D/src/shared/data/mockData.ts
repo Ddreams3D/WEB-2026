@@ -1,124 +1,64 @@
 import { Product, Category, User, Review } from '../types';
 
-// Mock Categories
+// Mock Categories - Based on "Industrias que servimos"
 export const mockCategories: Category[] = [
   {
-    id: '1',
-    name: 'Arquitectura 3D',
-    description: 'Modelos arquitectónicos y diseños de edificios',
-    slug: 'arquitectura-3d',
-    imageUrl: '/images/categories/architecture.jpg',
-    productCount: 25,
+    id: 'medicina',
+    name: 'Medicina',
+    description: 'Prótesis personalizadas y modelos anatómicos de precisión médica',
+    slug: 'medicina',
+    imageUrl: '/images/categories/medical.jpg',
+    productCount: 15,
     isActive: true,
     sortOrder: 1,
     createdAt: new Date('2024-01-01'),
     updatedAt: new Date('2024-01-01')
   },
   {
-    id: '2',
-    name: 'Diseño Industrial',
-    description: 'Productos y prototipos industriales',
-    slug: 'diseno-industrial',
-    imageUrl: '/images/categories/industrial.jpg',
-    productCount: 18,
+    id: 'arquitectura',
+    name: 'Arquitectura',
+    description: 'Maquetas arquitectónicas detalladas y visualización de proyectos',
+    slug: 'arquitectura',
+    imageUrl: '/images/categories/architecture.jpg',
+    productCount: 8,
     isActive: true,
     sortOrder: 2,
     createdAt: new Date('2024-01-01'),
     updatedAt: new Date('2024-01-01')
   },
   {
-    id: '3',
-    name: 'Arte Digital',
-    description: 'Esculturas y arte conceptual en 3D',
-    slug: 'arte-digital',
-    imageUrl: '/images/categories/digital-art.jpg',
-    productCount: 32,
+    id: 'educacion',
+    name: 'Educación',
+    description: 'Material didáctico interactivo y modelos educativos innovadores',
+    slug: 'educacion',
+    imageUrl: '/images/categories/education.jpg',
+    productCount: 12,
     isActive: true,
     sortOrder: 3,
     createdAt: new Date('2024-01-01'),
     updatedAt: new Date('2024-01-01')
   },
   {
-    id: '4',
-    name: 'Videojuegos',
-    description: 'Assets y modelos para videojuegos',
-    slug: 'videojuegos',
-    imageUrl: '/images/categories/gaming.jpg',
-    productCount: 45,
+    id: 'ingenieria',
+    name: 'Ingeniería',
+    description: 'Prototipos funcionales y componentes técnicos de alta precisión',
+    slug: 'ingenieria',
+    imageUrl: '/images/categories/engineering.jpg',
+    productCount: 10,
     isActive: true,
     sortOrder: 4,
     createdAt: new Date('2024-01-01'),
     updatedAt: new Date('2024-01-01')
   },
   {
-    id: '5',
-    name: 'Animación',
-    description: 'Modelos para animación y motion graphics',
-    slug: 'animacion',
-    imageUrl: '/images/categories/animation.jpg',
-    productCount: 28,
+    id: 'arte-diseno',
+    name: 'Arte y Diseño',
+    description: 'Esculturas únicas, trofeos y objetos decorativos personalizados',
+    slug: 'arte-diseno',
+    imageUrl: '/images/categories/art.jpg',
+    productCount: 25,
     isActive: true,
     sortOrder: 5,
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-01')
-  },
-  {
-    id: '6',
-    name: 'Medicina / Educación',
-    description: 'Modelos anatómicos y médicos para educación',
-    slug: 'medicina',
-    imageUrl: '/images/categories/medical.jpg',
-    productCount: 15,
-    isActive: true,
-    sortOrder: 6,
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-01')
-  },
-  {
-    id: '7',
-    name: 'Trofeos, Merchandising & Regalos',
-    description: 'Trofeos, copas, regalos personalizados y merchandising',
-    slug: 'trofeos-regalos',
-    imageUrl: '/images/categories/trophies.jpg',
-    productCount: 20,
-    isActive: true,
-    sortOrder: 7,
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-01')
-  },
-  {
-    id: '10',
-    name: 'Servicios 3D',
-    description: 'Servicios de impresión y diseño 3D bajo demanda',
-    slug: 'servicios-3d',
-    imageUrl: '/images/categories/services.jpg',
-    productCount: 10,
-    isActive: true,
-    sortOrder: 8,
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-01')
-  },
-  {
-    id: '11',
-    name: 'Arte 3D & Coleccionables',
-    description: 'Figuras, arte y coleccionables impresos en 3D',
-    slug: 'arte-coleccionables',
-    imageUrl: '/images/categories/art.jpg',
-    productCount: 12,
-    isActive: true,
-    sortOrder: 9,
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-01')
-  },
-  {
-    id: '12',
-    name: 'Diseño 3D',
-    description: 'Servicios de modelado y diseño digital',
-    slug: 'diseno-3d',
-    imageUrl: '/images/categories/design.jpg',
-    productCount: 8,
-    isActive: true,
-    sortOrder: 10,
     createdAt: new Date('2024-01-01'),
     updatedAt: new Date('2024-01-01')
   }
@@ -198,8 +138,8 @@ export const mockProducts: Product[] = [
     shortDescription: 'Modelo anatómico físico de pelvis humana impreso en 3D a escala real',
     price: 300.00,
     currency: 'PEN',
-    categoryId: '6',
-    categoryName: 'Medicina / Educación',
+    categoryId: 'medicina',
+    categoryName: 'Medicina',
     sellerId: '1',
     sellerName: 'Ddreams 3D',
     images: [
@@ -284,8 +224,8 @@ export const mockProducts: Product[] = [
     shortDescription: 'Modelo anatómico físico impreso en 3D',
     price: 450.00,
     currency: 'PEN',
-    categoryId: '6',
-    categoryName: 'Medicina / Educación',
+    categoryId: 'medicina',
+    categoryName: 'Medicina',
     sellerId: '1',
     sellerName: 'Ddreams 3D',
     images: [
@@ -364,8 +304,8 @@ export const mockProducts: Product[] = [
     price: 0,
     customPriceDisplay: 'Cotización personalizada según proyecto',
     currency: 'PEN',
-    categoryId: '6',
-    categoryName: 'Medicina / Educación',
+    categoryId: 'medicina',
+    categoryName: 'Medicina',
     sellerId: '1',
     sellerName: 'Ddreams 3D',
     images: [
@@ -486,8 +426,8 @@ export const mockProducts: Product[] = [
     shortDescription: 'Regalo personalizado ideal para fanáticos de los autos',
     price: 79.00,
     currency: 'PEN',
-    categoryId: '7',
-    categoryName: 'Trofeos, Merchandising & Regalos',
+    categoryId: 'arte-diseno',
+    categoryName: 'Arte y Diseño',
     sellerId: '1',
     sellerName: 'Ddreams 3D',
     images: [
@@ -594,8 +534,8 @@ export const mockProducts: Product[] = [
     shortDescription: 'Regalo personalizado ideal para fanáticos de los autos (Versión Grande)',
     price: 129.00,
     currency: 'PEN',
-    categoryId: '7',
-    categoryName: 'Trofeos, Merchandising & Regalos',
+    categoryId: 'arte-diseno',
+    categoryName: 'Arte y Diseño',
     sellerId: '1',
     sellerName: 'Ddreams 3D',
     images: [
@@ -702,8 +642,8 @@ export const mockProducts: Product[] = [
     price: 0,
     customPriceDisplay: 'Precio sujeto a cotización según cantidad y diseño',
     currency: 'PEN',
-    categoryId: '7',
-    categoryName: 'Trofeos, Merchandising & Regalos',
+    categoryId: 'arte-diseno',
+    categoryName: 'Arte y Diseño',
     sellerId: '1',
     sellerName: 'Ddreams 3D',
     images: [
@@ -768,8 +708,8 @@ export const mockProducts: Product[] = [
     shortDescription: 'Cooler funcional impreso en 3D con diseño inspirado en motores V6',
     price: 210.00,
     currency: 'PEN',
-    categoryId: '7',
-    categoryName: 'Trofeos, Merchandising & Regalos',
+    categoryId: 'arte-diseno',
+    categoryName: 'Arte y Diseño',
     sellerId: '1',
     sellerName: 'Ddreams 3D',
     images: [
@@ -856,58 +796,58 @@ export const mockProducts: Product[] = [
   {
     id: '5',
     name: 'Cooler Motor 3D – V8',
-    description: 'Cooler funcional impreso en 3D con diseño robusto inspirado en motores V8. Pensado para quienes buscan mayor capacidad y presencia visual, ideal para reuniones, eventos pequeños, parrillas o como regalo premium para amantes del mundo automotor.\n\nFabricado en impresión 3D de alta calidad con PLA Premium, ofrece mayor espacio para bebidas y un diseño más imponente, manteniendo el estilo mecánico como protagonista.',
-    shortDescription: 'Cooler funcional impreso en 3D con diseño robusto inspirado en motores V8',
-    price: 260.00,
+    description: 'Cooler funcional impreso en 3D con diseño inspirado en motores V8. Ideal para mantener bebidas frías en reuniones pequeñas, escritorios, espacios gamer o como regalo original para fanáticos de los autos y la mecánica.\n\nFabricado mediante impresión 3D en PLA Premium, combina diseño llamativo con funcionalidad real. Su formato compacto lo hace perfecto para cervezas, gaseosas o bebidas individuales, aportando un toque automotriz único al espacio.',
+    shortDescription: 'Cooler funcional impreso en 3D con diseño inspirado en motores V8',
+    price: 250.00,
     currency: 'PEN',
-    categoryId: '7',
-    categoryName: 'Trofeos, Merchandising & Regalos',
+    categoryId: 'arte-diseno',
+    categoryName: 'Arte y Diseño',
     sellerId: '1',
     sellerName: 'Ddreams 3D',
     images: [
       {
-        id: '10',
+        id: '9',
         productId: '5',
         url: '/images/marketplace/cooler-motor-v8-impresion-3d-regalo-autos-frontal.png',
         alt: 'Cooler Motor V8 Impresión 3D - Regalo para Amantes de Autos - Vista Frontal',
         isPrimary: true,
         width: 800,
         height: 600,
-        createdAt: new Date('2024-01-15'),
-        updatedAt: new Date('2024-01-15')
+        createdAt: new Date('2024-01-14'),
+        updatedAt: new Date('2024-01-14')
       },
       {
-        id: '10-b',
-        productId: '5',
-        url: '/images/marketplace/cooler-motor-v8-impresion-3d-regalo-autos-detalle.png',
-        alt: 'Cooler Motor V8 Impresión 3D - Regalo para Amantes de Autos - Vista Detalle',
-        isPrimary: false,
-        width: 800,
-        height: 600,
-        createdAt: new Date('2024-01-15'),
-        updatedAt: new Date('2024-01-15')
-      },
-      {
-        id: '10-c',
+        id: '9-b',
         productId: '5',
         url: '/images/marketplace/cooler-motor-v8-impresion-3d-regalo-autos-superior.png',
-        alt: 'Cooler Motor V8 Impresión 3D - Regalo para Amantes de Autos - Vista Superior',
+        alt: 'Cooler Motor V8 Impresión 3D - Vista Superior',
         isPrimary: false,
         width: 800,
         height: 600,
-        createdAt: new Date('2024-01-15'),
-        updatedAt: new Date('2024-01-15')
+        createdAt: new Date('2024-01-14'),
+        updatedAt: new Date('2024-01-14')
       },
       {
-        id: '10-d',
+        id: '9-c',
         productId: '5',
-        url: '/images/marketplace/cooler-motor-v8-impresion-3d-regalo-autos-uso.png',
-        alt: 'Cooler Motor V8 Impresión 3D - Regalo para Amantes de Autos - Uso en Reuniones',
+        url: '/images/marketplace/cooler-motor-v8-impresion-3d-regalo-autos-detalle.png',
+        alt: 'Cooler Motor V8 Impresión 3D - Detalle',
         isPrimary: false,
         width: 800,
         height: 600,
-        createdAt: new Date('2024-01-15'),
-        updatedAt: new Date('2024-01-15')
+        createdAt: new Date('2024-01-14'),
+        updatedAt: new Date('2024-01-14')
+      },
+      {
+        id: '9-d',
+        productId: '5',
+        url: '/images/marketplace/cooler-motor-v8-impresion-3d-regalo-autos-uso.png',
+        alt: 'Cooler Motor V8 Impresión 3D - Uso Real',
+        isPrimary: false,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-01-14'),
+        updatedAt: new Date('2024-01-14')
       }
     ],
     options: [
@@ -951,12 +891,12 @@ export const mockProducts: Product[] = [
     ],
     specifications: [
       {
-        id: '20',
+        id: '15',
         name: 'Tamaño',
         value: 'V8 (8 espacios)'
       },
       {
-        id: '25',
+        id: '20',
         name: 'Tiempo estimado de fabricación',
         value: '3–5 días hábiles'
       }
@@ -964,39 +904,39 @@ export const mockProducts: Product[] = [
     format: 'Físico',
     fileSize: 'N/A',
     license: 'Standard',
-    tags: ['cooler3D', 'coolerMotorV8', 'regaloParaFanaticosDeAutos', 'regaloPremium', 'impresion3D', 'cerveza', 'Arequipa'],
+    tags: ['cooler3D', 'coolerMotor', 'regaloParaFanaticosDeAutos', 'regaloOriginal', 'impresion3D', 'cerveza', 'Arequipa'],
     sku: 'COOLER-V8-001',
     stock: 15,
     minQuantity: 1,
     materials: ['PLA'],
-    complexity: 'high',
+    complexity: 'medium',
     rating: 4.9,
     reviewCount: 20,
     downloadCount: 0,
     isActive: true,
     isFeatured: true,
-    createdAt: new Date('2024-01-15'),
-    updatedAt: new Date('2024-01-15')
+    createdAt: new Date('2024-01-14'),
+    updatedAt: new Date('2024-01-14')
   },
   {
-    id: '9',
-    slug: 'regalos-personalizados-impresion-3d',
-    name: 'Regalos Personalizados en Impresión 3D – Diseño a Medida',
-    description: 'Diseño y fabricación de regalos personalizados impresos en 3D, desarrollados a medida según nombre, frase, temática o idea especial del cliente. Cada pieza es única y se crea desde cero, integrando el diseño directamente en el modelo mediante grabado 3D para un acabado duradero y exclusivo.\n\nEste servicio es ideal para quienes buscan un regalo original y diferente, adaptado completamente a la persona u ocasión. Permite personalizar forma, tamaño, estilo y nivel de detalle según el concepto del regalo.\n\nPerfecto para aniversarios, cumpleaños, reconocimientos, recuerdos especiales, piezas decorativas personalizadas o regalos con alto valor emocional.\n\nCada proyecto se evalúa de forma individual para garantizar un resultado único, funcional y alineado con la idea del cliente.',
-    shortDescription: 'Diseño y fabricación de regalos personalizados impresos en 3D',
+    id: '13',
+    slug: 'maquetas-arquitectonicas-visualizacion-3d',
+    name: 'Maquetas Arquitectónicas y Visualización 3D',
+    description: 'Servicio de fabricación de maquetas arquitectónicas detalladas y visualización de proyectos mediante impresión 3D. Transformamos planos y modelos digitales en maquetas físicas de alta precisión para presentaciones, ventas inmobiliarias y estudios de volumetría.\n\nTrabajamos con arquitectos, inmobiliarias y estudiantes para materializar sus diseños con acabados profesionales y diferentes escalas.',
+    shortDescription: 'Maquetas arquitectónicas detalladas y visualización de proyectos',
     price: 0,
-    customPriceDisplay: 'Precio sujeto a cotización según diseño y complejidad',
+    customPriceDisplay: 'Cotización personalizada según proyecto',
     currency: 'PEN',
-    categoryId: '7',
-    categoryName: 'Trofeos, Merchandising & Regalos',
+    categoryId: 'arquitectura',
+    categoryName: 'Arquitectura',
     sellerId: '1',
     sellerName: 'Ddreams 3D',
     images: [
       {
-        id: '9-a',
-        productId: '9',
-        url: '/images/marketplace/regalos-personalizados-impresion-3d-diseno-medida.jpg',
-        alt: 'Regalos Personalizados en Impresión 3D - Diseño y Grabado a Medida - Ejemplo de Trabajo',
+        id: '13-a',
+        productId: '13',
+        url: '/images/placeholder-architectural.svg',
+        alt: 'Maquetas Arquitectónicas 3D - Vista General',
         isPrimary: true,
         width: 800,
         height: 600,
@@ -1005,94 +945,256 @@ export const mockProducts: Product[] = [
       }
     ],
     specifications: [
-      {
-        id: 'spec-9-1',
-        name: 'Información importante',
-        value: '• Fabricación bajo pedido\n• Diseño 3D totalmente personalizado\n• Grabado 3D integrado en la pieza\n• Precio sujeto a cotización según diseño y complejidad\n• Servicio orientado a regalos únicos y personalizados'
-      }
+      { name: 'Servicio', value: 'Maquetería 3D' },
+      { name: 'Escalas', value: '1:50, 1:100, 1:200, personalizadas' },
+      { name: 'Acabados', value: 'Monocromático, color, modular' }
     ],
-    tags: ['regalosPersonalizados', 'regalos3D', 'impresion3D', 'regalosOriginales', 'regalosUnicos', 'regalosHechosAMedida', 'detallePersonalizado', 'regalosEspeciales', 'Arequipa', 'regalosArequipa'],
-    seoKeywords: ['regalos personalizados impresión 3d', 'regalos con nombre grabado', 'regalos personalizados arequipa', 'impresión 3d regalos', 'regalos a medida 3d'],
-    sku: 'GIFT-CUSTOM-001',
-    stock: 999,
-    minQuantity: 1,
-    materials: ['PLA', 'Resina'],
-    complexity: 'medium',
-    rating: 4.8,
-    reviewCount: 12,
+    format: 'Físico',
+    fileSize: 'N/A',
+    license: 'Standard',
+    tags: ['arquitectura', 'maquetas', 'urbanismo', 'inmobiliaria', 'b2b'],
     downloadCount: 0,
-    isActive: true,
+    rating: 4.8,
+    reviewCount: 5,
     isFeatured: true,
+    isActive: true,
     createdAt: new Date('2024-02-15'),
     updatedAt: new Date('2024-02-15')
   },
   {
-    id: '10',
-    name: 'Impresión 3D Personalizada – Proyectos a Medida',
-    description: 'Servicio de impresión 3D para proyectos personalizados según requerimiento del cliente. Ideal para piezas funcionales, decorativas, técnicas o prototipos.',
-    shortDescription: 'Desarrollo e impresión de piezas personalizadas según requerimiento del cliente',
+    id: '14',
+    slug: 'prototipado-ingenieria-piezas-tecnicas',
+    name: 'Prototipado de Ingeniería y Piezas Técnicas',
+    description: 'Servicio de prototipado rápido y fabricación de piezas técnicas funcionales para ingeniería. Utilizamos materiales de ingeniería como ABS, PETG, Nylon y ASA para garantizar resistencia mecánica, térmica y química según los requerimientos del proyecto.\n\nIdeal para validación de diseño, pruebas de ajuste, repuestos descontinuados y series cortas de producción.',
+    shortDescription: 'Prototipos funcionales y componentes técnicos de alta precisión',
     price: 0,
-    customPriceDisplay: 'Precio sujeto a cotización según proyecto',
+    customPriceDisplay: 'Cotización personalizada según proyecto',
     currency: 'PEN',
-    categoryId: '10',
-    categoryName: 'Servicios 3D',
+    categoryId: 'ingenieria',
+    categoryName: 'Ingeniería',
     sellerId: '1',
     sellerName: 'Ddreams 3D',
     images: [
       {
-        id: '16',
-        productId: '10',
-        url: 'https://images.unsplash.com/photo-1631541909061-71e349d1f203?auto=format&fit=crop&q=80&w=600',
-        alt: 'Impresión 3D Personalizada',
+        id: '14-a',
+        productId: '14',
+        url: '/images/placeholder-engineering.svg',
+        alt: 'Prototipado de Ingeniería 3D - Vista General',
         isPrimary: true,
-        sortOrder: 1,
-        order: 1
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-02-15'),
+        updatedAt: new Date('2024-02-15')
       }
     ],
     specifications: [
+      { name: 'Servicio', value: 'Prototipado Industrial' },
+      { name: 'Materiales', value: 'ABS, PETG, Nylon, Fibra de Carbono' },
+      { name: 'Precisión', value: 'Hasta +/- 0.1mm' }
+    ],
+    format: 'Físico',
+    fileSize: 'N/A',
+    license: 'Standard',
+    tags: ['ingenieria', 'prototipos', 'repuestos', 'industrial', 'b2b'],
+    downloadCount: 0,
+    rating: 4.9,
+    reviewCount: 8,
+    isFeatured: true,
+    isActive: true,
+    createdAt: new Date('2024-02-15'),
+    updatedAt: new Date('2024-02-15')
+  },
+  {
+    id: '15',
+    slug: 'material-didactico-educativo',
+    name: 'Material Didáctico y Modelos Educativos',
+    description: 'Diseño y fabricación de material didáctico interactivo y modelos educativos innovadores para todos los niveles de enseñanza. Facilitamos el aprendizaje de conceptos complejos a través de objetos tangibles y manipulables.\n\nDesarrollamos kits educativos para ciencias, matemáticas, geografía e historia, adaptados al currículo escolar o universitario.',
+    shortDescription: 'Material didáctico interactivo y modelos educativos innovadores',
+    price: 0,
+    customPriceDisplay: 'Cotización personalizada según proyecto',
+    currency: 'PEN',
+    categoryId: 'educacion',
+    categoryName: 'Educación',
+    sellerId: '1',
+    sellerName: 'Ddreams 3D',
+    images: [
       {
-        id: 'spec-10-1',
-        name: 'Incluye',
-        value: 'Revisión básica del proyecto\nFabricación bajo pedido\nImpresión en tecnología FDM'
-      },
-      {
-        id: 'spec-10-2',
-        name: 'Información importante',
-        value: 'El precio se determina según tamaño, material y complejidad\nEl proyecto se cotiza antes de iniciar la fabricación\nNo se inicia producción sin aprobación del cliente'
+        id: '15-a',
+        productId: '15',
+        url: '/images/placeholder-educational.svg',
+        alt: 'Material Didáctico 3D - Vista General',
+        isPrimary: true,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-02-15'),
+        updatedAt: new Date('2024-02-15')
       }
     ],
-    tags: ['impresión 3d', 'personalizado', 'proyectos', 'servicios'],
-    sku: 'SERV-PRINT-001',
-    stock: 999,
-    minQuantity: 1,
-    materials: ['PLA', 'PETG', 'Resina'],
-    complexity: 'high',
-    rating: 4.8,
-    reviewCount: 45,
+    specifications: [
+      { name: 'Servicio', value: 'Recursos Educativos' },
+      { name: 'Niveles', value: 'Primaria, Secundaria, Superior' },
+      { name: 'Personalización', value: 'Diseño a medida según currículo' }
+    ],
+    format: 'Físico',
+    fileSize: 'N/A',
+    license: 'Standard',
+    tags: ['educacion', 'didactico', 'aprendizaje', 'escolar', 'b2b'],
     downloadCount: 0,
+    rating: 4.7,
+    reviewCount: 6,
+    isFeatured: true,
     isActive: true,
-    isFeatured: false,
+    createdAt: new Date('2024-02-15'),
+    updatedAt: new Date('2024-02-15')
+  },
+  {
+    id: '16',
+    slug: 'regalos-personalizados-impresion-3d-diseno-medida',
+    name: 'Regalos Personalizados en Impresión 3D – Diseño a Medida',
+    description: 'Diseño y fabricación de regalos personalizados impresos en 3D, ideales para fechas especiales, aniversarios y sorpresas únicas. Convertimos tus ideas en objetos físicos, desde llaveros y figuras hasta litofanías y accesorios decorativos.\n\nCada pieza es única y se adapta a tus gustos y presupuesto.',
+    shortDescription: 'Diseño y fabricación de regalos personalizados impresos en 3D',
+    price: 0,
+    customPriceDisplay: 'Precio sujeto a cotización según diseño y complejidad',
+    currency: 'PEN',
+    categoryId: 'arte-diseno',
+    categoryName: 'Arte y Diseño',
+    sellerId: '1',
+    sellerName: 'Ddreams 3D',
+    images: [
+      {
+        id: '16-a',
+        productId: '16',
+        url: '/images/marketplace/regalos-personalizados-impresion-3d-diseno-medida.jpg',
+        alt: 'Regalos Personalizados en Impresión 3D - Vista General',
+        isPrimary: true,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-02-10'),
+        updatedAt: new Date('2024-02-10')
+      }
+    ],
+    specifications: [
+      { name: 'Servicio', value: 'Regalos Personalizados' },
+      { name: 'Opciones', value: 'Litofanías, Figuras, Llaveros, Decoración' },
+      { name: 'Material', value: 'PLA, Resina' }
+    ],
+    format: 'Físico',
+    fileSize: 'N/A',
+    license: 'Standard',
+    tags: ['regalos', 'personalizado', 'sorpresa', 'arte', '3d'],
+    downloadCount: 0,
+    rating: 4.8,
+    reviewCount: 10,
+    isFeatured: true,
+    isActive: true,
+    createdAt: new Date('2024-02-10'),
+    updatedAt: new Date('2024-02-10')
+  },
+  {
+    id: 'b2b-1',
+    slug: 'proyectos-anatomicos-3d-especializados-b2b',
+    name: 'Proyectos Anatómicos 3D – Especializados (B2B)',
+    description: 'Desarrollo, modelado y fabricación de modelos anatómicos personalizados para instituciones médicas y educativas. Creamos réplicas exactas a partir de tomografías (DICOM) o modelos 3D para planificación quirúrgica, educación médica y simuladores de entrenamiento.',
+    shortDescription: 'Desarrollo, modelado y fabricación de modelos anatómicos personalizados',
+    price: 0,
+    customPriceDisplay: 'Cotización personalizada según proyecto',
+    currency: 'PEN',
+    categoryId: 'medicina',
+    categoryName: 'Medicina',
+    sellerId: '1',
+    sellerName: 'Ddreams 3D',
+    images: [
+      {
+        id: 'b2b-1-a',
+        productId: 'b2b-1',
+        url: '/images/marketplace/modelo-pelvis-anatomica-escala-real-3d-vista-frontal.png',
+        alt: 'Proyectos Anatómicos 3D - Especializados',
+        isPrimary: true,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-02-20'),
+        updatedAt: new Date('2024-02-20')
+      }
+    ],
+    specifications: [
+      { name: 'Servicio', value: 'Anatomía Personalizada' },
+      { name: 'Origen', value: 'DICOM / Escaneo 3D / Modelado' },
+      { name: 'Aplicación', value: 'Quirúrgica / Educativa' }
+    ],
+    format: 'Físico',
+    fileSize: 'N/A',
+    license: 'Standard',
+    tags: ['medicina', 'anatomia', 'b2b', 'quirurgico', 'educacion'],
+    downloadCount: 0,
+    rating: 4.9,
+    reviewCount: 15,
+    isFeatured: true,
+    isActive: true,
     createdAt: new Date('2024-02-20'),
     updatedAt: new Date('2024-02-20')
   },
   {
-    id: '11',
-    name: 'Figuras, Máscaras, Cascos y Dioramas 3D – Personalizados',
-    description: 'Diseño e impresión 3D de figuras, máscaras, cascos y dioramas personalizados para colección, exhibición o proyectos especiales.',
-    shortDescription: 'Diseño e impresión 3D de piezas personalizadas para colección',
-    price: 250.00,
-    customPriceDisplay: 'Desde S/ 250.00 – IGV incluido\n(El precio varía según tamaño y complejidad)',
+    id: 'b2b-2',
+    slug: 'trofeos-medallas-3d-personalizados-empresas-b2b',
+    name: 'Trofeos y Medallas 3D Personalizados para Eventos y Empresas (B2B)',
+    description: 'Fabricación de trofeos y medallas personalizados mediante impresión 3D para eventos corporativos, deportivos y reconocimientos especiales. Diseños únicos que reflejan la identidad de tu marca o evento, con acabados en colores metalizados o personalizados.',
+    shortDescription: 'Fabricación de trofeos y medallas personalizados mediante impresión 3D',
+    price: 0,
+    customPriceDisplay: 'Precio sujeto a cotización según cantidad y diseño',
     currency: 'PEN',
-    categoryId: '11',
-    categoryName: 'Arte 3D & Coleccionables',
+    categoryId: 'arte-diseno',
+    categoryName: 'Arte y Diseño',
     sellerId: '1',
     sellerName: 'Ddreams 3D',
     images: [
       {
-        id: '17',
-        productId: '11',
-        url: 'https://images.unsplash.com/photo-1614728263952-84ea256f9679?auto=format&fit=crop&q=80&w=600',
-        alt: 'Figuras y Coleccionables 3D',
+        id: 'b2b-2-a',
+        productId: 'b2b-2',
+        url: '/images/marketplace/copa-piston-grande-30cm-regalo-personalizado-autos-3d-frontal.png',
+        alt: 'Trofeos y Medallas 3D Personalizados',
+        isPrimary: true,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-02-20'),
+        updatedAt: new Date('2024-02-20')
+      }
+    ],
+    specifications: [
+      { name: 'Servicio', value: 'Trofeos Corporativos' },
+      { name: 'Personalización', value: 'Logo, Texto, Forma' },
+      { name: 'Volumen', value: 'Unitario o Masivo' }
+    ],
+    format: 'Físico',
+    fileSize: 'N/A',
+    license: 'Standard',
+    tags: ['trofeos', 'medallas', 'eventos', 'corporativo', 'b2b'],
+    downloadCount: 0,
+    rating: 4.8,
+    reviewCount: 20,
+    isFeatured: true,
+    isActive: true,
+    createdAt: new Date('2024-02-20'),
+    updatedAt: new Date('2024-02-20')
+  },
+  {
+    id: '17',
+    slug: 'modelado-3d-personalizado',
+    name: 'Modelado 3D personalizado',
+    description: 'Creación de modelos 3D únicos adaptados a tus necesidades específicas. Transformamos tus bocetos, ideas o planos en modelos tridimensionales digitales listos para impresión 3D, renderizado o animación. Nuestro equipo de diseñadores expertos utiliza software avanzado para garantizar precisión y detalle en cada proyecto.',
+    shortDescription: 'Creación de modelos 3D únicos adaptados a tus necesidades específicas',
+    price: 0,
+    customPriceDisplay: 'Cotización personalizada',
+    currency: 'PEN',
+    categoryId: 'arte-diseno',
+    categoryName: 'Arte y Diseño',
+    sellerId: '1',
+    sellerName: 'Ddreams 3D',
+    images: [
+      {
+        id: '17-a',
+        productId: '17',
+        url: '/images/placeholder-modeling.svg',
+        alt: 'Modelado 3D Personalizado - Diseño Digital',
         isPrimary: true,
         width: 800,
         height: 600,
@@ -1101,121 +1203,149 @@ export const mockProducts: Product[] = [
       }
     ],
     specifications: [
-      {
-        id: 'spec-11-1',
-        name: 'Información importante',
-        value: 'Precio desde S/ 250\nEl valor final depende del tamaño, nivel de detalle y complejidad\nProducto fabricado bajo pedido\nNo incluye pintura (salvo coordinación previa)'
-      }
+      { name: 'Servicio', value: 'Diseño y Modelado 3D' },
+      { name: 'Entregables', value: 'Archivos STL, OBJ, STEP, Renders' },
+      { name: 'Software', value: 'Blender, Fusion 360, ZBrush' }
     ],
-    format: 'Físico',
-    fileSize: 'N/A',
+    format: 'Digital',
+    fileSize: 'Variable',
     license: 'Standard',
-    tags: ['arte', 'coleccionables', 'cascos', 'figuras', 'dioramas'],
-    sku: 'ART-COLL-001',
-    stock: 50,
-    minQuantity: 1,
-    materials: ['PLA', 'Resina'],
-    complexity: 'high',
-    rating: 4.8,
-    reviewCount: 32,
+    tags: ['modelado3d', 'diseño', 'digital', 'personalizado', 'servicios'],
     downloadCount: 0,
+    rating: 5.0,
+    reviewCount: 8,
+    isFeatured: true,
     isActive: true,
-    isFeatured: false,
     createdAt: new Date('2024-03-01'),
     updatedAt: new Date('2024-03-01')
   },
   {
-    id: '12',
-    name: 'Modelado 3D – Diseño Digital Personalizado',
-    description: 'Servicio de modelado 3D a medida para impresión 3D, visualización o desarrollo de productos personalizados.',
-    shortDescription: 'Servicio de modelado 3D a medida',
+    id: '18',
+    slug: 'impresion-3d-por-encargo',
+    name: 'Impresión 3D por encargo',
+    description: 'Servicio de impresión 3D de alta calidad en múltiples materiales y acabados. Contamos con tecnología FDM (filamento) y SLA/DLP (resina) para materializar tus proyectos con la mejor resolución y resistencia. Ideal para piezas únicas, series cortas, repuestos y prototipos.',
+    shortDescription: 'Impresión de alta calidad en múltiples materiales y acabados',
     price: 0,
-    customPriceDisplay: 'Precio sujeto a cotización según proyecto',
+    customPriceDisplay: 'Cotización según proyecto',
     currency: 'PEN',
-    categoryId: '12',
-    categoryName: 'Diseño 3D',
+    categoryId: 'ingenieria',
+    categoryName: 'Ingeniería',
     sellerId: '1',
     sellerName: 'Ddreams 3D',
     images: [
       {
-        id: '18',
-        productId: '12',
-        url: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&q=80&w=600',
-        alt: 'Modelado 3D Digital',
+        id: '18-a',
+        productId: '18',
+        url: '/images/placeholder-prototype.svg',
+        alt: 'Servicio de Impresión 3D por Encargo',
         isPrimary: true,
         width: 800,
         height: 600,
-        createdAt: new Date('2024-03-02'),
-        updatedAt: new Date('2024-03-02')
+        createdAt: new Date('2024-03-01'),
+        updatedAt: new Date('2024-03-01')
       }
     ],
     specifications: [
-      {
-        id: 'spec-12-1',
-        name: 'Incluye',
-        value: 'Modelado digital según requerimiento\nEntrega de archivo digital final'
-      },
-      {
-        id: 'spec-12-2',
-        name: 'Información importante',
-        value: 'Servicio digital (no incluye impresión)\nPrecio sujeto a cotización según alcance del proyecto\nEl tiempo de entrega depende de la complejidad del modelo'
-      }
+      { name: 'Tecnologías', value: 'FDM, SLA (Resina)' },
+      { name: 'Materiales', value: 'PLA, ABS, PETG, TPU, Resina Standard/Tough' },
+      { name: 'Volumen Máx', value: '300 x 300 x 400 mm' }
     ],
-    format: 'Digital',
+    format: 'Físico',
     fileSize: 'N/A',
     license: 'Standard',
-    tags: ['diseño', 'modelado 3d', 'digital', 'personalizado'],
-    sku: 'SERV-DESIGN-001',
-    stock: 999,
-    minQuantity: 1,
-    materials: ['Digital'],
-    complexity: 'high',
-    rating: 4.7,
-    reviewCount: 28,
+    tags: ['impresion3d', 'manufactura', 'servicios', 'prototipado'],
     downloadCount: 0,
+    rating: 4.9,
+    reviewCount: 25,
+    isFeatured: true,
     isActive: true,
-    isFeatured: false,
     createdAt: new Date('2024-03-02'),
     updatedAt: new Date('2024-03-02')
+  },
+  {
+    id: '19',
+    slug: 'acabado-profesional-postprocesado',
+    name: 'Acabado Profesional y Postprocesado',
+    description: 'Servicio de postprocesado y acabados premium para resultados excepcionales. Llevamos tus impresiones 3D al siguiente nivel mediante técnicas de lijado, masillado, pintura, barnizado y tratamientos superficiales. Eliminamos las líneas de capa para obtener piezas con apariencia de producto final inyectado.',
+    shortDescription: 'Postprocesado y acabados premium para resultados excepcionales',
+    price: 0,
+    customPriceDisplay: 'Cotización personalizada',
+    currency: 'PEN',
+    categoryId: 'arte-diseno',
+    categoryName: 'Arte y Diseño',
+    sellerId: '1',
+    sellerName: 'Ddreams 3D',
+    images: [
+      {
+        id: '19-a',
+        productId: '19',
+        url: '/images/placeholder-artistic.svg',
+        alt: 'Acabado Profesional y Pintura de Modelos 3D',
+        isPrimary: true,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-03-01'),
+        updatedAt: new Date('2024-03-01')
+      }
+    ],
+    specifications: [
+      { name: 'Servicio', value: 'Postprocesado y Pintura' },
+      { name: 'Técnicas', value: 'Lijado, Masillado, Aerografía, Pincel' },
+      { name: 'Acabados', value: 'Mate, Brillante, Metálico, Texturizado' }
+    ],
+    format: 'Físico',
+    fileSize: 'N/A',
+    license: 'Standard',
+    tags: ['postprocesado', 'pintura', 'acabado', 'premium', 'servicios'],
+    downloadCount: 0,
+    rating: 4.8,
+    reviewCount: 12,
+    isFeatured: true,
+    isActive: true,
+    createdAt: new Date('2024-03-01'),
+    updatedAt: new Date('2024-03-01')
+  },
+  {
+    id: '20',
+    slug: 'trofeos-3d-tematicos-personalizados',
+    name: 'Trofeos 3D Temáticos',
+    description: 'Trofeos únicos y personalizados para eventos, torneos y reconocimientos. Diseñamos y fabricamos premios temáticos que capturan la esencia de tu evento. Desde copas clásicas hasta figuras de personajes o logotipos corporativos en 3D.',
+    shortDescription: 'Trofeos únicos y personalizados para eventos y reconocimientos',
+    price: 0,
+    customPriceDisplay: 'Cotización según diseño',
+    currency: 'PEN',
+    categoryId: 'arte-diseno',
+    categoryName: 'Arte y Diseño',
+    sellerId: '1',
+    sellerName: 'Ddreams 3D',
+    images: [
+      {
+        id: '20-a',
+        productId: '20',
+        url: '/images/marketplace/copa-piston-20cm-regalo-personalizado-autos-3d-frontal.png',
+        alt: 'Trofeos Temáticos Personalizados 3D',
+        isPrimary: true,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-03-01'),
+        updatedAt: new Date('2024-03-01')
+      }
+    ],
+    specifications: [
+      { name: 'Servicio', value: 'Diseño y Fabricación de Trofeos' },
+      { name: 'Personalización', value: 'Total (Forma, Tamaño, Color)' },
+      { name: 'Uso', value: 'Torneos, Eventos, Reconocimientos' }
+    ],
+    format: 'Físico',
+    fileSize: 'N/A',
+    license: 'Standard',
+    tags: ['trofeos', 'premios', 'eventos', 'tematico', 'personalizado'],
+    downloadCount: 0,
+    rating: 4.9,
+    reviewCount: 18,
+    isFeatured: true,
+    isActive: true,
+    createdAt: new Date('2024-03-01'),
+    updatedAt: new Date('2024-03-01')
   }
 ];
-
-// Helper functions
-export const getProductById = (id: string): Product | undefined => {
-  return mockProducts.find(product => product.id === id || product.slug === id);
-};
-
-export const getProductsByCategory = (categoryId: string): Product[] => {
-  return mockProducts.filter(product => product.categoryId === categoryId);
-};
-
-export const getFeaturedProducts = (): Product[] => {
-  return mockProducts.filter(product => product.isFeatured);
-};
-
-export const searchProducts = (query: string): Product[] => {
-  const lowercaseQuery = query.toLowerCase();
-  return mockProducts.filter(product => 
-    product.name.toLowerCase().includes(lowercaseQuery) ||
-    product.description.toLowerCase().includes(lowercaseQuery) ||
-    product.tags.some(tag => tag.toLowerCase().includes(lowercaseQuery))
-  );
-};
-
-export const getProductsByPriceRange = (minPrice: number, maxPrice: number): Product[] => {
-  return mockProducts.filter(product => 
-    product.price >= minPrice && product.price <= maxPrice
-  );
-};
-
-export const getCategoryById = (id: string): Category | undefined => {
-  return mockCategories.find(category => category.id === id);
-};
-
-export const getUserById = (id: string): User | undefined => {
-  return mockUsers.find(user => user.id === id);
-};
-
-export const getReviewsByProductId = (productId: string): Review[] => {
-  return mockReviews.filter(review => review.productId === productId);
-};

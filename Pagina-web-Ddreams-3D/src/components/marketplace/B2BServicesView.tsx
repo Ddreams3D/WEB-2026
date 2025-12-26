@@ -1,13 +1,29 @@
-import React from 'react';
+'use client';
+
+import React, { useMemo } from 'react';
 import Link from 'next/link';
 import { ArrowRight, FileText } from 'lucide-react';
 import { mockProducts } from '@/shared/data/mockData';
-import { ProductCard } from '@/components/marketplace/ProductCard';
+import { ProductCard } from './ProductCard';
+
+import { Product } from '@/shared/types';
 
 export const B2BServicesView = () => {
-  // IDs of B2B services/products
-  const b2bProductIds = ['7', '8', '9'];
-  const b2bProducts = mockProducts.filter(product => b2bProductIds.includes(product.id));
+  // B2B service IDs
+  const b2bServiceIds = ['b2b-1', 'b2b-2', '7', '8'];
+  
+  // Sort services based on the order of IDs in b2bServiceIds
+  const b2bProducts = useMemo(() => {
+    if (!mockProducts || !Array.isArray(mockProducts)) return [];
+    
+    return mockProducts
+      .filter((product: Product) => product && b2bServiceIds.includes(product.id))
+      .sort((a: Product, b: Product) => {
+        return b2bServiceIds.indexOf(a.id) - b2bServiceIds.indexOf(b.id);
+      });
+  }, []);
+
+  if (!b2bProducts.length) return null;
 
   return (
     <div className="space-y-12 animate-fade-in">

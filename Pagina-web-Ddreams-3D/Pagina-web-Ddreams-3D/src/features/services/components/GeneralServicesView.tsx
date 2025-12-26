@@ -53,4 +53,4 @@ const GeneralServicesView = () => {
   );
 };
 
-export default GeneralServicesView;
+export { GeneralServicesView };

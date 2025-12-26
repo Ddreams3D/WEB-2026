@@ -1,8 +1,8 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { supabase } from '../shared/lib/supabase';
-import { CartItem, Cart, Product } from '../shared/types';
+import { supabase } from '@/shared/lib/supabase';
+import { CartItem, Cart, Product } from '@/shared/types';
 
 // Interfaz para compatibilidad con base de datos existente
 interface CartItemFromDB {

@@ -2,12 +2,14 @@ import React from 'react';
 import Link from 'next/link';
 import { ArrowRight, FileText } from 'lucide-react';
 import { mockProducts } from '@/shared/data/mockData';
-import { ProductCard } from '@/components/marketplace/ProductCard';
+import { ProductCard } from './ProductCard';
 
-const B2BServicesView = () => {
+import { Product } from '@/shared/types';
+
+export const B2BServicesView = () => {
   // IDs of B2B services/products
   const b2bProductIds = ['7', '8', '9'];
-  const b2bProducts = mockProducts.filter(product => b2bProductIds.includes(product.id));
+  const b2bProducts = mockProducts.filter((product: Product) => b2bProductIds.includes(product.id));
 
   return (
     <div className="space-y-12 animate-fade-in">
@@ -50,5 +52,3 @@ const B2BServicesView = () => {
     </div>
   );
 };
-
-export default B2BServicesView;

@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, ChevronUp, X, Filter, Search } from '@/lib/icons';
-import { ProductFilters as ProductFiltersType, Category, ProductSortOption, Product } from '../../shared/types';
-import { useMarketplace } from '../../contexts/MarketplaceContext';
+import { ChevronDown, ChevronUp, X, Filter, Search } from 'lucide-react';
+import { ProductFilters as ProductFiltersType, Category, ProductSortOption, Product } from '@/shared/types';
+import { useMarketplace } from '@/contexts/MarketplaceContext';
 
 interface ProductFiltersProps {
   onFiltersChange?: (filters: ProductFiltersType) => void;

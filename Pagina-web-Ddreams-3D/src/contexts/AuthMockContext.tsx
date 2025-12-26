@@ -1,8 +1,8 @@
 'use client';
 
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import { User } from '../shared/types';
-import { mockUsers } from '../shared/data/mockData';
+import { User } from '@/shared/types';
+import { mockUsers } from '@/shared/data/mockData';
 
 interface AuthMockContextType {
   user: User | null;
@@ -42,7 +42,7 @@ export const AuthMockProvider: React.FC<AuthMockProviderProps> = ({ children }) 
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Find user by email (mock authentication)
-      const foundUser = mockUsers.find(u => u.email === email);
+      const foundUser = mockUsers.find((u: User) => u.email === email);
       
       if (foundUser && password === 'password123') { // Mock password validation
         setUser(foundUser);
@@ -73,7 +73,7 @@ export const AuthMockProvider: React.FC<AuthMockProviderProps> = ({ children }) 
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       // Check if user already exists
-      const existingUser = mockUsers.find(u => u.email === userData.email);
+      const existingUser = mockUsers.find((u: User) => u.email === userData.email);
       if (existingUser) {
         return false; // User already exists
       }
@@ -118,7 +118,7 @@ export const AuthMockProvider: React.FC<AuthMockProviderProps> = ({ children }) 
       };
       
       // Update in mock users array
-      const userIndex = mockUsers.findIndex(u => u.id === user.id);
+      const userIndex = mockUsers.findIndex((u: User) => u.id === user.id);
       if (userIndex !== -1) {
         mockUsers[userIndex] = updatedUser;
       }

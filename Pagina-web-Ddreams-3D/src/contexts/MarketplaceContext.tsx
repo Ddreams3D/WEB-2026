@@ -1,11 +1,11 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
-import { Product, Category, ProductFilters, SearchResult, SearchResultItem } from '../shared/types';
+import { Product, Category, ProductFilters, SearchResult, SearchResultItem } from '@/shared/types';
 import {
   mockProducts,
   mockCategories
-} from '../shared/data/mockData';
+} from '@/shared/data/mockData';
 import {
   getProductById,
   getProductsByCategory,
@@ -13,7 +13,7 @@ import {
   searchProducts,
   getProductsByPriceRange,
   getCategoryById
-} from '../shared/data/mockDataHelpers';
+} from '@/shared/data/mockDataHelpers';
 
 interface MarketplaceContextType {
   // Products
