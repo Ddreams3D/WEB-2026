@@ -36,7 +36,9 @@ export default function MarketplacePage() {
   const getDisplayProducts = () => {
     // If searching, show search results
     if (searchQuery.trim()) {
-       return searchResults.map(result => products.find(p => p.id === result.id)).filter((product): product is Product => product !== undefined);
+       return searchResults
+        .map(result => products.find(p => p.id === result.id))
+        .filter((product): product is Product => product !== undefined && !product.customPriceDisplay);
     }
     // Otherwise show only products (not services)
     return products.filter(p => !p.customPriceDisplay);
