@@ -203,8 +203,7 @@ export default function MarketplacePage() {
         </div>
       </div>
 
-      {/* Mobile Filters Overlay (Hidden temporarily) */}
-      {/* 
+      {/* Mobile Filters Overlay */}
       {showFilters && (
         <div className="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50" onClick={() => setShowFilters(false)}>
           <div className="absolute right-0 top-0 h-full w-80 bg-surface dark:bg-neutral-800 shadow-xl overflow-y-auto" onClick={(e) => e.stopPropagation()}>
@@ -229,7 +228,6 @@ export default function MarketplacePage() {
           </div>
         </div>
       )}
-      */}
     </div>
   );
 }
