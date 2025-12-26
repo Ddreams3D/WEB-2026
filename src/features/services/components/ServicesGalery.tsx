@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 
 import { Clock, Eye, Filter, Grid, X, FileText } from 'lucide-react';
