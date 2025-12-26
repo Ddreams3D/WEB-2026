@@ -17,10 +17,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
-<<<<<<< HEAD
     "forceConsistentCasingInFileNames": true,
-=======
->>>>>>> 679e4ae649a8208e0df4b97c70c98f469699e861
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
