@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useState } from 'react';
 import Testimonials from '../../shared/components/Testimonials';
 
@@ -65,9 +64,7 @@ export default function ServicesPageClient() {
 
         {/* Testimonials Section */}
         <Testimonials />
-
-
-
+        
         {/* FAQ Section */}
         <ServicesFAQ />
 

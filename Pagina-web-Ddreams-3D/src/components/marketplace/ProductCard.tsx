@@ -49,7 +49,7 @@ export function ProductCard({
     showToast('info', 'Wishlist', 'Funcionalidad de wishlist próximamente');
   };
 
-  const primaryImage = product.images.find(img => img.isPrimary) || product.images[0];
+  const primaryImage = product.images.find((img: any) => img.isPrimary) || product.images[0];
   const hasDiscount = product.originalPrice && product.originalPrice > product.price;
   const discountPercentage = hasDiscount 
     ? Math.round(((product.originalPrice! - product.price) / product.originalPrice!) * 100)

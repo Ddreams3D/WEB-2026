@@ -1,11 +1,11 @@
 'use client';
 
-import React from 'react';
-import { Filter, Grid, List, Search, FileText, X } from 'lucide-react';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Filter, Grid, List, Search, FileText, X } from '@/lib/icons';
 import Link from 'next/link';
 import { ProductGrid, ProductList } from '@/components/marketplace/ProductGrid';
 import { ProductFilters as ProductFiltersComponent } from '@/components/marketplace/ProductFilters';
+import { B2BServicesView } from '@/components/marketplace/B2BServicesView';
 import { useMarketplace } from '@/contexts/MarketplaceContext';
 import { ProductFilters as ProductFiltersType, Product } from '@/shared/types';
 import { mockProducts } from '@/shared/data/mockData';
@@ -26,6 +26,7 @@ export default function MarketplacePage() {
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   // Removed section state as Services are moved to /services
   const [showFilters, setShowFilters] = useState(false);
+
   // Removed activeTab state as we only show products here
   
   const handleFiltersChange = (filters: ProductFiltersType) => {
@@ -35,10 +36,12 @@ export default function MarketplacePage() {
   const getDisplayProducts = () => {
     // If searching, show search results
     if (searchQuery.trim()) {
-       return searchResults.map((result: any) => products.find((p: Product) => p.id === result.id)).filter((product: any): product is Product => product !== undefined);
+       return searchResults
+        .map(result => products.find(p => p.id === result.id))
+        .filter((product): product is Product => product !== undefined && !product.customPriceDisplay);
     }
     // Otherwise show only products (not services)
-    return products.filter((p: Product) => !p.customPriceDisplay);
+    return products.filter(p => !p.customPriceDisplay);
   };
 
   // Calculate base products for filter counts (only products, no services)
@@ -47,16 +50,16 @@ export default function MarketplacePage() {
     
     // If searching, restrict to search results
     if (searchQuery.trim()) {
-       const searchIds = searchResults.map((r: any) => r.id);
-       filtered = filtered.filter((p: Product) => searchIds.includes(p.id));
+       const searchIds = searchResults.map(r => r.id);
+       filtered = filtered.filter(p => searchIds.includes(p.id));
     }
 
     // Always filter out services (customPriceDisplay)
-    return filtered.filter((p: Product) => !p.customPriceDisplay);
+    return filtered.filter(p => !p.customPriceDisplay);
   }, [searchQuery, searchResults]);
 
   const displayProducts = getDisplayProducts();
-  const productCount = products.filter((p: Product) => !p.customPriceDisplay).length;
+  const productCount = products.filter(p => !p.customPriceDisplay).length;
 
   return (
     <div className="min-h-screen bg-background dark:bg-neutral-900">
@@ -149,7 +152,7 @@ export default function MarketplacePage() {
                 <div className="flex items-center space-x-2">
                   <Search className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                   <span className="text-primary-800 dark:text-primary-200">
-                    Resultados para "{searchQuery}"
+                    Resultados para &quot;{searchQuery}&quot;
                     <span className="ml-1 text-sm text-primary-600 dark:text-primary-400">
                       ({searchResults.length} encontrados)
                     </span>
@@ -200,7 +203,7 @@ export default function MarketplacePage() {
               </div>
               <ProductFiltersComponent
                 onFiltersChange={handleFiltersChange}
-                showSearch={false}
+                showSearch={true}
                 isCollapsible={false}
                 availableProducts={baseProducts}
               />

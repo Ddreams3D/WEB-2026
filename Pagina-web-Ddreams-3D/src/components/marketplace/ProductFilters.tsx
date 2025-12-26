@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, ChevronUp, X, Filter, Search } from 'lucide-react';
-import { ProductFilters as ProductFiltersType, Category, ProductSortOption, Product } from '@/shared/types';
-import { useMarketplace } from '@/contexts/MarketplaceContext';
+import { ChevronDown, ChevronUp, X, Filter, Search } from '@/lib/icons';
+import { ProductFilters as ProductFiltersType, Category, ProductSortOption, Product } from '../../shared/types';
+import { useMarketplace } from '../../contexts/MarketplaceContext';
 
 interface ProductFiltersProps {
   onFiltersChange?: (filters: ProductFiltersType) => void;
@@ -145,21 +145,22 @@ export function ProductFilters({
                   : category.productCount;
                 
                 return (
-                <label key={category.id} className="flex items-center space-x-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={localFilters.categoryIds?.includes(category.id) || false}
-                    onChange={(e) => handleCategoryChange(category.id, e.target.checked)}
-                    className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-700"
-                  />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">
-                    {category.name}
-                  </span>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                    ({count})
-                  </span>
-                </label>
-              )})}
+                  <label key={category.id} className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={localFilters.categoryIds?.includes(category.id) || false}
+                      onChange={(e) => handleCategoryChange(category.id, e.target.checked)}
+                      className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-700"
+                    />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">
+                      {category.name}
+                    </span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                      ({count})
+                    </span>
+                  </label>
+                );
+              })}
             </div>
           </div>
 

@@ -1,11 +1,9 @@
-'use client';
-
-import React, { useMemo } from 'react';
+import React from 'react';
 import { FileText } from 'lucide-react';
 import { mockProducts } from '@/shared/data/mockData';
 import { ProductCard } from '@/components/marketplace/ProductCard';
 
-export const GeneralServicesView = () => {
+const GeneralServicesView = () => {
   // IDs of General services/products
   // 18: Impresión 3D por encargo
   // 17: Modelado 3D personalizado
@@ -18,17 +16,11 @@ export const GeneralServicesView = () => {
   const generalServiceIds = ['18', '17', '19', '13', '14', '20', '16', '15'];
   
   // Sort services based on the order of IDs in generalServiceIds
-  const services = useMemo(() => {
-    if (!mockProducts || !Array.isArray(mockProducts)) return [];
-    
-    return mockProducts
-      .filter(product => product && generalServiceIds.includes(product.id))
-      .sort((a, b) => {
-        return generalServiceIds.indexOf(a.id) - generalServiceIds.indexOf(b.id);
-      });
-  }, []);
-
-  if (!services.length) return null;
+  const services = mockProducts
+    .filter(product => generalServiceIds.includes(product.id))
+    .sort((a, b) => {
+      return generalServiceIds.indexOf(a.id) - generalServiceIds.indexOf(b.id);
+    });
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -60,3 +52,5 @@ export const GeneralServicesView = () => {
     </div>
   );
 };
+
+export { GeneralServicesView };
