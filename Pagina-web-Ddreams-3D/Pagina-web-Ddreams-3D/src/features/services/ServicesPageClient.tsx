@@ -9,8 +9,8 @@ import ServicesGalery from '@/features/services/components/ServicesGalery';
 import ServicesCalculatorPrice from '@/features/services/components/ServicesCalculatorPrice';
 import ServicesFAQ from '@/features/services/components/ServicesFAQ';
 import ServicesCTA from '@/features/services/components/ServicesCTA';
-import { GeneralServicesView } from '@/features/services/components/GeneralServicesView';
-import { B2BServicesView } from '@/components/marketplace/B2BServicesView';
+import GeneralServicesView from '@/features/services/components/GeneralServicesView';
+import B2BServicesView from '@/components/marketplace/B2BServicesView';
 
 export default function ServicesPageClient() {
   const [activeTab, setActiveTab] = useState<'general' | 'b2b'>('general');
