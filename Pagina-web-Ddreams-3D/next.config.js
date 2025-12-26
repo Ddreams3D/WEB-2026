@@ -36,17 +36,6 @@ const nextConfig = {
     scrollRestoration: true,
   },
   
-  // Configuración de Turbopack (estable)
-  turbopack: {
-    root: __dirname,
-    rules: {
-      '*.svg': {
-        loaders: ['@svgr/webpack'],
-        as: '*.js',
-      },
-    },
-  },
-  
   // Paquetes externos del servidor
   serverExternalPackages: ['@supabase/supabase-js'],
   // Optimizaciones de rendimiento
