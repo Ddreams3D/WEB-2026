@@ -16,49 +16,30 @@ type ViewMode = 'grid' | 'list';
 export default function MarketplacePage() {
   const {
     products,
-<<<<<<< HEAD
-    searchQuery,
-    searchResults,
-    isLoading,
-    setSearchQuery
-=======
     categories,
     searchQuery,
     searchResults,
     isLoading,
     setSearchQuery,
->>>>>>> ac54a24dffdb027ac16bde58a0d73bdc18b6bc89
   } = useMarketplace();
   
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   // Removed section state as Services are moved to /services
   const [showFilters, setShowFilters] = useState(false);
-<<<<<<< HEAD
 
-=======
   // Removed activeTab state as we only show products here
   
->>>>>>> ac54a24dffdb027ac16bde58a0d73bdc18b6bc89
   const handleFiltersChange = (filters: ProductFiltersType) => {
     // Filters are automatically applied through the MarketplaceContext
   };
 
   const getDisplayProducts = () => {
-<<<<<<< HEAD
-    if (searchQuery.trim()) {
-      return searchResults
-        .map(result => products.find(p => p.id === result.id))
-        .filter((product): product is Product => product !== undefined);
-    }
-    return products;
-=======
     // If searching, show search results
     if (searchQuery.trim()) {
        return searchResults.map(result => products.find(p => p.id === result.id)).filter((product): product is Product => product !== undefined);
     }
     // Otherwise show only products (not services)
     return products.filter(p => !p.customPriceDisplay);
->>>>>>> ac54a24dffdb027ac16bde58a0d73bdc18b6bc89
   };
 
   // Calculate base products for filter counts (only products, no services)
@@ -81,37 +62,14 @@ export default function MarketplacePage() {
   return (
     <div className="min-h-screen bg-background dark:bg-neutral-900">
       <PageHeader
-<<<<<<< HEAD
-        title="Marketplace"
-        description="Descubre nuestra colección exclusiva de modelos y diseños 3D de alta calidad"
-=======
         title="Catálogo de Productos"
         description="Descubre nuestra colección de productos de impresión 3D listos para ti"
->>>>>>> ac54a24dffdb027ac16bde58a0d73bdc18b6bc89
         image="/images/placeholder-innovation.svg"
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
         <div className="flex flex-col lg:flex-row gap-8">
-<<<<<<< HEAD
-          {/* Sidebar - Filters */}
-          <div className="hidden lg:block lg:w-80 lg:sticky lg:top-8 lg:max-h-[calc(100vh-4rem)] lg:overflow-y-auto">
-            <ProductFiltersComponent
-              onFiltersChange={handleFiltersChange}
-              showSearch={true}
-              isCollapsible={true}
-            />
-          </div>
-
-          {/* Main Content */}
-          <div className="flex-1">
-            {/* Controls */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 space-y-4 sm:space-y-0">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Productos ({displayProducts.length})
-              </h2>
-=======
             {/* Filters Sidebar - Desktop */}
             <div className="hidden lg:block w-64 flex-shrink-0">
               <div className="sticky top-24">
@@ -146,7 +104,6 @@ export default function MarketplacePage() {
                   </div>
                 )}
               </div>
->>>>>>> ac54a24dffdb027ac16bde58a0d73bdc18b6bc89
 
               {/* View Controls */}
               <div className="flex items-center space-x-2">

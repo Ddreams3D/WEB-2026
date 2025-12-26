@@ -159,7 +159,8 @@ export function ProductFilters({
                     ({count})
                   </span>
                 </label>
-              ))}
+                );
+              })}
             </div>
           </div>
 

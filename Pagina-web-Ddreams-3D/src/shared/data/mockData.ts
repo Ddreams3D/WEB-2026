@@ -1259,7 +1259,6 @@ export const mockProducts: Product[] = [
     reviewCount: 25,
     isFeatured: true,
     isActive: true,
-    isFeatured: true,
     createdAt: new Date('2024-03-02'),
     updatedAt: new Date('2024-03-02')
   },
