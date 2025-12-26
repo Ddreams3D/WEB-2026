@@ -34,9 +34,7 @@ export default function ServicesCTA() {
               className="flex flex-col sm:flex-row gap-6 justify-center"
               aria-label="Opciones de contacto"
             >
-              <Link href="/contact">
-                <ButtonPrincipal msgLg="Solicitar Cotización" />
-              </Link>
+              <ButtonPrincipal href="/contact" msgLg="Solicitar Cotización" />
               <ButtonRedirectWhatsapp />
             </nav>
           </div>

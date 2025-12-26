@@ -30,17 +30,17 @@ export default function ProcessCallAction() {
               Te acompañamos desde la idea hasta la pieza terminada, con un proceso claro y personalizado.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <Link href="/contact" aria-label="Ir a la página de contacto">
-                <ButtonPrincipal
-                  msgLg="Contactar ahora"
-                  iconRight={
-                    <ArrowRight
-                      className={` text-white ml-2  ${getIconClasses('md')}`}
-                      aria-hidden="true"
-                    />
-                  }
-                />
-              </Link>
+              <ButtonPrincipal
+                href="/contact"
+                aria-label="Ir a la página de contacto"
+                msgLg="Contactar ahora"
+                iconRight={
+                  <ArrowRight
+                    className={` text-white ml-2  ${getIconClasses('md')}`}
+                    aria-hidden="true"
+                  />
+                }
+              />
               <ButtonRedirectWhatsapp />
             </div>
           </div>

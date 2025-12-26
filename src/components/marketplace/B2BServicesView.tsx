@@ -1,27 +1,15 @@
-'use client';
-
-import React, { useMemo } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { ArrowRight, FileText } from 'lucide-react';
 import { mockProducts } from '@/shared/data/mockData';
-import { ProductCard } from '@/components/marketplace/ProductCard';
+import { ProductCard } from './ProductCard';
+
+import { Product } from '@/shared/types';
 
 export const B2BServicesView = () => {
-  // B2B service IDs
-  const b2bServiceIds = ['b2b-1', 'b2b-2', '7', '8'];
-  
-  // Sort services based on the order of IDs in b2bServiceIds
-  const b2bProducts = useMemo(() => {
-    if (!mockProducts || !Array.isArray(mockProducts)) return [];
-    
-    return mockProducts
-      .filter(product => product && b2bServiceIds.includes(product.id))
-      .sort((a, b) => {
-        return b2bServiceIds.indexOf(a.id) - b2bServiceIds.indexOf(b.id);
-      });
-  }, []);
-
-  if (!b2bProducts.length) return null;
+  // IDs of B2B services/products
+  const b2bProductIds = ['7', '8', '9'];
+  const b2bProducts = mockProducts.filter((product: Product) => b2bProductIds.includes(product.id));
 
   return (
     <div className="space-y-12 animate-fade-in">
@@ -61,21 +49,6 @@ export const B2BServicesView = () => {
           />
         ))}
       </div>
-
-      {/* Trust Indicators - Removed as per user request to clean up industries section */}
-      {/* 
-      <div className="text-center pt-8 border-t border-neutral-200 dark:border-neutral-800">
-        <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-6">
-          Empresas que confían en nosotros
-        </p>
-        <div className="flex flex-wrap justify-center gap-8 opacity-50 grayscale">
-            <div className="text-xl font-bold text-neutral-400">EMPRESA 1</div>
-            <div className="text-xl font-bold text-neutral-400">EMPRESA 2</div>
-            <div className="text-xl font-bold text-neutral-400">EMPRESA 3</div>
-            <div className="text-xl font-bold text-neutral-400">EMPRESA 4</div>
-        </div>
-      </div>
-      */}
     </div>
   );
 };

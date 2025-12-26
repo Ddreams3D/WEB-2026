@@ -103,17 +103,17 @@ export default function HomePageClient() {
                 Diseñamos y fabricamos piezas personalizadas en 3D, adaptadas a tu proyecto y uso final.
               </p>
               <div className="flex flex-col sm:flex-row gap-6 justify-center">
-                <Link href="/contact" aria-describedby="cta-heading">
-                  <ButtonPrincipal
-                    msgLg="Solicitar cotización"
-                    iconRight={
-                      <ArrowRight
-                        className={` text-white ml-2  ${getIconClasses('md')}`}
-                        aria-hidden="true"
-                      />
-                    }
-                  />
-                </Link>
+                <ButtonPrincipal
+                  href="/contact"
+                  aria-describedby="cta-heading"
+                  msgLg="Solicitar cotización"
+                  iconRight={
+                    <ArrowRight
+                      className={` text-white ml-2  ${getIconClasses('md')}`}
+                      aria-hidden="true"
+                    />
+                  }
+                />
                 <ButtonRedirectWhatsapp />
               </div>
             </div>

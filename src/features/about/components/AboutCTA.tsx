@@ -29,17 +29,17 @@ export default function AboutCTA() {
               Escríbenos y conversemos sobre tu idea o necesidad específica.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <Link href="/contact" aria-label="Solicitar cotización">
-                <ButtonPrincipal
-                  msgLg="Solicitar cotización"
-                  iconRight={
-                    <ArrowRight
-                      className={` text-white ml-2  ${getIconClasses('md')}`}
-                      aria-hidden="true"
-                    />
-                  }
-                />
-              </Link>
+              <ButtonPrincipal
+                href="/contact"
+                aria-label="Solicitar cotización"
+                msgLg="Solicitar cotización"
+                iconRight={
+                  <ArrowRight
+                    className={` text-white ml-2  ${getIconClasses('md')}`}
+                    aria-hidden="true"
+                  />
+                }
+              />
               <ButtonRedirectWhatsapp />
             </div>
           </div>

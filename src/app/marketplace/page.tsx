@@ -26,6 +26,7 @@ export default function MarketplacePage() {
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   // Removed section state as Services are moved to /services
   const [showFilters, setShowFilters] = useState(false);
+
   // Removed activeTab state as we only show products here
   
   const handleFiltersChange = (filters: ProductFiltersType) => {
@@ -35,7 +36,9 @@ export default function MarketplacePage() {
   const getDisplayProducts = () => {
     // If searching, show search results
     if (searchQuery.trim()) {
-       return searchResults.map(result => products.find(p => p.id === result.id)).filter((product): product is Product => product !== undefined);
+       return searchResults
+        .map(result => products.find(p => p.id === result.id))
+        .filter((product): product is Product => product !== undefined && !product.customPriceDisplay);
     }
     // Otherwise show only products (not services)
     return products.filter(p => !p.customPriceDisplay);
@@ -149,7 +152,7 @@ export default function MarketplacePage() {
                 <div className="flex items-center space-x-2">
                   <Search className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                   <span className="text-primary-800 dark:text-primary-200">
-                    Resultados para "{searchQuery}"
+                    Resultados para &quot;{searchQuery}&quot;
                     <span className="ml-1 text-sm text-primary-600 dark:text-primary-400">
                       ({searchResults.length} encontrados)
                     </span>
@@ -200,7 +203,7 @@ export default function MarketplacePage() {
               </div>
               <ProductFiltersComponent
                 onFiltersChange={handleFiltersChange}
-                showSearch={false}
+                showSearch={true}
                 isCollapsible={false}
                 availableProducts={baseProducts}
               />

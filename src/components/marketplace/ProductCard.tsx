@@ -3,11 +3,11 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Star, ShoppingCart, Download, Heart, ImageIcon } from '@/lib/icons';
-import { Product } from '../../shared/types';
-import { useCart } from '../../contexts/CartContext';
-import { useToast } from '../ui/ToastManager';
-import { ProductImage } from '../../shared/components/ui/DefaultImage';
+import { Star, ShoppingCart, Heart } from 'lucide-react';
+import { Product } from '@/shared/types';
+import { useCart } from '@/contexts/CartContext';
+import { useToast } from '@/components/ui/ToastManager';
+import { ProductImage } from '@/shared/components/ui/DefaultImage';
 
 interface ProductCardProps {
   product: Product;
@@ -49,7 +49,7 @@ export function ProductCard({
     showToast('info', 'Wishlist', 'Funcionalidad de wishlist próximamente');
   };
 
-  const primaryImage = product.images.find(img => img.isPrimary) || product.images[0];
+  const primaryImage = product.images.find((img: any) => img.isPrimary) || product.images[0];
   const hasDiscount = product.originalPrice && product.originalPrice > product.price;
   const discountPercentage = hasDiscount 
     ? Math.round(((product.originalPrice! - product.price) / product.originalPrice!) * 100)
