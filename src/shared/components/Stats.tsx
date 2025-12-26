@@ -61,14 +61,19 @@ export default function Stats() {
   return (
     <section 
       ref={sectionRef}
-      className="bg-neutral-50 dark:bg-neutral-800 py-12 sm:py-16"
+      className="bg-neutral-50 dark:bg-transparent py-12 sm:py-16"
       aria-labelledby="stats-heading"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12 sm:mb-16">
+          <span className="text-neutral-500 dark:text-white/60 font-medium tracking-[0.2em] uppercase text-xs sm:text-sm">
+            Trayectoria & Confianza
+          </span>
+        </div>
         <h2 id="stats-heading" className="sr-only">
           Estadísticas de Ddreams 3D
         </h2>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 opacity-90 hover:opacity-100 transition-opacity duration-300">
           {stats.map((stat, index) => (
             <article 
               key={stat.id} 
@@ -76,9 +81,9 @@ export default function Stats() {
               className={`text-center group ${getAnimationClasses(visibleItems?.[index] || false, index)}`}
               role="listitem"
             >
-              <div className={`inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 ${getGradientClasses('primary')} hover:from-secondary-500 hover:to-primary-500 ${getTransitionClasses()} rounded-full mb-3 sm:mb-4 shadow-lg group-hover:shadow-xl group-hover:scale-105`}>
+              <div className={`inline-flex items-center justify-center w-10 h-10 sm:w-14 sm:h-14 ${getGradientClasses('primary')} hover:from-secondary-500 hover:to-primary-500 ${getTransitionClasses()} rounded-full mb-3 sm:mb-4 shadow-lg group-hover:shadow-xl group-hover:scale-105`}>
                 <stat.icon 
-                  className={`${getIconClasses('md', 'primary')} text-white`} 
+                  className={`w-5 h-5 sm:w-7 sm:h-7 text-white`} 
                   aria-hidden="true" 
                   aria-label={`Icono de ${stat.label}`}
                 />

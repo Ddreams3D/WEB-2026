@@ -29,6 +29,16 @@ const nextConfig = {
     ],
     formats: ['image/webp', 'image/avif'],
     minimumCacheTTL: 60,
+    localPatterns: [
+      {
+        pathname: '/images/**',
+        search: '', // Permitir cualquier parámetro de consulta (como ?v=2)
+      },
+      {
+        pathname: '/logo/**',
+        search: '', // Permitir cualquier parámetro de consulta
+      },
+    ],
   },
   experimental: {
     optimizePackageImports: ['framer-motion'],

@@ -27,9 +27,12 @@ export default function BenefitsSection() {
   const { ref, visibleItems } = useStaggeredItemsAnimation(benefits.length, 200);
 
   return (
-    <section className="py-20 bg-neutral-50 dark:bg-neutral-900" aria-labelledby="benefits-heading">
+    <section className="py-20 bg-neutral-50 dark:bg-transparent" aria-labelledby="benefits-heading">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <header className="text-center mb-16">
+          <span className="block text-neutral-500 dark:text-white/60 font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-3">
+            Nuestras Ventajas
+          </span>
           <h2 id="benefits-heading" className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-900 dark:text-white mb-6">
             ¿Por Qué{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
@@ -47,7 +50,7 @@ export default function BenefitsSection() {
             return (
               <article 
                 key={index} 
-                className={`text-center p-8 bg-white dark:bg-neutral-800 rounded-xl shadow-lg hover:shadow-xl ${getTransitionClasses('transform')} hover:scale-105 ${getAnimationClasses(visibleItems?.[index] || false, index)}`}
+                className={`text-center p-8 bg-white dark:bg-neutral-900/40 border border-transparent dark:border-white/10 rounded-xl shadow-lg hover:shadow-xl ${getTransitionClasses('transform')} hover:scale-105 ${getAnimationClasses(visibleItems?.[index] || false, index)}`}
               >
                 <div className={`inline-flex items-center justify-center w-16 h-16 ${getGradientClasses('primary')} rounded-full mb-6 shadow-lg`}>
                   <IconComponent className={`${getIconClasses('lg')} text-white`} aria-hidden="true" />

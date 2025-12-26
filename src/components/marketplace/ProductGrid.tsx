@@ -82,17 +82,18 @@ export function ProductGrid({
             key={product.id}
             product={product}
             showAddToCart={showAddToCart}
-            onViewDetails={setSelectedProduct}
+            // onViewDetails removed to enforce navigation to product page
             customAction={customAction}
           />
         ))}
       </div>
 
-      <ProductDetailsModal 
+      {/* Modal removed/disabled as per user request to always navigate to product page */}
+      {/* <ProductDetailsModal 
         product={selectedProduct}
         isOpen={!!selectedProduct}
         onClose={() => setSelectedProduct(null)}
-      />
+      /> */}
     </>
   );
 }

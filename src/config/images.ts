@@ -1,5 +1,5 @@
 export const heroImages = {
-  innovation: "/images/placeholder-innovation.svg", // Impresora 3D moderna
+  innovation: "/images/impresion-3d-arequipa-ddreams-v2.png", // Impresora 3D moderna
   precision: "/images/placeholder-precision.svg", // Pieza detallada
   solutions: "/images/placeholder-solutions.svg" // Prototipo funcional
 };

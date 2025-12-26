@@ -8,12 +8,12 @@ import { spacing } from './spacing';
 
 export const buttons = {
   // Estilos base para todos los botones
-  base: 'inline-flex items-center justify-center font-semibold transition-all duration-300 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none',
+  base: 'inline-flex items-center justify-center font-medium transition-all duration-300 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none',
   
   // Variantes de botones
   variants: {
     // Botón primario con gradiente
-    primary: `${colors.gradients.primary} ${colors.gradients.primaryHover} text-white transform hover:scale-105 shadow-lg hover:shadow-xl ${colors.focus.primary}`,
+    primary: `${colors.gradients.primary} ${colors.gradients.primaryHover} text-white transform hover:-translate-y-[1px] ${colors.focus.primary}`,
     
     // Botón secundario transparente
     secondary: 'bg-white/10 backdrop-blur-sm hover:bg-white/20 text-neutral-800 hover:text-white border-2 border-white/30 hover:border-white/50 transform hover:scale-105 hover:shadow-xl',
@@ -39,7 +39,7 @@ export const buttons = {
     xs: `${spacing.button.small} text-xs rounded-md`,
     sm: `${spacing.button.medium} text-sm rounded-md`,
     md: `${spacing.button.responsive.medium} text-base rounded-lg`,
-    lg: `${spacing.button.responsive.large} text-lg rounded-lg`,
+    lg: `${spacing.button.responsive.large} text-sm rounded-lg`,
     xl: 'px-8 py-4 sm:px-10 sm:py-5 text-xl rounded-xl'
   },
   

@@ -47,20 +47,20 @@ export default function ServicesBenefits() {
         {benefits.map((benefit, index) => (
           <article
             key={index}
-            className={`bg-white dark:bg-neutral-800 rounded-xl shadow-lg hover-lift hover-glow p-6 sm:p-8 text-center group animate-scale-in stagger-${
+            className={`bg-white dark:bg-neutral-900/40 border border-transparent dark:border-white/10 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 p-6 sm:p-8 text-center group transition-all duration-700 ease-out animate-scale-in stagger-${
               index + 1
             }`}
           >
-            <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full mb-3 sm:mb-4 shadow-lg group-hover:shadow-xl transition-all duration-300 animate-float">
+            <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full mb-4 sm:mb-6 shadow-lg group-hover:shadow-primary-500/30 transition-all duration-700 ease-out animate-float">
               <benefit.icon
-                className="h-6 w-6 sm:h-8 sm:w-8 text-white"
+                className="h-6 w-6 sm:h-8 sm:w-8 text-white transform group-hover:scale-110 transition-transform duration-700"
                 aria-hidden="true"
               />
             </div>
-            <h3 className="text-lg sm:text-xl lg:text-2xl font-bold mb-2 text-neutral-800 dark:text-neutral-200">
+            <h3 className="text-lg sm:text-xl lg:text-2xl font-bold mb-3 text-neutral-900 dark:text-white group-hover:text-primary-500 transition-colors duration-300">
               {benefit.title}
             </h3>
-            <p className="text-neutral-600 dark:text-neutral-400 text-sm sm:text-base leading-relaxed">
+            <p className="text-neutral-600 dark:text-neutral-300 text-sm sm:text-base leading-relaxed">
               {benefit.description}
             </p>
           </article>

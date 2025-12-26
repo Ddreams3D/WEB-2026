@@ -32,7 +32,10 @@ const Footer = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 300);
+      // Mostrar cuando se ha scrolleado más del 50% de la página
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercentage = (window.scrollY / totalHeight) * 100;
+      setShowScrollTop(scrollPercentage > 50);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -274,14 +277,14 @@ const Footer = () => {
               . Todos los derechos reservados.
             </p>
 
-            {/* Botón scroll to top - Ajustado para no chocar con WhatsApp */}
+            {/* Botón scroll to top - Rediseñado y reposicionado (esquina inferior) */}
             {showScrollTop && (
               <button
                 onClick={scrollToTop}
-                className={`${getButtonClasses('primary', 'sm', 'pill')} fixed bottom-24 right-6 z-40 shadow-lg`}
+                className="fixed bottom-6 right-6 z-40 p-2.5 bg-neutral-900/60 hover:bg-neutral-900/90 text-white rounded-full shadow-md transition-all duration-300 backdrop-blur-sm border border-white/10 hover:-translate-y-1"
                 aria-label="Volver arriba"
               >
-                <ChevronUp className={getIconClasses('sm', 'white')} />
+                <ChevronUp className="w-5 h-5" />
               </button>
             )}
           </div>

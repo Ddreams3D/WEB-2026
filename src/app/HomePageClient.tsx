@@ -38,7 +38,7 @@ export default function HomePageClient() {
   }
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-background dark:bg-neutral-950">
       <Hero />
 
       {/* Stats Section */}
@@ -48,7 +48,7 @@ export default function HomePageClient() {
 
       {/* Projects Section */}
       <section
-        className="py-20 bg-surface dark:bg-neutral-800"
+        className="py-20 bg-surface dark:bg-transparent"
         aria-labelledby="projects-heading"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
