@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import { Send, CheckCircle2, AlertCircle } from '@/lib/icons';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import ButtonPrincipal from '@/shared/components/ButtonPrincipal';
 import { WHATSAPP_REDIRECT } from '@/shared/constants/infoBusiness';
 
