@@ -5,12 +5,15 @@ import { ProductCard } from '@/components/marketplace/ProductCard';
 
 const GeneralServicesView = () => {
   // IDs of General services/products
-  // 10: Impresión 3D Personalizada
-  // 12: Modelado 3D
+  // 18: Impresión 3D por encargo
+  // 17: Modelado 3D personalizado
+  // 19: Acabado profesional
   // 13: Maquetas Arquitectónicas
   // 14: Prototipado de Ingeniería
+  // 20: Trofeos 3D temáticos
+  // 16: Regalos Personalizados
   // 15: Material Didáctico
-  const generalServiceIds = ['10', '12', '13', '14', '15'];
+  const generalServiceIds = ['18', '17', '19', '13', '14', '20', '16', '15'];
   
   // Sort services based on the order of IDs in generalServiceIds
   const services = mockProducts
@@ -50,4 +53,4 @@ const GeneralServicesView = () => {
   );
 };
 
-export default GeneralServicesView;
+export { GeneralServicesView };

@@ -14,6 +14,11 @@ interface ProductGridProps {
   showWishlist?: boolean;
   emptyMessage?: string;
   skeletonCount?: number;
+  customAction?: {
+    label: string;
+    href: string;
+    icon?: React.ReactNode;
+  };
 }
 
 export function ProductGrid({
@@ -23,7 +28,8 @@ export function ProductGrid({
   showAddToCart = true,
   showWishlist = true,
   emptyMessage = 'No se encontraron productos',
-  skeletonCount = 8
+  skeletonCount = 8,
+  customAction
 }: ProductGridProps) {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
@@ -80,6 +86,7 @@ export function ProductGrid({
             showAddToCart={showAddToCart}
             showWishlist={showWishlist}
             onViewDetails={setSelectedProduct}
+            customAction={customAction}
           />
         ))}
       </div>

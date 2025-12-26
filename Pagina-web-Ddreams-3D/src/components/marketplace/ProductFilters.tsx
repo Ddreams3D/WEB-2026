@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, ChevronUp, X, Filter, Search } from '@/lib/icons';
-import { ProductFilters as ProductFiltersType, Category, ProductSortOption } from '../../shared/types';
+import { ProductFilters as ProductFiltersType, Category, ProductSortOption, Product } from '../../shared/types';
 import { useMarketplace } from '../../contexts/MarketplaceContext';
 
 interface ProductFiltersProps {
@@ -10,13 +10,15 @@ interface ProductFiltersProps {
   className?: string;
   showSearch?: boolean;
   isCollapsible?: boolean;
+  availableProducts?: Product[];
 }
 
 export function ProductFilters({
   onFiltersChange,
   className = '',
   showSearch = true,
-  isCollapsible = true
+  isCollapsible = true,
+  availableProducts
 }: ProductFiltersProps) {
   const { categories, filters, applyFilters, clearFilters, searchQuery, setSearchQuery } = useMarketplace();
   const [isExpanded, setIsExpanded] = useState(true);
@@ -137,7 +139,12 @@ export function ProductFilters({
               Categorías
             </label>
             <div className="space-y-2 max-h-40 overflow-y-auto">
-              {categories.map((category) => (
+              {categories.map((category) => {
+                const count = availableProducts 
+                  ? availableProducts.filter(p => p.categoryId === category.id).length
+                  : category.productCount;
+                
+                return (
                 <label key={category.id} className="flex items-center space-x-2 cursor-pointer">
                   <input
                     type="checkbox"
@@ -149,7 +156,7 @@ export function ProductFilters({
                     {category.name}
                   </span>
                   <span className="text-xs text-gray-500 dark:text-gray-400">
-                    ({category.productCount})
+                    ({count})
                   </span>
                 </label>
               ))}

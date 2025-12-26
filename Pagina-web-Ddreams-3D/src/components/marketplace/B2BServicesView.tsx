@@ -4,7 +4,7 @@ import { ArrowRight, FileText } from 'lucide-react';
 import { mockProducts } from '@/shared/data/mockData';
 import { ProductCard } from '@/components/marketplace/ProductCard';
 
-const B2BServicesView = () => {
+export const B2BServicesView = () => {
   // IDs of B2B services/products
   const b2bProductIds = ['7', '8', '9'];
   const b2bProducts = mockProducts.filter(product => b2bProductIds.includes(product.id));
@@ -50,5 +50,3 @@ const B2BServicesView = () => {
     </div>
   );
 };
-
-export default B2BServicesView;

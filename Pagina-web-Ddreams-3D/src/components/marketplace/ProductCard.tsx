@@ -157,6 +157,22 @@ export function ProductCard({
 
       {/* Buttons */}
       <div className="p-4 pt-0 space-y-2">
+        {onViewDetails ? (
+          <button
+            onClick={() => onViewDetails(product)}
+            className="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 py-2 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center text-sm"
+          >
+            Ver detalles
+          </button>
+        ) : (
+          <Link 
+            href={`/marketplace/product/${product.id}`}
+            className="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 py-2 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center text-sm"
+          >
+            Ver detalles
+          </Link>
+        )}
+        
         {customAction ? (
           <Link
             href={customAction.href}
@@ -165,34 +181,14 @@ export function ProductCard({
             {customAction.icon}
             <span>{customAction.label}</span>
           </Link>
-        ) : (
-          <>
-            {onViewDetails ? (
-              <button
-                onClick={() => onViewDetails(product)}
-                className="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 py-2 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center text-sm"
-              >
-                Ver detalles
-              </button>
-            ) : (
-              <Link 
-                href={`/marketplace/product/${product.id}`}
-                className="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 py-2 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center text-sm"
-              >
-                Ver detalles
-              </Link>
-            )}
-            
-            {showAddToCart && (
-              <button
-                onClick={handleAddToCart}
-                className="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center space-x-2 group/btn text-sm"
-              >
-                <ShoppingCart className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
-                <span>Agregar al Carrito</span>
-              </button>
-            )}
-          </>
+        ) : showAddToCart && (
+          <button
+            onClick={handleAddToCart}
+            className="w-full bg-primary-600 hover:bg-primary-700 text-white py-2 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center space-x-2 group/btn text-sm"
+          >
+            <ShoppingCart className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
+            <span>Agregar al Carrito</span>
+          </button>
         )}
       </div>
     </div>
