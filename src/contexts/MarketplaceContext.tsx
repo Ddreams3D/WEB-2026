@@ -122,7 +122,7 @@ export function MarketplaceProvider({ children }: MarketplaceProviderProps) {
   }, [searchQuery, allProducts]);
 
   const loadFeaturedProducts = useCallback(() => {
-    const marketplaceProducts = allProducts.filter(p => !p.customPriceDisplay);
+    const marketplaceProducts = allProducts;
     const featured = marketplaceProducts.filter(p => p.isFeatured);
     setFeaturedProducts(featured);
   }, [allProducts]);
@@ -130,7 +130,7 @@ export function MarketplaceProvider({ children }: MarketplaceProviderProps) {
   const loadProductsByCategory = (categoryId: string) => {
     setIsLoading(true);
     try {
-      const marketplaceProducts = allProducts.filter(p => !p.customPriceDisplay);
+      const marketplaceProducts = allProducts;
       const categoryProducts = marketplaceProducts.filter(p => p.categoryId === categoryId);
       setProducts(categoryProducts);
     } catch (error) {
@@ -158,7 +158,7 @@ export function MarketplaceProvider({ children }: MarketplaceProviderProps) {
       }
     } else {
       setCurrentCategoryState(null);
-      setProducts(allProducts.filter(p => !p.customPriceDisplay));
+      setProducts(allProducts);
     }
   };
 
@@ -168,8 +168,7 @@ export function MarketplaceProvider({ children }: MarketplaceProviderProps) {
       const term = query.toLowerCase();
       const results = allProducts.filter(p => 
         (p.name.toLowerCase().includes(term) || 
-         p.description.toLowerCase().includes(term)) &&
-        !p.customPriceDisplay
+         p.description.toLowerCase().includes(term))
       );
       
       const searchResultsFormatted: SearchResultItem[] = results.map(product => ({
@@ -198,7 +197,7 @@ export function MarketplaceProvider({ children }: MarketplaceProviderProps) {
     setIsLoading(true);
     
     try {
-      let filteredProducts = allProducts.filter(p => !p.customPriceDisplay);
+      let filteredProducts = allProducts;
 
       // Filter by categories
       if (newFilters.categoryIds && newFilters.categoryIds.length > 0) {
@@ -277,7 +276,7 @@ export function MarketplaceProvider({ children }: MarketplaceProviderProps) {
 
   const clearFilters = () => {
     setFilters(initialFilters);
-    setProducts(allProducts.filter(p => !p.customPriceDisplay));
+    setProducts(allProducts);
   };
 
   const getProductsByFilters = (): Product[] => {
