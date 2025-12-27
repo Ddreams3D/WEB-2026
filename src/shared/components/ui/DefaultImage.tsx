@@ -101,6 +101,7 @@ export default function DefaultImage({
   );
 }
 
+
 // Componente específico para productos
 export function ProductImage({
   src,
