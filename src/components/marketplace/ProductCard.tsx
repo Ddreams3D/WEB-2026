@@ -36,7 +36,7 @@ export function ProductCard({
   const { addToCart } = useCart();
   const { showToast } = useToast();
 
-  const productUrl = `/marketplace/product/${product.slug || product.id}${source ? `?from=${source}` : ''}`;
+  const productUrl = `/marketplace/product/${product.slug || product.id || ''}${source ? `?from=${source}` : ''}`;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -46,7 +46,8 @@ export function ProductCard({
     showToast('success', 'Producto agregado', `${product.name} agregado al carrito`);
   };
 
-  const primaryImage = product.images.find((img: any) => img.isPrimary) || product.images[0];
+  const images = product.images || [];
+  const primaryImage = images.find((img: any) => img.isPrimary) || images[0];
   const hasDiscount = product.originalPrice && product.originalPrice > product.price;
   const discountPercentage = hasDiscount 
     ? Math.round(((product.originalPrice! - product.price) / product.originalPrice!) * 100)

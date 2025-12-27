@@ -24,8 +24,16 @@ const GeneralServicesView = () => {
   useEffect(() => {
     const loadServices = async () => {
       try {
+        console.log('Iniciando carga de servicios generales...');
         const allProducts = await ProductService.getAllProducts();
+        console.log('Total productos obtenidos:', allProducts?.length);
         
+        if (!allProducts) {
+          console.error('Error: allProducts es undefined o null');
+          setServices([]);
+          return;
+        }
+
         // Sort services based on the order of IDs in generalServiceIds
         const filteredServices = allProducts
           .filter(product => generalServiceIds.includes(product.id))
@@ -33,6 +41,7 @@ const GeneralServicesView = () => {
             return generalServiceIds.indexOf(a.id) - generalServiceIds.indexOf(b.id);
           });
           
+        console.log('Servicios filtrados:', filteredServices.length);
         setServices(filteredServices);
       } catch (error) {
         console.error('Error loading general services:', error);
@@ -48,6 +57,15 @@ const GeneralServicesView = () => {
     return (
       <div className="flex justify-center items-center py-12">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      </div>
+    );
+  }
+
+  if (services.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-lg text-neutral-600 dark:text-neutral-300">No se encontraron servicios generales disponibles.</p>
+        <p className="text-sm text-neutral-500 mt-2">Verifica la conexión o intenta más tarde.</p>
       </div>
     );
   }

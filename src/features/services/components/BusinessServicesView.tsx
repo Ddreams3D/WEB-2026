@@ -45,7 +45,12 @@ const BusinessServicesView = () => {
   }
 
   if (services.length === 0) {
-    return null;
+    return (
+      <div className="text-center py-12">
+        <p className="text-lg text-neutral-600 dark:text-neutral-300">No se encontraron servicios empresariales disponibles.</p>
+        <p className="text-sm text-neutral-500 mt-2">Intenta recargar la página.</p>
+      </div>
+    );
   }
 
   return (
