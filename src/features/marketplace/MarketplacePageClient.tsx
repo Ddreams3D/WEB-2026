@@ -60,15 +60,6 @@ export default function MarketplacePageClient() {
   const displayProducts = getDisplayProducts();
   const productCount = displayProducts.length;
 
-  // Debug logging
-  useEffect(() => {
-    console.log('MarketplacePageClient:', {
-      productsCount: products.length,
-      displayProductsCount: displayProducts.length,
-      isLoading
-    });
-  }, [products, displayProducts, isLoading]);
-
   return (
     <div className="min-h-screen bg-background dark:bg-neutral-900">
       <PageHeader
