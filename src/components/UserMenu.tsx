@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { User, Settings, LogOut, Bell } from '@/lib/icons';
+import { Button } from '@/components/ui/button';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from './ui/ToastManager';
 
@@ -28,13 +29,15 @@ export default function UserMenu() {
 
   return (
     <div className="relative">
-      <button
+      <Button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+        variant="ghost"
+        size="icon"
+        className="rounded-full h-10 w-10"
       >
         {/* TODO: Implementar avatar cuando esté disponible */}
         <User className="h-6 w-6" />
-      </button>
+      </Button>
 
       {isOpen && (
         <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-neutral-800 rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5">
@@ -47,37 +50,40 @@ export default function UserMenu() {
             </p>
           </div>
 
-          <Link
-            href="/profile"
-            className="block px-4 py-2 text-sm sm:text-base text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+          <Button
+            asChild
+            variant="ghost"
+            className="w-full justify-start px-4 py-2 text-sm sm:text-base text-neutral-700 dark:text-neutral-200 rounded-none h-auto font-normal"
             onClick={() => setIsOpen(false)}
           >
-            <div className="flex items-center space-x-2">
-              <Settings className="h-4 w-4" />
+            <Link href="/profile">
+              <Settings className="h-4 w-4 mr-2" />
               <span>Mi Perfil</span>
-            </div>
-          </Link>
+            </Link>
+          </Button>
 
-          <Link
-            href="/notifications"
-            className="block px-4 py-2 text-sm sm:text-base text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+          <Button
+            asChild
+            variant="ghost"
+            className="w-full justify-start px-4 py-2 text-sm sm:text-base text-neutral-700 dark:text-neutral-200 rounded-none h-auto font-normal"
             onClick={() => setIsOpen(false)}
           >
-            <div className="flex items-center space-x-2">
-              <Bell className="h-4 w-4" />
+            <Link href="/notifications">
+              <Bell className="h-4 w-4 mr-2" />
               <span>Notificaciones</span>
-            </div>
-          </Link>
+            </Link>
+          </Button>
 
-          <button
+          <Button
             onClick={handleLogout}
-            className="block w-full text-left px-4 py-2 text-sm sm:text-base text-red-600 dark:text-red-400 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+            variant="ghost"
+            className="w-full justify-start px-4 py-2 text-sm sm:text-base text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 rounded-none h-auto"
           >
             <div className="flex items-center space-x-2">
               <LogOut className="h-4 w-4" />
               <span>Cerrar Sesión</span>
             </div>
-          </button>
+          </Button>
         </div>
       )}
     </div>

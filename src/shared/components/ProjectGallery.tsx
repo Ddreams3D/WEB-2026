@@ -4,6 +4,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { X, Eye, FileText } from '@/lib/icons';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { colors } from '@/shared/styles/colors';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStaggeredItemsAnimation } from '../hooks/useIntersectionAnimation';
 
@@ -125,12 +128,14 @@ export default function ProjectGallery() {
         {projects.map((project, index) => (
           <article
             key={project.id}
-            className={`group flex flex-col h-full bg-white dark:bg-neutral-900/40 border border-transparent dark:border-white/10 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-700 ease-out overflow-hidden transform hover:-translate-y-1 hover-lift isolate ${
+            className={cn(
+              "group flex flex-col h-full border border-transparent dark:border-neutral-700/50 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-700 ease-out overflow-hidden transform hover:-translate-y-1 hover-lift isolate",
+              colors.backgrounds.card,
               visibleItems[index] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-            }`}
+            )}
             style={{ transitionDelay: `${index * 150}ms`, backfaceVisibility: 'hidden', WebkitMaskImage: '-webkit-radial-gradient(white, black)' }}
           >
-            <figure className="relative overflow-hidden shrink-0 rounded-t-xl bg-white dark:bg-neutral-800 z-0">
+            <figure className={cn("relative overflow-hidden shrink-0 rounded-t-xl z-0", colors.backgrounds.neutral)}>
               <Image
                 src={project.image}
                 alt={`Proyecto: ${project.title}`}
@@ -142,20 +147,27 @@ export default function ProjectGallery() {
                     : 'object-cover group-hover:scale-105'
                 }`}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-in-out" />
+              <div className={cn(
+                "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-in-out",
+                colors.gradients.overlayDark
+              )} />
               <div className="absolute top-3 sm:top-4 right-3 sm:right-4">
-                <span className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-medium shadow-lg">
+                <span className={cn(
+                  "text-white px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-medium shadow-lg",
+                  colors.gradients.primary
+                )}>
                   {project.category}
                 </span>
               </div>
               <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 ease-out opacity-0 group-hover:opacity-100">
-                <button
+                <Button
                   onClick={() => openModal(project)}
-                  className="w-full bg-white/90 backdrop-blur-sm text-neutral-900 py-2 px-4 rounded-lg font-medium hover:bg-white transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base shadow-lg hover:shadow-xl hover:scale-[1.02]"
+                  variant="overlay"
+                  className="w-full shadow-lg"
                 >
-                  <Eye className="w-3 h-3 sm:w-4 sm:h-4" aria-hidden="true" />
+                  <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-2" aria-hidden="true" />
                   Ver Detalles
-                </button>
+                </Button>
               </div>
             </figure>
             <div className="p-4 sm:p-6 flex flex-col flex-grow">
@@ -165,13 +177,19 @@ export default function ProjectGallery() {
               <p className="text-neutral-600 dark:text-neutral-400 mb-6 text-sm sm:text-base line-clamp-2 leading-relaxed">
                 {project.description}
               </p>
-              <Link
-                href="/contact"
-                className="mt-auto w-full bg-neutral-100 dark:bg-neutral-700 text-neutral-900 dark:text-white py-2 px-4 rounded-lg font-medium hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base hover:shadow-md"
+              <Button
+                asChild
+                variant="gradient"
+                className="mt-auto w-full shadow-md hover:shadow-lg transform hover:-translate-y-1"
               >
-                <FileText className="w-4 h-4" />
-                {project.ctaText || 'Cotizar proyecto similar'}
-              </Link>
+                <Link
+                  href="/contact"
+                  className="flex items-center justify-center w-full h-full"
+                >
+                  <FileText className="w-4 h-4 mr-2" />
+                  {project.ctaText || 'Cotizar proyecto similar'}
+                </Link>
+              </Button>
             </div>
           </article>
         ))}
@@ -196,16 +214,18 @@ export default function ProjectGallery() {
                 duration: 0.6,
                 ease: [0.22, 1, 0.36, 1] // Custom easing for "exquisite" feel
               }}
-              className="bg-white dark:bg-neutral-800 rounded-2xl max-w-2xl w-full shadow-2xl relative overflow-hidden"
+              className={cn("rounded-2xl max-w-2xl w-full shadow-2xl relative overflow-hidden", colors.backgrounds.card)}
               onClick={(e) => e.stopPropagation()}
             >
-              <button
+              <Button
                 onClick={closeModal}
-                className="absolute top-4 right-4 p-2 rounded-full bg-neutral-100 dark:bg-neutral-700 text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 transition-colors z-10"
+                variant="overlay"
+                size="icon"
+                className="absolute top-4 right-4 rounded-full z-10 shadow-sm"
                 aria-label="Cerrar detalles"
               >
                 <X className="w-5 h-5" />
-              </button>
+              </Button>
 
               <div className="relative h-64 sm:h-80 w-full group">
                 <Image
@@ -216,14 +236,18 @@ export default function ProjectGallery() {
                       : selectedProject.title
                   }
                   fill
-                  className={`transition-opacity duration-300 ${
+                  className={cn(
+                    "transition-opacity duration-300",
                     selectedProject.imageFit === 'contain' 
-                      ? 'object-contain p-4 bg-neutral-50 dark:bg-neutral-800/50' 
-                      : 'object-cover'
-                  }`}
+                      ? cn("object-contain p-4", colors.backgrounds.neutral)
+                      : "object-cover"
+                  )}
                 />
                 <div className="absolute top-4 left-4">
-                  <span className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg">
+                  <span className={cn(
+                    "text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg",
+                    colors.gradients.primary
+                  )}>
                     {selectedProject.category}
                   </span>
                 </div>
@@ -232,17 +256,19 @@ export default function ProjectGallery() {
                   <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-3 z-20 px-4">
                     <div className="flex gap-2 p-2 bg-black/40 backdrop-blur-md rounded-xl">
                       {selectedProject.gallery.map((img, idx) => (
-                        <button
+                        <Button
                           key={idx}
                           onClick={(e) => {
                             e.stopPropagation();
                             setActiveImage(img);
                           }}
-                          className={`relative w-12 h-12 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
+                          variant="ghost"
+                          className={cn(
+                            "relative w-12 h-12 p-0 rounded-lg overflow-hidden border-2 transition-all duration-200 hover:bg-transparent",
                             activeImage === img 
-                              ? 'border-primary-500 scale-110 shadow-lg' 
-                              : 'border-white/30 hover:border-white/80 hover:scale-105'
-                          }`}
+                              ? "border-white scale-110 shadow-lg" 
+                              : "border-white/30 hover:border-white/80 hover:scale-105"
+                          )}
                         >
                           <Image 
                             src={img} 
@@ -250,7 +276,7 @@ export default function ProjectGallery() {
                             fill 
                             className="object-cover"
                           />
-                        </button>
+                        </Button>
                       ))}
                     </div>
                   </div>
@@ -282,13 +308,20 @@ export default function ProjectGallery() {
                 </div>
 
                 <div className="mt-8 flex justify-end">
-                  <Link
-                    href="/contact"
-                    className="w-full sm:w-auto bg-primary-600 text-white py-3 px-6 rounded-xl font-medium hover:bg-primary-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                  <Button
+                    asChild
+                    variant="gradient"
+                    size="lg"
+                    className="w-full sm:w-auto transform hover:-translate-y-1"
                   >
-                    <FileText className="w-5 h-5" />
-                    {selectedProject.ctaText || 'Cotizar proyecto similar'}
-                  </Link>
+                    <Link
+                      href="/contact"
+                      className="flex items-center justify-center gap-2"
+                    >
+                      <FileText className="w-5 h-5" />
+                      {selectedProject.ctaText || 'Cotizar proyecto similar'}
+                    </Link>
+                  </Button>
                 </div>
               </div>
             </motion.div>

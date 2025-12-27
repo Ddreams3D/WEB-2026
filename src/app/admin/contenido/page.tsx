@@ -4,6 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { Search as MagnifyingGlassIcon, Eye as EyeIcon, Trash2 as TrashIcon, FileText as DocumentTextIcon, Calendar as CalendarIcon, User as UserIcon, Share as ShareIcon } from '@/lib/icons';
 import AdminLayout from '@/shared/components/layout/AdminLayout';
 import AdminProtection from '@/components/admin/AdminProtection';
+import { Button } from '@/components/ui/button';
+import { colors } from '@/shared/styles/colors';
+import { cn } from '@/lib/utils';
 
 
 interface ConceptMap {
@@ -121,17 +124,22 @@ function MapDetailsModal({ map, isOpen, onClose }: {
       <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
         <div className="fixed inset-0 transition-opacity bg-neutral-500 bg-opacity-75" onClick={onClose} />
         
-        <div className="inline-block w-full max-w-2xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-neutral-800 shadow-xl rounded-2xl">
+        <div className={cn(
+          "inline-block w-full max-w-2xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform shadow-xl rounded-2xl",
+          colors.backgrounds.card
+        )}>
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-semibold text-neutral-900 dark:text-white">
               Detalles del Mapa
             </h3>
-            <button
+            <Button
               onClick={onClose}
-              className="p-2 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700"
+              variant="ghost"
+              size="icon"
+              className="p-2 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 h-auto w-auto"
             >
               ×
-            </button>
+            </Button>
           </div>
           
           <div className="space-y-6">
@@ -188,21 +196,21 @@ function MapDetailsModal({ map, isOpen, onClose }: {
             </div>
             
             <div className="grid grid-cols-3 gap-4">
-              <div className="text-center p-4 bg-neutral-50 dark:bg-neutral-700 rounded-lg">
+              <div className={cn("text-center p-4 rounded-lg", colors.backgrounds.neutral)}>
                 <EyeIcon className="w-6 h-6 text-neutral-400 mx-auto mb-2" />
                 <p className="text-lg font-semibold text-neutral-900 dark:text-white">
                   {map.views.toLocaleString()}
                 </p>
                 <p className="text-sm text-neutral-500 dark:text-neutral-400">Visualizaciones</p>
               </div>
-              <div className="text-center p-4 bg-neutral-50 dark:bg-neutral-700 rounded-lg">
+              <div className={cn("text-center p-4 rounded-lg", colors.backgrounds.neutral)}>
                 <span className="text-red-500 text-xl">♥</span>
                 <p className="text-lg font-semibold text-neutral-900 dark:text-white">
                   {map.likes.toLocaleString()}
                 </p>
                 <p className="text-sm text-neutral-500 dark:text-neutral-400">Me gusta</p>
               </div>
-              <div className="text-center p-4 bg-neutral-50 dark:bg-neutral-700 rounded-lg">
+              <div className={cn("text-center p-4 rounded-lg", colors.backgrounds.neutral)}>
                 <ShareIcon className="w-6 h-6 text-neutral-400 mx-auto mb-2" />
                 <p className="text-lg font-semibold text-neutral-900 dark:text-white">
                   {map.shares.toLocaleString()}
@@ -219,7 +227,10 @@ function MapDetailsModal({ map, isOpen, onClose }: {
                 {map.tags.map((tag, index) => (
                   <span
                     key={index}
-                    className="px-2 py-1 text-xs bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded-full"
+                    className={cn(
+                      "px-2 py-1 text-xs rounded-full text-primary-700 dark:text-primary-300",
+                      colors.backgrounds.highlight
+                    )}
                   >
                     #{tag}
                   </span>
@@ -315,16 +326,16 @@ export default function ContentManagement() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 p-4">
+          <div className={cn("rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 p-4", colors.backgrounds.card)}>
             <div className="flex items-center">
-              <DocumentTextIcon className="w-8 h-8 text-blue-500 mr-3" />
+              <DocumentTextIcon className="w-8 h-8 text-primary-600 dark:text-primary-400 mr-3" />
               <div>
                 <p className="text-sm font-medium text-neutral-600 dark:text-neutral-400">Total</p>
                 <p className="text-xl font-bold text-neutral-900 dark:text-white">{maps.length}</p>
               </div>
             </div>
           </div>
-          <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 p-4">
+          <div className={cn("rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 p-4", colors.backgrounds.card)}>
             <div className="flex items-center">
               <div className="w-3 h-3 bg-green-500 rounded-full mr-3" />
               <div>
@@ -335,7 +346,7 @@ export default function ContentManagement() {
               </div>
             </div>
           </div>
-          <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 p-4">
+          <div className={cn("rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 p-4", colors.backgrounds.card)}>
             <div className="flex items-center">
               <div className="w-3 h-3 bg-yellow-500 rounded-full mr-3" />
               <div>
@@ -346,7 +357,7 @@ export default function ContentManagement() {
               </div>
             </div>
           </div>
-          <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 p-4">
+          <div className={cn("rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 p-4", colors.backgrounds.card)}>
             <div className="flex items-center">
               <div className="w-3 h-3 bg-neutral-500 rounded-full mr-3" />
               <div>
@@ -360,7 +371,7 @@ export default function ContentManagement() {
         </div>
 
         {/* Filters and Search */}
-        <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
+        <div className={cn("rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6", colors.backgrounds.card)}>
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1">
               <div className="relative">
@@ -370,14 +381,20 @@ export default function ContentManagement() {
                   placeholder="Buscar mapas conceptuales..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-neutral-700 dark:text-white"
+                  className={cn(
+                    "w-full pl-10 pr-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:text-white",
+                    colors.backgrounds.input
+                  )}
                 />
               </div>
             </div>
             <select
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value)}
-              className="px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-neutral-700 dark:text-white"
+              className={cn(
+                "px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:text-white",
+                colors.backgrounds.input
+              )}
             >
               {categories.map(category => (
                 <option key={category} value={category}>{category}</option>
@@ -386,7 +403,10 @@ export default function ContentManagement() {
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value as 'all' | 'published' | 'draft' | 'archived')}
-              className="px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-neutral-700 dark:text-white"
+              className={cn(
+                "px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:text-white",
+                colors.backgrounds.input
+              )}
             >
               <option value="all">Todos los estados</option>
               <option value="published">Publicados</option>
@@ -396,7 +416,10 @@ export default function ContentManagement() {
             <select
               value={filterVisibility}
               onChange={(e) => setFilterVisibility(e.target.value as 'all' | 'public' | 'private' | 'shared')}
-              className="px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-neutral-700 dark:text-white"
+              className={cn(
+                "px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:text-white",
+                colors.backgrounds.input
+              )}
             >
               <option value="all">Todas las visibilidades</option>
               <option value="public">Públicos</option>
@@ -407,10 +430,10 @@ export default function ContentManagement() {
         </div>
 
         {/* Maps Table */}
-        <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+        <div className={cn("rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden", colors.backgrounds.card)}>
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-neutral-50 dark:bg-neutral-700">
+              <thead className={cn(colors.backgrounds.neutral)}>
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
                     Mapa
@@ -450,7 +473,10 @@ export default function ContentManagement() {
                           {map.tags.slice(0, 2).map((tag, index) => (
                             <span
                               key={index}
-                              className="px-1.5 py-0.5 text-xs bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400 rounded"
+                              className={cn(
+                                "px-1.5 py-0.5 text-xs rounded text-neutral-600 dark:text-neutral-400",
+                                colors.backgrounds.neutral
+                              )}
                             >
                               #{tag}
                             </span>
@@ -521,20 +547,24 @@ export default function ContentManagement() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex items-center justify-end space-x-2">
-                        <button
+                        <Button
                           onClick={() => openModal(map)}
-                          className="p-2 text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-neutral-100 dark:hover:bg-neutral-700"
                           title="Ver detalles"
                         >
                           <EyeIcon className="w-4 h-4" />
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           onClick={() => handleDeleteMap(map.id)}
-                          className="p-2 text-neutral-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-neutral-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
                           title="Eliminar"
                         >
                           <TrashIcon className="w-4 h-4" />
-                        </button>
+                        </Button>
                       </div>
                     </td>
                   </tr>

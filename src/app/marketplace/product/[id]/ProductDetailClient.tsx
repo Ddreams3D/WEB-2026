@@ -12,6 +12,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowLeft, ShoppingCart, Star, Share2, Heart, Check, MessageSquare } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { colors } from '@/shared/styles/colors';
 
 interface Props {
   product: Product;
@@ -187,18 +189,26 @@ export default function ProductDetailClient({ product: initialProduct }: Props) 
 
   return (
     <div className="container mx-auto px-4 pt-24 pb-12 lg:pt-32 lg:pb-20 max-w-7xl font-sans text-gray-900 dark:text-gray-100 min-h-screen">
-      <Link 
-        href={fromSource === 'services' ? '/services' : '/marketplace'} 
-        className="inline-flex items-center px-4 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 rounded-full text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-primary hover:text-primary hover:bg-primary/5 transition-all group shadow-sm mb-8"
+      <Button 
+        asChild
+        variant="outline"
+        className="rounded-full mb-8 h-auto py-2 px-4 backdrop-blur-sm hover:border-primary hover:text-primary hover:bg-primary/5"
       >
-        <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
-        {fromSource === 'services' ? 'Volver a Servicios' : 'Volver al Marketplace'}
-      </Link>
+        <Link 
+          href={fromSource === 'services' ? '/services' : '/marketplace'} 
+        >
+          <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+          {fromSource === 'services' ? 'Volver a Servicios' : 'Volver al Marketplace'}
+        </Link>
+      </Button>
 
       <div className="grid grid-cols-1 lg:grid-cols-[45%_55%] gap-10 lg:gap-16 items-start">
         {/* Product Images Section */}
         <div className="space-y-4 lg:sticky lg:top-24">
-          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 shadow-sm">
+          <div className={cn(
+            "relative aspect-[4/3] overflow-hidden rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm",
+            colors.backgrounds.neutral
+          )}>
             <ProductImage
               src={selectedImage?.url}
               alt={selectedImage?.alt || product.name}
@@ -295,7 +305,10 @@ export default function ProductDetailClient({ product: initialProduct }: Props) 
 
           {/* Opciones del Producto */}
           {product.options && product.options.length > 0 && (
-            <div className="space-y-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl p-5 border border-gray-100 dark:border-gray-800">
+            <div className={cn(
+              "space-y-4 rounded-xl p-5 border border-gray-100 dark:border-gray-800",
+              colors.backgrounds.neutral
+            )}>
               <h3 className="font-bold text-gray-900 dark:text-white">Opciones de Personalización</h3>
               <div className="space-y-4">
                 {product.options.map((option) => (
@@ -309,7 +322,10 @@ export default function ProductDetailClient({ product: initialProduct }: Props) 
                     {option.type === 'select' && (
                       <div className="relative">
                         <select
-                          className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all appearance-none cursor-pointer"
+                          className={cn(
+                            "w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all appearance-none cursor-pointer",
+                            colors.backgrounds.input
+                          )}
                           value={selectedOptions[option.id] || ''}
                           onChange={(e) => handleOptionChange(option.id, e.target.value, true)}
                         >
@@ -330,12 +346,12 @@ export default function ProductDetailClient({ product: initialProduct }: Props) 
                       <div className="flex flex-col gap-3">
                         <div className="flex flex-wrap gap-2">
                           {option.values.map((value) => (
-                            <label key={value.id} className={`
-                              cursor-pointer rounded-lg border px-3 py-2 transition-all duration-200 flex items-center gap-2
-                              ${selectedOptions[option.id] === value.id 
-                                ? 'border-transparent bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-md transform scale-[1.02]' 
-                                : 'border-gray-200 dark:border-gray-700 hover:border-primary/50 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'}
-                            `}>
+                            <label key={value.id} className={cn(
+                              "cursor-pointer rounded-lg border px-3 py-2 transition-all duration-200 flex items-center gap-2",
+                              selectedOptions[option.id] === value.id 
+                                ? cn("border-transparent text-white shadow-md transform scale-[1.02]", colors.gradients.primary, colors.gradients.primaryHover)
+                                : cn("border-gray-200 dark:border-gray-700 hover:border-primary/50 text-gray-600 dark:text-gray-300", colors.hover.neutralBg)
+                            )}>
                               <input
                                 type="radio"
                                 name={`option-${option.id}`}
@@ -345,11 +361,12 @@ export default function ProductDetailClient({ product: initialProduct }: Props) 
                               />
                               <span className="font-medium text-sm">{value.name}</span>
                               {value.priceModifier > 0 && (
-                                <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${
+                                <span className={cn(
+                                  "text-xs font-bold px-1.5 py-0.5 rounded",
                                   selectedOptions[option.id] === value.id 
                                     ? 'bg-white/20 text-white' 
                                     : 'bg-primary/10 text-primary'
-                                }`}>
+                                )}>
                                   +S/{value.priceModifier}
                                 </span>
                               )}
@@ -374,7 +391,10 @@ export default function ProductDetailClient({ product: initialProduct }: Props) 
                                 </label>
                                 <input
                                   type="text"
-                                  className="w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-gray-400"
+                                  className={cn(
+                                    "w-full p-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-gray-400",
+                                    colors.backgrounds.input
+                                  )}
                                   placeholder={selectedValue.inputPlaceholder || `Escribe tu ${option.name.toLowerCase()} aquí (máx. ${limit} caracteres)...`}
                                   value={customInputs[option.id] || ''}
                                   onChange={(e) => setCustomInputs(prev => ({ ...prev, [option.id]: e.target.value }))}
@@ -391,7 +411,10 @@ export default function ProductDetailClient({ product: initialProduct }: Props) 
 
                     {option.type === 'checkbox' && option.values.map((value) => (
                       <div key={value.id} className="flex flex-col">
-                        <label className="flex items-start space-x-3 cursor-pointer group p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+                        <label className={cn(
+                          "flex items-start space-x-3 cursor-pointer group p-2 rounded-lg transition-colors",
+                          colors.hover.neutralBg
+                        )}>
                           <div className="relative flex items-center mt-0.5">
                             <input
                               type="checkbox"
@@ -453,14 +476,8 @@ export default function ProductDetailClient({ product: initialProduct }: Props) 
           <div className="flex flex-col gap-4 pt-6 border-t border-gray-100 dark:border-gray-800">
             <Button 
               size="lg" 
-              className={
-                'w-full text-lg h-14 ' +
-                'bg-gradient-to-r from-primary-500 to-secondary-500 ' +
-                'hover:from-secondary-500 hover:to-primary-500 ' +
-                'text-white ' +
-                'rounded-xl font-bold transition-all duration-300 transform ' +
-                'hover:scale-105 shadow-lg hover:shadow-xl'
-              }
+              variant="gradient"
+              className="w-full text-lg h-14 rounded-xl font-bold shadow-lg hover:shadow-xl"
               onClick={handleAction}
               disabled={isAdding}
             >

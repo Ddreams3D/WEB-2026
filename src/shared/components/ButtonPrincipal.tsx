@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui';
 import React, { DetailedHTMLProps, ReactNode } from 'react';
 import Link from 'next/link';
+import { cn } from '@/lib/utils';
 
 interface PropsButtonPrincipal
   extends DetailedHTMLProps<
@@ -32,6 +33,7 @@ export default function ButtonPrincipal({
   asChild,
   target,
   rel,
+  className,
   ...props
 }: PropsButtonPrincipal) {
   const content = isLoading ? (
@@ -51,26 +53,20 @@ export default function ButtonPrincipal({
     </>
   );
 
-  const buttonClasses =
-    'inline-flex flex-row items-center justify-center gap-2 px-4 py-4 sm:px-6 sm:py-3 ' +
-    'bg-gradient-to-r from-primary-500 to-secondary-500 ' +
-    'hover:from-secondary-500 hover:to-primary-500 ' +
-    'text-white text-sm sm:text-base ' +
-    'rounded-lg font-semibold transition-all duration-300 transform ' +
-    'hover:scale-105 shadow-lg hover:shadow-xl ' +
-    (isFull ? 'w-full' : '') + 
-    (props.className ? ' ' + props.className : '');
-
-  // Remove className from props to avoid duplication
-  const { className, ...otherProps } = props;
+  const buttonClasses = cn(
+    "gap-2 px-4 py-4 sm:px-6 sm:py-3",
+    isFull && "w-full",
+    className
+  );
 
   if (href) {
     return (
       <Button
-        className={buttonClasses}
+        variant="gradient"
         size="lg"
         asChild
-        {...otherProps}
+        className={buttonClasses}
+        {...props}
       >
         <Link href={href} target={target} rel={rel} className="flex flex-row items-center justify-center gap-2 w-full h-full">
           {content}
@@ -81,10 +77,11 @@ export default function ButtonPrincipal({
 
   return (
     <Button
-      className={buttonClasses}
+      variant="gradient"
       size="lg"
       asChild={asChild}
-      {...otherProps}
+      className={buttonClasses}
+      {...props}
     >
       {content}
     </Button>

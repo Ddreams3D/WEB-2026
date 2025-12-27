@@ -2,7 +2,7 @@
 
 import { useAuth } from '../../contexts/AuthContext';
 import ProtectedRoute from '../../components/auth/ProtectedRoute';
-import { getButtonClasses } from '../../shared/styles/buttons';
+import { Button } from '@/components/ui';
 import { User, Shield, LogOut, Home } from '@/lib/icons';
 import Link from 'next/link';
 
@@ -32,21 +32,28 @@ function ProtectedContent() {
                 <span>Bienvenido, {user?.username}</span>
               </div>
               
-              <Link
-                href="/"
-                className={getButtonClasses('outline', 'sm')}
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
               >
-                <Home className="h-4 w-4 mr-2" />
-                Inicio
-              </Link>
+                <Link
+                  href="/"
+                >
+                  <Home className="h-4 w-4 mr-2" />
+                  Inicio
+                </Link>
+              </Button>
               
-              <button
+              <Button
                 onClick={handleLogout}
-                className={`${getButtonClasses('danger', 'sm')} flex items-center`}
+                variant="destructive"
+                size="sm"
+                className="flex items-center"
               >
                 <LogOut className="h-4 w-4 mr-2" />
                 Cerrar Sesión
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -141,21 +148,31 @@ function ProtectedContent() {
 
         {/* Action Buttons */}
         <div className="mt-12 flex justify-center space-x-4">
-          <Link
-            href="/"
-            className={getButtonClasses('secondary', 'lg')}
+          <Button
+            asChild
+            variant="outline"
+            size="lg"
           >
-            <Home className="h-5 w-5 mr-2" />
-            Volver al Inicio
-          </Link>
+            <Link
+              href="/"
+            >
+              <Home className="h-5 w-5 mr-2" />
+              Volver al Inicio
+            </Link>
+          </Button>
           
-          <Link
-            href="/logout"
-            className={getButtonClasses('primary', 'lg')}
+          <Button
+            asChild
+            variant="gradient"
+            size="lg"
           >
-            <LogOut className="h-5 w-5 mr-2" />
-            Cerrar Sesión
-          </Link>
+            <Link
+              href="/logout"
+            >
+              <LogOut className="h-5 w-5 mr-2" />
+              Cerrar Sesión
+            </Link>
+          </Button>
         </div>
       </main>
     </div>

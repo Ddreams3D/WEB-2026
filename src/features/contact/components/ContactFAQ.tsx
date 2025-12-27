@@ -1,12 +1,8 @@
 import React, { useState } from 'react';
 
 import { MessageCircle, Plus, Minus, HelpCircle } from '@/lib/icons';
-import {
-  getButtonClasses,
-  getTransitionClasses,
-  getIconClasses,
-  getGradientClasses,
-} from '../../../shared/styles';
+import { Button } from '@/components/ui/button';
+import { colors } from '@/shared/styles/colors';
 import ButtonPrincipal from '@/shared/components/ButtonPrincipal';
 
 const faqs = [
@@ -50,7 +46,7 @@ export default function ContactFAQ() {
       <header className="text-center mb-6 sm:mb-8">
         <h2
           id="faq"
-          className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary-500 to-secondary-500 bg-clip-text text-transparent"
+          className={`text-2xl sm:text-3xl font-bold ${colors.gradients.textPrimary}`}
         >
           Preguntas Frecuentes
         </h2>
@@ -66,15 +62,16 @@ export default function ContactFAQ() {
             key={index}
             className="bg-white dark:bg-neutral-800 rounded-xl shadow-lg overflow-hidden border border-neutral-200/50 dark:border-neutral-700/50"
           >
-            <button
+            <Button
               onClick={() =>
                 setOpenFaqIndex(openFaqIndex === index ? null : index)
               }
-              className="w-full px-4 py-4 sm:px-6 sm:py-5 text-left flex justify-between items-center hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-200"
+              variant="ghost"
+              className="w-full px-4 py-4 sm:px-6 sm:py-5 text-left flex justify-between items-center hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-200 h-auto rounded-none"
               aria-expanded={openFaqIndex === index}
               aria-controls={`faq-answer-${index}`}
             >
-              <h3 className="text-base sm:text-lg font-semibold text-neutral-900 dark:text-white pr-4">
+              <h3 className="text-base sm:text-lg font-semibold text-neutral-900 dark:text-white pr-4 flex items-center">
                 <HelpCircle
                   className="inline-block w-4 h-4 sm:w-5 sm:h-5 mr-2 text-primary-500"
                   aria-hidden="true"
@@ -92,7 +89,7 @@ export default function ContactFAQ() {
                   aria-hidden="true"
                 />
               )}
-            </button>
+            </Button>
             {openFaqIndex === index && (
               <div
                 id={`faq-answer-${index}`}
@@ -109,7 +106,7 @@ export default function ContactFAQ() {
 
       {/* Call to Action */}
       <div className="mt-8 sm:mt-12 text-center">
-        <div className="bg-gradient-to-r from-primary-50 to-secondary-50 dark:from-primary-900/20 dark:to-secondary-900/20 rounded-xl p-6 sm:p-8 border border-primary-200/50 dark:border-primary-700/30">
+        <div className={`rounded-xl p-6 sm:p-8 border border-primary-200/50 dark:border-primary-700/30 ${colors.gradients.boxHighlight}`}>
           <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-neutral-900 dark:text-white mb-3 sm:mb-4">
             ¿No encontraste lo que buscabas?
           </h3>

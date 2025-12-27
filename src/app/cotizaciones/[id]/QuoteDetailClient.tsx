@@ -39,6 +39,8 @@ import {
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import Link from 'next/link';
+import { cn } from '@/lib/utils';
+import { colors } from '@/shared/styles/colors';
 
 interface QuoteItemDetail {
   id: string;
@@ -82,27 +84,27 @@ interface QuoteDetail {
 const statusConfig = {
   draft: {
     label: 'Borrador',
-    color: 'bg-gray-100 text-gray-800',
+    color: cn(colors.status.info.bg, colors.status.info.text),
     icon: Edit
   },
   pending: {
     label: 'Pendiente',
-    color: 'bg-yellow-100 text-yellow-800',
+    color: cn(colors.status.warning.bg, colors.status.warning.text),
     icon: Clock
   },
   approved: {
     label: 'Aprobada',
-    color: 'bg-green-100 text-green-800',
+    color: cn(colors.status.success.bg, colors.status.success.text),
     icon: CheckCircle
   },
   rejected: {
     label: 'Rechazada',
-    color: 'bg-red-100 text-red-800',
+    color: cn(colors.status.error.bg, colors.status.error.text),
     icon: XCircle
   },
   expired: {
     label: 'Expirada',
-    color: 'bg-gray-100 text-gray-600',
+    color: cn(colors.backgrounds.neutral, "text-gray-600 dark:text-gray-400"),
     icon: AlertCircle
   }
 };
@@ -244,15 +246,15 @@ export default function QuoteDetailClient() {
 
   if (!isB2BUser) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-12">
+      <div className={cn("min-h-screen py-12", colors.gradients.backgroundInfo)}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Card className="text-center py-12">
             <CardContent>
-              <Building className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              <Building className="h-16 w-16 text-neutral-400 mx-auto mb-4" />
+              <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">
                 Acceso Restringido
               </h2>
-              <p className="text-gray-600 dark:text-gray-300 mb-6">
+              <p className="text-neutral-600 dark:text-neutral-300 mb-6">
                 Para ver detalles de cotizaciones, necesitas iniciar sesión con una cuenta empresarial.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -276,16 +278,16 @@ export default function QuoteDetailClient() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-12">
+      <div className={cn("min-h-screen py-12", colors.gradients.backgroundInfo)}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
+            <div className={cn("h-8 rounded w-1/4 mb-6", colors.backgrounds.neutral)}></div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2">
-                <div className="h-64 bg-gray-200 rounded mb-6"></div>
-                <div className="h-48 bg-gray-200 rounded"></div>
+                <div className={cn("h-64 rounded mb-6", colors.backgrounds.neutral)}></div>
+                <div className={cn("h-48 rounded", colors.backgrounds.neutral)}></div>
               </div>
-              <div className="h-96 bg-gray-200 rounded"></div>
+              <div className={cn("h-96 rounded", colors.backgrounds.neutral)}></div>
             </div>
           </div>
         </div>
@@ -295,15 +297,15 @@ export default function QuoteDetailClient() {
 
   if (!quote) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-12">
+      <div className={cn("min-h-screen py-12", colors.gradients.backgroundPage)}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Card className="text-center py-12">
             <CardContent>
-              <FileText className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              <FileText className="h-16 w-16 text-neutral-400 mx-auto mb-4" />
+              <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">
                 Cotización no encontrada
               </h2>
-              <p className="text-gray-600 dark:text-gray-300 mb-6">
+              <p className="text-neutral-600 dark:text-neutral-300 mb-6">
                 La cotización que buscas no existe o ha sido eliminada.
               </p>
               <Button asChild>
@@ -325,7 +327,7 @@ export default function QuoteDetailClient() {
   if (!currentQuote) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-12">
+    <div className={cn("min-h-screen py-12", colors.gradients.backgroundInfo)}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
@@ -337,7 +339,7 @@ export default function QuoteDetailClient() {
               </Link>
             </Button>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">
                 {currentQuote.number}
               </h1>
               <div className="flex items-center mt-2">
@@ -401,7 +403,7 @@ export default function QuoteDetailClient() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                     Título
                   </label>
                   {isEditing ? (
@@ -410,12 +412,12 @@ export default function QuoteDetailClient() {
                       onChange={(e) => setEditedQuote(prev => prev ? {...prev, title: e.target.value} : null)}
                     />
                   ) : (
-                    <p className="text-gray-900 dark:text-white">{currentQuote.title}</p>
+                    <p className="text-neutral-900 dark:text-white">{currentQuote.title}</p>
                   )}
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                     Descripción
                   </label>
                   {isEditing ? (
@@ -425,26 +427,26 @@ export default function QuoteDetailClient() {
                       rows={3}
                     />
                   ) : (
-                    <p className="text-gray-900 dark:text-white">{currentQuote.description}</p>
+                    <p className="text-neutral-900 dark:text-white">{currentQuote.description}</p>
                   )}
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                       Fecha de Creación
                     </label>
-                    <p className="text-gray-900 dark:text-white flex items-center">
+                    <p className="text-neutral-900 dark:text-white flex items-center">
                       <Calendar className="h-4 w-4 mr-2" />
                       {format(currentQuote.createdAt, 'dd/MM/yyyy', { locale: es })}
                     </p>
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                       Válida Hasta
                     </label>
-                    <p className="text-gray-900 dark:text-white flex items-center">
+                    <p className="text-neutral-900 dark:text-white flex items-center">
                       <Clock className="h-4 w-4 mr-2" />
                       {format(currentQuote.validUntil, 'dd/MM/yyyy', { locale: es })}
                     </p>
@@ -474,7 +476,7 @@ export default function QuoteDetailClient() {
                   {currentQuote.items.map((item, index) => (
                     <div key={item.id} className="border rounded-lg p-4">
                       <div className="flex justify-between items-start mb-3">
-                        <h4 className="font-medium text-gray-900 dark:text-white">
+                        <h4 className="font-medium text-neutral-900 dark:text-white">
                           Item #{index + 1}
                         </h4>
                         {isEditing && (
@@ -491,7 +493,7 @@ export default function QuoteDetailClient() {
                       
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div>
-                          <label className="block text-xs font-medium text-gray-500 mb-1">
+                          <label className="block text-xs font-medium text-neutral-500 mb-1">
                             Nombre
                           </label>
                           {isEditing ? (
@@ -500,12 +502,12 @@ export default function QuoteDetailClient() {
                               onChange={(e) => updateItem(item.id, { name: e.target.value })}
                             />
                           ) : (
-                            <p className="text-sm text-gray-900 dark:text-white">{item.name}</p>
+                            <p className="text-sm text-neutral-900 dark:text-white">{item.name}</p>
                           )}
                         </div>
                         
                         <div>
-                          <label className="block text-xs font-medium text-gray-500 mb-1">
+                          <label className="block text-xs font-medium text-neutral-500 mb-1">
                             Material
                           </label>
                           {isEditing ? (
@@ -524,12 +526,12 @@ export default function QuoteDetailClient() {
                               </SelectContent>
                             </Select>
                           ) : (
-                            <p className="text-sm text-gray-900 dark:text-white">{item.material}</p>
+                            <p className="text-sm text-neutral-900 dark:text-white">{item.material}</p>
                           )}
                         </div>
                         
                         <div>
-                          <label className="block text-xs font-medium text-gray-500 mb-1">
+                          <label className="block text-xs font-medium text-neutral-500 mb-1">
                             Cantidad
                           </label>
                           {isEditing ? (
@@ -540,12 +542,12 @@ export default function QuoteDetailClient() {
                               min="1"
                             />
                           ) : (
-                            <p className="text-sm text-gray-900 dark:text-white">{item.quantity}</p>
+                            <p className="text-sm text-neutral-900 dark:text-white">{item.quantity}</p>
                           )}
                         </div>
                         
                         <div>
-                          <label className="block text-xs font-medium text-gray-500 mb-1">
+                          <label className="block text-xs font-medium text-neutral-500 mb-1">
                             Precio Unitario
                           </label>
                           {isEditing ? (
@@ -557,21 +559,21 @@ export default function QuoteDetailClient() {
                               step="0.01"
                             />
                           ) : (
-                            <p className="text-sm text-gray-900 dark:text-white">S/ {item.unitPrice.toFixed(2)}</p>
+                            <p className="text-sm text-neutral-900 dark:text-white">S/ {item.unitPrice.toFixed(2)}</p>
                           )}
                         </div>
                         
                         <div>
-                          <label className="block text-xs font-medium text-gray-500 mb-1">
+                          <label className="block text-xs font-medium text-neutral-500 mb-1">
                             Total
                           </label>
-                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          <p className="text-sm font-medium text-neutral-900 dark:text-white">
                             S/ {(item.quantity * item.unitPrice).toFixed(2)}
                           </p>
                         </div>
                         
                         <div>
-                          <label className="block text-xs font-medium text-gray-500 mb-1">
+                          <label className="block text-xs font-medium text-neutral-500 mb-1">
                             Tiempo Est. (hrs)
                           </label>
                           {isEditing ? (
@@ -583,14 +585,14 @@ export default function QuoteDetailClient() {
                               step="0.1"
                             />
                           ) : (
-                            <p className="text-sm text-gray-900 dark:text-white">{item.estimatedTime}h</p>
+                            <p className="text-sm text-neutral-900 dark:text-white">{item.estimatedTime}h</p>
                           )}
                         </div>
                       </div>
                       
                       {item.description && (
                         <div className="mt-3">
-                          <label className="block text-xs font-medium text-gray-500 mb-1">
+                          <label className="block text-xs font-medium text-neutral-500 mb-1">
                             Descripción
                           </label>
                           {isEditing ? (
@@ -600,7 +602,7 @@ export default function QuoteDetailClient() {
                               rows={2}
                             />
                           ) : (
-                            <p className="text-sm text-gray-600 dark:text-gray-300">{item.description}</p>
+                            <p className="text-sm text-neutral-600 dark:text-neutral-300">{item.description}</p>
                           )}
                         </div>
                       )}
@@ -623,7 +625,7 @@ export default function QuoteDetailClient() {
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-300">Subtotal:</span>
+                  <span className="text-neutral-600 dark:text-neutral-300">Subtotal:</span>
                   <span className="font-medium">S/ {currentQuote.subtotal.toFixed(2)}</span>
                 </div>
                 
@@ -635,7 +637,7 @@ export default function QuoteDetailClient() {
                 )}
                 
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-300">IGV (18%):</span>
+                  <span className="text-neutral-600 dark:text-neutral-300">IGV (18%):</span>
                   <span className="font-medium">S/ {currentQuote.tax.toFixed(2)}</span>
                 </div>
                 
@@ -658,27 +660,27 @@ export default function QuoteDetailClient() {
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex items-center">
-                  <User className="h-4 w-4 mr-2 text-gray-400" />
+                  <User className="h-4 w-4 mr-2 text-neutral-400" />
                   <span className="text-sm">{currentQuote.clientInfo.name}</span>
                 </div>
                 
                 <div className="flex items-center">
-                  <Building className="h-4 w-4 mr-2 text-gray-400" />
+                  <Building className="h-4 w-4 mr-2 text-neutral-400" />
                   <span className="text-sm">{currentQuote.clientInfo.company}</span>
                 </div>
                 
                 <div className="flex items-center">
-                  <Mail className="h-4 w-4 mr-2 text-gray-400" />
+                  <Mail className="h-4 w-4 mr-2 text-neutral-400" />
                   <span className="text-sm">{currentQuote.clientInfo.email}</span>
                 </div>
                 
                 <div className="flex items-center">
-                  <Phone className="h-4 w-4 mr-2 text-gray-400" />
+                  <Phone className="h-4 w-4 mr-2 text-neutral-400" />
                   <span className="text-sm">{currentQuote.clientInfo.phone}</span>
                 </div>
                 
                 <div className="flex items-start">
-                  <MapPin className="h-4 w-4 mr-2 text-gray-400 mt-0.5" />
+                  <MapPin className="h-4 w-4 mr-2 text-neutral-400 mt-0.5" />
                   <span className="text-sm">{currentQuote.clientInfo.address}</span>
                 </div>
               </CardContent>
@@ -699,7 +701,7 @@ export default function QuoteDetailClient() {
                       rows={4}
                     />
                   ) : (
-                    <p className="text-sm text-gray-600 dark:text-gray-300">
+                    <p className="text-sm text-neutral-600 dark:text-neutral-300">
                       {currentQuote.notes || 'Sin notas adicionales'}
                     </p>
                   )}

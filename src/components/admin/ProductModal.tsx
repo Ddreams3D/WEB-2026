@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
 import { X, Upload, ImageIcon } from '@/lib/icons';
 import { useToast } from '@/components/ui/ToastManager';
 import ImageUpload from './ImageUpload';
@@ -179,12 +180,14 @@ export default function ProductModal({ isOpen, onClose, onSave, product }: Produ
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
             {product ? 'Editar Producto' : 'Nuevo Producto'}
           </h2>
-          <button
+          <Button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+            variant="ghost"
+            size="icon"
+            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors h-auto w-auto p-2"
           >
             <X className="h-6 w-6" />
-          </button>
+          </Button>
         </div>
 
         {/* Form */}
@@ -369,23 +372,25 @@ export default function ProductModal({ isOpen, onClose, onSave, product }: Produ
 
           {/* Actions */}
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <button
+            <Button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
+              variant="outline"
+              className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 border-none"
             >
               Cancelar
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
               disabled={isSubmitting}
-              className="px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              variant="gradient"
+              className="flex items-center gap-2"
             >
               {isSubmitting && (
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
               )}
               {product ? 'Actualizar' : 'Crear'} Producto
-            </button>
+            </Button>
           </div>
         </form>
       </div>

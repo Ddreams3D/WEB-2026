@@ -614,12 +614,14 @@ function NewContractPageContent() {
                       {formData.tags.map((tag, index) => (
                         <Badge key={index} variant="secondary" className="flex items-center gap-1">
                           {tag}
-                          <button
+                          <Button
                             onClick={() => removeTag(tag)}
-                            className="ml-1 hover:text-red-500"
+                            variant="ghost"
+                            size="sm"
+                            className="h-auto w-auto p-0 ml-1 hover:text-red-500 hover:bg-transparent"
                           >
                             <Minus className="h-3 w-3" />
-                          </button>
+                          </Button>
                         </Badge>
                       ))}
                     </div>

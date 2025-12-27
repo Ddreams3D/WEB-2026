@@ -2,7 +2,9 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { useToast } from '../ui/ToastManager';
+import { useToast } from '../../components/ui/ToastManager';
+import { Button } from '@/components/ui';
+import { cn } from '@/lib/utils';
 
 interface GoogleLoginButtonProps {
   className?: string;
@@ -26,11 +28,15 @@ export const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({ className 
   };
 
   return (
-    <button
+    <Button
       type="button"
+      variant="outline"
       onClick={handleGoogleLogin}
       disabled={isLoading}
-      className={`w-full flex items-center justify-center px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${className}`}
+      className={cn(
+        "w-full flex items-center justify-center bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700",
+        className
+      )}
     >
       {isLoading ? (
         <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-600 mr-3"></div>
@@ -55,7 +61,7 @@ export const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({ className 
         </svg>
       )}
       {isLoading ? 'Iniciando sesión...' : 'Continuar con Google'}
-    </button>
+    </Button>
   );
 };
 

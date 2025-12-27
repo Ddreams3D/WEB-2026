@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui';
+import { Switch } from '@/components/ui/switch';
 import { Settings as CogIcon, Paintbrush as PaintBrushIcon, ShieldCheck as ShieldCheckIcon, Bell as BellIcon, FileText as DocumentTextIcon, Eye as EyeIcon, Check as CheckIcon } from '@/lib/icons';
 import AdminLayout from '@/shared/components/layout/AdminLayout';
 import AdminProtection from '@/components/admin/AdminProtection';
@@ -150,19 +152,10 @@ function ToggleField({ label, value, onChange, description }: {
           </p>
         )}
       </div>
-      <button
-        type="button"
-        onClick={() => onChange(!value)}
-        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${
-          value ? 'bg-primary-600' : 'bg-neutral-200 dark:bg-neutral-700'
-        }`}
-      >
-        <span
-          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-            value ? 'translate-x-6' : 'translate-x-1'
-          }`}
-        />
-      </button>
+      <Switch
+        checked={value}
+        onCheckedChange={onChange}
+      />
     </div>
   );
 }
@@ -219,13 +212,10 @@ export default function Settings() {
               Personaliza y configura tu plataforma
             </p>
           </div>
-          <button
+          <Button
             onClick={handleSave}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              saved
-                ? 'bg-green-100 text-green-700 border border-green-200'
-                : 'bg-primary-600 text-white hover:bg-primary-700'
-            }`}
+            variant={saved ? 'success' : 'gradient'}
+            className="rounded-lg"
           >
             {saved ? (
               <div className="flex items-center space-x-2">
@@ -235,7 +225,7 @@ export default function Settings() {
             ) : (
               'Guardar Cambios'
             )}
-          </button>
+          </Button>
         </div>
 
         {/* Tabs */}
@@ -244,10 +234,11 @@ export default function Settings() {
             {tabs.map((tab) => {
               const Icon = tab.icon;
               return (
-                <button
+                <Button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                  variant="ghost"
+                  className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors rounded-none h-auto hover:bg-transparent ${
                     activeTab === tab.id
                       ? 'border-primary-500 text-primary-600 dark:text-primary-400'
                       : 'border-transparent text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300'
@@ -255,7 +246,7 @@ export default function Settings() {
                 >
                   <Icon className="w-4 h-4" />
                   <span>{tab.label}</span>
-                </button>
+                </Button>
               );
             })}
           </nav>

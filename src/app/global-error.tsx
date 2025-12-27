@@ -3,6 +3,9 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { AlertTriangle, Home, RefreshCw, Mail } from '@/lib/icons';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { colors } from '@/shared/styles/colors';
 
 export default function GlobalError({
   error,
@@ -19,12 +22,15 @@ export default function GlobalError({
   return (
     <html>
       <body>
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 px-4">
+        <div className={cn(
+          "min-h-screen flex items-center justify-center px-4",
+          colors.gradients.backgroundError
+        )}>
           <div className="max-w-md w-full mx-auto text-center">
             {/* Error Icon */}
             <div className="mb-8">
-              <div className="mx-auto w-20 h-20 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
-                <AlertTriangle className="h-10 w-10 text-red-600 dark:text-red-400" />
+              <div className={cn("mx-auto w-20 h-20 rounded-full flex items-center justify-center", colors.status.error.bg)}>
+                <AlertTriangle className={cn("h-10 w-10", colors.status.error.text)} />
               </div>
             </div>
 
@@ -55,29 +61,36 @@ export default function GlobalError({
 
             {/* Action Buttons */}
             <div className="space-y-3">
-              <button
+              <Button
                 onClick={reset}
-                className="inline-flex items-center justify-center w-full bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                variant="gradient"
+                className="w-full h-auto px-6 py-3 text-base font-medium"
               >
                 <RefreshCw className="h-5 w-5 mr-2" />
                 Intentar de nuevo
-              </button>
+              </Button>
               
-              <Link
-                href="/"
-                className="inline-flex items-center justify-center w-full border border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 px-6 py-3 rounded-lg font-medium transition-colors"
+              <Button
+                asChild
+                variant="outline"
+                className="w-full h-auto px-6 py-3 text-base font-medium justify-center"
               >
-                <Home className="h-5 w-5 mr-2" />
-                Volver al inicio
-              </Link>
+                <Link href="/">
+                  <Home className="h-5 w-5 mr-2" />
+                  Volver al inicio
+                </Link>
+              </Button>
               
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center w-full text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 px-6 py-3 rounded-lg font-medium transition-colors"
+              <Button
+                asChild
+                variant="ghost"
+                className="w-full h-auto px-6 py-3 text-base font-medium justify-center text-primary-600 dark:text-primary-400"
               >
-                <Mail className="h-5 w-5 mr-2" />
-                Reportar problema
-              </Link>
+                <Link href="/contact">
+                  <Mail className="h-5 w-5 mr-2" />
+                  Reportar problema
+                </Link>
+              </Button>
             </div>
 
             {/* Help Text */}

@@ -1,6 +1,9 @@
 import React from 'react';
 
 import { Clock, Shield, Users, Printer } from '@/lib/icons';
+import { colors } from '@/shared/styles/colors';
+import { cn } from '@/lib/utils';
+import InfoCard from '@/shared/components/InfoCard';
 
 const benefits = [
   {
@@ -36,7 +39,7 @@ export default function ServicesBenefits() {
         className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center mb-4 sm:mb-6 text-neutral-900 dark:text-white"
       >
         ¿Cómo{' '}
-        <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
+        <span className={cn(colors.gradients.textHighlight)}>
           trabajamos?
         </span>
       </h2>
@@ -45,25 +48,13 @@ export default function ServicesBenefits() {
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
         {benefits.map((benefit, index) => (
-          <article
+          <InfoCard
             key={index}
-            className={`bg-white dark:bg-neutral-900/40 border border-transparent dark:border-white/10 rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 p-6 sm:p-8 text-center group transition-all duration-700 ease-out animate-scale-in stagger-${
-              index + 1
-            }`}
-          >
-            <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full mb-4 sm:mb-6 shadow-lg group-hover:shadow-primary-500/30 transition-all duration-700 ease-out animate-float">
-              <benefit.icon
-                className="h-6 w-6 sm:h-8 sm:w-8 text-white transform group-hover:scale-110 transition-transform duration-700"
-                aria-hidden="true"
-              />
-            </div>
-            <h3 className="text-lg sm:text-xl lg:text-2xl font-bold mb-3 text-neutral-900 dark:text-white group-hover:text-primary-500 transition-colors duration-300">
-              {benefit.title}
-            </h3>
-            <p className="text-neutral-600 dark:text-neutral-300 text-sm sm:text-base leading-relaxed">
-              {benefit.description}
-            </p>
-          </article>
+            title={benefit.title}
+            description={benefit.description}
+            icon={benefit.icon}
+            index={index}
+          />
         ))}
       </div>
     </section>

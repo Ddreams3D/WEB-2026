@@ -3,6 +3,8 @@
 import * as React from "react";
 import { cn } from "../../lib/utils";
 
+import { Button } from "./button";
+
 export interface DateRange {
   from?: Date;
   to?: Date;
@@ -88,21 +90,21 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
         const isDisabled = disabled && disabled(date);
 
         days.push(
-          <button
+          <Button
             key={day}
-            type="button"
+            variant={isSelected ? "gradient" : "ghost"}
             className={cn(
-              "p-2 text-sm rounded hover:bg-gray-100 transition-colors",
-              isSelected && "bg-blue-500 text-white hover:bg-blue-600",
-              isInRange && !isSelected && "bg-blue-100",
+              "h-9 w-9 p-0 font-normal aria-selected:opacity-100",
+              isSelected && "text-white hover:text-white",
+              isInRange && !isSelected && "bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary",
               isDisabled && "opacity-50 cursor-not-allowed",
-              "focus:outline-none focus:ring-2 focus:ring-blue-500"
+              !isSelected && !isInRange && "hover:bg-accent hover:text-accent-foreground"
             )}
             onClick={() => handleDateSelect(date)}
             disabled={isDisabled}
           >
             {day}
-          </button>
+          </Button>
         );
       }
 
@@ -132,30 +134,34 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
       <div
         ref={ref}
         className={cn(
-          "p-4 bg-white border rounded-lg shadow-sm",
+          "p-4 bg-white dark:bg-neutral-900 border rounded-lg shadow-sm",
           className
         )}
         {...props}
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
-          <button
-            type="button"
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => navigateMonth('prev')}
-            className="p-1 hover:bg-gray-100 rounded transition-colors"
+            className="h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100"
           >
+            <span className="sr-only">Previous month</span>
             ←
-          </button>
+          </Button>
           <h2 className="text-lg font-semibold">
             {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
           </h2>
-          <button
-            type="button"
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => navigateMonth('next')}
-            className="p-1 hover:bg-gray-100 rounded transition-colors"
+            className="h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100"
           >
+            <span className="sr-only">Next month</span>
             →
-          </button>
+          </Button>
         </div>
 
         {/* Day names */}

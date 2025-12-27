@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { Product } from '../../shared/types';
 import { ProductCard, ProductCardSkeleton } from './ProductCard';
-import { ProductDetailsModal } from './ProductDetailsModal';
+import { Button } from '@/components/ui';
 
 interface ProductGridProps {
   products: Product[];
@@ -218,9 +218,13 @@ export function ProductList({
                 S/ {product.price.toFixed(2)}
               </span>
               {showAddToCart && (
-                <button className="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg text-sm font-medium transition-colors">
+                <Button 
+                  variant="gradient"
+                  size="sm"
+                  className="px-4 py-2 text-sm font-medium shadow-sm hover:shadow-md transform hover:scale-105"
+                >
                   Agregar
-                </button>
+                </Button>
               )}
             </div>
           </div>

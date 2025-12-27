@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import Hero from '../shared/components/Hero';
-import SocialShare from '../shared/components/SocialShare';
 import BenefitsSection from '../shared/components/BenefitsSection';
 import {
   LazyStats,
@@ -10,14 +9,15 @@ import {
 } from '../shared/components/LazyComponents';
 import { ArrowRight } from '@/lib/icons';
 import Link from 'next/link';
+import { Button } from '@/components/ui';
 import {
-  getButtonClasses,
   getTransitionClasses,
   getIconClasses,
-  getGradientClasses,
 } from '../shared/styles';
-import ButtonPrincipal from '@/shared/components/ButtonPrincipal';
-import ButtonRedirectWhatsapp from '@/shared/components/ButtonRedirectWhatsapp';
+import { colors } from '@/shared/styles/colors';
+import { cn } from '@/lib/utils';
+import CallToAction from '@/shared/components/CallToAction';
+import { ctaData } from '@/shared/data/ctaData';
 
 export default function HomePageClient() {
   const [isMounted, setIsMounted] = useState(false);
@@ -38,7 +38,7 @@ export default function HomePageClient() {
   }
 
   return (
-    <main className="min-h-screen bg-background dark:bg-neutral-950">
+    <main className="min-h-screen bg-background">
       <Hero />
 
       {/* Stats Section */}
@@ -48,7 +48,7 @@ export default function HomePageClient() {
 
       {/* Projects Section */}
       <section
-        className="py-20 bg-surface dark:bg-transparent"
+        className="py-20"
         aria-labelledby="projects-heading"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -58,7 +58,7 @@ export default function HomePageClient() {
               className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-900 dark:text-white mb-6"
             >
               Proyectos{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
+              <span className={colors.gradients.textHighlight}>
                 Destacados
               </span>
             </h2>
@@ -69,57 +69,31 @@ export default function HomePageClient() {
           <LazyProjectGallery />
 
           <div className="text-center mt-12">
-            <Link
-              href="/services#gallery"
-              className="inline-flex items-center bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-secondary-500 hover:to-primary-500 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-300 transform hover:scale-105"
+            <Button
+              asChild
+              variant="gradient"
+              size="lg"
+              className="text-lg px-8 py-6 h-auto"
             >
-              Ver Todos los Proyectos
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Link>
+              <Link
+                href="/services#gallery"
+                className="flex items-center gap-2"
+              >
+                Ver Todos los Proyectos
+                <ArrowRight className="h-5 w-5" />
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20" aria-labelledby="cta-heading">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div
-            className={`${getGradientClasses(
-              'primary'
-            )} rounded-xl shadow-2xl p-6 sm:p-8 text-center text-white relative overflow-hidden`}
-          >
-            <div
-              className="absolute inset-0 bg-gradient-to-r from-primary-500/20 to-secondary-500/20 backdrop-blur-sm"
-              aria-hidden="true"
-            />
-            <div className="relative z-10">
-              <h2
-                id="cta-heading"
-                className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-6 drop-shadow-lg"
-              >
-                ¿Listo para dar vida a tus ideas?
-              </h2>
-              <p className="text-sm sm:text-base text-white/90 mb-10 max-w-3xl mx-auto leading-relaxed opacity-95">
-                Diseñamos y fabricamos piezas personalizadas en 3D, adaptadas a tu proyecto y uso final.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-6 justify-center">
-                <ButtonPrincipal
-                  href="/contact"
-                  aria-describedby="cta-heading"
-                  msgLg="Solicitar cotización"
-                  icon={
-                    <ArrowRight
-                      className={` text-white ${getIconClasses('md')}`}
-                      aria-hidden="true"
-                    />
-                  }
-                />
-                <ButtonRedirectWhatsapp />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <CallToAction
+        title={ctaData.home.title}
+        description={ctaData.home.description}
+        primaryButtonText={ctaData.home.primaryButtonText}
+        primaryButtonLink={ctaData.home.primaryButtonLink}
+      />
     </main>
   );
 }

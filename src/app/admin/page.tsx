@@ -1,9 +1,21 @@
 'use client';
 
 import React from 'react';
-import { Users as UsersIcon, FileText as DocumentTextIcon, Eye as EyeIcon, BarChart3 as ChartBarIcon, TrendingUp as TrendingUpIcon, TrendingDown as TrendingDownIcon } from '@/lib/icons';
+import Link from 'next/link';
+import { 
+  Users as UsersIcon, 
+  FileText as DocumentTextIcon, 
+  Eye as EyeIcon, 
+  BarChart3 as ChartBarIcon, 
+  TrendingUp as TrendingUpIcon, 
+  TrendingDown as TrendingDownIcon,
+  ShoppingBag as ShoppingBagIcon,
+  Settings as CogIcon,
+  Palette as PaletteIcon
+} from '@/lib/icons';
 import AdminLayout from '@/shared/components/layout/AdminLayout';
 import AdminProtection from '@/components/admin/AdminProtection';
+import { cn } from '@/lib/utils';
 
 // Datos simulados para el dashboard
 const mockStats = {
@@ -16,6 +28,15 @@ const mockStats = {
   growthViews: -2.1,
   growthActive: 15.7
 };
+
+const quickAccess = [
+  { name: 'Usuarios', href: '/admin/usuarios', icon: UsersIcon, color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-100 dark:bg-blue-900/30' },
+  { name: 'Productos', href: '/admin/productos', icon: ShoppingBagIcon, color: 'text-indigo-600 dark:text-indigo-400', bg: 'bg-indigo-100 dark:bg-indigo-900/30' },
+  { name: 'Contenido', href: '/admin/contenido', icon: DocumentTextIcon, color: 'text-green-600 dark:text-green-400', bg: 'bg-green-100 dark:bg-green-900/30' },
+  { name: 'Estadísticas', href: '/admin/estadisticas', icon: ChartBarIcon, color: 'text-yellow-600 dark:text-yellow-400', bg: 'bg-yellow-100 dark:bg-yellow-900/30' },
+  { name: 'Temas', href: '/admin/temas', icon: PaletteIcon, color: 'text-purple-600 dark:text-purple-400', bg: 'bg-purple-100 dark:bg-purple-900/30' },
+  { name: 'Configuración', href: '/admin/configuracion', icon: CogIcon, color: 'text-gray-600 dark:text-gray-400', bg: 'bg-gray-100 dark:bg-gray-900/30' },
+];
 
 const recentActivity = [
   {
@@ -154,6 +175,22 @@ export default function AdminDashboard() {
           <p className="text-neutral-600 dark:text-neutral-400 mt-1">
             Resumen general de la plataforma de mapas conceptuales
           </p>
+        </div>
+
+        {/* Quick Access Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+          {quickAccess.map((item) => (
+            <Link 
+              key={item.name} 
+              href={item.href}
+              className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 hover:shadow-md transition-all duration-200 flex flex-col items-center justify-center gap-3 group"
+            >
+              <div className={cn("p-3 rounded-full transition-transform duration-200 group-hover:scale-110", item.bg)}>
+                <item.icon className={cn("w-6 h-6", item.color)} />
+              </div>
+              <span className="font-medium text-sm text-neutral-700 dark:text-neutral-300">{item.name}</span>
+            </Link>
+          ))}
         </div>
 
         {/* Stats Grid */}

@@ -1,11 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
 import { Star, Quote, Filter, Share2, ExternalLink } from '@/lib/icons';
 import {
   useStaggeredItemsAnimation,
   getAnimationClasses,
 } from '../hooks/useIntersectionAnimation';
+import { cn } from '@/lib/utils';
+import { colors } from '@/shared/styles/colors';
 
 interface Testimonial {
   id: string;
@@ -111,27 +114,10 @@ export default function Testimonials() {
       ? testimonials
       : testimonials.filter((t) => t.industry === selectedIndustry);
 
-  const shareTestimonial = (testimonial: Testimonial) => {
-    if (navigator.share) {
-      navigator.share({
-        title: `Testimonio de ${testimonial.name}`,
-        text: testimonial.content,
-        url: window.location.href,
-      });
-    } else {
-      // Fallback: copy to clipboard
-      navigator.clipboard.writeText(
-        `"${testimonial.content}" - ${testimonial.name}, ${testimonial.role}${
-          testimonial.company ? ` en ${testimonial.company}` : ''
-        }`
-      );
-    }
-  };
-
   return (
     <section
       ref={ref}
-      className="py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-neutral-50 via-white to-neutral-100 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900"
+      className="py-12 sm:py-16 lg:py-20"
       role="region"
       aria-labelledby="testimonials-heading"
     >
@@ -142,7 +128,10 @@ export default function Testimonials() {
             className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-900 dark:text-white mb-3 sm:mb-4"
           >
             Lo que dicen nuestros{' '}
-            <span className="bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
+            <span className={cn(
+              "bg-clip-text text-transparent",
+              colors.gradients.textPrimary
+            )}>
               clientes
             </span>
           </h2>
@@ -158,20 +147,20 @@ export default function Testimonials() {
           aria-label="Carrusel de testimonios"
         >
           {/* Industry Filter */}
-          <div className="mb-6 sm:mb-8 hidden">
+          <div className="mb-6 sm:mb-8">
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              <button
+              <Button
                 onClick={() => setShowFilters(!showFilters)}
-                className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 hover:shadow-md transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
+                variant="outline"
                 aria-expanded={showFilters}
                 aria-controls="filter-options"
                 aria-label="Alternar filtros de testimonios"
               >
-                <Filter className="h-4 w-4" aria-hidden="true" />
+                <Filter className="h-4 w-4 mr-2" aria-hidden="true" />
                 <span className="text-sm font-medium">
                   Filtrar por industria
                 </span>
-              </button>
+              </Button>
             </div>
             {showFilters && (
               <div
@@ -181,18 +170,15 @@ export default function Testimonials() {
                 aria-label="Filtros por industria"
               >
                 {industries.map((industry) => (
-                  <button
+                  <Button
                     key={industry}
                     onClick={() => setSelectedIndustry(industry)}
-                    className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 ${
-                      selectedIndustry === industry
-                        ? 'bg-primary-500 text-white shadow-md scale-105 hover:shadow-lg'
-                        : 'bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 hover:bg-primary-50 dark:hover:bg-primary-900 hover:text-primary-600 dark:hover:text-primary-400 hover:border-primary-200 dark:hover:border-primary-700 hover:shadow-sm'
-                    }`}
+                    variant={selectedIndustry === industry ? 'gradient' : 'outline'}
+                    className="rounded-full h-auto py-1.5 px-3"
                     aria-pressed={selectedIndustry === industry}
                   >
                     {industry}
-                  </button>
+                  </Button>
                 ))}
               </div>
             )}
@@ -219,17 +205,21 @@ export default function Testimonials() {
           {filteredTestimonials.map((testimonial, index) => (
             <article
               key={testimonial.id}
-              className={`group bg-gradient-to-br from-white via-neutral-50 to-neutral-25 dark:from-neutral-800 dark:via-neutral-750 dark:to-neutral-800 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 p-4 sm:p-5 relative transform hover:scale-[1.005] hover:-translate-y-0.5 border border-neutral-300 dark:border-neutral-600 overflow-hidden focus-within:ring-2 focus-within:ring-primary-500 focus-within:ring-offset-2 dark:focus-within:ring-offset-neutral-900 ${getAnimationClasses(
-                visibleItems?.[index] || false,
-                index
-              )}`}
+              className={cn(
+                "group rounded-xl shadow-md hover:shadow-lg transition-all duration-200 p-4 sm:p-5 relative transform hover:scale-[1.005] hover:-translate-y-0.5 border border-neutral-300 dark:border-neutral-600 overflow-hidden focus-within:ring-2 focus-within:ring-primary-500 focus-within:ring-offset-2 dark:focus-within:ring-offset-neutral-900",
+                colors.gradients.cardNeutral,
+                getAnimationClasses(visibleItems?.[index] || false, index)
+              )}
               tabIndex={0}
               role="article"
               aria-labelledby={`testimonial-${testimonial.id}-name`}
               aria-describedby={`testimonial-${testimonial.id}-content`}
             >
               <div
-                className="absolute inset-0 bg-gradient-to-br from-primary-500/5 via-transparent to-secondary-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                className={cn(
+                  "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300",
+                  colors.gradients.cardHover
+                )}
                 aria-hidden="true"
               />
               <Quote
@@ -238,9 +228,9 @@ export default function Testimonials() {
               />
 
               <div className="flex items-start gap-3 sm:gap-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-primary-500 via-primary-600 to-secondary-500 rounded-full flex items-center justify-center text-white text-sm sm:text-base font-bold flex-shrink-0 shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all duration-200 ring-2 ring-primary-100 dark:ring-primary-800 group-hover:ring-primary-300 dark:group-hover:ring-primary-600">
-                  {testimonial.name.charAt(0)}
-                </div>
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 text-sm sm:text-base font-bold flex-shrink-0 shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all duration-200 ring-2 ring-primary-200 dark:ring-primary-800">
+                {testimonial.name.charAt(0)}
+              </div>
 
                 <div className="flex-1 min-w-0">
                   <div
@@ -272,7 +262,11 @@ export default function Testimonials() {
                     <cite className="not-italic">
                       <h4
                         id={`testimonial-${testimonial.id}-name`}
-                        className="font-bold text-sm sm:text-base lg:text-lg bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent group-hover:from-primary-700 group-hover:to-secondary-700 transition-all duration-300 leading-tight"
+                        className={cn(
+                          "font-bold text-sm sm:text-base lg:text-lg bg-clip-text text-transparent transition-all duration-300 leading-tight",
+                          colors.gradients.textPrimary,
+                          colors.gradients.textPrimaryHover
+                        )}
                       >
                         {testimonial.name}
                       </h4>
@@ -301,32 +295,7 @@ export default function Testimonials() {
                       </div>
                     </cite>
 
-                    {/* Action Buttons */}
-                    {/* <div className="flex items-center gap-1.5 mt-3 pt-3 border-t border-neutral-100 dark:border-neutral-700">
-                       <button
-                         onClick={() => shareTestimonial(testimonial)}
-                         className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-neutral-700 dark:text-neutral-300 hover:text-primary-700 dark:hover:text-primary-300 hover:bg-primary-50 dark:hover:bg-primary-950 hover:shadow-sm rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800"
-                         title="Compartir testimonio"
-                         aria-label={`Compartir testimonio de ${testimonial.name}`}
-                       >
-                         <Share2 className="h-3.5 w-3.5" aria-hidden="true" />
-                         <span className="font-semibold">Compartir</span>
-                       </button>
-                       
-                       {testimonial.caseStudyUrl && (
-                         <a
-                           href={testimonial.caseStudyUrl}
-                           className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-neutral-700 dark:text-neutral-300 hover:text-secondary-700 dark:hover:text-secondary-300 hover:bg-secondary-50 dark:hover:bg-secondary-950 hover:shadow-sm rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-secondary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800"
-                           title="Ver caso de estudio completo"
-                           aria-label={`Ver caso de estudio de ${testimonial.name}`}
-                           target="_blank"
-                           rel="noopener noreferrer"
-                         >
-                           <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
-                           <span className="font-semibold">Caso de Estudio</span>
-                         </a>
-                       )}
-                     </div> */}
+
                   </footer>
                 </div>
               </div>

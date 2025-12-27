@@ -3,7 +3,9 @@
 import React from 'react';
 import { Users, Printer, Star, Clock } from '@/lib/icons';
 import { useStaggeredItemsAnimation, useCounterAnimation, getAnimationClasses } from '../hooks/useIntersectionAnimation';
-import { getTransitionClasses, getIconClasses, getGradientClasses } from '../styles';
+import { getTransitionClasses } from '../styles';
+import { colors } from '@/shared/styles/colors';
+import { cn } from '@/lib/utils';
 
 const stats = [
   {
@@ -61,7 +63,7 @@ export default function Stats() {
   return (
     <section 
       ref={sectionRef}
-      className="bg-neutral-50 dark:bg-transparent py-12 sm:py-16"
+      className="py-12 sm:py-16"
       aria-labelledby="stats-heading"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -78,18 +80,22 @@ export default function Stats() {
             <article 
               key={stat.id} 
               ref={counters[index].ref}
-              className={`text-center group ${getAnimationClasses(visibleItems?.[index] || false, index)}`}
+              className={cn("text-center group", getAnimationClasses(visibleItems?.[index] || false, index))}
               role="listitem"
             >
-              <div className={`inline-flex items-center justify-center w-10 h-10 sm:w-14 sm:h-14 ${getGradientClasses('primary')} hover:from-secondary-500 hover:to-primary-500 ${getTransitionClasses()} rounded-full mb-3 sm:mb-4 shadow-lg group-hover:shadow-xl group-hover:scale-105`}>
+              <div className="flex justify-center mb-3 sm:mb-4">
                 <stat.icon 
-                  className={`w-5 h-5 sm:w-7 sm:h-7 text-white`} 
+                  className="w-10 h-10 sm:w-14 sm:h-14 text-primary-600 dark:text-primary-400 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300" 
                   aria-hidden="true" 
                   aria-label={`Icono de ${stat.label}`}
                 />
               </div>
               <div 
-                className={`text-2xl sm:text-3xl lg:text-4xl font-bold ${getGradientClasses('textPrimary')} bg-clip-text text-transparent mb-1 sm:mb-2`}
+                className={cn(
+                  "text-2xl sm:text-3xl lg:text-4xl font-bold mb-1 sm:mb-2",
+                  colors.gradients.textPrimary,
+                  colors.gradients.textPrimaryHover
+                )}
                 aria-label={`${stat.value} ${stat.label}`}
               >
                 {formatValue(stat, index)}

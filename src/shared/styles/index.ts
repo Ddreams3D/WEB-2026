@@ -14,7 +14,7 @@ export { forms, getInputClasses, getLabelClasses, getTextareaClasses, getValidat
 // Importar configuraciones para crear un objeto unificado
 import { colors, commonClasses as colorUtilities } from './colors';
 import { spacing, commonSpacing as spacingUtilities } from './spacing';
-import { buttons, commonButtons as buttonUtilities, getButtonClasses } from './buttons';
+import { buttons, commonButtons as buttonUtilities } from './buttons';
 import { animations, commonAnimations } from './animations';
 import { icons, commonIconClasses } from './icons';
 import { forms, commonFormClasses } from './forms';
@@ -29,8 +29,6 @@ export const ddreamsStyles = {
   forms
 } as const;
 
-// Exportar la función principal de botones
-export { getButtonClasses };
 
 // Re-exportar utilidades
 export const gradients = colors.gradients;
@@ -84,7 +82,7 @@ export const componentStyles = {
     container: commonStyles.container,
     title: 'text-4xl md:text-6xl font-bold text-white mb-6',
     subtitle: 'text-xl md:text-2xl text-white/90 mb-8',
-    button: 'bg-gradient-to-r from-primary-600 to-secondary-600 text-white px-8 py-4 rounded-lg font-semibold hover:from-primary-700 hover:to-secondary-700 transition-all duration-300'
+    button: `${colors.gradients.primary} ${colors.gradients.primaryHover} text-white px-8 py-4 rounded-lg font-semibold`
   },
   
   // Secciones
@@ -111,7 +109,7 @@ export const componentStyles = {
   
   // Botones comunes
   button: {
-    primary: 'bg-gradient-to-r from-primary-600 to-secondary-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-primary-700 hover:to-secondary-700 transition-all duration-300',
+    primary: `${colors.gradients.primary} ${colors.gradients.primaryHover} text-white px-6 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105`,
     secondary: 'bg-neutral-200 text-neutral-800 px-6 py-3 rounded-lg font-semibold hover:bg-neutral-300 transition-all duration-300',
     outline: 'border-2 border-primary-600 text-primary-600 px-6 py-3 rounded-lg font-semibold hover:bg-primary-600 hover:text-white transition-all duration-300',
     ghost: 'text-primary-600 px-6 py-3 rounded-lg font-semibold hover:bg-primary-50 transition-all duration-300'

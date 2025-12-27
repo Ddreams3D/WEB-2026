@@ -123,7 +123,7 @@ export const forms = {
   button: {
     // Botón principal de envío
     submit: {
-      base: 'w-full bg-gradient-to-r from-primary-600 to-secondary-600 text-white font-semibold rounded-lg transition-all duration-300 hover:from-primary-700 hover:to-secondary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2',
+      base: 'w-full bg-gradient-to-r from-primary-600 via-secondary-500 to-primary-600 bg-[length:200%_auto] transition-all duration-500 ease-in-out bg-left hover:bg-right text-white font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transform hover:scale-[1.02] shadow-md hover:shadow-lg',
       size: {
         sm: 'px-4 py-2 text-sm',
         md: 'px-6 py-3 text-base',

@@ -34,20 +34,44 @@ export const colors = {
 
   // Gradientes estandarizados
   gradients: {
-    primary: 'bg-gradient-to-r from-primary-500 to-secondary-500',
-    primaryHover: 'hover:from-secondary-500 hover:to-primary-500',
-    primaryBr: 'bg-gradient-to-br from-primary-500 to-secondary-500',
-    primaryBrHover: 'hover:from-secondary-500 hover:to-primary-500',
+    primary: 'bg-gradient-to-r from-primary-600 via-secondary-500 to-primary-600 bg-[length:200%_auto] transition-all duration-500 ease-in-out bg-left',
+    primaryHover: 'hover:bg-right',
+    primaryBr: 'bg-gradient-to-br from-primary-600 via-secondary-500 to-primary-600 bg-[length:200%_auto] transition-all duration-500 ease-in-out bg-left',
+    primaryBrHover: 'hover:bg-right',
+
+    // Gradientes verticales
+    primaryVertical: 'bg-gradient-to-b from-primary-500 to-secondary-500',
+    dividerVertical: 'bg-gradient-to-b from-primary-500/10 via-primary-500/40 to-primary-500/10',
+
+    // Gradientes para cards
+    cardPrimary: 'bg-gradient-to-br from-primary-500 to-primary-600',
+    cardSecondary: 'bg-gradient-to-br from-secondary-500 to-secondary-600',
+    cardNeutral:
+      'bg-gradient-to-br from-white via-neutral-50 to-neutral-100 dark:from-neutral-800 dark:via-neutral-800 dark:to-neutral-900',
+    cardHover:
+      'bg-gradient-to-br from-primary-500/5 via-transparent to-secondary-500/5 dark:from-primary-400/10 dark:to-secondary-400/10',
 
     // Gradientes de fondo
     backgroundLight:
       'bg-gradient-to-br from-neutral-50 via-white to-neutral-100',
     backgroundDark:
       'bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900',
+    backgroundPage:
+      'bg-gradient-to-br from-neutral-50 via-white to-neutral-100 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900',
+    backgroundError:
+      'bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20',
+    backgroundWarning:
+      'bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20',
+    backgroundInfo:
+      'bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800',
+    backgroundNeutral:
+      'bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-700 dark:to-neutral-600',
 
     // Gradientes para texto
     textPrimary:
-      'bg-gradient-to-r from-primary-500 to-secondary-500 bg-clip-text text-transparent',
+      'bg-gradient-to-r from-primary-500 to-secondary-600 bg-clip-text text-transparent',
+    textHighlight:
+      'bg-gradient-to-r from-primary-400 to-secondary-600 bg-clip-text text-transparent',
     textPrimaryHover:
       'group-hover:from-primary-700 group-hover:to-secondary-700',
 
@@ -59,6 +83,38 @@ export const colors = {
     overlayDark: 'bg-gradient-to-t from-black/60 to-transparent',
     overlayLight:
       'bg-gradient-to-r from-transparent via-white/10 to-transparent',
+    overlayColor:
+      'bg-gradient-to-r from-primary-500/20 to-secondary-500/20',
+    overlayFadeUp:
+      'bg-gradient-to-t from-neutral-50 dark:from-neutral-950 to-transparent',
+    overlaySubtle:
+      'bg-gradient-to-t from-black/10 via-transparent to-transparent',
+    heroTopOverlay:
+      'bg-gradient-to-b from-[#0F1729]/90 to-transparent',
+    
+    // Gradientes de utilidad
+    boxHighlight: 
+      'bg-gradient-to-r from-primary-50 to-secondary-50 dark:from-primary-900/20 dark:to-secondary-900/20',
+    skeleton:
+      'bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700',
+
+    // Navbar
+    navbarScrolled:
+      'bg-white/95 dark:bg-neutral-900/95 backdrop-blur-md shadow-lg',
+    navbarTransparent:
+      'bg-transparent',
+    navbarLight: 'bg-transparent',
+    navbarDark: 'bg-transparent',
+  },
+
+  // Fondos sólidos estandarizados
+  backgrounds: {
+    primary: 'bg-primary-50 dark:bg-primary-950',
+    secondary: 'bg-secondary-50 dark:bg-secondary-950',
+    neutral: 'bg-neutral-50 dark:bg-neutral-900',
+    card: 'bg-white dark:bg-neutral-800',
+    input: 'bg-white dark:bg-neutral-900',
+    highlight: 'bg-primary-100 dark:bg-primary-900/30',
   },
 
   // Estados de hover estandarizados

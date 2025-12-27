@@ -1,13 +1,13 @@
 import React from 'react';
+import { cn } from '@/lib/utils';
+import { colors } from '@/shared/styles/colors';
 
-import { Mail, Phone, MapPin, Clock, MessageCircle } from '@/lib/icons';
-import ButtonPrincipal from '@/shared/components/ButtonPrincipal';
+import { Mail, Phone, MapPin, Clock, HelpCircle } from '@/lib/icons';
 import {
   PHONE_BUSINESS,
-  WHATSAPP_REDIRECT,
 } from '@/shared/constants/infoBusiness';
-import Link from 'next/link';
 import ButtonRedirectWhatsapp from '@/shared/components/ButtonRedirectWhatsapp';
+import InfoCard from '@/shared/components/InfoCard';
 
 const contactInfo = [
   {
@@ -41,69 +41,63 @@ export default function ContactInfoBusiness() {
     <section aria-labelledby="contact-info">
       <h2
         id="contact-info"
-        className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6 sm:mb-8 bg-gradient-to-r from-primary-500 to-secondary-500 bg-clip-text text-transparent"
+        className={cn("text-2xl sm:text-3xl lg:text-4xl font-bold mb-6 sm:mb-8", colors.gradients.textPrimary)}
       >
         Información de Contacto
       </h2>
-      <address className="space-y-4 sm:space-y-6 not-italic">
-        {contactInfo.map((info, index) => (
-          <div
-            key={index}
-            className="flex items-start space-x-3 sm:space-x-4 p-3 sm:p-4 bg-white dark:bg-neutral-800 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-          >
-            <div className="flex-shrink-0">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center shadow-lg">
-                <info.icon
-                  className="h-5 w-5 sm:h-6 sm:w-6 text-white"
-                  aria-hidden="true"
-                />
+      <div className="space-y-8">
+        <div className="grid grid-cols-1 gap-6">
+          {contactInfo.map((info, index) => (
+            <div key={index} className="flex items-start space-x-4">
+              <div className="flex-shrink-0 p-3 bg-primary-50 dark:bg-primary-900/20 rounded-xl text-primary-600 dark:text-primary-400">
+                <info.icon className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-neutral-900 dark:text-white mb-1">
+                  {info.title}
+                </h3>
+                {info.link ? (
+                  <a
+                    href={info.link}
+                    className="text-neutral-600 dark:text-neutral-400 hover:text-primary-500 transition-colors duration-300"
+                    {...(info.link.startsWith('http') && {
+                      target: '_blank',
+                      rel: 'noopener noreferrer',
+                    })}
+                  >
+                    {info.value}
+                  </a>
+                ) : (
+                  <p className="text-neutral-600 dark:text-neutral-400">
+                    {info.value}
+                  </p>
+                )}
               </div>
             </div>
+          ))}
+        </div>
+
+        {/* CTA Card */}
+        <div className="p-6 bg-primary-50 dark:bg-primary-900/10 rounded-2xl border border-primary-100 dark:border-primary-800/30">
+          <div className="flex items-start space-x-4">
+            <div className="flex-shrink-0 p-2 bg-white dark:bg-primary-800 rounded-lg text-primary-600 dark:text-primary-300">
+              <HelpCircle className="w-6 h-6" />
+            </div>
             <div>
-              <h3 className="text-base sm:text-lg font-semibold mb-1 text-neutral-800 dark:text-neutral-200">
-                {info.title}
+              <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
+                ¿No encontraste lo que buscabas?
               </h3>
-              {info.link ? (
-                <a
-                  href={info.link}
-                  className="text-neutral-600 dark:text-neutral-400 hover:text-primary-500 transition-colors duration-300 font-medium"
-                  {...(info.link.startsWith('http') && {
-                    target: '_blank',
-                    rel: 'noopener noreferrer',
-                  })}
-                >
-                  {info.value}
-                </a>
-              ) : (
-                <p className="text-neutral-600 dark:text-neutral-400 font-medium">
-                  {info.value}
-                </p>
-              )}
+              <p className="text-neutral-600 dark:text-neutral-300 mb-4">
+                Nuestro equipo está aquí para ayudarte con cualquier pregunta específica
+              </p>
+              <ButtonRedirectWhatsapp
+                text="Chatear por WhatsApp"
+                className="w-full sm:w-auto"
+              />
             </div>
           </div>
-        ))}
-      </address>
-
-      {/* WhatsApp */}
-      <aside className="mt-6 sm:mt-8 p-4 sm:p-6 bg-gradient-to-br from-primary-50 to-secondary-50 dark:from-primary-900/20 dark:to-secondary-900/20 rounded-xl border border-primary-200/50 dark:border-primary-700/30 shadow-lg">
-        <div className="flex items-start space-x-3 sm:space-x-4 my-2">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center shadow-lg">
-            <MessageCircle
-              className="h-5 w-5 sm:h-6 sm:w-6 text-white"
-              aria-hidden="true"
-            />
-          </div>
-          <div>
-            <h3 className="text-base sm:text-lg font-semibold text-green-700 dark:text-green-400">
-              WhatsApp
-            </h3>
-            <p className="text-sm sm:text-base text-green-600/80 dark:text-green-400/70">
-              Respuesta inmediata
-            </p>
-          </div>
         </div>
-        <ButtonRedirectWhatsapp />
-      </aside>
+      </div>
     </section>
   );
 }

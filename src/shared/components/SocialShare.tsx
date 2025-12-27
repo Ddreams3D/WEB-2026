@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
+import { Button } from '@/components/ui/button';
 import { Facebook, Twitter, Instagram, Send } from '@/lib/icons';
 import {
   getTransitionClasses,
   getIconClasses,
-  getGradientClasses,
 } from '../styles';
 import { analytics } from '../utils/analytics';
 
@@ -84,34 +84,36 @@ export default function SocialShare({
           Compartir
         </h3>
         <div className="flex gap-4">
-          <button
+          <Button
             onClick={() => handleShare('facebook')}
             disabled={isSharing === 'facebook'}
-            className={`p-2 ${getGradientClasses(
-              'primary'
-            )} hover:from-secondary-500 hover:to-primary-500 text-white rounded-full disabled:opacity-50 ${getTransitionClasses(
-              'transform'
-            )} hover:scale-105 focus:outline-none focus:ring-4 focus:ring-primary-300 shadow-lg`}
+            variant="gradient"
+            size="icon"
+            className="rounded-full shadow-lg hover:scale-105"
             aria-label="Compartir en Facebook"
           >
             <Facebook className={getIconClasses('md')} />
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => handleShare('twitter')}
             disabled={isSharing === 'twitter'}
-            className="p-2 bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-secondary-500 hover:to-primary-500 text-white rounded-full disabled:opacity-50 transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-primary-300 shadow-lg"
+            variant="gradient"
+            size="icon"
+            className="rounded-full shadow-lg hover:scale-105"
             aria-label="Compartir en Twitter"
           >
             <Twitter className={getIconClasses('md')} />
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => handleShare('whatsapp')}
             disabled={isSharing === 'whatsapp'}
-            className="p-2 bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-secondary-500 hover:to-primary-500 text-white rounded-full disabled:opacity-50 transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-primary-300 shadow-lg"
+            variant="gradient"
+            size="icon"
+            className="rounded-full shadow-lg hover:scale-105"
             aria-label="Compartir en WhatsApp"
           >
             <Send className={getIconClasses('md')} />
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -121,25 +123,28 @@ export default function SocialShare({
           Síguenos
         </h3>
         <div className="flex flex-wrap gap-4">
-          <button
+          <Button
             onClick={() => handleFollow('facebook')}
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-secondary-500 hover:to-primary-500 text-white rounded-md transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-primary-300 shadow-lg"
+            variant="gradient"
+            className="gap-2 shadow-lg hover:scale-105"
             aria-label="Seguir en Facebook"
           >
             <Facebook className="h-5 w-5" aria-hidden="true" />
             Facebook
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => handleFollow('instagram')}
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-secondary-500 hover:to-primary-500 text-white rounded-md transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-primary-300 shadow-lg"
+            variant="gradient"
+            className="gap-2 shadow-lg hover:scale-105"
             aria-label="Seguir en Instagram"
           >
             <Instagram className="h-5 w-5" aria-hidden="true" />
             Instagram
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => handleFollow('tiktok')}
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-secondary-500 hover:to-primary-500 text-white rounded-md transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-primary-300 shadow-lg"
+            variant="gradient"
+            className="gap-2 shadow-lg hover:scale-105"
             aria-label="Seguir en TikTok"
           >
             <svg
@@ -151,7 +156,7 @@ export default function SocialShare({
               <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
             </svg>
             TikTok
-          </button>
+          </Button>
         </div>
       </div>
     </div>

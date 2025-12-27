@@ -1,9 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp, X, Filter, Search } from '@/lib/icons';
 import { ProductFilters as ProductFiltersType, Category, ProductSortOption, Product } from '../../shared/types';
 import { useMarketplace } from '../../contexts/MarketplaceContext';
+import { cn } from '@/lib/utils';
+import { colors } from '@/shared/styles/colors';
 
 interface ProductFiltersProps {
   onFiltersChange?: (filters: ProductFiltersType) => void;
@@ -74,16 +77,24 @@ export function ProductFilters({
   );
 
   return (
-    <div className={`bg-white dark:bg-gray-800 backdrop-blur-sm rounded-lg border border-gray-200 dark:border-gray-700 shadow-lg relative z-30 ${className}`}>
+    <div className={cn(
+      "backdrop-blur-sm rounded-lg border border-neutral-200 dark:border-neutral-700 shadow-lg relative z-30",
+      colors.backgrounds.card,
+      className
+    )}>
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+      <div className="flex items-center justify-between p-4 border-b border-neutral-200 dark:border-neutral-700">
         <div className="flex items-center space-x-2">
-          <Filter className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-          <h3 className="font-semibold text-gray-900 dark:text-white">
+          <Filter className="w-5 h-5 text-neutral-600 dark:text-neutral-300" />
+          <h3 className="font-semibold text-neutral-900 dark:text-white">
             Filtros
           </h3>
           {hasActiveFilters && (
-            <span className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs px-2 py-1 rounded-full">
+            <span className={cn(
+              "text-xs px-2 py-1 rounded-full",
+              colors.gradients.backgroundInfo,
+              "text-blue-800 dark:text-blue-100"
+            )}>
               Activos
             </span>
           )}
@@ -91,22 +102,27 @@ export function ProductFilters({
         
         <div className="flex items-center space-x-2">
           {hasActiveFilters && (
-            <button
+            <Button
               onClick={handleClearFilters}
-              className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 flex items-center space-x-1"
+              variant="ghost"
+              size="sm"
+              className="text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 h-8 px-2"
             >
-              <X className="w-4 h-4" />
-              <span>Limpiar</span>
-            </button>
+              <X className="w-4 h-4 mr-1" />
+              Limpiar
+            </Button>
           )}
           
           {isCollapsible && (
-            <button
+            <Button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              variant="ghost"
+              size="icon"
+              className="w-8 h-8 text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+              aria-label={isExpanded ? "Contraer filtros" : "Expandir filtros"}
             >
               {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-            </button>
+            </Button>
           )}
         </div>
       </div>
@@ -117,17 +133,24 @@ export function ProductFilters({
           {/* Search */}
           {showSearch && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                 Buscar productos
               </label>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-400" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Buscar por nombre, descripción o tags..."
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                  className={cn(
+                    "w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:border-transparent outline-none transition-all duration-200",
+                    "border-neutral-300 dark:border-neutral-600",
+                    "bg-white dark:bg-neutral-800",
+                    "text-neutral-900 dark:text-white",
+                    "placeholder-neutral-500 dark:placeholder-neutral-400",
+                    "focus:ring-primary-500 dark:focus:ring-primary-400"
+                  )}
                 />
               </div>
             </div>
@@ -135,27 +158,27 @@ export function ProductFilters({
 
           {/* Categories */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">
               Categorías
             </label>
-            <div className="space-y-2 max-h-40 overflow-y-auto">
+            <div className="space-y-2 max-h-40 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-neutral-300 dark:scrollbar-thumb-neutral-600">
               {categories.map((category) => {
                 const count = availableProducts 
                   ? availableProducts.filter(p => p.categoryId === category.id).length
                   : category.productCount;
                 
                 return (
-                  <label key={category.id} className="flex items-center space-x-2 cursor-pointer">
+                  <label key={category.id} className="flex items-center space-x-2 cursor-pointer group">
                     <input
                       type="checkbox"
                       checked={localFilters.categoryIds?.includes(category.id) || false}
                       onChange={(e) => handleCategoryChange(category.id, e.target.checked)}
-                      className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-700"
+                      className="rounded border-neutral-300 dark:border-neutral-600 text-primary-600 focus:ring-primary-500 dark:bg-neutral-700 transition-colors"
                     />
-                    <span className="text-sm text-gray-700 dark:text-gray-300">
+                    <span className="text-sm text-neutral-700 dark:text-neutral-300 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                       {category.name}
                     </span>
-                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                    <span className="text-xs text-neutral-500 dark:text-neutral-400">
                       ({count})
                     </span>
                   </label>
@@ -166,48 +189,54 @@ export function ProductFilters({
 
           {/* Sort Options */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">
               Ordenar por
             </label>
             <div className="space-y-2">
               {sortOptions.map((option) => (
                 <div key={option.value} className="flex items-center space-x-3">
-                  <label className="flex items-center space-x-2 cursor-pointer flex-1">
+                  <label className="flex items-center space-x-2 cursor-pointer flex-1 group">
                     <input
                       type="radio"
                       name="sortBy"
                       value={option.value}
                       checked={localFilters.sortBy === option.value}
                       onChange={() => handleSortChange(option.value, localFilters.sortOrder || 'desc')}
-                      className="text-blue-600 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
+                      className="text-primary-600 focus:ring-primary-500 dark:bg-neutral-700 dark:border-neutral-600"
                     />
-                    <span className="text-sm text-gray-700 dark:text-gray-300">
+                    <span className="text-sm text-neutral-700 dark:text-neutral-300 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                       {option.label}
                     </span>
                   </label>
                   
                   {localFilters.sortBy === option.value && (
                     <div className="flex items-center space-x-1">
-                      <button
+                      <Button
                         onClick={() => handleSortChange(option.value, 'asc')}
-                        className={`px-2 py-1 text-xs rounded ${
+                        variant="ghost"
+                        size="sm"
+                        className={cn(
+                          "h-6 px-2 text-xs rounded transition-colors",
                           localFilters.sortOrder === 'asc'
-                            ? 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200'
-                            : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
-                        }`}
+                            ? "bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300"
+                            : "bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700"
+                        )}
                       >
                         ↑
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         onClick={() => handleSortChange(option.value, 'desc')}
-                        className={`px-2 py-1 text-xs rounded ${
+                        variant="ghost"
+                        size="sm"
+                        className={cn(
+                          "h-6 px-2 text-xs rounded transition-colors",
                           localFilters.sortOrder === 'desc'
-                            ? 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200'
-                            : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
-                        }`}
+                            ? "bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300"
+                            : "bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700"
+                        )}
                       >
                         ↓
-                      </button>
+                      </Button>
                     </div>
                   )}
                 </div>

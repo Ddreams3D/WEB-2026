@@ -1,6 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { cn } from '@/lib/utils';
+import { colors } from '@/shared/styles/colors';
+import { Button } from '@/components/ui/button';
 import { User, Mail, Phone, MapPin, Calendar, Edit3, Save, X, Camera } from '@/lib/icons';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -69,12 +72,16 @@ export default function ProfilePage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="relative">
-                <div className="w-20 h-20 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full flex items-center justify-center">
+                <div className={cn("w-20 h-20 rounded-full flex items-center justify-center", colors.gradients.cardPrimary)}>
                   <User className="h-10 w-10 text-white" />
                 </div>
-                <button className="absolute -bottom-1 -right-1 bg-white dark:bg-neutral-700 p-2 rounded-full shadow-md border border-neutral-200 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-600 transition-colors">
+                <Button 
+                  variant="ghost"
+                  size="icon"
+                  className="absolute -bottom-1 -right-1 bg-white dark:bg-neutral-700 rounded-full shadow-md border border-neutral-200 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-600 transition-colors h-8 w-8 p-0"
+                >
                   <Camera className="h-4 w-4 text-neutral-600 dark:text-neutral-300" />
-                </button>
+                </Button>
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">
@@ -85,13 +92,14 @@ export default function ProfilePage() {
                 </p>
               </div>
             </div>
-            <button
+            <Button
               onClick={() => setIsEditing(!isEditing)}
-              className="inline-flex items-center px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium transition-colors"
+              variant="gradient"
+              className="transform hover:scale-105"
             >
               <Edit3 className="h-4 w-4 mr-2" />
               {isEditing ? 'Cancelar' : 'Editar perfil'}
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -209,21 +217,22 @@ export default function ProfilePage() {
           {/* Action Buttons */}
           {isEditing && (
             <div className="flex justify-end space-x-3 mt-6 pt-6 border-t border-neutral-200 dark:border-neutral-700">
-              <button
+              <Button
                 onClick={handleCancel}
-                className="inline-flex items-center px-4 py-2 border border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 rounded-lg font-medium transition-colors"
+                variant="outline"
               >
                 <X className="h-4 w-4 mr-2" />
                 Cancelar
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={handleSave}
                 disabled={isSaving}
-                className="inline-flex items-center px-4 py-2 bg-primary-600 hover:bg-primary-700 disabled:bg-primary-400 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors"
+                variant="gradient"
+                className="transform hover:scale-105"
               >
                 <Save className="h-4 w-4 mr-2" />
                 {isSaving ? 'Guardando...' : 'Guardar cambios'}
-              </button>
+              </Button>
             </div>
           )}
         </div>

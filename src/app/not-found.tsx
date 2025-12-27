@@ -2,14 +2,17 @@
 
 import Link from 'next/link';
 import { Home, ArrowLeft, Search } from '@/lib/icons';
+import { Button } from '@/components/ui/button';
+import { colors } from '@/shared/styles/colors';
+import { cn } from '@/lib/utils';
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-900 dark:to-neutral-800 px-4">
+    <div className={cn("min-h-screen flex items-center justify-center px-4", colors.gradients.backgroundPage)}>
       <div className="max-w-md w-full mx-auto text-center">
         {/* Error Code */}
         <div className="mb-8">
-          <h1 className="text-9xl font-bold bg-gradient-to-r from-primary-500 to-primary-600 bg-clip-text text-transparent">
+          <h1 className={cn("text-9xl font-bold", colors.gradients.textPrimary)}>
             404
           </h1>
         </div>
@@ -26,29 +29,36 @@ export default function NotFound() {
 
         {/* Action Buttons */}
         <div className="space-y-3">
-          <Link
-            href="/"
-            className="inline-flex items-center justify-center w-full bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+          <Button
+            asChild
+            variant="gradient"
+            className="w-full px-6 py-3 h-auto text-base rounded-lg font-medium shadow-lg hover:shadow-xl"
           >
-            <Home className="h-5 w-5 mr-2" />
-            Volver al inicio
-          </Link>
+            <Link href="/">
+              <Home className="h-5 w-5 mr-2" />
+              Volver al inicio
+            </Link>
+          </Button>
           
-          <button
+          <Button
             onClick={() => window.history.back()}
-            className="inline-flex items-center justify-center w-full border border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 px-6 py-3 rounded-lg font-medium transition-colors"
+            variant="outline"
+            className="w-full px-6 py-3 h-auto text-base"
           >
             <ArrowLeft className="h-5 w-5 mr-2" />
             Volver atrás
-          </button>
+          </Button>
           
-          <Link
-            href="/marketplace"
-            className="inline-flex items-center justify-center w-full text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 px-6 py-3 rounded-lg font-medium transition-colors"
+          <Button
+            asChild
+            variant="ghost"
+            className="w-full px-6 py-3 h-auto text-base text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 hover:bg-primary-50 dark:hover:bg-primary-900/10"
           >
-            <Search className="h-5 w-5 mr-2" />
-            Explorar marketplace
-          </Link>
+            <Link href="/marketplace">
+              <Search className="h-5 w-5 mr-2" />
+              Explorar marketplace
+            </Link>
+          </Button>
         </div>
 
         {/* Helpful Links */}

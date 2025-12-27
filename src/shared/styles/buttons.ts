@@ -1,4 +1,7 @@
 /**
+ * @deprecated Este archivo está obsoleto. Por favor usa el componente <Button /> de '@/components/ui/button' 
+ * y los tokens de diseño de '@/shared/styles/colors'.
+ * 
  * Configuración centralizada de botones para Ddreams 3D
  * Este archivo define todos los estilos de botones utilizados en el proyecto para mantener consistencia
  */

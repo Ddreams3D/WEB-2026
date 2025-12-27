@@ -24,6 +24,8 @@ const colors = {
   info: 'bg-secondary-50 text-secondary-800 dark:bg-secondary-900/50 dark:text-secondary-300'
 };
 
+import { Button } from '@/components/ui/button';
+
 export default function Toast({ type, message, onClose, duration = 3000 }: ToastProps) {
   const Icon = icons[type];
 
@@ -39,13 +41,15 @@ export default function Toast({ type, message, onClose, duration = 3000 }: Toast
     >
       <Icon className="h-5 w-5 mr-2" />
       <span className="mr-2">{message}</span>
-      <button
+      <Button
         onClick={onClose}
-        className="ml-auto -mx-1.5 -my-1.5 rounded-lg p-1.5 hover:bg-white/20 inline-flex items-center justify-center"
+        variant="ghost"
+        size="icon"
+        className="ml-auto -mr-2 -my-2 h-8 w-8 hover:bg-white/20 text-current"
         aria-label="Cerrar notificación"
       >
         <X className="h-4 w-4" />
-      </button>
+      </Button>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
 import { Search as MagnifyingGlassIcon, Plus as PlusIcon, Edit as PencilIcon, Trash2 as TrashIcon, UserCircle as UserCircleIcon } from '@/lib/icons';
 import AdminLayout from '@/shared/components/layout/AdminLayout';
 import AdminProtection from '@/components/admin/AdminProtection';
@@ -181,19 +182,21 @@ function UserModal({ user, isOpen, onClose, onSave }: {
             </div>
             
             <div className="flex justify-end space-x-3 pt-4">
-              <button
+              <Button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-700 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors"
+                variant="ghost"
+                className="bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600"
               >
                 Cancelar
-              </button>
-              <button
+              </Button>
+              <Button
                 type="submit"
-                className="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors"
+                variant="gradient"
+                className="transform hover:scale-105"
               >
                 {user ? 'Actualizar' : 'Crear'}
-              </button>
+              </Button>
             </div>
           </form>
         </div>
@@ -272,13 +275,14 @@ export default function UsersManagement() {
               Administra los usuarios de la plataforma
             </p>
           </div>
-          <button
+          <Button
             onClick={() => openModal()}
-            className={`flex items-center space-x-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 ${getTransitionClasses('default')}`}
+            variant="gradient"
+            className="flex items-center space-x-2"
           >
             <PlusIcon className="w-5 h-5" />
             <span>Nuevo Usuario</span>
-          </button>
+          </Button>
         </div>
 
         {/* Filters and Search */}
@@ -387,20 +391,24 @@ export default function UsersManagement() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex items-center justify-end space-x-2">
-                        <button
+                        <Button
                           onClick={() => openModal(user)}
-                          className="p-2 text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                          variant="ghost"
+                          size="icon"
+                          className="hover:text-primary-600 dark:hover:text-primary-400"
                           title="Editar"
                         >
                           <PencilIcon className="w-4 h-4" />
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           onClick={() => handleDeleteUser(user.id)}
-                          className="p-2 text-neutral-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                          variant="ghost"
+                          size="icon"
+                          className="hover:text-red-600 dark:hover:text-red-400"
                           title="Eliminar"
                         >
                           <TrashIcon className="w-4 h-4" />
-                        </button>
+                        </Button>
                       </div>
                     </td>
                   </tr>

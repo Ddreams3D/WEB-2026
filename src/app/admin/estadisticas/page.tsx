@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import { BarChart3 as ChartBarIcon, Users as UsersIcon, FileText as DocumentTextIcon, Eye as EyeIcon, TrendingUp as TrendingUpIcon, TrendingDown as TrendingDownIcon, Calendar as CalendarIcon } from '@/lib/icons';
 import AdminLayout from '@/shared/components/layout/AdminLayout';
 import AdminProtection from '@/components/admin/AdminProtection';
+import { colors } from '@/shared/styles/colors';
+import { cn } from '@/lib/utils';
 
 // Datos simulados para estadísticas
 const mockStats = {
@@ -59,7 +61,10 @@ function StatCard({ title, value, change, icon: Icon, trend, subtitle }: {
   subtitle?: string;
 }) {
   return (
-    <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
+    <div className={cn(
+      "rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6",
+      colors.backgrounds.card
+    )}>
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium text-neutral-600 dark:text-neutral-400">
@@ -74,7 +79,10 @@ function StatCard({ title, value, change, icon: Icon, trend, subtitle }: {
             </p>
           )}
         </div>
-        <div className="p-3 bg-primary-100 dark:bg-primary-900/30 rounded-lg">
+        <div className={cn(
+          "p-3 rounded-lg",
+          colors.backgrounds.highlight
+        )}>
           <Icon className="w-6 h-6 text-primary-600 dark:text-primary-400" />
         </div>
       </div>
@@ -106,7 +114,10 @@ function SimpleBarChart({ data, title, dataKey, color = 'primary' }: {
   const maxValue = Math.max(...data.map(item => item[dataKey]));
   
   return (
-    <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
+    <div className={cn(
+      "rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6",
+      colors.backgrounds.card
+    )}>
       <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">
         {title}
       </h3>
@@ -143,7 +154,7 @@ function SimpleBarChart({ data, title, dataKey, color = 'primary' }: {
 }
 
 function CategoryChart({ data }: { data: typeof mockStats.mapsByCategory }) {
-  const colors = [
+  const colorsList = [
     'bg-blue-500',
     'bg-green-500',
     'bg-purple-500',
@@ -153,7 +164,10 @@ function CategoryChart({ data }: { data: typeof mockStats.mapsByCategory }) {
   ];
   
   return (
-    <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
+    <div className={cn(
+      "rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6",
+      colors.backgrounds.card
+    )}>
       <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">
         Mapas por Categoría
       </h3>
@@ -161,7 +175,7 @@ function CategoryChart({ data }: { data: typeof mockStats.mapsByCategory }) {
         {data.map((item, index) => (
           <div key={index} className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className={`w-4 h-4 rounded-full ${colors[index % colors.length]}`} />
+              <div className={`w-4 h-4 rounded-full ${colorsList[index % colorsList.length]}`} />
               <span className="text-sm font-medium text-neutral-900 dark:text-white">
                 {item.category}
               </span>
@@ -203,7 +217,10 @@ export default function Statistics() {
             <select
               value={timeRange}
               onChange={(e) => setTimeRange(e.target.value)}
-              className="px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-neutral-700 dark:text-white"
+              className={cn(
+                "px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:text-white",
+                colors.backgrounds.input
+              )}
             >
               <option value="7d">Últimos 7 días</option>
               <option value="30d">Últimos 30 días</option>
@@ -274,7 +291,10 @@ export default function Statistics() {
           />
           
           {/* Top Authors */}
-          <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
+          <div className={cn(
+            "rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6",
+            colors.backgrounds.card
+          )}>
             <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">
               Autores Más Activos
             </h3>
@@ -282,7 +302,10 @@ export default function Statistics() {
               {mockStats.topAuthors.map((author, index) => (
                 <div key={index} className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center">
+                    <div className={cn(
+                      "w-8 h-8 rounded-full flex items-center justify-center",
+                      colors.backgrounds.highlight
+                    )}>
                       <span className="text-primary-700 dark:text-primary-300 font-medium text-sm">
                         {author.name.charAt(0)}
                       </span>
@@ -311,12 +334,18 @@ export default function Statistics() {
         </div>
 
         {/* Detailed Metrics */}
-        <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
+        <div className={cn(
+          "rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6",
+          colors.backgrounds.card
+        )}>
           <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">
             Métricas Detalladas
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center p-4 bg-neutral-50 dark:bg-neutral-700 rounded-lg">
+            <div className={cn(
+              "text-center p-4 rounded-lg",
+              colors.backgrounds.neutral
+            )}>
               <p className="text-2xl font-bold text-neutral-900 dark:text-white">
                 4.8
               </p>
@@ -334,7 +363,10 @@ export default function Statistics() {
               </div>
             </div>
             
-            <div className="text-center p-4 bg-neutral-50 dark:bg-neutral-700 rounded-lg">
+            <div className={cn(
+              "text-center p-4 rounded-lg",
+              colors.backgrounds.neutral
+            )}>
               <p className="text-2xl font-bold text-neutral-900 dark:text-white">
                 2.3 min
               </p>
@@ -348,7 +380,10 @@ export default function Statistics() {
               </div>
             </div>
             
-            <div className="text-center p-4 bg-neutral-50 dark:bg-neutral-700 rounded-lg">
+            <div className={cn(
+              "text-center p-4 rounded-lg",
+              colors.backgrounds.neutral
+            )}>
               <p className="text-2xl font-bold text-neutral-900 dark:text-white">
                 68%
               </p>

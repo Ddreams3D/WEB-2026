@@ -6,6 +6,9 @@ import { ArrowRight, FileText } from 'lucide-react';
 import { ProductService } from '@/services/product.service';
 import { isFirebaseConfigured } from '@/lib/firebase';
 import { ProductCard } from './ProductCard';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { colors } from '@/shared/styles/colors';
 
 import { Product } from '@/shared/types';
 
@@ -43,7 +46,10 @@ export const B2BServicesView = () => {
   return (
     <div className="space-y-12 animate-fade-in">
       {/* Hero Section for B2B */}
-      <div className="bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-800/50 dark:to-neutral-900/50 rounded-2xl p-8 sm:p-12 text-center border border-neutral-200 dark:border-neutral-700/50 shadow-sm">
+      <div className={cn(
+        "rounded-2xl p-8 sm:p-12 text-center border border-neutral-200 dark:border-neutral-700/50 shadow-sm",
+        colors.gradients.backgroundPage
+      )}>
         <h2 className="text-3xl font-bold text-neutral-900 dark:text-white mb-6">
           Soluciones Integrales para Empresas
         </h2>
@@ -52,13 +58,17 @@ export const B2BServicesView = () => {
           Desde merchandising personalizado hasta producción de piezas finales.
         </p>
         <div className="flex justify-center gap-4">
-          <Link 
-            href="/contact"
-            className="inline-flex items-center px-8 py-3.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-primary-600/20 hover:shadow-primary-600/30 transform hover:-translate-y-0.5"
+          <Button 
+            asChild
+            variant="gradient"
+            size="lg"
+            className="rounded-xl shadow-lg hover:shadow-xl"
           >
-            Solicitar Cotización
-            <ArrowRight className="ml-2 w-5 h-5" />
-          </Link>
+            <Link href="/contact">
+              Solicitar Cotización
+              <ArrowRight className="ml-2 w-5 h-5" />
+            </Link>
+          </Button>
         </div>
       </div>
 

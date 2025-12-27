@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Plus, Edit, Trash2, Search, Package, Eye } from '@/lib/icons';
+import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/ToastManager';
 import { ProductImage } from '@/shared/components/ui/DefaultImage';
 import ProductModal from './ProductModal';
@@ -173,13 +174,14 @@ export default function ProductManager() {
             Gestión de Productos
           </h1>
         </div>
-        <button
+        <Button
           onClick={handleAddProduct}
-          className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg transition-colors font-medium"
+          variant="gradient"
+          className="flex items-center gap-2"
         >
           <Plus className="h-5 w-5" />
           Nuevo Producto
-        </button>
+        </Button>
       </div>
 
       {/* Stats Cards */}
@@ -244,12 +246,12 @@ export default function ProductManager() {
             {searchTerm ? 'Intenta con otros términos de búsqueda' : 'Comienza agregando tu primer producto'}
           </p>
           {!searchTerm && (
-            <button
+            <Button
               onClick={handleAddProduct}
-              className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg transition-colors"
+              variant="gradient"
             >
               Agregar Producto
-            </button>
+            </Button>
           )}
         </div>
       ) : (
@@ -292,20 +294,22 @@ export default function ProductManager() {
                   </span>
                 </div>
                 <div className="flex gap-2">
-                  <button
+                  <Button
                     onClick={() => handleEditProduct(product)}
-                    className="flex-1 flex items-center justify-center gap-2 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 text-blue-600 dark:text-blue-400 px-3 py-2 rounded-lg transition-colors text-sm font-medium"
+                    variant="ghost"
+                    className="flex-1 flex items-center justify-center gap-2 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 text-blue-600 dark:text-blue-400 px-3 py-2 rounded-lg transition-colors text-sm font-medium h-auto"
                   >
                     <Edit className="h-4 w-4" />
                     Editar
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => handleDeleteProduct(product.id)}
-                    className="flex-1 flex items-center justify-center gap-2 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 px-3 py-2 rounded-lg transition-colors text-sm font-medium"
+                    variant="ghost"
+                    className="flex-1 flex items-center justify-center gap-2 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 px-3 py-2 rounded-lg transition-colors text-sm font-medium h-auto"
                   >
                     <Trash2 className="h-4 w-4" />
                     Eliminar
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>

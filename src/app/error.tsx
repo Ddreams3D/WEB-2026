@@ -3,6 +3,10 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { AlertCircle, Home, RefreshCw, ArrowLeft } from '@/lib/icons';
+import { Button } from '@/components/ui/button';
+
+import { cn } from '@/lib/utils';
+import { colors } from '@/shared/styles/colors';
 
 export default function Error({
   error,
@@ -17,7 +21,10 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 px-4">
+    <div className={cn(
+      "min-h-screen flex items-center justify-center px-4",
+      colors.gradients.backgroundWarning
+    )}>
       <div className="max-w-md w-full mx-auto text-center">
         {/* Error Icon */}
         <div className="mb-8">
@@ -53,29 +60,34 @@ export default function Error({
 
         {/* Action Buttons */}
         <div className="space-y-3">
-          <button
+          <Button
             onClick={reset}
-            className="inline-flex items-center justify-center w-full bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+            variant="gradient"
+            className="w-full px-6 py-3 h-auto text-base"
           >
             <RefreshCw className="h-5 w-5 mr-2" />
             Intentar de nuevo
-          </button>
+          </Button>
           
-          <button
+          <Button
             onClick={() => window.history.back()}
-            className="inline-flex items-center justify-center w-full border border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 px-6 py-3 rounded-lg font-medium transition-colors"
+            variant="ghost"
+            className="w-full px-6 py-3 h-auto text-base"
           >
             <ArrowLeft className="h-5 w-5 mr-2" />
             Volver atrás
-          </button>
+          </Button>
           
-          <Link
-            href="/"
-            className="inline-flex items-center justify-center w-full text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 px-6 py-3 rounded-lg font-medium transition-colors"
+          <Button
+            asChild
+            variant="ghost"
+            className="w-full px-6 py-3 h-auto text-base text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 hover:bg-primary-50 dark:hover:bg-primary-900/10"
           >
-            <Home className="h-5 w-5 mr-2" />
-            Ir al inicio
-          </Link>
+            <Link href="/">
+              <Home className="h-5 w-5 mr-2" />
+              Ir al inicio
+            </Link>
+          </Button>
         </div>
 
         {/* Help Text */}

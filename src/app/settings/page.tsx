@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { cn } from '@/lib/utils';
+import { colors } from '@/shared/styles/colors';
 import { 
   Settings, 
   Bell, 
@@ -13,6 +15,15 @@ import {
 } from '@/lib/icons';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useToast } from '@/components/ui/ToastManager';
+import { Switch } from '@/components/ui/switch';
+import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 export default function SettingsPage() {
   const { darkMode, toggleDarkMode } = useTheme();
@@ -34,8 +45,8 @@ export default function SettingsPage() {
     });
   };
 
-  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setLanguage(e.target.value);
+  const handleLanguageChange = (value: string) => {
+    setLanguage(value);
     showToast('success', 'Idioma actualizado');
   };
 
@@ -54,7 +65,7 @@ export default function SettingsPage() {
 
         <div className="space-y-6">
           {/* Apariencia */}
-          <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-sm overflow-hidden">
+          <div className={cn("rounded-lg shadow-sm overflow-hidden", colors.backgrounds.card)}>
             <div className="p-6 border-b border-neutral-200 dark:border-neutral-700">
               <h2 className="text-lg font-semibold text-neutral-900 dark:text-white flex items-center gap-2">
                 <Moon className="h-5 w-5 text-neutral-500" />
@@ -69,18 +80,10 @@ export default function SettingsPage() {
                     Cambiar entre tema claro y oscuro
                   </p>
                 </div>
-                <button
-                  onClick={toggleDarkMode}
-                  className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                    darkMode ? 'bg-primary-600' : 'bg-neutral-200'
-                  }`}
-                >
-                  <span
-                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                      darkMode ? 'translate-x-5' : 'translate-x-0'
-                    }`}
-                  />
-                </button>
+                <Switch
+                  checked={darkMode}
+                  onCheckedChange={toggleDarkMode}
+                />
               </div>
             </div>
           </div>
@@ -104,18 +107,10 @@ export default function SettingsPage() {
                     </p>
                   </div>
                 </div>
-                <button
-                  onClick={() => handleNotificationChange('email')}
-                  className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                    notifications.email ? 'bg-primary-600' : 'bg-neutral-200'
-                  }`}
-                >
-                  <span
-                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                      notifications.email ? 'translate-x-5' : 'translate-x-0'
-                    }`}
-                  />
-                </button>
+                <Switch
+                  checked={notifications.email}
+                  onCheckedChange={() => handleNotificationChange('email')}
+                />
               </div>
 
               <div className="flex items-center justify-between">
@@ -128,18 +123,10 @@ export default function SettingsPage() {
                     </p>
                   </div>
                 </div>
-                <button
-                  onClick={() => handleNotificationChange('push')}
-                  className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                    notifications.push ? 'bg-primary-600' : 'bg-neutral-200'
-                  }`}
-                >
-                  <span
-                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                      notifications.push ? 'translate-x-5' : 'translate-x-0'
-                    }`}
-                  />
-                </button>
+                <Switch
+                  checked={notifications.push}
+                  onCheckedChange={() => handleNotificationChange('push')}
+                />
               </div>
             </div>
           </div>
@@ -160,21 +147,22 @@ export default function SettingsPage() {
                     Selecciona tu idioma preferido
                   </p>
                 </div>
-                <select
-                  value={language}
-                  onChange={handleLanguageChange}
-                  className="bg-neutral-50 dark:bg-neutral-700 border border-neutral-300 dark:border-neutral-600 text-neutral-900 dark:text-white text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2.5"
-                >
-                  <option value="es">Español</option>
-                  <option value="en">English</option>
-                  <option value="pt">Português</option>
-                </select>
+                <Select value={language} onValueChange={handleLanguageChange}>
+                  <SelectTrigger className="w-[180px] bg-neutral-50 dark:bg-neutral-700 border-neutral-300 dark:border-neutral-600 text-neutral-900 dark:text-white">
+                    <SelectValue placeholder="Selecciona idioma" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white dark:bg-neutral-800 border-neutral-200 dark:border-neutral-700">
+                    <SelectItem value="es" className="text-neutral-900 dark:text-white focus:bg-neutral-100 dark:focus:bg-neutral-700">Español</SelectItem>
+                    <SelectItem value="en" className="text-neutral-900 dark:text-white focus:bg-neutral-100 dark:focus:bg-neutral-700">English</SelectItem>
+                    <SelectItem value="pt" className="text-neutral-900 dark:text-white focus:bg-neutral-100 dark:focus:bg-neutral-700">Português</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </div>
 
           {/* Seguridad */}
-          <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-sm overflow-hidden">
+          <div className={cn("rounded-lg shadow-sm overflow-hidden", colors.backgrounds.card)}>
             <div className="p-6 border-b border-neutral-200 dark:border-neutral-700">
               <h2 className="text-lg font-semibold text-neutral-900 dark:text-white flex items-center gap-2">
                 <Shield className="h-5 w-5 text-neutral-500" />
@@ -182,15 +170,18 @@ export default function SettingsPage() {
               </h2>
             </div>
             <div className="p-6">
-              <button className="w-full flex items-center justify-between p-4 bg-neutral-50 dark:bg-neutral-700/50 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors group">
+              <Button
+                variant="secondary"
+                className="w-full h-auto flex items-center justify-between p-4 group"
+              >
                 <div className="text-left">
                   <p className="font-medium text-neutral-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400">Cambiar contraseña</p>
-                  <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400 font-normal normal-case">
                     Actualiza tu contraseña para mantener tu cuenta segura
                   </p>
                 </div>
                 <ChevronRight className="h-5 w-5 text-neutral-400 group-hover:text-primary-600" />
-              </button>
+              </Button>
             </div>
           </div>
 

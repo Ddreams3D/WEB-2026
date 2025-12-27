@@ -2,7 +2,9 @@
 
 import * as React from "react";
 import { cn } from "../../lib/utils";
+import { colors } from '@/shared/styles/colors';
 import { ChevronDown, Check } from '@/lib/icons';
+import { Button } from "./button";
 
 interface SelectContextType {
   value: string;
@@ -63,11 +65,12 @@ const SelectTrigger = React.forwardRef<HTMLButtonElement, SelectTriggerProps>(
     const { value, open, onOpenChange } = useSelectContext();
 
     return (
-      <button
+      <Button
         ref={ref}
         type="button"
+        variant="outline"
         className={cn(
-          "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+          "flex h-10 w-full items-center justify-between px-3 py-2 font-normal",
           className
         )}
         onClick={() => onOpenChange(!open)}
@@ -77,7 +80,7 @@ const SelectTrigger = React.forwardRef<HTMLButtonElement, SelectTriggerProps>(
           {children || placeholder || "Select..."}
         </span>
         <ChevronDown className={cn("h-4 w-4 opacity-50 transition-transform", open && "rotate-180")} />
-      </button>
+      </Button>
     );
   }
 );
@@ -139,7 +142,9 @@ const SelectItem = React.forwardRef<HTMLDivElement, SelectItemProps>(
       <div
         ref={ref}
         className={cn(
-          "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+          "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none",
+          colors.hover.neutralBg,
+          "hover:text-neutral-900 dark:hover:text-neutral-100 focus:bg-neutral-100 dark:focus:bg-neutral-700 focus:text-neutral-900 dark:focus:text-neutral-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
           className
         )}
         onClick={() => onValueChange(value)}
