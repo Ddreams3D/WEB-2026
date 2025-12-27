@@ -296,8 +296,8 @@ export const mockProducts: Product[] = [
     updatedAt: new Date('2024-02-01')
   },
   {
-    id: '7',
-    slug: 'proyectos-anatomicos-3d-especializados',
+    id: 'b2b-1',
+    slug: 'proyectos-anatomicos-3d-especializados-b2b',
     name: 'Proyectos Anatómicos 3D – Especializados (B2B)',
     description: 'Desarrollo, modelado y fabricación de modelos anatómicos personalizados impresos en 3D, orientados a instituciones educativas, centros de salud, universidades y proyectos académicos o médicos.\n\nCada proyecto se diseña a medida según requerimientos técnicos, escala, nivel de detalle, material y uso final.',
     shortDescription: 'Desarrollo, modelado y fabricación de modelos anatómicos personalizados',
@@ -396,7 +396,7 @@ export const mockProducts: Product[] = [
       {
         id: 'spec-7-2',
         name: 'Información importante',
-        value: '• Fabricación bajo pedido\n• Precio sujeto a cotización según proyecto\n• Servicio B2B / institucional'
+        value: '• Fabricación bajo pedido\n• Precio sujeto a cotización según proyecto\n• Servicio institucional'
       },
       {
         id: 'spec-7-3',
@@ -404,8 +404,8 @@ export const mockProducts: Product[] = [
         value: 'Universidades, institutos, colegios, centros de salud, proyectos de investigación y empresas del sector educativo o médico.'
       }
     ],
-    tags: ['proyectosAnatomicos3D', 'modelosAnatomicos3D', 'anatomiaHumana3D', 'modeladoAnatomico', 'educacionMedica', 'modelosEducativos3D', 'serviciosB2B', 'fabricacionPersonalizada', 'impresion3DProfesional', 'prototipado3D', 'Arequipa', 'Peru'],
-    sku: 'ANATOMY-B2B-001',
+    tags: ['proyectosAnatomicos3D', 'modelosAnatomicos3D', 'anatomiaHumana3D', 'modeladoAnatomico', 'educacionMedica', 'modelosEducativos3D', 'serviciosInstitucionales', 'fabricacionPersonalizada', 'impresion3DProfesional', 'prototipado3D', 'Arequipa', 'Peru'],
+    sku: 'ANATOMY-INST-001',
     stock: 999,
     minQuantity: 1,
     materials: ['PLA', 'Resina', 'Filamento Flexible'],
@@ -679,7 +679,7 @@ export const mockProducts: Product[] = [
       {
         id: 'spec-8-2',
         name: 'Información importante',
-        value: '• Fabricación bajo pedido\n• Precio sujeto a cotización según cantidad, diseño y complejidad\n• Servicio orientado a clientes B2B / institucionales\n• Entregas coordinadas según cronograma del evento'
+        value: '• Fabricación bajo pedido\n• Precio sujeto a cotización según cantidad, diseño y complejidad\n• Servicio orientado a clientes institucionales\n• Entregas coordinadas según cronograma del evento'
       },
       {
         id: 'spec-8-3',
@@ -688,7 +688,7 @@ export const mockProducts: Product[] = [
       }
     ],
     tags: ['trofeos', 'medallas', 'b2b', 'eventos', 'corporativo'],
-    sku: 'TROPHY-B2B-001',
+    sku: 'TROPHY-CORP-001',
     stock: 999,
     minQuantity: 1,
     materials: ['PLA', 'Resina', 'Filamento Metálico'],
@@ -1093,7 +1093,7 @@ export const mockProducts: Product[] = [
   {
     id: 'b2b-1',
     slug: 'proyectos-anatomicos-3d-especializados-b2b',
-    name: 'Proyectos Anatómicos 3D – Especializados (B2B)',
+    name: 'Proyectos Anatómicos 3D – Especializados',
     description: 'Desarrollo, modelado y fabricación de modelos anatómicos personalizados para instituciones médicas y educativas. Creamos réplicas exactas a partir de tomografías (DICOM) o modelos 3D para planificación quirúrgica, educación médica y simuladores de entrenamiento.',
     shortDescription: 'Desarrollo, modelado y fabricación de modelos anatómicos personalizados',
     price: 0,

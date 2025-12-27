@@ -23,8 +23,25 @@ export interface CalendarProps {
 
 const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
   ({ className, selected, onSelect, disabled, mode = "single", initialFocus, defaultMonth, numberOfMonths = 1, ...props }, ref) => {
-    const [currentDate, setCurrentDate] = React.useState(defaultMonth || new Date());
+    // Inicializar con defaultMonth si existe, o undefined para evitar mismatch
+    const [currentDate, setCurrentDate] = React.useState<Date>(defaultMonth || new Date());
     const [selectedDate, setSelectedDate] = React.useState<Date | DateRange | undefined>(selected);
+    const [isMounted, setIsMounted] = React.useState(false);
+
+    // Efecto para manejar la fecha actual en el cliente si no hay defaultMonth
+    React.useEffect(() => {
+      setIsMounted(true);
+      if (!defaultMonth) {
+        // Actualizar a la fecha actual del cliente para asegurar consistencia visual
+        setCurrentDate(new Date());
+      }
+    }, [defaultMonth]);
+
+    // Si no está montado y no hay fecha por defecto, renderizar null o un estado de carga
+    // para evitar mismatch de hidratación con la fecha del servidor
+    if (!defaultMonth && !isMounted) {
+      return null; 
+    }
 
     const handleDateSelect = (date: Date) => {
       if (disabled && disabled(date)) return;

@@ -7,7 +7,7 @@ import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft, MessageSquare } from '@/li
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { PHONE_BUSINESS } from '@/shared/constants/infoBusiness';
+import { PHONE_BUSINESS } from '@/shared/constants/contactInfo';
 import { Button } from '@/components/ui';
 import { ProductImage } from '@/shared/components/ui/DefaultImage';
 

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { WHATSAPP_REDIRECT } from '@/shared/constants/infoBusiness';
+import { WHATSAPP_REDIRECT } from '@/shared/constants/contactInfo';
 
 export default function WhatsAppFloatingButton() {
   const defaultMessage = "Hola, vengo de su página web y me gustaría cotizar un proyecto.";

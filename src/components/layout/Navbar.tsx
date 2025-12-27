@@ -43,8 +43,12 @@ const Navbar: React.FC = () => {
   const { itemCount } = useCart();
   const { isAdmin } = useAdminPermissions();
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
+  // Determine if navbar should be solid based on scroll or specific paths
+  const isNavbarSolid = isScrolled || pathname === '/login';
+
+  const toggleMenu = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setIsOpen((prev) => !prev);
     setIsUserMenuOpen(false);
   };
 
@@ -117,7 +121,7 @@ const Navbar: React.FC = () => {
     <nav
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-700 ease-in-out",
-        isScrolled
+        isNavbarSolid
           ? colors.gradients.navbarScrolled
           : darkMode
           ? colors.gradients.navbarDark
@@ -131,7 +135,7 @@ const Navbar: React.FC = () => {
           {/* Logo */}
           <Link
             href="/"
-            className="transform transition-transform duration-300 hover:scale-105 relative block w-[350px] h-[80px]"
+            className="transform transition-transform duration-300 lg:hover:scale-105 relative block flex-shrink-0 w-[180px] sm:w-[250px] lg:w-[350px] h-[60px] lg:h-[80px]"
             aria-label="Ddreams 3D - Inicio"
           >
             {/* 
@@ -147,12 +151,12 @@ const Navbar: React.FC = () => {
             {/* Logo Blanco (Prioridad en Modo Claro/Inicio y Modo Oscuro) */}
             <div className={cn(
               "absolute inset-0 transition-opacity ease-in-out",
-              (!isScrolled || darkMode) 
+              (!isNavbarSolid || darkMode) 
                 ? "opacity-100 z-10 duration-500 delay-200" 
                 : "opacity-0 z-0 pointer-events-none duration-200"
             )}>
               <Image
-                src="/logo/logo_DD_2026_blanco.svg"
+                src="/logo/logo_DD_2026_blanco_V2.svg"
                 alt="Ddreams 3D Logo"
                 fill
                 sizes="(max-width: 768px) 250px, 350px"
@@ -161,15 +165,15 @@ const Navbar: React.FC = () => {
               />
             </div>
 
-            {/* Logo Negro (Solo para Modo Claro con Scroll) */}
+            {/* Logo Negro (Solo para Modo Claro con Scroll o Login) */}
             <div className={cn(
               "absolute inset-0 transition-opacity ease-in-out",
-              (isScrolled && !darkMode) 
+              (isNavbarSolid && !darkMode) 
                 ? "opacity-100 z-10 duration-500 delay-200" 
                 : "opacity-0 z-0 pointer-events-none duration-200"
             )}>
               <Image
-                src="/logo/logo_DD_2026_negro.svg"
+                src="/logo/logo_DD_2026_negro_V2.svg"
                 alt="Ddreams 3D Logo"
                 fill
                 sizes="(max-width: 768px) 250px, 350px"
@@ -191,14 +195,14 @@ const Navbar: React.FC = () => {
                   pathname === link.href
                     ? cn(
                         "shadow-sm hover:shadow-md",
-                        isScrolled && !darkMode
+                        isNavbarSolid && !darkMode
                           ? "bg-primary-200 text-primary-950 hover:bg-primary-300" // Active state in light mode + scrolled
                           : "bg-white/20 text-white hover:bg-white/30" // Active state in dark mode or transparent
                       )
                     : cn(
                         // Cuando NO hay scroll (transparente sobre Hero oscuro) -> Texto blanco
                         // Cuando HAY scroll (fondo sólido) -> Texto oscuro en light, blanco en dark
-                        !isScrolled 
+                        !isNavbarSolid 
                           ? "text-white/90 hover:text-white hover:bg-white/10"
                           : darkMode 
                             ? "text-white/90 hover:text-white hover:bg-white/10"
@@ -226,7 +230,7 @@ const Navbar: React.FC = () => {
                 size="icon"
                 className={cn(
                   "transition-all duration-300 ease-out transform hover:scale-105",
-                  !isScrolled
+                  !isNavbarSolid
                     ? "text-white hover:bg-white/20 hover:text-white"
                     : darkMode
                       ? "text-white hover:bg-white/20 hover:text-white"
@@ -263,7 +267,7 @@ const Navbar: React.FC = () => {
               variant="gradient"
               className={cn(
                 "w-[200px] justify-start gap-2 hover:scale-105 shadow-md",
-                !isScrolled && "shadow-lg"
+                !isNavbarSolid && "shadow-lg"
               )}
             >
               <Link
@@ -294,7 +298,7 @@ const Navbar: React.FC = () => {
                   variant="ghost"
                   className={cn(
                     "flex items-center space-x-2 px-3 py-2 rounded-lg h-auto hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2",
-                    !isScrolled
+                    !isNavbarSolid
                       ? 'text-white hover:bg-white/20 focus:ring-offset-transparent'
                       : darkMode
                         ? 'text-neutral-200 hover:bg-neutral-800 focus:ring-offset-neutral-900'
@@ -310,7 +314,7 @@ const Navbar: React.FC = () => {
                     <div
                       className={cn(
                         "w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-200",
-                        isScrolled
+                        isNavbarSolid
                           ? cn(colors.backgrounds.highlight, "text-primary-700 dark:text-primary-300")
                           : darkMode
                           ? 'bg-white/20 text-white'
@@ -330,7 +334,7 @@ const Navbar: React.FC = () => {
                     <span
                       className={cn(
                         "text-xs leading-tight",
-                        isScrolled
+                        isNavbarSolid
                           ? 'text-neutral-500 dark:text-neutral-400'
                           : darkMode
                           ? 'text-white/70'
@@ -472,7 +476,7 @@ const Navbar: React.FC = () => {
               size="icon"
               className={cn(
                 "relative p-2 rounded-lg hover:scale-105 hover:shadow-lg transition-all duration-300 ease-in-out",
-                !isScrolled
+                !isNavbarSolid
                   ? 'text-white hover:bg-white/10 hover:text-white'
                   : darkMode
                     ? 'text-neutral-300 hover:bg-neutral-800 hover:text-white'
@@ -489,17 +493,17 @@ const Navbar: React.FC = () => {
             </Button>
 
             {/* Theme Toggle */}
-            <ThemeToggle isScrolled={isScrolled} />
+            <ThemeToggle isScrolled={isNavbarSolid} />
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="lg:hidden">
+          <div className="lg:hidden z-[100]">
             <Button
               onClick={toggleMenu}
               variant="ghost"
               className={cn(
-                "relative p-3 rounded-lg h-auto touch-manipulation min-w-[48px] min-h-[48px] flex items-center justify-center transition-colors duration-200",
-                !isScrolled
+                "navbar-toggle relative p-3 rounded-lg h-auto touch-manipulation min-w-[48px] min-h-[48px] flex items-center justify-center transition-colors duration-200 cursor-pointer z-[100]",
+                !isNavbarSolid
                   ? 'text-white/90 hover:bg-white/20 active:bg-white/30 hover:text-white'
                   : darkMode
                     ? 'text-neutral-300 hover:bg-neutral-800 active:bg-neutral-700 hover:text-white'
@@ -510,9 +514,9 @@ const Navbar: React.FC = () => {
               style={{ WebkitTapHighlightColor: 'transparent' }}
             >
               {isOpen ? (
-                <X className="w-6 h-6" />
+                <X className="w-6 h-6 pointer-events-none" />
               ) : (
-                <Menu className="w-6 h-6" />
+                <Menu className="w-6 h-6 pointer-events-none" />
               )}
             </Button>
           </div>
@@ -521,20 +525,28 @@ const Navbar: React.FC = () => {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="lg:hidden bg-white/98 dark:bg-neutral-900/98 border-t border-neutral-200/50 dark:border-neutral-700/50 navbar-menu z-50">
-          <div className="px-4 py-6 space-y-4">
+        <div 
+          className={cn(
+            "lg:hidden fixed top-[4.5rem] right-4 w-64 max-w-[90vw] z-40 overflow-y-auto backdrop-blur-xl rounded-2xl border border-neutral-200/20 dark:border-neutral-700/20 shadow-2xl transition-all duration-300",
+            darkMode 
+              ? "bg-neutral-950/95" 
+              : "bg-white/95"
+          )}
+          style={{ maxHeight: 'calc(100vh - 6rem)' }}
+        >
+          <div className="px-3 py-4 space-y-2">
             {/* Mobile Navigation Links */}
-            <div className="space-y-2">
+            <div className="space-y-1">
               {navLinks.map((link) => (
                 <Button
                   key={link.href}
                   asChild
                   variant="ghost"
                   className={cn(
-                    "w-full justify-start px-4 py-3 rounded-lg text-base font-medium touch-manipulation min-h-[48px] flex items-center transition-colors duration-200",
+                    "w-full justify-center px-4 py-2 rounded-lg text-sm font-medium touch-manipulation min-h-[40px] flex items-center transition-all duration-200 border border-transparent",
                     pathname === link.href
-                      ? cn(colors.backgrounds.highlight, "text-primary-700 dark:text-primary-300 shadow-md")
-                      : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800'
+                      ? cn(colors.backgrounds.highlight, "text-primary-600 dark:text-primary-400 shadow-sm border-primary-100 dark:border-primary-900/50")
+                      : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800/80'
                   )}
                   onClick={() => setIsOpen(false)}
                 >
@@ -551,43 +563,46 @@ const Navbar: React.FC = () => {
               ))}
             </div>
 
-            {/* Mobile Quote Button */}
-            <div className="pt-4 space-y-3">
+            {/* Mobile Quote & Cart & Theme */}
+            <div className="pt-3 border-t border-neutral-200/50 dark:border-neutral-800/50 space-y-2">
               <Button
                 asChild
                 variant="gradient"
-                className="w-full justify-center min-h-[48px]"
+                className="w-full justify-center min-h-[40px] text-sm shadow-md hover:shadow-lg hover:scale-[1.02] transition-all"
                 onClick={() => setIsOpen(false)}
               >
                 <Link
                   href="/contact"
+                  className="flex items-center justify-center gap-2"
                   tabIndex={isOpen ? 0 : -1}
                   style={{ WebkitTapHighlightColor: 'transparent' }}
                 >
-                  <MessageSquare className="w-5 h-5 mr-2 text-white" />
+                  <MessageSquare className="w-4 h-4 text-white" />
                   <span>Solicitar Cotización</span>
                 </Link>
               </Button>
 
-              {/* Mobile Cart Button */}
-              <Button
-                onClick={() => {
-                  setIsCartOpen(true);
-                  setIsOpen(false);
-                }}
-                variant="ghost"
-                className="w-full justify-center bg-primary-50 dark:bg-primary-900/20 hover:bg-primary-100 dark:hover:bg-primary-900/30 active:bg-primary-200 dark:active:bg-primary-900/40 text-primary-700 dark:text-primary-300 min-h-[48px]"
-                tabIndex={isOpen ? 0 : -1}
-                style={{ WebkitTapHighlightColor: 'transparent' }}
-              >
-                <ShoppingCart className="w-4 h-4 mr-2" />
-                <span>Carrito ({itemCount})</span>
-                {itemCount > 0 && (
-                  <span className="ml-2 bg-red-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-semibold animate-pulse">
-                    {itemCount > 99 ? '99+' : itemCount}
-                  </span>
-                )}
-              </Button>
+              <div className="grid grid-cols-4 gap-2">
+                {/* Mobile Cart Button */}
+                <Button
+                  onClick={() => {
+                    setIsCartOpen(true);
+                    setIsOpen(false);
+                  }}
+                  variant="ghost"
+                  className="col-span-3 justify-center bg-primary-50 dark:bg-primary-900/20 hover:bg-primary-100 dark:hover:bg-primary-900/30 active:bg-primary-200 dark:active:bg-primary-900/40 text-primary-700 dark:text-primary-300 min-h-[40px] text-xs px-2"
+                  tabIndex={isOpen ? 0 : -1}
+                  style={{ WebkitTapHighlightColor: 'transparent' }}
+                >
+                  <ShoppingCart className="w-4 h-4 mr-1.5" />
+                  <span>Carrito ({itemCount})</span>
+                </Button>
+
+                {/* Mobile Theme Toggle */}
+                <div className="col-span-1 flex items-center justify-center bg-neutral-100 dark:bg-neutral-800 rounded-lg">
+                   <ThemeToggle isScrolled={true} />
+                </div>
+              </div>
             </div>
 
             {/* Mobile User Section */}

@@ -16,12 +16,6 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'ncnkmrjfmxxncqqhdqcz.supabase.co',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
         hostname: 'images.unsplash.com',
         port: '',
         pathname: '/**',
@@ -50,7 +44,7 @@ const nextConfig = {
   turbopack: {},
   
   // Paquetes externos del servidor
-  serverExternalPackages: ['@supabase/supabase-js'],
+  serverExternalPackages: [],
   // Optimizaciones de rendimiento
   compress: true,
   poweredByHeader: false,
@@ -96,12 +90,6 @@ const nextConfig = {
             chunks: 'all',
             priority: 20,
             reuseExistingChunk: true,
-          },
-          supabase: {
-            test: /[\/]node_modules[\/]@supabase[\/]/,
-            name: 'supabase',
-            chunks: 'all',
-            priority: 15,
           },
           common: {
             name: 'common',

@@ -18,7 +18,11 @@ import {
 import {
   PHONE_BUSINESS,
   WHATSAPP_REDIRECT,
-} from '@/shared/constants/infoBusiness';
+  PHONE_DISPLAY,
+  EMAIL_BUSINESS,
+  ADDRESS_BUSINESS,
+  SCHEDULE_BUSINESS,
+} from '@/shared/constants/contactInfo';
 import { Button, Input } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import { colors } from '@/shared/styles/colors';
@@ -91,7 +95,7 @@ const Footer = () => {
           <div className="text-center">
             <div className="flex justify-center mb-4">
               <Image
-                src="/logo/isotipo_DD_negro.svg"
+                src="/logo/isotipo_DD_blanco_V2.svg"
                 alt="isotipo"
                 width={100}
                 height={40}
@@ -111,15 +115,15 @@ const Footer = () => {
               className="text-neutral-400 dark:text-neutral-400 hover:text-primary-400 transition-colors duration-200 font-medium flex items-center gap-1"
             >
               <Phone className="w-4 h-4" />
-              +51 901 843 288
+              {PHONE_DISPLAY}
             </a>
             <span className="text-neutral-600 hidden sm:inline">•</span>
             <a
-              href="mailto:dreamings.desings.3d@gmail.com"
+              href={`mailto:${EMAIL_BUSINESS}`}
               className="text-neutral-400 dark:text-neutral-400 hover:text-primary-400 transition-colors duration-200 font-medium flex items-center gap-1"
             >
               <Mail className="w-4 h-4" />
-              dreamings.desings.3d@gmail.com
+              {EMAIL_BUSINESS}
             </a>
           </div>
 
@@ -128,13 +132,13 @@ const Footer = () => {
             <div className="flex items-center gap-1 text-neutral-400 dark:text-neutral-400">
               <MapPin className="w-4 h-4" />
               <span>
-                Urb. Chapi Chico Mz. A Lt 5, Miraflores, Arequipa, Perú
+                {ADDRESS_BUSINESS}
               </span>
             </div>
 
             <div className="flex items-center gap-1 text-neutral-400 dark:text-neutral-400">
               <Clock className="w-4 h-4" />
-              <span>Lun-Vie: 9:00-18:00 | Sáb: 9:00-14:00</span>
+              <span>{SCHEDULE_BUSINESS}</span>
             </div>
           </div>
 

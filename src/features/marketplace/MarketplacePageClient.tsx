@@ -5,7 +5,6 @@ import { Filter, Grid, List, Search, FileText, X } from '@/lib/icons';
 import Link from 'next/link';
 import { ProductGrid, ProductList } from '@/components/marketplace/ProductGrid';
 import { ProductFilters as ProductFiltersComponent } from '@/components/marketplace/ProductFilters';
-import { B2BServicesView } from '@/components/marketplace/B2BServicesView';
 import { useMarketplace } from '@/contexts/MarketplaceContext';
 import { ProductFilters as ProductFiltersType, Product } from '@/shared/types';
 import PageHeader from '@/shared/components/PageHeader';

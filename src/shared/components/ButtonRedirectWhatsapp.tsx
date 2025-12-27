@@ -1,5 +1,5 @@
 import React from 'react';
-import { WHATSAPP_REDIRECT } from '../constants/infoBusiness';
+import { WHATSAPP_REDIRECT } from '@/shared/constants/contactInfo';
 import { Button } from '@/components/ui/button';
 import { MessageCircle } from 'lucide-react';
 

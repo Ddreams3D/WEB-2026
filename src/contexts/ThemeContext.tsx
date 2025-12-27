@@ -20,16 +20,24 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-    
     // Load Dark Mode preference
     const savedDarkMode = localStorage.getItem('darkMode');
+    let initialDarkMode = false;
+    
     if (savedDarkMode) {
-      const isDark = JSON.parse(savedDarkMode);
-      setDarkMode(isDark);
-      if (isDark) {
-        document.documentElement.classList.add('dark');
-      }
+      initialDarkMode = JSON.parse(savedDarkMode);
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      // Fallback to system preference if no stored preference
+      initialDarkMode = true;
+    }
+
+    setDarkMode(initialDarkMode);
+    
+    // Ensure DOM matches state immediately upon mount
+    if (initialDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
     }
 
     // Load Theme preference
@@ -38,13 +46,15 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       setThemeState(savedTheme);
       document.documentElement.setAttribute('data-theme', savedTheme);
     }
+    
+    setMounted(true);
   }, []);
 
   useEffect(() => {
-    if (mounted) {
-      localStorage.setItem('darkMode', JSON.stringify(darkMode));
-    }
-    // Always update the DOM classes immediately
+    if (!mounted) return;
+    
+    localStorage.setItem('darkMode', JSON.stringify(darkMode));
+    
     if (darkMode) {
       document.documentElement.classList.add('dark');
     } else {

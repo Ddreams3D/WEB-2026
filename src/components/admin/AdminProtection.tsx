@@ -70,7 +70,7 @@ export default function AdminProtection({ children, requiredRole = 'admin' }: Ad
 
     if (!user) {
       // Usuario no autenticado, redirigir al login
-      router.push('/auth/login?redirect=/admin');
+      router.push('/login?redirect=/admin');
       return;
     }
 

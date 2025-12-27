@@ -14,7 +14,7 @@ import { MessageSquare } from 'lucide-react';
 import { useCart } from '../../../contexts/CartContext';
 import Link from 'next/link';
 import { ProductImage } from './DefaultImage';
-import { PHONE_BUSINESS } from '@/shared/constants/infoBusiness';
+import { PHONE_BUSINESS } from '@/shared/constants/contactInfo';
 import { colors } from '@/shared/styles/colors';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';

@@ -1,6 +1,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { colors } from '@/shared/styles/colors';
+import { ADDRESS_BUSINESS } from '@/shared/constants/contactInfo';
 
 export default function ContactAddressMap() {
   return (
@@ -16,7 +17,7 @@ export default function ContactAddressMap() {
           Visítanos en Arequipa
         </h2>
         <p className="text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto text-lg">
-          Estamos ubicados estratégicamente en Miraflores para atenderte mejor.
+          Estamos ubicados en {ADDRESS_BUSINESS} para atenderte mejor.
         </p>
       </div>
 

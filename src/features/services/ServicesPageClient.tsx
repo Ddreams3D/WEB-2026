@@ -1,59 +1,51 @@
 'use client';
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import Testimonials from '../../shared/components/Testimonials';
-
 import './animations.css';
 import ServicesHero from '@/features/services/components/ServicesHero';
 import ServicesBenefits from '@/features/services/components/ServicesBenefits';
 import ServicesFAQ from '@/features/services/components/ServicesFAQ';
 import ServicesCTA from '@/features/services/components/ServicesCTA';
 import { GeneralServicesView } from '@/features/services/components/GeneralServicesView';
-import { B2BServicesView } from '@/components/marketplace/B2BServicesView';
+import { BusinessServicesView } from '@/features/services/components/BusinessServicesView';
 
 export default function ServicesPageClient() {
-  const [activeTab, setActiveTab] = useState<'general' | 'b2b'>('general');
+  const [activeTab, setActiveTab] = useState<'general' | 'business'>('general');
 
   return (
     <main className="min-h-screen bg-background">
       <ServicesHero />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
-
-        {/* Tabs de Navegación */}
-        <div className="flex justify-center mb-16">
-          <div className="bg-neutral-100 dark:bg-neutral-800 p-1.5 rounded-2xl inline-flex shadow-inner">
-            <Button
-              onClick={() => setActiveTab('general')}
-              variant="ghost"
-              className={`px-8 py-3.5 rounded-xl text-sm font-semibold transition-all duration-200 h-auto ${
-                activeTab === 'general'
-                  ? 'bg-white dark:bg-neutral-700 text-primary-600 dark:text-primary-400 shadow-sm ring-1 ring-black/5 dark:ring-white/10 hover:bg-white dark:hover:bg-neutral-700'
-                  : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200 hover:bg-transparent'
-              }`}
+        
+        {/* Toggle de Vistas */}
+        <div id="servicios-generales" className="flex justify-center mb-16 scroll-mt-24">
+          <div className="bg-neutral-100 dark:bg-neutral-800 p-1.5 rounded-2xl inline-flex relative shadow-inner">
+            {/* Background slider */}
+            <div 
+              className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-white dark:bg-neutral-700 rounded-xl shadow-sm transition-all duration-300 ease-spring ${activeTab === 'general' ? 'left-1.5' : 'left-[calc(50%+1.5px)]'}`} 
+            />
+             
+            <button 
+              onClick={() => setActiveTab('general')} 
+              className={`relative z-10 px-8 py-3 text-sm md:text-base font-medium transition-colors duration-200 rounded-xl w-48 ${activeTab === 'general' ? 'text-neutral-900 dark:text-white' : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200'}`}
             >
-              Servicios Generales
-            </Button>
-            <Button
-              onClick={() => setActiveTab('b2b')}
-              variant="ghost"
-              className={`px-8 py-3.5 rounded-xl text-sm font-semibold transition-all duration-200 h-auto ${
-                activeTab === 'b2b'
-                  ? 'bg-white dark:bg-neutral-700 text-primary-600 dark:text-primary-400 shadow-sm ring-1 ring-black/5 dark:ring-white/10 hover:bg-white dark:hover:bg-neutral-700'
-                  : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200 hover:bg-transparent'
-              }`}
+              Servicios
+            </button>
+            <button 
+              onClick={() => setActiveTab('business')} 
+              className={`relative z-10 px-8 py-3 text-sm md:text-base font-medium transition-colors duration-200 rounded-xl w-48 ${activeTab === 'business' ? 'text-neutral-900 dark:text-white' : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200'}`}
             >
-              Servicios Empresariales (B2B)
-            </Button>
+              Empresarial B2B
+            </button>
           </div>
         </div>
 
-        {/* Contenido según Tab Activo */}
-        <div className="animate-fade-in">
+        {/* Contenido Dinámico */}
+        <div className="animate-fade-in min-h-[400px]">
           {activeTab === 'general' ? (
             <GeneralServicesView />
           ) : (
-            <B2BServicesView />
+            <BusinessServicesView />
           )}
         </div>
 
@@ -62,9 +54,6 @@ export default function ServicesPageClient() {
           <ServicesBenefits />
         </div>
       </div>
-
-      {/* Testimonials Section */}
-      <Testimonials />
       
       {/* FAQ Section */}
       <ServicesFAQ />

@@ -12,10 +12,6 @@ El proyecto ya está configurado para Netlify con:
 Configura estas variables en Netlify Dashboard:
 
 ```bash
-# Supabase (Requerido)
-NEXT_PUBLIC_SUPABASE_URL=tu-url-de-supabase
-NEXT_PUBLIC_SUPABASE_ANON_KEY=tu-clave-anonima-supabase
-
 # Opcional
 NEXT_PUBLIC_GA_TRACKING_ID=tu-id-google-analytics
 NEXT_PUBLIC_SENTRY_DSN=tu-dsn-sentry
@@ -89,7 +85,6 @@ El archivo `netlify.toml` incluye:
 - [ ] Build local exitoso (`npm run build`)
 - [ ] Todas las rutas funcionando correctamente
 - [ ] Imágenes y assets cargando correctamente
-- [ ] Configuración de Supabase verificada
 
 ## 🌐 Post-Despliegue
 

@@ -24,7 +24,6 @@ interface QuoteItem {
 
 interface Quote {
   id: string;
-  companyId: string;
   title: string;
   description: string;
   items: QuoteItem[];
@@ -130,7 +129,6 @@ export const QuoteProvider: React.FC<QuoteProviderProps> = ({ children }) => {
   const createQuote = (title: string, description: string): Quote => {
     const newQuote: Quote = {
       id: `quote-${Date.now()}`,
-      companyId: '1', // Obtener del contexto B2B
       title,
       description,
       items: [],
@@ -356,7 +354,6 @@ export const QuoteProvider: React.FC<QuoteProviderProps> = ({ children }) => {
       const mockQuotes: Quote[] = [
         {
           id: 'quote-1',
-          companyId: '1',
           title: 'Prototipos Automotrices',
           description: 'Piezas de prototipado para nuevo modelo',
           items: [],

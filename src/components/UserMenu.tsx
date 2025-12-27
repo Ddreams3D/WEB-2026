@@ -33,10 +33,19 @@ export default function UserMenu() {
         onClick={() => setIsOpen(!isOpen)}
         variant="ghost"
         size="icon"
-        className="rounded-full h-10 w-10"
+        className="rounded-full h-10 w-10 overflow-hidden"
       >
-        {/* TODO: Implementar avatar cuando esté disponible */}
-        <User className="h-6 w-6" />
+        {user.photoURL ? (
+          <Image 
+            src={user.photoURL} 
+            alt={user.username || 'Avatar'} 
+            width={40} 
+            height={40}
+            className="object-cover"
+          />
+        ) : (
+          <User className="h-6 w-6" />
+        )}
       </Button>
 
       {isOpen && (

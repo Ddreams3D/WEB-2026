@@ -17,12 +17,12 @@ import {
   useStaggeredItemsAnimation,
 } from '../../../shared/hooks/useIntersectionAnimation';
 
-import { WHATSAPP_REDIRECT } from '@/shared/constants/infoBusiness';
+import { WHATSAPP_REDIRECT } from '@/shared/constants/contactInfo';
 const faqData = [
   {
-    question: '¿Qué materiales utilizan para la impresión 3D?',
+    question: '¿Qué materiales utilizamos?',
     answer:
-      'Trabajamos con una amplia variedad de materiales incluyendo PLA, ABS, PETG, TPU, resinas fotopoliméricas, y materiales especializados como fibra de carbono, metal y cerámicas. Cada material tiene propiedades específicas que se adaptan a diferentes aplicaciones y requisitos del proyecto.',
+      'Imprimimos en PLA, PETG, ABS entre otras, seleccionando el material adecuado según el uso y acabado que necesite tu proyecto. Si no sabes cuál elegir, nosotros te asesoramos.',
   },
   {
     question: '¿Cuánto tiempo toma completar un proyecto?',
@@ -144,12 +144,9 @@ export default function ServicesFAQ() {
     <section className={cn("py-20", colors.backgrounds.neutral)}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <div className={cn(
-            "inline-flex items-center justify-center w-16 h-16 rounded-full mb-6",
-            colors.backgrounds.highlight
-          )}>
-            <HelpCircle className="w-8 h-8 text-primary-600 dark:text-primary-400" />
-          </div>
+          <span className="text-neutral-500 dark:text-white/60 font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-6 block">
+            Soporte & Claridad
+          </span>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-900 dark:text-white mb-4">
             Preguntas{' '}
             <span className={cn(

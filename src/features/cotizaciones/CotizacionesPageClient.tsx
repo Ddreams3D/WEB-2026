@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useB2B } from '@/contexts/B2BContext';
 import { useQuote } from '@/contexts/QuoteContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -37,7 +36,6 @@ import Link from 'next/link';
 import { QuoteStatus } from '@/contexts/QuoteContext';
 
 export default function CotizacionesPageClient() {
-  const { currentCompany } = useB2B();
   const { quotes, createQuote, updateQuote, deleteQuote } = useQuote();
   
   const [activeTab, setActiveTab] = useState('list');
@@ -114,22 +112,6 @@ export default function CotizacionesPageClient() {
       await deleteQuote(quoteId);
     }
   };
-
-  if (!currentCompany) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <FileText className="h-12 w-12 text-muted-foreground mb-4" />
-            <h2 className="text-xl font-semibold mb-2">Acceso Empresarial Requerido</h2>
-            <p className="text-muted-foreground text-center">
-              Para gestionar cotizaciones, necesitas iniciar sesión con una cuenta empresarial.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <div className="container mx-auto px-4 py-8">

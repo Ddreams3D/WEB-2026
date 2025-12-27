@@ -34,6 +34,11 @@ const benefits = [
 export default function ServicesBenefits() {
   return (
     <section className="mb-12 sm:mb-16 lg:mb-20" aria-labelledby="benefits">
+      <div className="text-center mb-4">
+        <span className="text-neutral-500 dark:text-white/60 font-medium tracking-[0.2em] uppercase text-xs sm:text-sm">
+          Excelencia & Calidad
+        </span>
+      </div>
       <h2
         id="benefits"
         className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center mb-4 sm:mb-6 text-neutral-900 dark:text-white"

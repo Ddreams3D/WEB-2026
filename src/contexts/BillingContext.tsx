@@ -31,7 +31,6 @@ interface InvoiceItem {
 interface Invoice {
   id: string;
   invoiceNumber: string;
-  companyId: string;
   companyName: string;
   companyAddress: string;
   companyTaxId: string;
@@ -445,7 +444,6 @@ export const BillingProvider: React.FC<BillingProviderProps> = ({ children }) =>
         {
           id: 'invoice-1',
           invoiceNumber: 'DD3D-202401-0001',
-          companyId: '1',
           companyName: 'TechCorp Industries',
           companyAddress: 'Av. Industrial 456, Lima',
           companyTaxId: '20987654321',

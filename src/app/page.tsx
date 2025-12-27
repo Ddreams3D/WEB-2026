@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
-import HomePageClient from './HomePageClient';
+import HomePageClient from '@/features/home/HomePageClient';
+import { PHONE_BUSINESS } from '@/shared/constants/contactInfo';
 
 export const metadata: Metadata = {
   title: 'Ddreams 3D | Impresión 3D y Regalos Personalizados en Arequipa',
@@ -51,7 +52,7 @@ const jsonLd = {
     addressCountry: 'PE',
   },
   url: 'https://ddreams3d.com',
-  telephone: '+51901843288',
+  telephone: `+${PHONE_BUSINESS}`,
   priceRange: '$$',
   openingHoursSpecification: [
     {

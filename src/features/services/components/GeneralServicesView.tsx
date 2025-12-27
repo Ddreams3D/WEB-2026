@@ -55,6 +55,9 @@ const GeneralServicesView = () => {
   return (
     <div className="space-y-8 animate-fade-in">
       <div className="text-center max-w-3xl mx-auto mb-16">
+        <span className="text-neutral-500 dark:text-white/60 font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-4 block">
+          Creatividad & Precisión
+        </span>
         <h2 className="text-3xl font-bold text-neutral-900 dark:text-white mb-6">
           Servicios de Impresión y Diseño 3D
         </h2>

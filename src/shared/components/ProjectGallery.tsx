@@ -171,10 +171,10 @@ export default function ProjectGallery() {
               </div>
             </figure>
             <div className="p-4 sm:p-6 flex flex-col flex-grow">
-              <h3 className="text-lg sm:text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300">
+              <h3 className="text-lg sm:text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-3 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300 line-clamp-2 min-h-[3.5rem] flex items-start">
                 {project.title}
               </h3>
-              <p className="text-neutral-600 dark:text-neutral-400 mb-6 text-sm sm:text-base line-clamp-2 leading-relaxed">
+              <p className="text-neutral-600 dark:text-neutral-400 mb-6 text-sm sm:text-base line-clamp-2 leading-relaxed min-h-[3rem]">
                 {project.description}
               </p>
               <Button
@@ -214,7 +214,7 @@ export default function ProjectGallery() {
                 duration: 0.6,
                 ease: [0.22, 1, 0.36, 1] // Custom easing for "exquisite" feel
               }}
-              className={cn("rounded-2xl max-w-2xl w-full shadow-2xl relative overflow-hidden", colors.backgrounds.card)}
+              className={cn("rounded-2xl max-w-2xl w-full shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto", colors.backgrounds.card)}
               onClick={(e) => e.stopPropagation()}
             >
               <Button

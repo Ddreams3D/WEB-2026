@@ -24,10 +24,10 @@ export const THEME_CONFIG: Record<Theme, {
   },
   promo: {
     label: 'Promo (Black Friday)',
-    description: 'Urgencia y conversión. Negro y gris oscuro.',
+    description: 'Urgencia y conversión. Alto contraste (Negro y Blanco).',
     icon: ShoppingBag,
-    colorClass: 'text-neutral-800 hover:text-neutral-900 hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-800',
-    previewColors: ['bg-neutral-900', 'bg-neutral-700']
+    colorClass: 'text-neutral-900 hover:text-black hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-900',
+    previewColors: ['bg-black', 'bg-white']
   },
   'festive-strong': {
     label: 'Festive Strong (Patrio)',
@@ -38,10 +38,10 @@ export const THEME_CONFIG: Record<Theme, {
   },
   'festive-warm': {
     label: 'Festive Warm (Navidad)',
-    description: 'Calidez y celebración. Rojo cálido y dorado.',
+    description: 'Calidez y celebración. Dorado y blanco.',
     icon: Gift,
-    colorClass: 'text-red-500 hover:text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20',
-    previewColors: ['bg-red-500', 'bg-amber-400']
+    colorClass: 'text-amber-500 hover:text-amber-600 hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-amber-900/20',
+    previewColors: ['bg-amber-500', 'bg-white', 'bg-amber-500']
   },
   'festive-soft': {
     label: 'Festive Soft (Madre/Mujer)',

@@ -66,7 +66,7 @@ export function ProductCard({
       )}
 
       {/* Featured Badge - Only show if not in featured view (optional, but good for "All" view) */}
-      {product.isFeatured && (
+      {product.isFeatured && source !== 'services' && (
         <div className={`absolute top-3 ${hasDiscount ? 'left-16' : 'left-3'} z-20 bg-amber-400 text-white px-2.5 py-1 rounded-full text-xs font-bold shadow-md flex items-center gap-1`}>
           <Star className="w-3 h-3 fill-current" />
           <span>Destacado</span>

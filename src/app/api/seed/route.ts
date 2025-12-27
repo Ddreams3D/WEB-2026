@@ -19,6 +19,14 @@ const deepClean = (obj: any): any => {
 };
 
 export async function GET() {
+  // Prevent seeding in production
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json({ 
+      success: false, 
+      error: 'Seeding is disabled in production environment' 
+    }, { status: 403 });
+  }
+
   try {
     const batch = writeBatch(db);
     let count = 0;

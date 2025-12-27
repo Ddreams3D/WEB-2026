@@ -27,10 +27,17 @@ export default function Hero() {
     triggerOnce: true
   });
   
+  const getAnimClass = (delay: number) => cn(
+    "transform transition-all duration-1000 ease-out",
+    isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
+  );
+
+  const getDelayStyle = (delay: number) => ({ transitionDelay: `${delay}ms` });
+  
   return (
     <section 
       ref={heroRef}
-      className={cn("relative h-screen w-full overflow-hidden", getAnimationClasses(isVisible))}
+      className="relative h-screen w-full overflow-hidden"
       role="banner"
       aria-label="Sección principal de Ddreams 3D"
     >
@@ -44,25 +51,42 @@ export default function Hero() {
           src={heroContent.image}
           alt={heroContent.title}
           fill
-          className="object-cover w-full h-full object-center"
+          className={cn(
+            "object-cover w-full h-full object-center transition-opacity duration-1000",
+            isVisible ? "opacity-100" : "opacity-0"
+          )}
           priority
           sizes="100vw"
         />
-        <div className="absolute inset-0 flex items-center justify-center z-20 pt-28 sm:pt-36">
+        <div className="absolute inset-0 flex items-center justify-center z-20 pb-12 sm:pb-20">
           <div 
             className="text-center text-white max-w-5xl px-4 sm:px-6 lg:px-8"
           >
             <h1 className="sr-only">
               {heroContent.seoTitle}
             </h1>
-            <p className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-4 tracking-tight drop-shadow-lg leading-tight text-white">
+            <p 
+              className={cn("text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-4 tracking-tight drop-shadow-lg leading-tight text-white", getAnimClass(0))}
+              style={getDelayStyle(0)}
+            >
               Tus ideas. Nuestro arte.
-              <span className="block mt-2">En 3D.</span>
+              <span 
+                className={cn("block mt-2", getAnimClass(200))}
+                style={getDelayStyle(200)}
+              >
+                En 3D.
+              </span>
             </p>
-            <p className="text-lg sm:text-xl md:text-2xl mb-8 text-gray-100 max-w-2xl mx-auto font-light leading-relaxed drop-shadow-md">
+            <p 
+              className={cn("text-lg sm:text-xl md:text-2xl mb-8 text-gray-100 max-w-2xl mx-auto font-light leading-relaxed drop-shadow-md", getAnimClass(400))}
+              style={getDelayStyle(400)}
+            >
               {heroContent.description}
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <div 
+              className={cn("flex flex-col sm:flex-row gap-4 justify-center items-center", getAnimClass(600))}
+              style={getDelayStyle(600)}
+            >
               <Button
                 asChild
                 variant="gradient"
