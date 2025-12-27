@@ -51,8 +51,11 @@ let productsCache: { data: Product[], timestamp: number } | null = null;
 let categoriesCache: { data: Category[], timestamp: number } | null = null;
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
+// Circuit breaker state
+let _firebaseCircuitOpen = false;
+
 // Helper to get docs with timeout
-const getDocsWithTimeout = async (query: any, timeoutMs: number = 2000) => {
+const getDocsWithTimeout = async (query: any, timeoutMs: number = 1500) => {
   const timeoutPromise = new Promise((_, reject) => {
     setTimeout(() => reject(new Error('Firebase request timed out')), timeoutMs);
   });
@@ -66,14 +69,24 @@ const getDocsWithTimeout = async (query: any, timeoutMs: number = 2000) => {
 export const ProductService = {
   // Get all products
   async getAllProducts(forceRefresh = false): Promise<Product[]> {
+    console.time('ProductService.getAllProducts');
     // Return cached data if valid
     if (!forceRefresh && productsCache && (Date.now() - productsCache.timestamp < CACHE_DURATION)) {
+      console.timeEnd('ProductService.getAllProducts');
       return productsCache.data;
+    }
+
+    // Circuit breaker check
+    if (_firebaseCircuitOpen) {
+      console.log('Firebase circuit is open, skipping connection attempt and using mock data');
+      console.timeEnd('ProductService.getAllProducts');
+      return mockProducts;
     }
 
     // If Firebase is not configured, use mock data immediately
     if (!isFirebaseConfigured) {
       console.log('Firebase not configured, using mock data');
+      console.timeEnd('ProductService.getAllProducts');
       return mockProducts;
     }
 
@@ -81,7 +94,8 @@ export const ProductService = {
       const q = query(collection(db, PRODUCTS_COLLECTION), orderBy('createdAt', 'desc'));
       
       // Use timeout wrapper to prevent long loading times if Firebase is unreachable
-      const snapshot = await getDocsWithTimeout(q, 3000); // 3 second timeout
+      console.log('Attempting to fetch from Firebase...');
+      const snapshot = await getDocsWithTimeout(q, 1500); // 1.5 second timeout
       
       const products = snapshot.docs.map(convertProductData);
       
@@ -89,15 +103,22 @@ export const ProductService = {
       // This handles cases where Firebase is configured but empty
       if (products.length === 0) {
         console.log('No products in Firebase, using mock data fallback');
+        console.timeEnd('ProductService.getAllProducts');
         return mockProducts;
       }
       
       // Update cache
       productsCache = { data: products, timestamp: Date.now() };
       
+      console.timeEnd('ProductService.getAllProducts');
       return products;
     } catch (error) {
       console.warn('Error fetching products from Firebase (or timeout), falling back to mock data:', error);
+      // Open circuit breaker to prevent future delays
+      _firebaseCircuitOpen = true;
+      console.log('Firebase circuit breaker opened - subsequent requests will use mock data immediately');
+      
+      console.timeEnd('ProductService.getAllProducts');
       // Fallback to mock data on error or timeout
       return mockProducts;
     }
