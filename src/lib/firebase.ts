@@ -20,6 +20,9 @@ export const db = getFirestore(app);
 export const auth = getAuth(app);
 export const storage = getStorage(app);
 
-export const isFirebaseConfigured = !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+export const isFirebaseConfigured = !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY && 
+  process.env.NEXT_PUBLIC_FIREBASE_API_KEY.length > 0 &&
+  process.env.NEXT_PUBLIC_FIREBASE_API_KEY !== 'undefined' &&
+  process.env.NEXT_PUBLIC_FIREBASE_API_KEY !== 'null';
 
 export default app;

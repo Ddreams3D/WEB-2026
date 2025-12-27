@@ -51,6 +51,18 @@ let productsCache: { data: Product[], timestamp: number } | null = null;
 let categoriesCache: { data: Category[], timestamp: number } | null = null;
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
+// Helper to get docs with timeout
+const getDocsWithTimeout = async (query: any, timeoutMs: number = 2000) => {
+  const timeoutPromise = new Promise((_, reject) => {
+    setTimeout(() => reject(new Error('Firebase request timed out')), timeoutMs);
+  });
+  
+  return Promise.race([
+    getDocs(query),
+    timeoutPromise
+  ]) as Promise<any>;
+};
+
 export const ProductService = {
   // Get all products
   async getAllProducts(forceRefresh = false): Promise<Product[]> {
@@ -67,7 +79,9 @@ export const ProductService = {
 
     try {
       const q = query(collection(db, PRODUCTS_COLLECTION), orderBy('createdAt', 'desc'));
-      const snapshot = await getDocs(q);
+      
+      // Use timeout wrapper to prevent long loading times if Firebase is unreachable
+      const snapshot = await getDocsWithTimeout(q, 3000); // 3 second timeout
       
       const products = snapshot.docs.map(convertProductData);
       
@@ -83,9 +97,8 @@ export const ProductService = {
       
       return products;
     } catch (error) {
-      console.error('Error fetching products:', error);
-      // Fallback to mock data on error
-      console.log('Error fetching from Firebase, using mock data fallback');
+      console.warn('Error fetching products from Firebase (or timeout), falling back to mock data:', error);
+      // Fallback to mock data on error or timeout
       return mockProducts;
     }
   },
