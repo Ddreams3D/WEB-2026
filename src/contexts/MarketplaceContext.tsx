@@ -77,14 +77,9 @@ export function MarketplaceProvider({ children }: MarketplaceProviderProps) {
           ProductService.getCategories()
         ]);
         
-        // Filter out service products (IDs: 7, 8, 9, 10, 12, 13, 14, 15) from the marketplace
-        // Note: In a real app, we might want to have a separate field for 'type' (product vs service)
-        // For now, we keep the existing logic of filtering by ID or maybe use a tag/category if available.
-        // The mock logic was filtering IDs. Let's see if we can replicate that or just show everything
-        // that is not a 'service' if we have a way to distinguish.
-        // Checking mockData, services have customPriceDisplay.
-        
-        const marketplaceProducts = fetchedProducts.filter(p => !p.customPriceDisplay);
+        // We want to show all products in the marketplace for now
+        // Filtering by customPriceDisplay might hide legitimate products
+        const marketplaceProducts = fetchedProducts;
         
         setAllProducts(fetchedProducts);
         setProducts(marketplaceProducts);
@@ -101,13 +96,19 @@ export function MarketplaceProvider({ children }: MarketplaceProviderProps) {
         const featured = marketplaceProducts.filter(p => p.isFeatured);
         setFeaturedProducts(featured);
         
+        console.log('Marketplace loaded:', { 
+          total: fetchedProducts.length, 
+          marketplace: marketplaceProducts.length,
+          categories: categoriesWithCounts.length 
+        });
+
       } catch (error) {
-        console.error('Error initializing marketplace data:', error);
+        console.error('Error loading marketplace data:', error);
       } finally {
         setIsLoading(false);
       }
     };
-    
+
     initData();
   }, []);
 

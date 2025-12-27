@@ -256,7 +256,16 @@ export const ProductService = {
 
   // Get all categories
   async getCategories(forceRefresh = false): Promise<Category[]> {
-    if (!isFirebaseConfigured) return mockCategories;
+    // Circuit breaker check
+    if (_firebaseCircuitOpen) {
+      console.log('Firebase circuit is open, skipping categories fetch and using mock data');
+      return mockCategories;
+    }
+
+    if (!isFirebaseConfigured) {
+      console.log('Firebase not configured, using mock categories');
+      return mockCategories;
+    }
 
     // Return cached data if valid
     if (!forceRefresh && categoriesCache && (Date.now() - categoriesCache.timestamp < CACHE_DURATION)) {
@@ -265,10 +274,14 @@ export const ProductService = {
 
     try {
       const q = query(collection(db, CATEGORIES_COLLECTION), orderBy('sortOrder', 'asc'));
-      const snapshot = await getDocs(q);
+      
+      console.log('Attempting to fetch categories from Firebase...');
+      const snapshot = await getDocsWithTimeout(q, 1500); // 1.5 second timeout
+      
       const categories = snapshot.docs.map(convertCategoryData);
       
       if (categories.length === 0) {
+        console.log('No categories in Firebase, using mock data fallback');
         return mockCategories;
       }
 
@@ -277,7 +290,11 @@ export const ProductService = {
 
       return categories;
     } catch (error) {
-      console.error('Error fetching categories:', error);
+      console.warn('Error fetching categories from Firebase (or timeout):', error);
+      // Open circuit breaker
+      _firebaseCircuitOpen = true;
+      console.log('Firebase circuit breaker opened (in getCategories) - subsequent requests will use mock data immediately');
+      
       // Cache mock categories on error too
       categoriesCache = { data: mockCategories, timestamp: Date.now() };
       return mockCategories;

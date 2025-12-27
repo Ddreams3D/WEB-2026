@@ -38,13 +38,13 @@ export default function MarketplacePageClient() {
     if (searchQuery.trim()) {
        return searchResults
         .map(result => products.find(p => p.id === result.id))
-        .filter((product): product is Product => product !== undefined && !product.customPriceDisplay);
+        .filter((product): product is Product => product !== undefined);
     }
-    // Otherwise show only products (not services)
-    return products.filter(p => !p.customPriceDisplay);
+    // Otherwise show all products
+    return products;
   };
 
-  // Calculate base products for filter counts (only products, no services)
+  // Calculate base products for filter counts
   const baseProducts = React.useMemo(() => {
     let filtered = allProducts;
     
@@ -54,12 +54,20 @@ export default function MarketplacePageClient() {
        filtered = filtered.filter(p => searchIds.includes(p.id));
     }
 
-    // Always filter out services (customPriceDisplay)
-    return filtered.filter(p => !p.customPriceDisplay);
+    return filtered;
   }, [searchQuery, searchResults, allProducts]);
 
   const displayProducts = getDisplayProducts();
-  const productCount = products.filter(p => !p.customPriceDisplay).length;
+  const productCount = displayProducts.length;
+
+  // Debug logging
+  useEffect(() => {
+    console.log('MarketplacePageClient:', {
+      productsCount: products.length,
+      displayProductsCount: displayProducts.length,
+      isLoading
+    });
+  }, [products, displayProducts, isLoading]);
 
   return (
     <div className="min-h-screen bg-background dark:bg-neutral-900">
