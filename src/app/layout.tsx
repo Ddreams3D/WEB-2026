@@ -73,6 +73,14 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
+  icons: {
+    icon: [
+      { url: '/logo/isotipo_DD_negro_V2.svg' },
+    ],
+    apple: [
+      { url: '/logo/isotipo_DD_negro_V2.svg' },
+    ],
+  },
 };
 
 export default function RootLayout({
