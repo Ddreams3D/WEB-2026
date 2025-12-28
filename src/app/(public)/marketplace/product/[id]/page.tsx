@@ -59,6 +59,12 @@ export default async function ProductPage({ params }: Props) {
     redirect(`/marketplace/product/${product.slug}`);
   }
 
+  // Fetch related products
+  const allProducts = await ProductService.getAllProducts();
+  const relatedProducts = allProducts
+    .filter(p => p.id !== product.id && (p.categoryId === product.categoryId || p.tags?.some(tag => product.tags?.includes(tag))))
+    .slice(0, 4);
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -77,7 +83,14 @@ export default async function ProductPage({ params }: Props) {
       price: product.price,
       availability: product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
       itemCondition: 'https://schema.org/NewCondition'
-    }
+    },
+    ...(product.rating && product.reviewCount ? {
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: product.rating,
+        reviewCount: product.reviewCount
+      }
+    } : {})
   };
 
   const breadcrumbItems = [
@@ -90,7 +103,7 @@ export default async function ProductPage({ params }: Props) {
     <>
       <JsonLd data={jsonLd} />
       <BreadcrumbJsonLd items={breadcrumbItems} />
-      <ProductDetailClient product={product} />
+      <ProductDetailClient product={product} relatedProducts={relatedProducts} />
     </>
   );
 }

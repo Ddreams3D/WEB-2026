@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from '@/lib/icons';
 import { Button } from '@/components/ui/button';
+import { colors } from '@/shared/styles/colors';
+import { cn } from '@/lib/utils';
 
 type ToastType = 'success' | 'error' | 'info' | 'warning';
 
@@ -61,39 +63,68 @@ const Toast: React.FC<ToastProps> = ({
     }
   };
 
-  const getBackgroundColor = () => {
+  const getStyles = () => {
     switch (type) {
       case 'success':
-        return 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800';
+        return {
+          bg: colors.status.success.bg,
+          border: colors.status.success.border,
+          text: colors.status.success.text,
+          gradient: colors.gradients.backgroundPage // Using page background for glass effect base
+        };
       case 'error':
-        return 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800';
+        return {
+          bg: colors.status.error.bg,
+          border: colors.status.error.border,
+          text: colors.status.error.text,
+          gradient: colors.gradients.backgroundError
+        };
       case 'warning':
-        return 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800';
+        return {
+          bg: colors.status.warning.bg,
+          border: colors.status.warning.border,
+          text: colors.status.warning.text,
+          gradient: colors.gradients.backgroundWarning
+        };
       case 'info':
       default:
-        return 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800';
+        return {
+          bg: colors.status.info.bg,
+          border: colors.status.info.border,
+          text: colors.status.info.text,
+          gradient: colors.gradients.backgroundInfo
+        };
     }
   };
 
+  const styles = getStyles();
+
   return (
     <div
-      className={`
-        pointer-events-auto w-full max-w-sm mb-2
-        transform transition-all duration-300 ease-in-out
-        ${isVisible && !isLeaving ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}
-      `}
+      className={cn(
+        "pointer-events-auto w-full max-w-sm mb-3",
+        "transform transition-all duration-300 ease-in-out",
+        isVisible && !isLeaving ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
+      )}
     >
-      <div className={`
-        rounded-lg border shadow-lg p-4
-        ${getBackgroundColor()}
-      `}>
-        <div className="flex items-start">
-          <div className="flex-shrink-0">
+      <div className={cn(
+        "rounded-xl border shadow-xl p-4 backdrop-blur-md overflow-hidden relative group",
+        styles.bg,
+        styles.border
+      )}>
+        {/* Decorative gradient background */}
+        <div className={cn(
+          "absolute inset-0 opacity-40 dark:opacity-20 pointer-events-none",
+          styles.gradient
+        )} />
+        
+        <div className="flex items-start relative z-10">
+          <div className="flex-shrink-0 mt-0.5">
             {getIcon()}
           </div>
           
           <div className="ml-3 flex-1">
-            <h3 className="text-sm font-medium text-neutral-900 dark:text-white">
+            <h3 className={cn("text-sm font-semibold", styles.text)}>
               {title}
             </h3>
             {message && (
@@ -102,18 +133,22 @@ const Toast: React.FC<ToastProps> = ({
               </p>
             )}
           </div>
-          
-          <div className="ml-4 flex-shrink-0">
-            <Button
+
+          <div className="ml-4 flex-shrink-0 flex">
+            <button
+              className={cn(
+                "rounded-md inline-flex text-neutral-400 hover:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-offset-2",
+                "bg-transparent hover:bg-black/5 dark:hover:bg-white/5 transition-colors p-1"
+              )}
               onClick={handleClose}
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
             >
+              <span className="sr-only">Cerrar</span>
               <X className="h-4 w-4" />
-            </Button>
+            </button>
           </div>
         </div>
+        
+        {/* Progress bar animation could go here */}
       </div>
     </div>
   );

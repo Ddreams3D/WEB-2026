@@ -105,6 +105,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Verificar autenticación al cargar la aplicación con Firebase
   useEffect(() => {
+    // Si Firebase no está configurado, verificar sesión mock y salir
+    if (!auth) {
+      checkStoredAuth();
+      setIsLoading(false);
+      return;
+    }
+
     // Asegurar persistencia local
     setPersistence(auth, browserLocalPersistence)
       .catch(() => {}); // Silenciar error de persistencia si ocurre
@@ -274,13 +281,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsLoading(true);
       
       // 1. Intentar Login con Firebase (Email/Password)
-      try {
-        await signInWithEmailAndPassword(auth, username, password);
-        return true; // onAuthStateChanged manejará el estado
-      } catch (firebaseError: any) {
-        // Si falla Firebase, intentar Mock silenciosamente
-        
-        // 2. Intentar Mock Credentials
+      if (auth) {
+        try {
+          await signInWithEmailAndPassword(auth, username, password);
+          return true; // onAuthStateChanged manejará el estado
+        } catch (firebaseError: any) {
+          // Si falla Firebase, intentar Mock silenciosamente
+        }
+      }
+      
+      // 2. Intentar Mock Credentials
         const validCredential = MOCK_CREDENTIALS.find(
           cred => (cred.username === username || cred.user.email === username) && cred.password === password
         );
@@ -294,7 +304,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setUser(userData);
           return true;
         }
-      }
       
       return false;
     } catch (error) {
@@ -307,6 +316,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginWithGoogle = async (): Promise<void> => {
     try {
+      if (!auth) {
+        showError('Error', 'Firebase no está configurado. No se puede iniciar sesión con Google.');
+        return;
+      }
       setIsLoading(true);
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
@@ -335,6 +348,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       // Usuario Firebase
+      if (!db) {
+        throw new Error('Firebase no está configurado');
+      }
       const userRef = doc(db, 'users', user.id);
       
       // Update in Firestore
@@ -361,7 +377,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     try {
-      await signOut(auth);
+      if (auth) {
+        await signOut(auth);
+      }
       localStorage.removeItem(AUTH_TOKEN_KEY);
       localStorage.removeItem(AUTH_USER_KEY);
       setUser(null);

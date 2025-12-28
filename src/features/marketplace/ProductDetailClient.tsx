@@ -14,12 +14,14 @@ import { Card, CardContent } from '@/components/ui/card';
 import { ArrowLeft, ShoppingCart, Star, Share2, Heart, Check, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { colors } from '@/shared/styles/colors';
+import { ProductCard } from '@/components/marketplace/ProductCard';
 
 interface Props {
   product: Product;
+  relatedProducts?: Product[];
 }
 
-export default function ProductDetailClient({ product: initialProduct }: Props) {
+export default function ProductDetailClient({ product: initialProduct, relatedProducts = [] }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const fromSource = searchParams.get('from');
@@ -528,6 +530,23 @@ export default function ProductDetailClient({ product: initialProduct }: Props) 
           )}
         </div>
       </div>
+
+      {/* Related Products Section */}
+      {relatedProducts.length > 0 && (
+        <div className="mt-20 pt-10 border-t border-gray-100 dark:border-gray-800">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-8">
+            Productos Relacionados
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {relatedProducts.map((relatedProduct) => (
+              <ProductCard 
+                key={relatedProduct.id} 
+                product={relatedProduct} 
+              />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

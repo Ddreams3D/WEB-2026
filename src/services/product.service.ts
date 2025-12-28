@@ -54,6 +54,8 @@ const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 // Circuit breaker state
 let _firebaseCircuitOpen = false;
 
+import { unstable_cache } from 'next/cache';
+
 // Helper to get docs with timeout
 const getDocsWithTimeout = async (query: any, timeoutMs: number = 1500) => {
   const timeoutPromise = new Promise((_, reject) => {
@@ -66,14 +68,8 @@ const getDocsWithTimeout = async (query: any, timeoutMs: number = 1500) => {
   ]) as Promise<any>;
 };
 
-export const ProductService = {
-  // Get all products
-  async getAllProducts(forceRefresh = false): Promise<Product[]> {
-    // Return cached data if valid
-    if (!forceRefresh && productsCache && (Date.now() - productsCache.timestamp < CACHE_DURATION)) {
-      return productsCache.data;
-    }
-
+// Internal function to fetch all products from Firebase
+const fetchAllProductsFromFirebase = async (): Promise<Product[]> => {
     // Circuit breaker check
     if (_firebaseCircuitOpen) {
       console.log('Firebase circuit is open, skipping connection attempt and using mock data');
@@ -94,26 +90,54 @@ export const ProductService = {
       const products = snapshot.docs.map(convertProductData);
       
       // If Firebase returns no products, fallback to mock data
-      // This handles cases where Firebase is configured but empty
       if (products.length === 0) {
         console.log('No products in Firebase, using mock data fallback');
         return mockProducts;
       }
-      
-      // Update cache
-      productsCache = { data: products, timestamp: Date.now() };
-      
+
       return products;
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.warn('Error fetching products from Firebase (or timeout), falling back to mock data:', error);
-      }
-      // Open circuit breaker to prevent future delays
+      console.warn('Error fetching products from Firebase:', error);
+      // Open circuit breaker on error to prevent further timeouts
       _firebaseCircuitOpen = true;
+      // Reset circuit breaker after 1 minute
+      setTimeout(() => { _firebaseCircuitOpen = false; }, 60000);
       
-      // Fallback to mock data on error or timeout
       return mockProducts;
     }
+};
+
+// Cached version of fetchAllProducts
+const getCachedProducts = unstable_cache(
+  async () => fetchAllProductsFromFirebase(),
+  ['all-products'],
+  { revalidate: 3600, tags: ['products'] } // Cache for 1 hour
+);
+
+export const ProductService = {
+  // Get all products
+  async getAllProducts(forceRefresh = false): Promise<Product[]> {
+    // Return cached data if valid (Memory cache for client-side)
+    if (!forceRefresh && productsCache && (Date.now() - productsCache.timestamp < CACHE_DURATION)) {
+      return productsCache.data;
+    }
+
+    let products: Product[];
+
+    // Use Next.js Data Cache on server if available and not forcing refresh
+    if (typeof window === 'undefined' && !forceRefresh) {
+        products = await getCachedProducts();
+    } else {
+        products = await fetchAllProductsFromFirebase();
+    }
+
+    // Update memory cache
+    productsCache = {
+      data: products,
+      timestamp: Date.now()
+    };
+    
+    return products;
   },
 
   // Get product by ID or Slug
