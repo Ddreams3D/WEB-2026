@@ -86,7 +86,7 @@ export function ProductCard({
             src={primaryImage?.url}
             alt={primaryImage?.alt || `Imagen del producto ${product.name}`}
             fill
-            className="object-contain p-8 group-hover:scale-105 transition-transform duration-1000 ease-out z-10 relative"
+            className="object-cover group-hover:scale-105 transition-transform duration-1000 ease-out z-10 relative"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
           {/* Soft Overlay on Hover */}

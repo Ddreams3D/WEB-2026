@@ -99,6 +99,7 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
   });
   const [customInputs, setCustomInputs] = useState<Record<string, string>>({});
   const [isAdding, setIsAdding] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const selectedImage = product.images.find(img => img.id === selectedImageId) || product.images[0];
 
@@ -224,6 +225,32 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
     }
   };
 
+  const handleNextImage = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    const currentIndex = product.images.findIndex(img => img.id === selectedImageId);
+    const nextIndex = (currentIndex + 1) % product.images.length;
+    setSelectedImageId(product.images[nextIndex].id);
+  };
+
+  const handlePrevImage = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    const currentIndex = product.images.findIndex(img => img.id === selectedImageId);
+    const prevIndex = (currentIndex - 1 + product.images.length) % product.images.length;
+    setSelectedImageId(product.images[prevIndex].id);
+  };
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (!isModalOpen) return;
+    if (e.key === 'Escape') setIsModalOpen(false);
+    if (e.key === 'ArrowRight') handleNextImage();
+    if (e.key === 'ArrowLeft') handlePrevImage();
+  };
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isModalOpen, selectedImageId]);
+
   return (
     <div className="container mx-auto px-4 pt-24 pb-12 lg:pt-32 lg:pb-20 max-w-7xl font-sans text-gray-900 dark:text-gray-100 min-h-screen">
       <Button 
@@ -242,10 +269,13 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
       <div className="grid grid-cols-1 lg:grid-cols-[45%_55%] gap-10 lg:gap-16 items-start">
         {/* Product Images Section */}
         <div className="space-y-4 lg:sticky lg:top-24">
-          <div className={cn(
-            "relative aspect-[4/3] overflow-hidden rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm",
-            colors.backgrounds.neutral
-          )}>
+          <div 
+            className={cn(
+              "relative aspect-[4/3] overflow-hidden rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm cursor-zoom-in group",
+              colors.backgrounds.neutral
+            )}
+            onClick={() => setIsModalOpen(true)}
+          >
             <ProductImage
               src={selectedImage?.url}
               alt={selectedImage?.alt || product.name}
@@ -258,6 +288,13 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
                 Destacado
               </Badge>
             )}
+            
+            {/* Zoom Indicator - Bottom Right Corner */}
+            <div className="absolute bottom-4 right-4 z-20 transition-all duration-300 transform group-hover:scale-110">
+              <div className="bg-black/60 text-white p-2.5 rounded-full backdrop-blur-md shadow-lg border border-white/10 hover:bg-black/80 transition-colors">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 15 6 6"/><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"/></svg>
+              </div>
+            </div>
           </div>
           {product.images.length > 1 && (
             <div className="grid grid-cols-4 gap-3">
@@ -587,6 +624,80 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
                 product={relatedProduct} 
               />
             ))}
+          </div>
+        </div>
+      )}
+      {/* Image Modal - Vitrina Técnica */}
+      {isModalOpen && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md animate-in fade-in duration-300"
+          onClick={() => setIsModalOpen(false)}
+        >
+          {/* Close Button - Consistent hierarchy, semi-transparent */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="fixed top-6 right-6 text-white/70 hover:text-white bg-black/40 hover:bg-black/60 z-[60] rounded-full h-12 w-12 backdrop-blur-md transition-all duration-300 border border-white/10 hover:rotate-90"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsModalOpen(false);
+            }}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </Button>
+
+          {/* Main Stage Container - Adaptive frame */}
+          <div 
+            className="relative w-full h-full flex flex-col items-center justify-center pointer-events-none"
+            onClick={(e) => e.stopPropagation()}
+          >
+             {/* Interactive Zone Container - Captures pointer events for navigation */}
+             <div className="relative w-full h-full max-w-[95vw] max-h-[90vh] flex items-center justify-center pointer-events-auto group/stage">
+               
+               {/* Navigation - Large hit areas, subtle feedback */}
+               {product.images.length > 1 && (
+                 <>
+                   <div className="absolute inset-y-0 left-0 w-[15%] flex items-center justify-start z-50 hover:bg-gradient-to-r hover:from-black/20 hover:to-transparent transition-all duration-500 group/nav-left cursor-pointer" onClick={handlePrevImage}>
+                     <Button
+                        variant="ghost"
+                        size="icon"
+                        className="ml-4 md:ml-8 text-white/30 group-hover/nav-left:text-white/90 group-hover/nav-left:bg-black/40 group-hover/nav-left:scale-110 rounded-full h-12 w-12 md:h-16 md:w-16 transition-all duration-300"
+                     >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                     </Button>
+                   </div>
+                   
+                   <div className="absolute inset-y-0 right-0 w-[15%] flex items-center justify-end z-50 hover:bg-gradient-to-l hover:from-black/20 hover:to-transparent transition-all duration-500 group/nav-right cursor-pointer" onClick={handleNextImage}>
+                     <Button
+                        variant="ghost"
+                        size="icon"
+                        className="mr-4 md:mr-8 text-white/30 group-hover/nav-right:text-white/90 group-hover/nav-right:bg-black/40 group-hover/nav-right:scale-110 rounded-full h-12 w-12 md:h-16 md:w-16 transition-all duration-300"
+                     >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                     </Button>
+                   </div>
+                 </>
+               )}
+
+               {/* Image Container - "Vitrina" with Auto-hide UI logic */}
+               <div className="relative w-full h-full flex items-center justify-center p-0">
+                  <ProductImage
+                    src={selectedImage?.url}
+                    alt={selectedImage?.alt || product.name}
+                    fill
+                    className="object-contain drop-shadow-[0_0_50px_rgba(0,0,0,0.5)]"
+                    priority
+                    sizes="95vw"
+                  />
+                  
+                  {/* Caption / Counter - Auto-hide on idle, move away from content */}
+                  <div className="absolute bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover/stage:opacity-100 transition-opacity duration-500 delay-150 flex items-center gap-3 text-xs font-medium px-4 py-2 bg-black/60 rounded-full backdrop-blur-xl border border-white/10 shadow-2xl whitespace-nowrap max-w-[80%] overflow-hidden pointer-events-none">
+                      <span className="truncate max-w-[300px] text-white/90 tracking-wide">{selectedImage?.alt || product.name}</span>
+                      <span className="w-px h-3 bg-white/20 shrink-0"></span>
+                      <span className="shrink-0 text-white/50">{product.images.findIndex(img => img.id === selectedImageId) + 1} <span className="text-white/30 text-[10px] mx-0.5">/</span> {product.images.length}</span>
+                  </div>
+               </div>
+             </div>
           </div>
         </div>
       )}
