@@ -19,6 +19,7 @@ interface DefaultImageProps {
   priority?: boolean;
   quality?: number;
   onError?: () => void;
+  style?: React.CSSProperties;
 }
 
 const DEFAULT_FALLBACK = 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?auto=format&fit=crop&q=80&w=400';
@@ -36,7 +37,8 @@ export default function DefaultImage({
   sizes,
   priority = false,
   quality = 75,
-  onError
+  onError,
+  style
 }: DefaultImageProps) {
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -82,6 +84,7 @@ export default function DefaultImage({
     onLoad: handleLoad,
     priority,
     quality,
+    style,
     ...(fill ? { fill: true, sizes } : { width, height })
   };
 

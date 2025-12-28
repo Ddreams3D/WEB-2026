@@ -679,19 +679,24 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
                  </>
                )}
 
-               {/* Image Container - "Vitrina" with Auto-hide UI logic */}
+               {/* Image Container - "Vitrina" with Auto-hide UI logic and Smart Mat */}
                <div className="relative w-full h-full flex items-center justify-center p-0">
+                  {/* Smart Vignette / Mat: Only visible if image doesn't fill width (usually vertical images) */}
+                  {/* We use a CSS trick: a radial gradient background that acts as a "vignette" behind the image */}
+                  {/* Adjusted opacity to 0.02 to avoid washing out edges, creating a subtle spotlight effect */}
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.02)_0%,transparent_70%)] pointer-events-none"></div>
+
                   <ProductImage
                     src={selectedImage?.url}
                     alt={selectedImage?.alt || product.name}
                     fill
-                    className="object-contain drop-shadow-[0_0_50px_rgba(0,0,0,0.5)]"
+                    className="object-contain drop-shadow-[0_0_50px_rgba(0,0,0,0.5)] z-10"
                     priority
                     sizes="95vw"
                   />
                   
                   {/* Caption / Counter - Auto-hide on idle, move away from content */}
-                  <div className="absolute bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover/stage:opacity-100 transition-opacity duration-500 delay-150 flex items-center gap-3 text-xs font-medium px-4 py-2 bg-black/60 rounded-full backdrop-blur-xl border border-white/10 shadow-2xl whitespace-nowrap max-w-[80%] overflow-hidden pointer-events-none">
+                  <div className="absolute bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover/stage:opacity-100 transition-opacity duration-500 delay-150 flex items-center gap-3 text-xs font-medium px-4 py-2 bg-black/60 rounded-full backdrop-blur-xl border border-white/10 shadow-2xl whitespace-nowrap max-w-[80%] overflow-hidden pointer-events-none z-20">
                       <span className="truncate max-w-[300px] text-white/90 tracking-wide">{selectedImage?.alt || product.name}</span>
                       <span className="w-px h-3 bg-white/20 shrink-0"></span>
                       <span className="shrink-0 text-white/50">{product.images.findIndex(img => img.id === selectedImageId) + 1} <span className="text-white/30 text-[10px] mx-0.5">/</span> {product.images.length}</span>

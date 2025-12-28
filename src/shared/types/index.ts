@@ -107,7 +107,7 @@ export interface Product {
   sellerId?: string;
   sellerName?: string;
   images: ProductImage[];
-  specifications: ProductSpecification[];
+  specifications?: ProductSpecification[];
   options?: ProductOption[];
   tags: string[];
   seoKeywords?: string[];
@@ -154,6 +154,7 @@ export interface ProductImage {
   isPrimary: boolean;
   sortOrder?: number;
   order?: number;
+  imagePosition?: string; // CSS object-position value (e.g. 'center', 'top', '50% 30%')
   createdAt?: Date;
   updatedAt?: Date;
 }

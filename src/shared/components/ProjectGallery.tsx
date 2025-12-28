@@ -23,6 +23,7 @@ interface Project {
   date?: string;
   ctaText?: string;
   imageFit?: 'cover' | 'contain';
+  imagePosition?: string;
 }
 
 const projects: Project[] = [
@@ -32,6 +33,7 @@ const projects: Project[] = [
     description: 'Desarrollo de modelos anatómicos impresos en 3D a partir de referencias reales para estudio, enseñanza y planificación médica. Cada detalle se define desde el modelado 3D, asegurando coherencia total entre diseño, fabricación y acabados finales, incluidos pintura y postprocesado.',
     category: 'Medicina',
     image: '/images/modelo-anatomico-craneo-3d-corte-lateral.jpg',
+    imagePosition: 'object-center',
     gallery: [
       '/images/modelo-anatomico-craneo-3d-corte-lateral.jpg',
       '/images/modelo-anatomico-craneo-3d-corte-sagital.jpg'
@@ -128,67 +130,52 @@ export default function ProjectGallery() {
         {projects.map((project, index) => (
           <article
             key={project.id}
+            onClick={() => openModal(project)}
             className={cn(
-              "group flex flex-col h-full border border-transparent dark:border-neutral-700/50 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-700 ease-out overflow-hidden transform hover:-translate-y-1 hover-lift isolate",
-              colors.backgrounds.card,
-              visibleItems[index] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+              "group relative overflow-hidden rounded-xl border bg-white dark:bg-neutral-900 transition-all duration-300 cursor-pointer",
+              "border-neutral-200 dark:border-neutral-800",
+              "shadow-sm hover:shadow-xl",
+              visibleItems[index] ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
             )}
-            style={{ transitionDelay: `${index * 150}ms`, backfaceVisibility: 'hidden', WebkitMaskImage: '-webkit-radial-gradient(white, black)' }}
+            style={{ transitionDelay: `${index * 100}ms` }}
           >
-            <figure className={cn("relative overflow-hidden shrink-0 rounded-t-xl z-0", colors.backgrounds.neutral)}>
+            {/* Project Image */}
+            <div className="relative aspect-[4/3] overflow-hidden">
               <Image
                 src={project.image}
-                alt={`Proyecto: ${project.title}`}
-                width={400}
-                height={300}
-                className={`w-full h-48 sm:h-56 transition-all duration-1000 ease-out will-change-transform ${
-                  project.imageFit === 'contain' 
-                    ? 'object-contain p-4' 
-                    : 'object-cover group-hover:scale-105'
-                }`}
+                alt={project.title}
+                fill
+                className={cn(
+                  "object-cover transition-transform duration-700 will-change-transform group-hover:scale-110",
+                  project.imageFit === 'contain' ? "object-contain bg-neutral-100 dark:bg-neutral-800" : "",
+                  project.imagePosition || 'object-center'
+                )}
+                style={project.imagePosition ? { objectPosition: project.imagePosition.replace('object-', '').replace('[', '').replace(']', '').replace('_', ' ') } : undefined}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               />
-              <div className={cn(
-                "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-in-out",
-                colors.gradients.overlayDark
-              )} />
-              <div className="absolute top-3 sm:top-4 right-3 sm:right-4">
-                <span className={cn(
-                  "text-white px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-medium shadow-lg",
-                  colors.gradients.primary
-                )}>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            </div>
+
+            {/* Content */}
+            <div className="p-6">
+              <div className="mb-3">
+                <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300 border border-primary-100 dark:border-primary-800">
                   {project.category}
                 </span>
               </div>
-              <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 ease-out opacity-0 group-hover:opacity-100">
-                <Button
-                  onClick={() => openModal(project)}
-                  variant="overlay"
-                  className="w-full shadow-lg"
-                >
-                  <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-2" aria-hidden="true" />
-                  Ver Detalles
-                </Button>
-              </div>
-            </figure>
-            <div className="p-4 sm:p-6 flex flex-col flex-grow">
-              <h3 className="text-lg sm:text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-3 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300 line-clamp-2 min-h-[3.5rem] flex items-start">
+              <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-2 line-clamp-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                 {project.title}
               </h3>
-              <p className="text-neutral-600 dark:text-neutral-400 mb-6 text-sm sm:text-base line-clamp-2 leading-relaxed min-h-[3rem]">
+              <p className="text-sm text-neutral-600 dark:text-neutral-400 line-clamp-2 mb-4">
                 {project.description}
               </p>
               <Button
-                asChild
-                variant="gradient"
-                className="mt-auto w-full shadow-md hover:shadow-lg transform hover:-translate-y-1"
+                onClick={() => openModal(project)}
+                variant="outline"
+                className="w-full justify-between group/btn hover:border-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
               >
-                <Link
-                  href="/contact"
-                  className="flex items-center justify-center w-full h-full"
-                >
-                  <FileText className="w-4 h-4 mr-2" />
-                  {project.ctaText || 'Cotizar proyecto similar'}
-                </Link>
+                Ver proyecto
+                <Eye className="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
               </Button>
             </div>
           </article>

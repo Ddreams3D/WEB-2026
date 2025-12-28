@@ -7,17 +7,17 @@ import InfoCard from '@/shared/components/InfoCard';
 const services = [
   {
     icon: Palette,
-    title: 'Modelado 3D personalizado',
+    title: 'Modelado 3D Personalizado (Orgánico)',
     description:
-      'Creación de modelos 3D únicos adaptados a tus necesidades específicas',
+      'Creación de modelos 3D orgánicos para personajes, figuras y piezas visuales únicas. Ideal para arte, exhibición y proyectos creativos personalizados.',
     emoji: '🎨',
     cta: 'Cotizar ahora',
     href: '/contact',
   },
   {
     icon: Printer,
-    title: 'Impresión 3D por encargo',
-    description: 'Impresión de alta calidad en múltiples materiales y acabados',
+    title: 'Impresión 3D por Encargo',
+    description: 'Fabricación de piezas en impresión 3D bajo pedido y según especificaciones. Para repuestos, componentes funcionales y soluciones personalizadas.',
     emoji: '🖨️',
     cta: 'Ver más',
     href: '#gallery',
@@ -33,17 +33,17 @@ const services = [
   },
   {
     icon: Zap,
-    title: 'Prototipado rápido',
-    description: 'Desarrollo acelerado de prototipos para validar tus ideas',
+    title: 'Prototipado Técnico y Diseño CAD Funcional',
+    description: 'Diseño CAD y prototipado funcional para validar piezas antes de producción. Pensado para ingeniería, pruebas técnicas y desarrollo de producto.',
     emoji: '⚡',
     cta: 'Cotizar',
     href: '/contact',
   },
   {
     icon: Award,
-    title: 'Trofeos 3D temáticos',
+    title: 'Trofeos y Medallas 3D Personalizadas',
     description:
-      'Trofeos únicos y personalizados para eventos y reconocimientos',
+      'Diseño y fabricación de trofeos y premios totalmente personalizados. Perfecto para eventos, competencias y reconocimientos especiales.',
     emoji: '🏆',
     cta: 'Ver ejemplos',
     href: '#gallery',

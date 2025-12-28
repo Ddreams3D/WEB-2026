@@ -15,11 +15,10 @@ export default function InfoCard({ title, description, icon: Icon, className, in
   return (
     <div
       className={cn(
-        "group relative h-full overflow-hidden rounded-2xl p-8 transition-all duration-500",
+        "group relative h-full overflow-hidden rounded-xl p-8 transition-all duration-300",
         "bg-white dark:bg-neutral-900",
         "border border-neutral-100 dark:border-white/10",
-        "hover:shadow-2xl hover:shadow-primary-500/10 dark:hover:shadow-none",
-        "hover:-translate-y-2",
+        "hover:shadow-xl hover:shadow-primary-500/10 dark:hover:shadow-none",
         className
       )}
       style={{ animationDelay: `${index * 100}ms` }}
