@@ -97,22 +97,20 @@ export const ProductService = {
       // This handles cases where Firebase is configured but empty
       if (products.length === 0) {
         console.log('No products in Firebase, using mock data fallback');
-        console.timeEnd('ProductService.getAllProducts');
         return mockProducts;
       }
       
       // Update cache
       productsCache = { data: products, timestamp: Date.now() };
       
-      console.timeEnd('ProductService.getAllProducts');
       return products;
     } catch (error) {
-      console.warn('Error fetching products from Firebase (or timeout), falling back to mock data:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('Error fetching products from Firebase (or timeout), falling back to mock data:', error);
+      }
       // Open circuit breaker to prevent future delays
       _firebaseCircuitOpen = true;
-      console.log('Firebase circuit breaker opened - subsequent requests will use mock data immediately');
       
-      console.timeEnd('ProductService.getAllProducts');
       // Fallback to mock data on error or timeout
       return mockProducts;
     }

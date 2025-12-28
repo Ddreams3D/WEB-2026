@@ -179,6 +179,32 @@
   --secondary-foreground: 0 0 0; /* Black text on white */
 }
 
+/* Logic for Promo - Black & White High Contrast */
+[data-theme='promo'] .bg-clip-text,
+[data-theme='promo'] .text-transparent.bg-gradient-to-r {
+  /* Black-White-Black */
+  background-image: linear-gradient(
+    to right, 
+    rgb(var(--primary-600)), 
+    rgb(var(--secondary-500)), 
+    rgb(var(--primary-600))
+  ) !important;
+  background-size: 100% auto !important;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  text-shadow: none !important;
+}
+
+[data-theme='promo'] .bg-gradient-to-r.text-white {
+  background-image: linear-gradient(
+    to right, 
+    rgb(var(--primary-600)), 
+    rgb(var(--primary-900)), 
+    rgb(var(--primary-600))
+  ) !important;
+  background-size: 100% auto !important;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
 /* 4️⃣ FESTIVE.STRONG (Fiestas Patrias) - Pride & Identity */
 [data-theme='festive-strong'] {
   /* HSL Variables - Red & White (Peru Flag) */
@@ -251,6 +277,34 @@
   --secondary-foreground: 0 0 0;
 }
 
+/* Logic for Festive Warm - Gold & White Visibility */
+[data-theme='festive-warm'] .bg-clip-text,
+[data-theme='festive-warm'] .text-transparent.bg-gradient-to-r {
+  /* Ensure Gold-White-Gold structure */
+  background-image: linear-gradient(
+    to right, 
+    rgb(var(--primary-600)), 
+    rgb(var(--secondary-500)), 
+    rgb(var(--primary-600))
+  ) !important;
+  background-size: 100% auto !important;
+  /* Shadow for white center visibility */
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.3));
+  text-shadow: none !important;
+}
+
+[data-theme='festive-warm'] .bg-gradient-to-r.text-white {
+  background-image: linear-gradient(
+    to right, 
+    rgb(var(--primary-500)), 
+    rgb(var(--primary-300)), 
+    rgb(var(--primary-500))
+  ) !important;
+  background-size: 100% auto !important;
+  border: 1px solid rgba(255,255,255,0.4);
+  color: #78350f !important; /* Dark amber text for readability on gold */
+}
+
 /* 6️⃣ FESTIVE.SOFT (Madre/Mujer) - Tenderness & Calm */
 [data-theme='festive-soft'] {
   /* HSL Variables - Baby Pink & Warm White */
@@ -285,6 +339,34 @@
   --secondary-900: 136 19 55;
   --secondary-950: 76 5 25;
   --secondary-foreground: 76 5 25;
+}
+
+/* Logic for Festive Soft - Pink & White Visibility */
+[data-theme='festive-soft'] .bg-clip-text,
+[data-theme='festive-soft'] .text-transparent.bg-gradient-to-r {
+  /* Ensure Pink-White-Pink structure */
+  background-image: linear-gradient(
+    to right, 
+    rgb(var(--primary-600)), 
+    rgb(var(--secondary-500)), 
+    rgb(var(--primary-600))
+  ) !important;
+  background-size: 100% auto !important;
+  /* Subtle shadow for white center */
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.2));
+  text-shadow: none !important;
+}
+
+[data-theme='festive-soft'] .bg-gradient-to-r.text-white {
+  background-image: linear-gradient(
+    to right, 
+    rgb(var(--primary-400)), 
+    rgb(var(--secondary-300)), 
+    rgb(var(--primary-400))
+  ) !important;
+  background-size: 100% auto !important;
+  border: 1px solid rgba(255,255,255,0.6);
+  color: #831843 !important; /* Dark pink text for readability */
 }
 
 /* Cleanup of old themes */

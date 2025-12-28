@@ -39,16 +39,33 @@ const Footer = () => {
     setShowSecretModal(true);
   };
 
-  const handleSecretLogin = (e: React.FormEvent) => {
+  const handleSecretLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (secretPassword === 'ddreams2026') {
-      localStorage.setItem('theme_secret_access', 'granted');
-      router.push('/admin/temas');
-      setShowSecretModal(false);
-      setSecretPassword('');
-      setSecretError('');
-    } else {
-      setSecretError('Contraseña incorrecta');
+    setSecretError('');
+    
+    try {
+      const response = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ password: secretPassword }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Acceso concedido (la cookie ya fue establecida por el servidor)
+        localStorage.setItem('theme_secret_access', 'granted');
+        
+        // Recargar para aplicar cambios de sesión
+        window.location.href = '/admin/temas';
+      } else {
+        setSecretError('Contraseña incorrecta');
+      }
+    } catch (error) {
+      setSecretError('Error al verificar credenciales');
+      console.error(error);
     }
   };
 
@@ -302,6 +319,46 @@ const Footer = () => {
               . Todos los derechos reservados.
             </p>
 
+            {/* Secret Admin Modal */}
+            {showSecretModal && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+                <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-6 w-full max-w-md shadow-2xl relative">
+                  <button 
+                    onClick={() => setShowSecretModal(false)}
+                    className="absolute top-4 right-4 text-neutral-400 hover:text-white"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                  
+                  <div className="text-center mb-6">
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary-500/20 text-primary-400 mb-4">
+                      <Lock className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-xl font-bold text-white">Acceso Administrativo</h3>
+                    <p className="text-neutral-400 text-sm mt-2">Ingresa la contraseña maestra para continuar</p>
+                  </div>
+
+                  <form onSubmit={handleSecretLogin} className="space-y-4">
+                    <div>
+                      <Input
+                        type="password"
+                        placeholder="Contraseña del sistema"
+                        value={secretPassword}
+                        onChange={(e) => setSecretPassword(e.target.value)}
+                        className="bg-neutral-950 border-neutral-800 focus:border-primary-500"
+                      />
+                      {secretError && (
+                        <p className="text-red-500 text-xs mt-2">{secretError}</p>
+                      )}
+                    </div>
+                    <Button type="submit" className="w-full bg-primary-600 hover:bg-primary-500 text-white">
+                      Acceder al Panel
+                    </Button>
+                  </form>
+                </div>
+              </div>
+            )}
+
             {/* Botón scroll to top - Rediseñado y reposicionado (esquina inferior) */}
             {showScrollTop && (
               <Button
@@ -317,59 +374,6 @@ const Footer = () => {
           </div>
         </div>
       </div>
-
-      {/* Secret Access Modal */}
-      {showSecretModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="relative w-full max-w-md bg-white dark:bg-neutral-800 rounded-xl shadow-2xl p-6 transform animate-in zoom-in-95 duration-200">
-            <button
-              onClick={() => {
-                setShowSecretModal(false);
-                setSecretError('');
-                setSecretPassword('');
-              }}
-              className="absolute top-4 right-4 text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
-            >
-              <X className="w-5 h-5" />
-            </button>
-            
-            <div className="flex flex-col items-center mb-6">
-              <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center mb-4 text-primary-600 dark:text-primary-400">
-                <Lock className="w-6 h-6" />
-              </div>
-              <h3 className="text-xl font-bold text-neutral-900 dark:text-white">
-                Acceso Administrativo
-              </h3>
-              <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
-                Ingresa la contraseña para gestionar temas
-              </p>
-            </div>
-
-            <form onSubmit={handleSecretLogin} className="space-y-4">
-              <div>
-                <Input
-                  type="password"
-                  placeholder="Contraseña"
-                  value={secretPassword}
-                  onChange={(e) => setSecretPassword(e.target.value)}
-                  className="w-full bg-neutral-50 dark:bg-neutral-900 border-neutral-200 dark:border-neutral-700"
-                  autoFocus
-                />
-                {secretError && (
-                  <p className="text-red-500 text-sm mt-2">{secretError}</p>
-                )}
-              </div>
-              
-              <Button 
-                type="submit" 
-                className="w-full bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-700 hover:to-secondary-700 text-white"
-              >
-                Acceder
-              </Button>
-            </form>
-          </div>
-        </div>
-      )}
     </footer>
   );
 };

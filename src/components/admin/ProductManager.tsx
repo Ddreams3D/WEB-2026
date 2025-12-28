@@ -9,6 +9,7 @@ import ProductModal from './ProductModal';
 import { Product } from '@/shared/types';
 import { ProductService } from '@/services/product.service';
 import { isFirebaseConfigured } from '@/lib/firebase';
+import { generateSlug } from '@/lib/utils';
 
 // Definimos la estructura de datos que devuelve el formulario
 interface ProductFormData {
@@ -110,6 +111,7 @@ export default function ProductManager() {
         // Crear nuevo producto
         const newProductData: Partial<Product> = {
           name: formData.name,
+          slug: generateSlug(formData.name), // Generar slug inicial
           description: formData.description,
           price: formData.price,
           currency: 'PEN',

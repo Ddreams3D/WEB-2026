@@ -82,6 +82,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const setAdminCookie = () => {
+    document.cookie = "ddreams_admin_session=true; path=/; max-age=86400; SameSite=Strict";
+  };
+
+  const removeAdminCookie = () => {
+    document.cookie = "ddreams_admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+  };
+
   // Inicializar estado desde localStorage después del montaje para evitar errores de hidratación
   useEffect(() => {
     try {
@@ -99,7 +107,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Asegurar persistencia local
     setPersistence(auth, browserLocalPersistence)
-      .catch(error => console.error("Error setting persistence:", error));
+      .catch(() => {}); // Silenciar error de persistencia si ocurre
 
     // Escuchar cambios de autenticación de Firebase
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -204,6 +212,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUserIfChanged(userData);
         localStorage.setItem(AUTH_USER_KEY, JSON.stringify(userData));
         localStorage.setItem(AUTH_TOKEN_KEY, await firebaseUser.getIdToken());
+        
+        // Set admin cookie if user has admin role
+        if (userData.role === 'admin' || isSuperAdmin(userData.email)) {
+          setAdminCookie();
+        } else {
+          removeAdminCookie();
+        }
       } else {
         // No hay usuario de Firebase
         const token = localStorage.getItem(AUTH_TOKEN_KEY);
@@ -214,6 +229,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           if (user) { 
             localStorage.removeItem(AUTH_TOKEN_KEY);
             localStorage.removeItem(AUTH_USER_KEY);
+            removeAdminCookie();
             setUserIfChanged(null);
           }
         }
@@ -240,9 +256,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           // Si era token real pero Firebase dice null, limpiamos
           localStorage.removeItem(AUTH_TOKEN_KEY);
           localStorage.removeItem(AUTH_USER_KEY);
+          removeAdminCookie();
           setUser(null);
         }
       } else {
+        removeAdminCookie();
         setUser(null);
       }
     } catch (error) {
@@ -260,8 +278,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await signInWithEmailAndPassword(auth, username, password);
         return true; // onAuthStateChanged manejará el estado
       } catch (firebaseError: any) {
-        // Si falla Firebase (ej: usuario no encontrado), intentar Mock
-        console.log('Firebase login failed, trying mock credentials...', firebaseError.code);
+        // Si falla Firebase, intentar Mock silenciosamente
         
         // 2. Intentar Mock Credentials
         const validCredential = MOCK_CREDENTIALS.find(
