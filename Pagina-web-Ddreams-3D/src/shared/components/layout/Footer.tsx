@@ -106,7 +106,9 @@ const Footer = () => {
               personalizados, trato directo y soluciones técnicas a medida.
             </p>
             <p className="text-neutral-300 dark:text-neutral-300 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto mt-2">
-              📍 Arequipa, Perú · Modelado & Impresión 3D · Envíos a todo el Perú
+              <Link href="/contact#location" className="hover:text-primary-400 transition-colors">
+                📍 Arequipa, Perú · Modelado & Impresión 3D · Envíos a todo el Perú
+              </Link>
             </p>
           </div>
 
