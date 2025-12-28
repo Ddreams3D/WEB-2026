@@ -38,28 +38,32 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
           const parsed = JSON.parse(storedProducts);
           const found = parsed.find((p: any) => p.id === initialProduct.id);
           if (found) {
-             // Hydrate dates
-             const hydrated = {
-               ...found,
-               createdAt: new Date(found.createdAt),
-               updatedAt: new Date(found.updatedAt),
-               images: found.images?.map((img: any) => ({
-                 ...img,
-                 createdAt: img.createdAt ? new Date(img.createdAt) : undefined,
-                 updatedAt: img.updatedAt ? new Date(img.updatedAt) : undefined
-               })),
-               // Ensure new fields like tabs are preserved if missing in storage
-               tabs: found.tabs || initialProduct.tabs,
-               tabsTitle: found.tabsTitle || initialProduct.tabsTitle
-             };
-             setProduct(hydrated);
+             const foundUpdatedAt = new Date(found.updatedAt);
+             // Solo usar datos de localStorage si son más recientes que los datos iniciales (del servidor/mock)
+             if (!initialProduct.updatedAt || foundUpdatedAt > initialProduct.updatedAt) {
+               // Hydrate dates
+               const hydrated = {
+                 ...found,
+                 createdAt: new Date(found.createdAt),
+                 updatedAt: foundUpdatedAt,
+                 images: found.images?.map((img: any) => ({
+                   ...img,
+                   createdAt: img.createdAt ? new Date(img.createdAt) : undefined,
+                   updatedAt: img.updatedAt ? new Date(img.updatedAt) : undefined
+                 })),
+                 // Ensure new fields like tabs are preserved if missing in storage
+                 tabs: found.tabs || initialProduct.tabs,
+                 tabsTitle: found.tabsTitle || initialProduct.tabsTitle
+               };
+               setProduct(hydrated);
+             }
           }
         } catch (e) {
-          console.error('Error syncing product from storage:', e);
+          console.error('Error parsing stored products:', e);
         }
       }
     }
-  }, [initialProduct.id]);
+  }, [initialProduct]);
 
   const { addToCart } = useCart();
   const { showSuccess, showError } = useToast();

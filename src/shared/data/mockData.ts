@@ -829,9 +829,42 @@ export const mockProducts: Product[] = [
       {
         id: '13-a',
         productId: '13',
-        url: '/images/placeholder-architectural.svg',
-        alt: 'Merchandising 3D Personalizado - Vista General',
+        url: '/images/services/merchandising-3d-personalizado-regalos-corporativos.png',
+        alt: 'Merchandising 3D Personalizado y Regalos Corporativos',
         isPrimary: true,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-02-15'),
+        updatedAt: new Date('2024-02-15')
+      },
+      {
+        id: '13-b',
+        productId: '13',
+        url: '/images/services/merchandising-3d-dragpharma-orejas-perro-anatomicas.png',
+        alt: 'Orejas de Perro Anatómicas 3D - Proyecto Dragpharma',
+        isPrimary: false,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-02-15'),
+        updatedAt: new Date('2024-02-15')
+      },
+      {
+        id: '13-c',
+        productId: '13',
+        url: '/images/services/merchandising-3d-detalle-producto-creativo.jpg',
+        alt: 'Detalle de Producto Creativo en Impresión 3D',
+        isPrimary: false,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-02-15'),
+        updatedAt: new Date('2024-02-15')
+      },
+      {
+        id: '13-d',
+        productId: '13',
+        url: '/images/services/merchandising-3d-regalos-personalizados-unicos.jpg',
+        alt: 'Regalos Personalizados Únicos para Empresas',
+        isPrimary: false,
         width: 800,
         height: 600,
         createdAt: new Date('2024-02-15'),
@@ -873,7 +906,7 @@ export const mockProducts: Product[] = [
     isFeatured: true,
     isActive: true,
     createdAt: new Date('2024-02-15'),
-    updatedAt: new Date('2024-02-15')
+    updatedAt: new Date('2025-12-28')
   },
   {
     id: '14',
@@ -893,9 +926,31 @@ export const mockProducts: Product[] = [
       {
         id: '14-a',
         productId: '14',
-        url: '/images/placeholder-engineering.svg',
-        alt: 'Prototipado de Ingeniería 3D - Vista General',
+        url: '/images/services/prototipado-ingenieria-vista-general-piezas.jpg',
+        alt: 'Prototipado de Ingeniería 3D - Vista General de Piezas',
         isPrimary: true,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-02-15'),
+        updatedAt: new Date('2024-02-15')
+      },
+      {
+        id: '14-b',
+        productId: '14',
+        url: '/images/services/prototipado-ingenieria-detalle-mecanico-funcional.jpg',
+        alt: 'Detalle de Mecanismo Funcional y Precisión Técnica',
+        isPrimary: false,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-02-15'),
+        updatedAt: new Date('2024-02-15')
+      },
+      {
+        id: '14-c',
+        productId: '14',
+        url: '/images/services/prototipado-ingenieria-conjunto-piezas-tecnicas.jpg',
+        alt: 'Conjunto de Piezas Técnicas para Validación de Diseño',
+        isPrimary: false,
         width: 800,
         height: 600,
         createdAt: new Date('2024-02-15'),
@@ -937,7 +992,7 @@ export const mockProducts: Product[] = [
     isFeatured: true,
     isActive: true,
     createdAt: new Date('2024-02-15'),
-    updatedAt: new Date('2024-02-15')
+    updatedAt: new Date('2025-12-28')
   },
   {
     id: '15',
@@ -957,13 +1012,13 @@ export const mockProducts: Product[] = [
       {
         id: '15-a',
         productId: '15',
-        url: '/images/placeholder-educational.svg',
+        url: '/images/services/maquetas-didacticas-v2.png',
         alt: 'Maquetas Didácticas y Material Educativo 3D',
         isPrimary: true,
         width: 800,
         height: 600,
         createdAt: new Date('2024-02-15'),
-        updatedAt: new Date('2024-02-15')
+        updatedAt: new Date('2025-12-28')
       }
     ],
     tabsTitle: 'ESTE SERVICIO SE ADAPTA SEGÚN EL TIPO DE CLIENTE',
@@ -1001,11 +1056,10 @@ export const mockProducts: Product[] = [
     isFeatured: true,
     isActive: true,
     createdAt: new Date('2024-02-15'),
-    updatedAt: new Date('2024-02-15')
+    updatedAt: new Date('2025-12-28')
   },
-
   {
-    id: 'b2b-1',
+    id: '16',
     displayOrder: 90,
     slug: 'proyectos-anatomicos-3d-personalizados',
     name: 'Proyectos Anatómicos 3D Personalizados',
@@ -1088,9 +1142,20 @@ export const mockProducts: Product[] = [
       {
         id: '17-a',
         productId: '17',
-        url: '/images/placeholder-modeling.svg',
-        alt: 'Modelado 3D Personalizado (Orgánico)',
+        url: '/images/services/modelado-3d-organico-personajes-esculturas-digitales.png',
+        alt: 'Modelado 3D Orgánico - Personajes y Esculturas Digitales',
         isPrimary: true,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-03-01'),
+        updatedAt: new Date('2024-03-01')
+      },
+      {
+        id: '17-b',
+        productId: '17',
+        url: '/images/services/diseno-3d-organico-modelado-artistico-profesional.png',
+        alt: 'Diseño 3D Orgánico - Modelado Artístico Profesional',
+        isPrimary: false,
         width: 800,
         height: 600,
         createdAt: new Date('2024-03-01'),
@@ -1153,9 +1218,20 @@ export const mockProducts: Product[] = [
       {
         id: '21-a',
         productId: '21',
-        url: '/images/placeholder-prototype.svg',
-        alt: 'Prototipado Técnico y Diseño CAD Funcional',
+        url: '/images/services/prototipado-tecnico-diseno-cad-industrial.png',
+        alt: 'Prototipado Técnico y Diseño CAD Industrial',
         isPrimary: true,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-03-05'),
+        updatedAt: new Date('2024-03-05')
+      },
+      {
+        id: '21-b',
+        productId: '21',
+        url: '/images/services/ingenieria-inversa-diseno-mecanico-3d.png',
+        alt: 'Ingeniería Inversa y Diseño Mecánico 3D',
+        isPrimary: false,
         width: 800,
         height: 600,
         createdAt: new Date('2024-03-05'),
@@ -1218,9 +1294,42 @@ export const mockProducts: Product[] = [
       {
         id: '18-a',
         productId: '18',
-        url: '/images/placeholder-prototype.svg',
-        alt: 'Servicio de Impresión 3D por Encargo',
+        url: '/images/services/impresion-3d-encargo-servicio-profesional.jpg',
+        alt: 'Servicio de Impresión 3D por Encargo - Calidad Profesional',
         isPrimary: true,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-03-01'),
+        updatedAt: new Date('2024-03-01')
+      },
+      {
+        id: '18-b',
+        productId: '18',
+        url: '/images/services/impresion-3d-detalle-alta-calidad.jpg',
+        alt: 'Detalle de Impresión 3D de Alta Calidad y Precisión',
+        isPrimary: false,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-03-01'),
+        updatedAt: new Date('2024-03-01')
+      },
+      {
+        id: '18-c',
+        productId: '18',
+        url: '/images/services/impresion-3d-gran-formato-piezas-industriales.jpg',
+        alt: 'Impresión 3D de Gran Formato para Piezas Industriales',
+        isPrimary: false,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-03-01'),
+        updatedAt: new Date('2024-03-01')
+      },
+      {
+        id: '18-d',
+        productId: '18',
+        url: '/images/services/impresion-3d-produccion-lotes-piezas-tecnicas.jpg',
+        alt: 'Producción de Lotes de Piezas Técnicas en Impresión 3D',
+        isPrimary: false,
         width: 800,
         height: 600,
         createdAt: new Date('2024-03-01'),
@@ -1263,18 +1372,18 @@ export const mockProducts: Product[] = [
     isFeatured: true,
     isActive: true,
     createdAt: new Date('2024-03-02'),
-    updatedAt: new Date('2024-03-02')
+    updatedAt: new Date('2025-12-28')
   },
 
   {
     id: '19',
     displayOrder: 80,
-    slug: 'acabado-profesional-postprocesado',
-    name: 'Acabado Profesional y Postprocesado',
-    description: 'Servicio de postprocesado y acabados premium para resultados excepcionales. Llevamos tus impresiones 3D al siguiente nivel mediante técnicas de lijado, masillado, pintura, barnizado y tratamientos superficiales. Eliminamos las líneas de capa para obtener piezas con apariencia de producto final inyectado.',
-    shortDescription: 'Postprocesado y acabados premium para resultados excepcionales',
+    slug: 'fabricacion-cascos-mascaras-props-cosplay',
+    name: 'Fabricación de Cascos, Máscaras, Props y Cosplay Personalizado',
+    description: 'Diseño, modelado y fabricación de piezas personalizadas mediante impresión 3D',
+    shortDescription: 'Diseño, modelado y fabricación de piezas personalizadas mediante impresión 3D',
     price: 0,
-    customPriceDisplay: 'Cotización personalizada',
+    customPriceDisplay: 'Cotización según diseño y tamaño',
     currency: 'PEN',
     categoryId: 'arte-diseno',
     categoryName: 'Arte y Diseño',
@@ -1284,37 +1393,80 @@ export const mockProducts: Product[] = [
       {
         id: '19-a',
         productId: '19',
-        url: '/images/placeholder-artistic.svg',
-        alt: 'Acabado Profesional y Pintura de Modelos 3D',
+        url: '/images/services/fabricacion-cascos-mascaras-cosplay-props-frontal.jpg',
+        alt: 'Fabricación de Cascos y Máscaras Cosplay - Vista Frontal',
         isPrimary: true,
         width: 800,
         height: 600,
-        createdAt: new Date('2024-03-01'),
-        updatedAt: new Date('2024-03-01')
+        createdAt: new Date('2025-12-28'),
+        updatedAt: new Date('2025-12-28')
+      },
+      {
+        id: '19-b',
+        productId: '19',
+        url: '/images/services/fabricacion-cascos-mascaras-cosplay-props-detalle.jpg',
+        alt: 'Detalle de Props y Accesorios Cosplay Personalizados',
+        isPrimary: false,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2025-12-28'),
+        updatedAt: new Date('2025-12-28')
+      },
+      {
+        id: '19-c',
+        productId: '19',
+        url: '/images/services/fabricacion-cascos-mascaras-cosplay-props-ejemplo-creativo.png',
+        alt: 'Ejemplo Creativo de Máscaras y Cascos 3D',
+        isPrimary: false,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2025-12-28'),
+        updatedAt: new Date('2025-12-28')
+      },
+      {
+        id: '19-d',
+        productId: '19',
+        url: '/images/services/fabricacion-cascos-mascaras-cosplay-props-acabado-final.png',
+        alt: 'Acabado Final en Props de Cosplay',
+        isPrimary: false,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2025-12-28'),
+        updatedAt: new Date('2025-12-28')
+      },
+      {
+        id: '19-e',
+        productId: '19',
+        url: '/images/services/fabricacion-cascos-mascaras-cosplay-props-modelo-exclusivo.png',
+        alt: 'Modelo Exclusivo de Casco/Máscara 3D Personalizado',
+        isPrimary: false,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2025-12-28'),
+        updatedAt: new Date('2025-12-28')
       }
     ],
     specifications: [
-      { name: 'Servicio', value: 'Postprocesado y Pintura' },
-      { name: 'Técnicas', value: 'Lijado, Masillado, Aerografía, Pincel' },
-      { name: 'Acabados', value: 'Mate, Brillante, Metálico, Texturizado' }
+      { name: 'Enfoque', value: 'Diseño personalizado, modelado 3D y fabricación mediante impresión 3D' },
+      { name: 'Materiales', value: 'PLA, Resina (según diseño y requerimientos de la pieza)' }
     ],
-    tabsTitle: 'ESTE SERVICIO SE ADAPTA SEGÚN EL TIPO DE CLIENTE',
+    tabsTitle: 'Este servicio se adapta según el tipo de cliente',
     tabs: [
       {
         id: 'b2c',
         label: 'General / Personas (B2C)',
-        description: 'Llevamos tus impresiones 3D o proyectos personales al siguiente nivel. Eliminamos las líneas de impresión, aplicamos pintura profesional y detallado a mano para que tus figuras, props de cosplay o piezas de colección luzcan increíbles.\nIdeal si ya tienes una pieza impresa pero quieres darle un acabado de tienda o exhibición.',
-        idealFor: ['Piezas de cosplay y props', 'Figuras de colección y arte', 'Mejora de impresiones caseras', 'Regalos con acabado premium'],
-        conditions: ['Cotización según tamaño y complejidad', 'Acabados a elección (pintura, alisado)', 'Trato directo y personalizado'],
+        description: 'Servicio de diseño y fabricación de cascos, máscaras, props y piezas de cosplay personalizadas, orientado a personas, cosplayers, coleccionistas, artistas y creadores de contenido.\nDesarrollamos piezas desde cero o a partir de referencias visuales, adaptadas al tamaño del usuario, estilo deseado y nivel de detalle requerido. Las piezas se fabrican mediante impresión 3D y pueden entregarse listas para uso o como base para pintado y acabado final.\nTambién hemos desarrollado máscaras personalizadas para DJs y artistas, diseñadas para presentaciones en vivo y contenido visual, adaptadas a identidad estética y comodidad de uso.\n\nIdeal para quienes buscan piezas únicas, resistentes y personalizadas, sin recurrir a productos genéricos o de producción en masa.',
+        idealFor: ['Cascos y máscaras personalizadas', 'Props para cosplay y exhibición', 'Accesorios temáticos y réplicas', 'Piezas únicas para coleccionistas', 'Cosplay para eventos, sesiones o contenido digital'],
+        conditions: ['Cotización según diseño, tamaño y nivel de detalle', 'Fabricación bajo pedido', 'Ajuste de escala según medidas del usuario', 'No incluye licencias oficiales de marcas registradas'],
         ctaText: 'Solicitar cotización',
         ctaAction: 'quote'
       },
       {
         id: 'b2b',
         label: 'Empresas / B2B',
-        description: 'Servicio de acabado superficial profesional para prototipos y series cortas. Transformamos piezas impresas en bruto en modelos de alta fidelidad visual (Look & Feel) para presentaciones, validación de diseño o marketing.\nLogramos acabados lisos, brillantes, texturizados o con colores corporativos, simulando la apariencia de un producto final inyectado.',
-        idealFor: ['Prototipos de alta fidelidad para presentación', 'Modelos de marketing y exhibición', 'Acabado de series cortas de producción', 'Mockups para validación estética'],
-        conditions: ['Acabados industriales o específicos', 'Consistencia en lotes de producción', 'Plazos ajustados a lanzamientos'],
+        description: 'Servicio profesional de diseño y fabricación de cascos, máscaras y props personalizados para empresas, productoras, agencias creativas y eventos.\nDesarrollamos piezas exclusivas para campañas publicitarias, activaciones de marca, exhibiciones, escenografía y contenido audiovisual. Incluye experiencia en la fabricación de máscaras personalizadas para DJs y artistas, utilizadas en eventos, presentaciones en vivo y producciones visuales.\nEl servicio permite producir piezas únicas o series pequeñas y medianas, manteniendo coherencia visual, calidad estructural y personalización según identidad de marca o requerimientos del proyecto.\n\nLa impresión 3D permite optimizar tiempos de desarrollo, costos y adaptar cada diseño a necesidades específicas.',
+        idealFor: ['Producciones audiovisuales y escenografía', 'Activaciones de marca y eventos temáticos', 'Exhibiciones, stands y vitrinas', 'Props personalizados para campañas', 'Producción por series pequeñas'],
+        conditions: ['Cotización según alcance, diseño y volumen', 'Producción por lotes disponible', 'Diseño exclusivo por proyecto', 'Uso comercial bajo solicitud del cliente'],
         ctaText: 'Cotizar proyecto B2B',
         ctaAction: 'quote'
       }
@@ -1322,13 +1474,13 @@ export const mockProducts: Product[] = [
     format: 'Físico',
     fileSize: 'N/A',
     license: 'Standard',
-    tags: ['postprocesado', 'pintura', 'acabado', 'premium', 'servicios', 'general-service'],
+    tags: ['cosplay', 'props', 'mascaras3d', 'cascos3d', 'impresion3d', 'personalizado', 'arteydiseño', 'b2b', 'general-service', 'business-service'],
     downloadCount: 0,
     rating: 4.8,
-    reviewCount: 12,
+    reviewCount: 15,
     isFeatured: true,
     isActive: true,
     createdAt: new Date('2024-03-01'),
-    updatedAt: new Date('2024-03-01')
+    updatedAt: new Date('2025-12-28')
   }
 ];

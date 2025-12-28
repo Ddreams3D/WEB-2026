@@ -8,7 +8,8 @@ export const heroImages = {
 
 export const serviceImages = {
   printing: "/images/placeholder-printing.svg", // Impresión profesional
-  modeling: "/images/placeholder-modeling.svg", // Modelado 3D
+  modeling: "/images/services/modelado-3d-organico-personajes-esculturas-digitales.png", // Modelado 3D (Principal)
+  modelingSecondary: "/images/services/diseno-3d-organico-modelado-artistico-profesional.png", // Modelado 3D (Secundaria/Detalle)
   prototyping: "/images/placeholder-prototype.svg", // Prototipado
   production: "/images/placeholder-process.svg", // Producción
   engineering: "/images/placeholder-precision.svg", // Ingeniería
