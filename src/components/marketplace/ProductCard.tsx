@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { colors } from '@/shared/styles/colors';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Star, ShoppingCart, Heart } from 'lucide-react';
+import { Star, ShoppingCart, Heart, FileText } from 'lucide-react';
 import { Product } from '@/shared/types';
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/components/ui/ToastManager';
@@ -52,6 +52,8 @@ export function ProductCard({
   const discountPercentage = hasDiscount 
     ? Math.round(((product.originalPrice! - product.price) / product.originalPrice!) * 100)
     : 0;
+  
+  const isService = product.tags?.some(tag => ['general-service', 'business-service'].includes(tag));
 
   return (
     <div className={cn(
@@ -172,6 +174,12 @@ export function ProductCard({
           >
             <Link 
               href={productUrl}
+              onClick={() => {
+                // Save scroll position before navigating
+                if (typeof window !== 'undefined') {
+                  sessionStorage.setItem('marketplace_scroll_pos', window.scrollY.toString());
+                }
+              }}
             >
               Ver detalles
             </Link>
@@ -190,6 +198,20 @@ export function ProductCard({
             >
               {customAction.icon}
               <span>{customAction.label}</span>
+            </Link>
+          </Button>
+        ) : isService ? (
+           <Button
+            asChild
+            variant="gradient"
+            className="w-full group/btn"
+          >
+            <Link
+              href="/contact"
+              className="flex items-center justify-center space-x-2"
+            >
+              <FileText className="w-4 h-4 group-hover/btn:scale-110 transition-transform duration-300" />
+              <span>Cotizar Servicio</span>
             </Link>
           </Button>
         ) : showAddToCart && (

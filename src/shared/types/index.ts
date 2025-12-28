@@ -127,8 +127,21 @@ export interface Product {
   rating: number;
   reviewCount: number;
   downloadCount?: number;
+  tabs?: ProductTab[];
+  tabsTitle?: string;
+  displayOrder?: number;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface ProductTab {
+  id: string;
+  label: string;
+  description: string;
+  idealFor: string[];
+  conditions: string[];
+  ctaText: string;
+  ctaAction?: 'quote' | 'cart';
 }
 
 export interface ProductImage {
@@ -306,6 +319,7 @@ export interface ProductFilters {
   isActive?: boolean;
   rating?: number;
   tags?: string[];
+  type?: 'product' | 'service' | 'all';
   sortBy?: ProductSortOption;
   sortOrder?: 'asc' | 'desc';
 }

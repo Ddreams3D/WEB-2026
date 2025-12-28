@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import HomePageClient from '@/features/home/HomePageClient';
-import { PHONE_BUSINESS } from '@/shared/constants/contactInfo';
+import { PHONE_BUSINESS, PHONE_DISPLAY, ADDRESS_BUSINESS, SCHEDULE_BUSINESS } from '@/shared/constants/contactInfo';
+import { JsonLd } from '@/components/seo/JsonLd';
 
 export const metadata: Metadata = {
   title: 'Ddreams 3D | Impresión 3D y Regalos Personalizados en Arequipa',
@@ -39,43 +40,48 @@ export const metadata: Metadata = {
   },
 };
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'LocalBusiness',
-  name: 'Ddreams 3D',
-  image: 'https://ddreams3d.com/logo-ddreams-3d.jpg',
-  description: 'Servicios de impresión 3D, modelado y prototipado en Arequipa. Envíos a todo el Perú.',
-  address: {
-    '@type': 'PostalAddress',
-    addressLocality: 'Arequipa',
-    addressRegion: 'Arequipa',
-    addressCountry: 'PE',
-  },
-  url: 'https://ddreams3d.com',
-  telephone: `+${PHONE_BUSINESS}`,
-  priceRange: '$$',
-  openingHoursSpecification: [
-    {
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-      opens: '09:00',
-      closes: '18:00',
-    },
-  ],
-  geo: {
-    '@type': 'GeoCoordinates',
-    latitude: -16.409047, // Coordinates for Arequipa (approximate, can be refined if user provides specific address)
-    longitude: -71.537451,
-  },
-};
-
 export default function HomePage() {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: 'Ddreams 3D',
+    image: 'https://ddreams3d.com/logo-ddreams-3d.jpg',
+    description: 'Servicios de impresión 3D, modelado y prototipado en Arequipa. Envíos a todo el Perú.',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: ADDRESS_BUSINESS,
+      addressLocality: 'Arequipa',
+      addressRegion: 'Arequipa',
+      addressCountry: 'PE',
+      postalCode: '04001',
+    },
+    url: 'https://ddreams3d.com',
+    telephone: PHONE_DISPLAY,
+    priceRange: '$$',
+    openingHoursSpecification: [
+      {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+        opens: '09:00',
+        closes: '18:00',
+      },
+      {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: ['Saturday'],
+        opens: '09:00',
+        closes: '14:00',
+      }
+    ],
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: -16.3956,
+      longitude: -71.5247,
+    },
+  };
+
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <JsonLd data={jsonLd} />
       <HomePageClient />
     </>
   );

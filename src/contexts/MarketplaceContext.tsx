@@ -45,6 +45,7 @@ const initialFilters: ProductFilters = {
   minPrice: 0,
   maxPrice: 1000,
   tags: [],
+  type: 'product',
   sortBy: 'createdAt',
   sortOrder: 'desc',
   isActive: true
@@ -82,7 +83,20 @@ export function MarketplaceProvider({ children }: MarketplaceProviderProps) {
         const marketplaceProducts = fetchedProducts;
         
         setAllProducts(fetchedProducts);
-        setProducts(marketplaceProducts);
+        
+        // Apply initial type filter
+        let initialVisibleProducts = marketplaceProducts;
+        if (initialFilters.type === 'product') {
+          initialVisibleProducts = marketplaceProducts.filter(p => 
+            !p.tags?.includes('general-service') && !p.tags?.includes('business-service')
+          );
+        } else if (initialFilters.type === 'service') {
+          initialVisibleProducts = marketplaceProducts.filter(p => 
+            p.tags?.includes('general-service') || p.tags?.includes('business-service')
+          );
+        }
+        
+        setProducts(initialVisibleProducts);
         
         // Calculate product counts for categories
         const categoriesWithCounts = fetchedCategories.map(cat => {
@@ -203,7 +217,10 @@ export function MarketplaceProvider({ children }: MarketplaceProviderProps) {
       // Filter by price range
       if (newFilters.minPrice !== undefined && newFilters.maxPrice !== undefined) {
         filteredProducts = filteredProducts.filter(product => 
-          product.price >= newFilters.minPrice! && product.price <= newFilters.maxPrice!
+          // Always include products with custom price display (usually quotes)
+          // or check if price is within range
+          (product.customPriceDisplay) || 
+          (product.price >= newFilters.minPrice! && product.price <= newFilters.maxPrice!)
         );
       }
 
@@ -212,6 +229,19 @@ export function MarketplaceProvider({ children }: MarketplaceProviderProps) {
         filteredProducts = filteredProducts.filter(product => 
           newFilters.tags!.some(tag => product.tags.includes(tag))
         );
+      }
+
+      // Filter by type
+      if (newFilters.type && newFilters.type !== 'all') {
+        filteredProducts = filteredProducts.filter(product => {
+          const isService = product.tags?.includes('general-service') || product.tags?.includes('business-service');
+          if (newFilters.type === 'service') {
+            return isService;
+          } else {
+            // type === 'product'
+            return !isService;
+          }
+        });
       }
 
       // Filter by active status
@@ -269,8 +299,7 @@ export function MarketplaceProvider({ children }: MarketplaceProviderProps) {
   };
 
   const clearFilters = () => {
-    setFilters(initialFilters);
-    setProducts(allProducts);
+    applyFilters(initialFilters);
   };
 
   const getProductsByFilters = (): Product[] => {

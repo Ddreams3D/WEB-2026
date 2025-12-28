@@ -65,6 +65,7 @@ export function ProductFilters({
       minPrice: 0,
       maxPrice: 1000,
       tags: [],
+      type: 'product',
       sortBy: 'createdAt',
       sortOrder: 'desc',
       isActive: true
@@ -155,6 +156,37 @@ export function ProductFilters({
               </div>
             </div>
           )}
+
+          {/* Tipo de Producto */}
+          <div>
+            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">
+              Tipo
+            </label>
+            <div className="flex space-x-2">
+              {[
+                { value: 'product', label: 'Producto' },
+                { value: 'service', label: 'Servicio' }
+              ].map((type) => (
+                <button
+                  key={type.value}
+                  onClick={() => {
+                    const newFilters = { ...localFilters, type: type.value as any };
+                    setLocalFilters(newFilters);
+                    applyFilters(newFilters);
+                    onFiltersChange?.(newFilters);
+                  }}
+                  className={cn(
+                    "px-3 py-1.5 text-sm rounded-lg transition-all duration-200 border",
+                    localFilters.type === type.value
+                      ? "bg-primary-600 text-white border-primary-600 shadow-md"
+                      : "bg-white dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 border-neutral-200 dark:border-neutral-700 hover:border-primary-300 dark:hover:border-primary-700"
+                  )}
+                >
+                  {type.label}
+                </button>
+              ))}
+            </div>
+          </div>
 
           {/* Categories */}
           <div>

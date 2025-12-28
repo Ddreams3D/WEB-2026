@@ -513,12 +513,13 @@ export const mockProducts: Product[] = [
   },
   {
     id: '8',
-    slug: 'trofeos-medallas-3d-personalizados-eventos-empresas-b2b',
-    name: 'Trofeos y Medallas 3D Personalizados para Eventos y Empresas (B2B)',
-    description: 'Fabricación de trofeos y medallas personalizados mediante impresión 3D, diseñados a medida para eventos deportivos, instituciones educativas, empresas, competencias y reconocimientos corporativos.\n\nCada proyecto se desarrolla desde cero según la identidad del evento o marca, permitiendo personalizar forma, tamaño, textos, logotipos y acabados. Ideal para premiaciones institucionales, torneos, aniversarios empresariales y campañas de reconocimiento.',
-    shortDescription: 'Fabricación de trofeos y medallas personalizados mediante impresión 3D',
+    displayOrder: 50,
+    slug: 'trofeos-medallas-3d-personalizados',
+    name: 'Trofeos y Medallas 3D Personalizados',
+    description: 'Servicio de diseño y fabricación de trofeos 3D personalizados, ideales para reconocimientos, eventos especiales, competencias y celebraciones personales.\nCreamos trofeos temáticos y piezas únicas, adaptadas al concepto del evento, con acabados personalizados y fabricación mediante impresión 3D.',
+    shortDescription: 'Trofeos y Medallas 3D Personalizados para eventos y empresas',
     price: 0,
-    customPriceDisplay: 'Precio sujeto a cotización según cantidad y diseño',
+    customPriceDisplay: 'Cotización según diseño y tamaño',
     currency: 'PEN',
     categoryId: 'arte-diseno',
     categoryName: 'Arte y Diseño',
@@ -529,7 +530,7 @@ export const mockProducts: Product[] = [
         id: '8-a',
         productId: '8',
         url: '/images/marketplace/trofeos-medallas-personalizadas-3d-b2b-principal.jpg',
-        alt: 'Trofeos y Medallas 3D Personalizados para Eventos y Empresas - Vista Principal',
+        alt: 'Trofeos y Medallas 3D Personalizados - Vista Principal',
         isPrimary: true,
         width: 800,
         height: 600,
@@ -540,7 +541,7 @@ export const mockProducts: Product[] = [
         id: '8-b',
         productId: '8',
         url: '/images/marketplace/trofeos-medallas-personalizadas-3d-b2b-detalle.jpg',
-        alt: 'Trofeos y Medallas 3D Personalizados para Eventos y Empresas - Vista Detalle',
+        alt: 'Trofeos y Medallas 3D Personalizados - Vista Detalle',
         isPrimary: false,
         width: 800,
         height: 600,
@@ -548,30 +549,44 @@ export const mockProducts: Product[] = [
         updatedAt: new Date('2024-02-10')
       }
     ],
-    specifications: [
+    tabsTitle: 'ESTE SERVICIO SE ADAPTA SEGÚN EL TIPO DE CLIENTE',
+    tabs: [
       {
-        id: 'spec-8-1',
-        name: 'Incluye',
-        value: '• Análisis del requerimiento y objetivo del evento\n• Diseño 3D personalizado (trofeos, medallas o piezas conmemorativas)\n• Fabricación en impresión 3D de alta calidad\n• Opciones de acabado (pintura, colores institucionales, placas)\n• Producción por unidad o en volumen\n• Adaptación a uso institucional o corporativo'
+        id: 'b2c',
+        label: 'General / Personas (B2C)',
+        description: 'Servicio de diseño y fabricación de trofeos 3D personalizados, ideales para reconocimientos, eventos especiales, competencias y celebraciones personales.\nCreamos trofeos temáticos y piezas únicas, adaptadas al concepto del evento, con acabados personalizados y fabricación mediante impresión 3D.\n\nEl enfoque es visual y decorativo, priorizando diseño, estética y personalización según el evento o reconocimiento.',
+        idealFor: ['Eventos deportivos o culturales', 'Reconocimientos personales', 'Trofeos temáticos personalizados', 'Premios únicos y conmemorativos'],
+        conditions: ['Cotización según diseño y tamaño', 'Fabricación bajo pedido', 'Personalización de textos, logos y formas'],
+        ctaText: 'Cotizar servicio',
+        ctaAction: 'quote'
       },
       {
-        id: 'spec-8-2',
-        name: 'Información importante',
-        value: '• Fabricación bajo pedido\n• Precio sujeto a cotización según cantidad, diseño y complejidad\n• Servicio orientado a clientes institucionales\n• Entregas coordinadas según cronograma del evento'
-      },
-      {
-        id: 'spec-8-3',
-        name: 'Sectores atendidos',
-        value: 'Empresas y marcas, Instituciones educativas, Clubes deportivos y ligas, Municipalidades y organizaciones, Eventos corporativos y competencias.'
+        id: 'b2b',
+        label: 'Empresas / B2B',
+        description: 'Servicio profesional de fabricación de trofeos y medallas 3D personalizados para empresas, instituciones y eventos corporativos.\nDesarrollamos trofeos y medallas en series pequeñas y medianas, manteniendo coherencia visual, calidad de acabado y personalización según identidad de marca o evento.\n\nProducción seriada disponible según cantidad y diseño.',
+        idealFor: ['Eventos empresariales y corporativos', 'Premiaciones institucionales', 'Competencias deportivas', 'Reconocimientos internos de empresa'],
+        conditions: ['Cotización según cantidad, diseño y acabados', 'Producción por lotes', 'Fabricación bajo pedido'],
+        ctaText: 'Cotizar proyecto B2B',
+        ctaAction: 'quote'
       }
     ],
-    tags: ['trofeos', 'medallas', 'b2b', 'eventos', 'corporativo'],
-    sku: 'TROPHY-CORP-001',
+    specifications: [
+      {
+        name: 'Enfoque',
+        value: 'Diseño personalizado, Producción seriada en impresión 3D, Acabados decorativos'
+      },
+      {
+        name: 'Materiales',
+        value: 'PLA, Resina (según diseño)'
+      }
+    ],
+    tags: ['trofeos3d', 'medallas3d', 'eventos', 'reconocimientos', 'impresion3d', 'general-service'],
+    sku: 'TROPHY-CUSTOM-001',
     stock: 999,
     minQuantity: 1,
-    materials: ['PLA', 'Resina', 'Filamento Metálico'],
+    materials: ['PLA', 'Resina'],
     complexity: 'medium',
-    rating: 4.8,
+    rating: 4.9,
     reviewCount: 15,
     downloadCount: 0,
     isActive: true,
@@ -798,15 +813,16 @@ export const mockProducts: Product[] = [
   },
   {
     id: '13',
-    slug: 'maquetas-arquitectonicas-visualizacion-3d',
-    name: 'Maquetas Arquitectónicas y Visualización 3D',
-    description: 'Servicio de fabricación de maquetas arquitectónicas detalladas y visualización de proyectos mediante impresión 3D. Transformamos planos y modelos digitales en maquetas físicas de alta precisión para presentaciones, ventas inmobiliarias y estudios de volumetría.\n\nTrabajamos con arquitectos, inmobiliarias y estudiantes para materializar sus diseños con acabados profesionales y diferentes escalas.',
-    shortDescription: 'Maquetas arquitectónicas detalladas y visualización de proyectos',
+    displayOrder: 40,
+    slug: 'merchandising-3d-personalizado',
+    name: 'Merchandising 3D Personalizado',
+    description: 'Servicio de diseño y fabricación de merchandising personalizado, ideal para regalos, productos únicos y piezas promocionales desarrolladas desde cero. Creamos objetos personalizados a partir de una idea, referencia o concepto, con diseño exclusivo y fabricación mediante impresión 3D.',
+    shortDescription: 'Diseño, modelado y fabricación de productos personalizados para marcas y empresas',
     price: 0,
-    customPriceDisplay: 'Cotización personalizada según proyecto',
+    customPriceDisplay: 'Cotización según diseño y tamaño',
     currency: 'PEN',
-    categoryId: 'arquitectura',
-    categoryName: 'Arquitectura',
+    categoryId: 'arte-diseno',
+    categoryName: 'Arte y Diseño',
     sellerId: '1',
     sellerName: 'Ddreams 3D',
     images: [
@@ -814,7 +830,7 @@ export const mockProducts: Product[] = [
         id: '13-a',
         productId: '13',
         url: '/images/placeholder-architectural.svg',
-        alt: 'Maquetas Arquitectónicas 3D - Vista General',
+        alt: 'Merchandising 3D Personalizado - Vista General',
         isPrimary: true,
         width: 800,
         height: 600,
@@ -822,15 +838,35 @@ export const mockProducts: Product[] = [
         updatedAt: new Date('2024-02-15')
       }
     ],
+    tabsTitle: 'ESTE SERVICIO SE ADAPTA SEGÚN EL TIPO DE CLIENTE',
+    tabs: [
+      {
+        id: 'b2c',
+        label: 'General / Personas (B2C)',
+        description: 'Servicio de diseño y fabricación de merchandising personalizado, ideal para regalos, productos únicos y piezas promocionales desarrolladas desde cero.\nCreamos objetos personalizados a partir de una idea, referencia o concepto, con diseño exclusivo y fabricación mediante impresión 3D, permitiendo alto nivel de personalización y producción bajo pedido.',
+        idealFor: ['Regalos personalizados', 'Productos únicos desarrollados desde cero', 'Piezas promocionales de pequeña escala'],
+        conditions: ['Cotización según diseño y tamaño', 'Fabricación bajo pedido', 'Personalización de forma, texto y detalles'],
+        ctaText: 'Cotizar servicio',
+        ctaAction: 'quote'
+      },
+      {
+        id: 'b2b',
+        label: 'Empresas / B2B',
+        description: 'Servicio profesional de merchandising personalizado para empresas, enfocado en el diseño, modelado y fabricación de productos corporativos mediante impresión 3D.\nDesarrollamos llaveros, productos promocionales, piezas de marca y objetos personalizados desde cero, alineados a la identidad visual y objetivos de cada empresa.\n\nLa impresión 3D permite producir series pequeñas y medianas, optimizar costos y adaptar cada diseño a campañas, eventos o activaciones de marca.\n\nProducción seriada disponible tras validación del diseño.',
+        idealFor: ['Merchandising corporativo personalizado', 'Llaveros y productos promocionales', 'Regalos empresariales y activaciones de marca', 'Eventos, ferias y campañas comerciales'],
+        conditions: ['Cotización según diseño, cantidad y acabados', 'Producción por lotes', 'Diseño exclusivo por proyecto'],
+        ctaText: 'Cotizar proyecto B2B',
+        ctaAction: 'quote'
+      }
+    ],
     specifications: [
-      { name: 'Servicio', value: 'Maquetería 3D' },
-      { name: 'Escalas', value: '1:50, 1:100, 1:200, personalizadas' },
-      { name: 'Acabados', value: 'Monocromático, color, modular' }
+      { name: 'Enfoque', value: 'Diseño y modelado de productos personalizados, Fabricación mediante impresión 3D, Producción seriada por lotes' },
+      { name: 'Materiales', value: 'PLA, Resina (según diseño y acabado requerido)' }
     ],
     format: 'Físico',
     fileSize: 'N/A',
     license: 'Standard',
-    tags: ['arquitectura', 'maquetas', 'urbanismo', 'inmobiliaria', 'b2b'],
+    tags: ['merchandising', 'productospersonalizados', 'branding', 'impresion3d', 'empresas', 'general-service'],
     downloadCount: 0,
     rating: 4.8,
     reviewCount: 5,
@@ -841,10 +877,11 @@ export const mockProducts: Product[] = [
   },
   {
     id: '14',
+    displayOrder: 60,
     slug: 'prototipado-ingenieria-piezas-tecnicas',
     name: 'Prototipado de Ingeniería y Piezas Técnicas',
-    description: 'Servicio de prototipado rápido y fabricación de piezas técnicas funcionales para ingeniería. Utilizamos materiales de ingeniería como ABS, PETG, Nylon y ASA para garantizar resistencia mecánica, térmica y química según los requerimientos del proyecto.\n\nIdeal para validación de diseño, pruebas de ajuste, repuestos descontinuados y series cortas de producción.',
-    shortDescription: 'Prototipos funcionales y componentes técnicos de alta precisión',
+    description: 'Diseño y fabricación de prototipos funcionales y piezas técnicas impresas en 3D',
+    shortDescription: 'Diseño y fabricación de prototipos funcionales y piezas técnicas impresas en 3D',
     price: 0,
     customPriceDisplay: 'Cotización personalizada según proyecto',
     currency: 'PEN',
@@ -865,15 +902,35 @@ export const mockProducts: Product[] = [
         updatedAt: new Date('2024-02-15')
       }
     ],
+    tabsTitle: 'ESTE SERVICIO SE ADAPTA SEGÚN EL TIPO DE CLIENTE',
+    tabs: [
+      {
+        id: 'b2c',
+        label: 'General / Personas (B2C)',
+        description: 'Servicio de prototipado técnico orientado a estudiantes, proyectos universitarios y necesidades funcionales personales. Diseñamos y fabricamos piezas técnicas personalizadas para validar ideas, reemplazar componentes o desarrollar soluciones prácticas mediante impresión 3D.\n\nEste servicio está enfocado en iteración, ajuste y mejora de piezas, priorizando funcionalidad, resistencia y compatibilidad con el uso real. Ideal para proyectos académicos, maquetas técnicas, prototipos simples y soluciones a medida sin procesos industriales complejos.',
+        idealFor: ['Proyectos universitarios y académicos', 'Prototipos funcionales a pequeña escala', 'Iteración y mejora de piezas personalizadas', 'Repuestos técnicos y adaptadores a medida'],
+        conditions: ['Cotización según complejidad y tamaño', 'Fabricación bajo pedido', 'Asesoría básica en funcionalidad y material'],
+        ctaText: 'Cotizar servicio',
+        ctaAction: 'quote'
+      },
+      {
+        id: 'b2b',
+        label: 'Empresas / B2B',
+        description: 'Servicio profesional de prototipado de ingeniería y fabricación de piezas técnicas para empresas, emprendimientos y proyectos industriales. Desarrollamos prototipos funcionales y componentes técnicos destinados a validación de diseño, pruebas funcionales y producción seriada mediante impresión 3D.\n\nEste servicio permite iterar diseños, optimizar geometrías y fabricar piezas técnicas en series pequeñas o medianas, reduciendo tiempos y costos frente a procesos industriales tradicionales. Está orientado a producción funcional, no a piezas altamente complejas ni procesos industriales de alta tolerancia.\n\nProducción seriada disponible tras validación del diseño.',
+        idealFor: ['Producción seriada de piezas técnicas', 'Validación funcional de componentes', 'Iteración y mejora continua de productos', 'Reemplazo de piezas personalizadas', 'Maquetas técnicas e industriales'],
+        conditions: ['Cotización según volumen y alcance del proyecto', 'Producción por lotes disponible', 'Entregables CAD funcionales (STL / STEP)', 'Evaluación técnica previa al inicio de producción'],
+        ctaText: 'Cotizar proyecto B2B',
+        ctaAction: 'quote'
+      }
+    ],
     specifications: [
-      { name: 'Servicio', value: 'Prototipado Industrial' },
-      { name: 'Materiales', value: 'ABS, PETG, Nylon, Fibra de Carbono' },
-      { name: 'Precisión', value: 'Hasta +/- 0.1mm' }
+      { name: 'Enfoque', value: 'Prototipado técnico, Producción seriada mediante impresión 3D, Ingeniería funcional' },
+      { name: 'Entregables', value: 'Archivos STL / STEP, Piezas técnicas impresas en 3D' }
     ],
     format: 'Físico',
     fileSize: 'N/A',
     license: 'Standard',
-    tags: ['ingenieria', 'prototipos', 'repuestos', 'industrial', 'b2b'],
+    tags: ['prototipado', 'ingenieria', 'piezastecnicas', 'impresion3d', 'produccionseriada', 'b2b', 'general-service'],
     downloadCount: 0,
     rating: 4.9,
     reviewCount: 8,
@@ -884,10 +941,11 @@ export const mockProducts: Product[] = [
   },
   {
     id: '15',
-    slug: 'material-didactico-educativo',
-    name: 'Material Didáctico y Modelos Educativos',
-    description: 'Diseño y fabricación de material didáctico interactivo y modelos educativos innovadores para todos los niveles de enseñanza. Facilitamos el aprendizaje de conceptos complejos a través de objetos tangibles y manipulables.\n\nDesarrollamos kits educativos para ciencias, matemáticas, geografía e historia, adaptados al currículo escolar o universitario.',
-    shortDescription: 'Material didáctico interactivo y modelos educativos innovadores',
+    displayOrder: 70,
+    slug: 'maquetas-didacticas-material-educativo-3d',
+    name: 'Maquetas Didácticas y Material Educativo 3D',
+    description: 'Diseño y fabricación de material didáctico interactivo y modelos educativos impresos en 3D',
+    shortDescription: 'Diseño y fabricación de material didáctico interactivo y modelos educativos impresos en 3D',
     price: 0,
     customPriceDisplay: 'Cotización personalizada según proyecto',
     currency: 'PEN',
@@ -900,7 +958,7 @@ export const mockProducts: Product[] = [
         id: '15-a',
         productId: '15',
         url: '/images/placeholder-educational.svg',
-        alt: 'Material Didáctico 3D - Vista General',
+        alt: 'Maquetas Didácticas y Material Educativo 3D',
         isPrimary: true,
         width: 800,
         height: 600,
@@ -908,15 +966,35 @@ export const mockProducts: Product[] = [
         updatedAt: new Date('2024-02-15')
       }
     ],
+    tabsTitle: 'ESTE SERVICIO SE ADAPTA SEGÚN EL TIPO DE CLIENTE',
+    tabs: [
+      {
+        id: 'b2c',
+        label: 'General / Personas (B2C)',
+        description: 'Servicio de diseño y fabricación de material didáctico y modelos educativos orientado a estudiantes, padres de familia y docentes. Creamos maquetas educativas físicas para apoyar tareas escolares, exposiciones y proyectos académicos, facilitando la comprensión de conceptos mediante objetos visuales y manipulables.\n\nDesarrollamos modelos educativos como células, sistemas solares, estructuras científicas, mapas, figuras geométricas y otros elementos solicitados en colegios y centros educativos. Los diseños se adaptan al nivel del estudiante y al contenido requerido, priorizando claridad, escala adecuada y resistencia para uso escolar.\n\nIdeal para complementar el aprendizaje tradicional con recursos prácticos y visuales.',
+        idealFor: ['Tareas y proyectos escolares', 'Exposiciones educativas', 'Maquetas didácticas para colegio', 'Apoyo visual para estudio en casa'],
+        conditions: ['Cotización según tamaño y complejidad', 'Fabricación bajo pedido', 'Personalización según nivel educativo'],
+        ctaText: 'Cotizar servicio',
+        ctaAction: 'quote'
+      },
+      {
+        id: 'b2b',
+        label: 'Empresas / B2B',
+        description: 'Servicio profesional de diseño y fabricación de material didáctico y modelos educativos para instituciones educativas, colegios, academias y universidades. Desarrollamos maquetas educativas y kits didácticos personalizados alineados al currículo educativo y objetivos pedagógicos.\n\nLos modelos se fabrican mediante impresión 3D, permitiendo producción en series pequeñas o medianas, estandarización de piezas y adaptación a programas educativos específicos. Este servicio está orientado a mejorar la experiencia de aprendizaje en aulas, laboratorios y espacios educativos.\n\nIdeal para instituciones que buscan recursos educativos físicos, durables y reutilizables.',
+        idealFor: ['Colegios e instituciones educativas', 'Academias y centros de formación', 'Material didáctico institucional', 'Kits educativos para aula'],
+        conditions: ['Cotización según volumen y diseño', 'Producción por lotes disponible', 'Diseño a medida según currículo'],
+        ctaText: 'Cotizar proyecto B2B',
+        ctaAction: 'quote'
+      }
+    ],
     specifications: [
       { name: 'Servicio', value: 'Recursos Educativos' },
-      { name: 'Niveles', value: 'Primaria, Secundaria, Superior' },
-      { name: 'Personalización', value: 'Diseño a medida según currículo' }
+      { name: 'Niveles', value: 'Primaria, Secundaria, Superior' }
     ],
     format: 'Físico',
     fileSize: 'N/A',
     license: 'Standard',
-    tags: ['educacion', 'didactico', 'aprendizaje', 'escolar', 'b2b'],
+    tags: ['materialdidactico', 'educacion', 'maquetas', 'colegio', 'aprendizaje', 'impresion3d', 'b2b', 'general-service'],
     downloadCount: 0,
     rating: 4.7,
     reviewCount: 6,
@@ -925,55 +1003,14 @@ export const mockProducts: Product[] = [
     createdAt: new Date('2024-02-15'),
     updatedAt: new Date('2024-02-15')
   },
-  {
-    id: '16',
-    slug: 'regalos-personalizados-impresion-3d-diseno-medida',
-    name: 'Regalos Personalizados en Impresión 3D – Diseño a Medida',
-    description: 'Diseño y fabricación de regalos personalizados impresos en 3D, ideales para fechas especiales, aniversarios y sorpresas únicas. Convertimos tus ideas en objetos físicos, desde llaveros y figuras hasta litofanías y accesorios decorativos.\n\nCada pieza es única y se adapta a tus gustos y presupuesto.',
-    shortDescription: 'Diseño y fabricación de regalos personalizados impresos en 3D',
-    price: 0,
-    customPriceDisplay: 'Precio sujeto a cotización según diseño y complejidad',
-    currency: 'PEN',
-    categoryId: 'arte-diseno',
-    categoryName: 'Arte y Diseño',
-    sellerId: '1',
-    sellerName: 'Ddreams 3D',
-    images: [
-      {
-        id: '16-a',
-        productId: '16',
-        url: '/images/marketplace/regalos-personalizados-impresion-3d-diseno-medida.jpg',
-        alt: 'Regalos Personalizados en Impresión 3D - Vista General',
-        isPrimary: true,
-        width: 800,
-        height: 600,
-        createdAt: new Date('2024-02-10'),
-        updatedAt: new Date('2024-02-10')
-      }
-    ],
-    specifications: [
-      { name: 'Servicio', value: 'Regalos Personalizados' },
-      { name: 'Opciones', value: 'Litofanías, Figuras, Llaveros, Decoración' },
-      { name: 'Material', value: 'PLA, Resina' }
-    ],
-    format: 'Físico',
-    fileSize: 'N/A',
-    license: 'Standard',
-    tags: ['regalos', 'personalizado', 'sorpresa', 'arte', '3d'],
-    downloadCount: 0,
-    rating: 4.8,
-    reviewCount: 10,
-    isFeatured: true,
-    isActive: true,
-    createdAt: new Date('2024-02-10'),
-    updatedAt: new Date('2024-02-10')
-  },
+
   {
     id: 'b2b-1',
-    slug: 'proyectos-anatomicos-3d-especializados-b2b',
-    name: 'Proyectos Anatómicos 3D – Especializados',
-    description: 'Desarrollo, modelado y fabricación de modelos anatómicos personalizados para instituciones médicas y educativas. Creamos réplicas exactas a partir de tomografías (DICOM) o modelos 3D para planificación quirúrgica, educación médica y simuladores de entrenamiento.',
-    shortDescription: 'Desarrollo, modelado y fabricación de modelos anatómicos personalizados',
+    displayOrder: 90,
+    slug: 'proyectos-anatomicos-3d-personalizados',
+    name: 'Proyectos Anatómicos 3D Personalizados',
+    description: 'Desarrollo, modelado y fabricación de modelos anatómicos personalizados en impresión 3D',
+    shortDescription: 'Desarrollo, modelado y fabricación de modelos anatómicos personalizados en impresión 3D',
     price: 0,
     customPriceDisplay: 'Cotización personalizada según proyecto',
     currency: 'PEN',
@@ -986,7 +1023,7 @@ export const mockProducts: Product[] = [
         id: 'b2b-1-a',
         productId: 'b2b-1',
         url: '/images/marketplace/modelo-pelvis-anatomica-escala-real-3d-vista-frontal.png',
-        alt: 'Proyectos Anatómicos 3D - Especializados',
+        alt: 'Proyectos Anatómicos 3D Personalizados',
         isPrimary: true,
         width: 800,
         height: 600,
@@ -994,15 +1031,36 @@ export const mockProducts: Product[] = [
         updatedAt: new Date('2024-02-20')
       }
     ],
+    tabsTitle: 'ESTE SERVICIO SE ADAPTA SEGÚN EL TIPO DE CLIENTE',
+    tabs: [
+      {
+        id: 'b2c',
+        label: 'General / Personas (B2C)',
+        description: 'Servicio de desarrollo y fabricación de modelos anatómicos 3D orientado a estudiantes, docentes y profesionales de la salud. Creamos modelos anatómicos personalizados para estudio, aprendizaje y apoyo visual, ideales para comprender estructuras complejas de forma clara y tangible.\n\nTrabajamos a partir de referencias anatómicas, modelos digitales existentes o requerimientos educativos específicos. Los modelos se diseñan priorizando claridad visual, escala adecuada y utilidad didáctica, y se fabrican mediante impresión 3D según el nivel académico o necesidad de estudio.\n\nIdeal para reforzar el aprendizaje práctico y complementar el material teórico en anatomía.',
+        idealFor: ['Estudiantes de medicina y ciencias de la salud', 'Material de estudio anatómico personalizado', 'Apoyo visual para clases y exposiciones', 'Modelos anatómicos a escala para aprendizaje'],
+        conditions: ['Cotización según complejidad y tamaño del modelo', 'Fabricación bajo pedido', 'Personalización según requerimiento educativo'],
+        ctaText: 'Cotizar servicio',
+        ctaAction: 'quote'
+      },
+      {
+        id: 'b2b',
+        label: 'Empresas / B2B',
+        description: 'Servicio profesional de desarrollo, modelado y fabricación de modelos anatómicos 3D personalizados para instituciones educativas, centros de formación, clínicas y proyectos académicos. Creamos modelos anatómicos físicos destinados a docencia, demostración, entrenamiento y apoyo visual especializado.\n\nLos modelos se desarrollan a partir de referencias anatómicas, modelos digitales base o requerimientos técnicos definidos por la institución. Se optimizan para impresión 3D, asegurando coherencia anatómica, resistencia física y calidad visual.\n\nLa producción puede realizarse en series pequeñas o medianas, según el alcance del proyecto.\n\nEste servicio está orientado a proyectos institucionales y educativos que requieran material anatómico físico como soporte técnico o formativo, sin intervención clínica directa.',
+        idealFor: ['Universidades y centros de formación', 'Instituciones educativas y academias', 'Clínicas para entrenamiento y demostración', 'Material anatómico institucional'],
+        conditions: ['Cotización según alcance, nivel de detalle y volumen', 'Producción por lotes disponible', 'Posibilidad de acuerdos de confidencialidad (NDA)'],
+        ctaText: 'Cotizar proyecto B2B',
+        ctaAction: 'quote'
+      }
+    ],
     specifications: [
-      { name: 'Servicio', value: 'Anatomía Personalizada' },
-      { name: 'Origen', value: 'DICOM / Escaneo 3D / Modelado' },
-      { name: 'Aplicación', value: 'Quirúrgica / Educativa' }
+      { name: 'Servicio', value: 'Anatomía 3D Personalizada' },
+      { name: 'Origen', value: 'Modelado 3D / Referencias anatómicas / Modelos educativos / Modelos base' },
+      { name: 'Aplicación', value: 'Educativa / Aprendizaje / Entrenamiento / Demostración' }
     ],
     format: 'Físico',
     fileSize: 'N/A',
     license: 'Standard',
-    tags: ['medicina', 'anatomia', 'b2b', 'quirurgico', 'educacion'],
+    tags: ['anatomia3d', 'modelosanatomicos', 'educacionmedica', 'salud', 'impresion3d', 'b2b', 'materialeducativo', 'medicina', 'business-service', 'general-service'],
     downloadCount: 0,
     rating: 4.9,
     reviewCount: 15,
@@ -1011,55 +1069,14 @@ export const mockProducts: Product[] = [
     createdAt: new Date('2024-02-20'),
     updatedAt: new Date('2024-02-20')
   },
-  {
-    id: 'b2b-2',
-    slug: 'trofeos-medallas-3d-personalizados-empresas-b2b',
-    name: 'Trofeos y Medallas 3D Personalizados para Eventos y Empresas (B2B)',
-    description: 'Fabricación de trofeos y medallas personalizados mediante impresión 3D para eventos corporativos, deportivos y reconocimientos especiales. Diseños únicos que reflejan la identidad de tu marca o evento, con acabados en colores metalizados o personalizados.',
-    shortDescription: 'Fabricación de trofeos y medallas personalizados mediante impresión 3D',
-    price: 0,
-    customPriceDisplay: 'Precio sujeto a cotización según cantidad y diseño',
-    currency: 'PEN',
-    categoryId: 'arte-diseno',
-    categoryName: 'Arte y Diseño',
-    sellerId: '1',
-    sellerName: 'Ddreams 3D',
-    images: [
-      {
-        id: 'b2b-2-a',
-        productId: 'b2b-2',
-        url: '/images/marketplace/copa-piston-grande-30cm-regalo-personalizado-autos-3d-frontal.png',
-        alt: 'Trofeos y Medallas 3D Personalizados',
-        isPrimary: true,
-        width: 800,
-        height: 600,
-        createdAt: new Date('2024-02-20'),
-        updatedAt: new Date('2024-02-20')
-      }
-    ],
-    specifications: [
-      { name: 'Servicio', value: 'Trofeos Corporativos' },
-      { name: 'Personalización', value: 'Logo, Texto, Forma' },
-      { name: 'Volumen', value: 'Unitario o Masivo' }
-    ],
-    format: 'Físico',
-    fileSize: 'N/A',
-    license: 'Standard',
-    tags: ['trofeos', 'medallas', 'eventos', 'corporativo', 'b2b'],
-    downloadCount: 0,
-    rating: 4.8,
-    reviewCount: 20,
-    isFeatured: true,
-    isActive: true,
-    createdAt: new Date('2024-02-20'),
-    updatedAt: new Date('2024-02-20')
-  },
+
   {
     id: '17',
+    displayOrder: 10,
     slug: 'modelado-3d-personalizado',
-    name: 'Modelado 3D personalizado',
-    description: 'Creación de modelos 3D únicos adaptados a tus necesidades específicas. Transformamos tus bocetos, ideas o planos en modelos tridimensionales digitales listos para impresión 3D, renderizado o animación. Nuestro equipo de diseñadores expertos utiliza software avanzado para garantizar precisión y detalle en cada proyecto.',
-    shortDescription: 'Creación de modelos 3D únicos adaptados a tus necesidades específicas',
+    name: 'Modelado 3D Personalizado (Orgánico)',
+    description: 'Servicio de modelado 3D orgánico y artístico para personajes, objetos personalizados y piezas visuales. Creamos modelos únicos a partir de ideas, bocetos, imágenes de referencia o conceptos generados con IA, enfocándonos en formas orgánicas, estética y personalidad del diseño.',
+    shortDescription: 'Modelado 3D orgánico y artístico para personajes, objetos personalizados y piezas visuales',
     price: 0,
     customPriceDisplay: 'Cotización personalizada',
     currency: 'PEN',
@@ -1072,7 +1089,7 @@ export const mockProducts: Product[] = [
         id: '17-a',
         productId: '17',
         url: '/images/placeholder-modeling.svg',
-        alt: 'Modelado 3D Personalizado - Diseño Digital',
+        alt: 'Modelado 3D Personalizado (Orgánico)',
         isPrimary: true,
         width: 800,
         height: 600,
@@ -1081,14 +1098,35 @@ export const mockProducts: Product[] = [
       }
     ],
     specifications: [
-      { name: 'Servicio', value: 'Diseño y Modelado 3D' },
-      { name: 'Entregables', value: 'Archivos STL, OBJ, STEP, Renders' },
-      { name: 'Software', value: 'Blender, Fusion 360, ZBrush' }
+      { name: 'Enfoque', value: 'Modelado Orgánico, Escultura Digital, Ajuste Visual' },
+      { name: 'Entregables', value: 'Archivos STL / OBJ, Versiones optimizadas' },
+      { name: 'Software', value: 'Blender, Flujos asistidos con IA' }
+    ],
+    tabsTitle: 'ESTE SERVICIO SE ADAPTA SEGÚN EL TIPO DE CLIENTE',
+    tabs: [
+      {
+        id: 'b2c',
+        label: 'General / Personas (B2C)',
+        description: 'Servicio de modelado 3D orgánico orientado a proyectos creativos y personales. Creamos modelos únicos a partir de ideas, bocetos, imágenes de referencia o conceptos generados con IA, enfocándonos en formas orgánicas, estética y personalidad del diseño.\nIdeal para figuras, personajes, regalos personalizados y piezas visuales listas para impresión 3D o exhibición, sin necesidad de conocimientos técnicos previos.',
+        idealFor: ['Figuras y personajes personalizados', 'Regalos únicos y piezas decorativas', 'Modelos para impresión 3D artística', 'Modificación de archivos STL existentes'],
+        conditions: ['Cotización según complejidad del modelo', 'Entregables digitales (STL / OBJ)', 'Revisiones incluidas según acuerdo'],
+        ctaText: 'Solicitar cotización',
+        ctaAction: 'quote'
+      },
+      {
+        id: 'b2b',
+        label: 'Empresas / B2B',
+        description: 'Servicio profesional de modelado 3D orgánico y visual enfocado en marcas, estudios creativos y proyectos comerciales que requieren modelos con alto impacto visual.\nDesarrollamos personajes, objetos y piezas orgánicas para marketing, exhibición, branding, impresión 3D artística o contenido visual, apoyándonos en flujos híbridos que incluyen IA + escultura digital.',
+        idealFor: ['Personajes de marca y mascots', 'Piezas visuales para campañas o eventos', 'Modelos orgánicos para impresión 3D artística', 'Contenido visual y presentaciones de producto'],
+        conditions: ['Cotización según alcance creativo', 'Archivos optimizados para impresión o visualización', 'Acuerdos de confidencialidad (NDA) disponibles'],
+        ctaText: 'Cotizar proyecto B2B',
+        ctaAction: 'quote'
+      }
     ],
     format: 'Digital',
     fileSize: 'Variable',
     license: 'Standard',
-    tags: ['modelado3d', 'diseño', 'digital', 'personalizado', 'servicios'],
+    tags: ['modelado3d', 'modeladoorganico', 'esculturadigital', 'impresion3d', 'arte3d', 'personajes3d', 'general-service'],
     downloadCount: 0,
     rating: 5.0,
     reviewCount: 8,
@@ -1098,13 +1136,79 @@ export const mockProducts: Product[] = [
     updatedAt: new Date('2024-03-01')
   },
   {
-    id: '18',
-    slug: 'impresion-3d-por-encargo',
-    name: 'Impresión 3D por encargo',
-    description: 'Servicio de impresión 3D de alta calidad en múltiples materiales y acabados. Contamos con tecnología FDM (filamento) y SLA/DLP (resina) para materializar tus proyectos con la mejor resolución y resistencia. Ideal para piezas únicas, series cortas, repuestos y prototipos.',
-    shortDescription: 'Impresión de alta calidad en múltiples materiales y acabados',
+    id: '21',
+    displayOrder: 20,
+    slug: 'prototipado-tecnico-diseno-cad-funcional',
+    name: 'Prototipado Técnico y Diseño CAD Funcional',
+    description: 'Diseño CAD, prototipado funcional y producción seriada para proyectos técnicos y empresariales',
+    shortDescription: 'Diseño CAD, prototipado funcional y producción seriada para proyectos técnicos y empresariales',
     price: 0,
-    customPriceDisplay: 'Cotización según proyecto',
+    customPriceDisplay: 'Cotización técnica',
+    currency: 'PEN',
+    categoryId: 'ingenieria',
+    categoryName: 'Ingeniería',
+    sellerId: '1',
+    sellerName: 'Ddreams 3D',
+    images: [
+      {
+        id: '21-a',
+        productId: '21',
+        url: '/images/placeholder-prototype.svg',
+        alt: 'Prototipado Técnico y Diseño CAD Funcional',
+        isPrimary: true,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-03-05'),
+        updatedAt: new Date('2024-03-05')
+      }
+    ],
+    specifications: [
+      { name: 'Enfoque', value: 'Diseño CAD funcional, Iteración y mejora de piezas, Prototipado técnico, Producción seriada mediante impresión 3D, Ingeniería inversa básica' },
+      { name: 'Entregables', value: 'Archivos STL / STEP, Planos técnicos básicos (cuando aplique)' },
+      { name: 'Software', value: 'Fusion 360, FreeCAD' }
+    ],
+    tabsTitle: 'ESTE SERVICIO SE ADAPTA SEGÚN EL TIPO DE CLIENTE',
+    tabs: [
+      {
+        id: 'b2c',
+        label: 'General / Personas (B2C)',
+        description: 'Servicio de diseño CAD funcional orientado a estudiantes, proyectos universitarios y necesidades técnicas personales.\nDesarrollamos piezas y soluciones prácticas para prototipos académicos, iteración de piezas personalizadas, maquetas técnicas y validación básica de ideas, asegurando que el diseño funcione correctamente y pueda fabricarse mediante impresión 3D.\n\nEl enfoque es práctico y funcional, ideal para probar, ajustar y mejorar una pieza sin recurrir a procesos industriales complejos.',
+        idealFor: ['Proyectos universitarios y académicos', 'Iteración y mejora de piezas personalizadas', 'Maquetas técnicas o industriales a pequeña escala', 'Repuestos y adaptadores personalizados', 'Optimización de archivos STL existentes'],
+        conditions: ['Cotización según complejidad del diseño', 'Archivos listos para impresión 3D', 'Asesoría en selección de material y ajustes funcionales'],
+        ctaText: 'Solicitar cotización',
+        ctaAction: 'quote'
+      },
+      {
+        id: 'b2b',
+        label: 'Empresas / B2B',
+        description: 'Servicio de diseño CAD y prototipado funcional orientado a empresas y emprendimientos que requieren iterar, validar y producir piezas técnicas en serie.\nTrabajamos desde el desarrollo del diseño hasta la producción seriada mediante impresión 3D, ideal para lotes pequeños y medianos, validación de mercado o reemplazo de componentes.\n\nLa producción se enfoca en repetibilidad, funcionalidad y control de calidad, utilizando impresión 3D como solución flexible y escalable.\n\nProducción seriada disponible tras validación del diseño.\n\nPara proyectos que requieran tolerancias industriales estrictas, normativas específicas o procesos de manufactura complejos, el alcance se evalúa y puede escalarse mediante colaboración técnica especializada.',
+        idealFor: ['Producción seriada de piezas técnicas', 'Iteración y mejora continua de componentes', 'Maquetas industriales y prototipos funcionales', 'Reemplazo de piezas personalizadas', 'Validación de productos antes de escalar a manufactura tradicional'],
+        conditions: ['Cotización según volumen y alcance del proyecto', 'Producción por lotes (series pequeñas y medianas)', 'Entregables CAD funcionales (STL / STEP)', 'Evaluación técnica previa al inicio de producción'],
+        ctaText: 'Cotizar proyecto B2B',
+        ctaAction: 'quote'
+      }
+    ],
+    format: 'Digital',
+    fileSize: 'Variable',
+    license: 'Standard',
+    tags: ['prototipado', 'diseñocad', 'produccion3d', 'produccionseriada', 'ingenieria', 'general-service'],
+    downloadCount: 0,
+    rating: 5.0,
+    reviewCount: 4,
+    isFeatured: true,
+    isActive: true,
+    createdAt: new Date('2024-03-05'),
+    updatedAt: new Date('2024-03-05')
+  },
+  {
+    id: '18',
+    displayOrder: 30,
+    slug: 'impresion-3d-por-encargo',
+    name: 'Impresión 3D por Encargo',
+    description: 'Servicio profesional de impresión 3D para materializar piezas funcionales, prototipos y repuestos personalizados con alta precisión y excelente calidad superficial. Trabajamos con FDM (filamento) para piezas resistentes y de mayor volumen, y SLA/DLP (resina) para detalles finos y acabados superiores.\n\nIdeal para piezas únicas, series cortas y validación de diseño antes de producción.',
+    shortDescription: 'Fabricación de piezas funcionales y prototipos en FDM y resina',
+    price: 0,
+    customPriceDisplay: 'Solicitar cotización',
     currency: 'PEN',
     categoryId: 'ingenieria',
     categoryName: 'Ingeniería',
@@ -1124,14 +1228,35 @@ export const mockProducts: Product[] = [
       }
     ],
     specifications: [
-      { name: 'Tecnologías', value: 'FDM, SLA (Resina)' },
-      { name: 'Materiales', value: 'PLA, ABS, PETG, TPU, Resina Standard/Tough' },
-      { name: 'Volumen Máx', value: '300 x 300 x 400 mm' }
+      { name: 'Tecnologías', value: 'FDM (Filamento), SLA/DLP (Resina)' },
+      { name: 'Materiales', value: 'PLA, PETG, ABS, TPU, Resina Standard' },
+      { name: 'Volumen Máx', value: '300 × 300 × 400 mm' }
+    ],
+    tabsTitle: 'Este servicio se adapta según el tipo de cliente',
+    tabs: [
+      {
+        id: 'b2c',
+        label: 'General / Personas (B2C)',
+        description: 'Servicio de impresión 3D orientado a clientes particulares y proyectos personales, ideal para fabricar piezas personalizadas con buen acabado y resistencia.\nTe acompañamos durante todo el proceso, desde la elección del material hasta la impresión final, para que obtengas un resultado funcional y bien terminado, incluso si no tienes experiencia previa en impresión 3D.',
+        idealFor: ['Repuestos personalizados', 'Proyectos personales o creativos', 'Trabajos universitarios y académicos', 'Piezas únicas con acabado profesional'],
+        conditions: ['Cotización según tamaño y material', 'Fabricación bajo pedido', 'Asesoría incluida durante el proceso'],
+        ctaText: 'Solicitar cotización',
+        ctaAction: 'quote'
+      },
+      {
+        id: 'b2b',
+        label: 'Empresas / B2B',
+        description: 'Servicio profesional de impresión 3D enfocado en empresas, ingenieros y proyectos técnicos, ideal para la fabricación de piezas funcionales, prototipos y series cortas.\nAnalizamos cada proyecto según su uso final, tolerancias, material y volumen de producción, asegurando resultados consistentes y listos para validación o implementación.',
+        idealFor: ['Prototipos funcionales', 'Validación de diseño', 'Producción piloto y series cortas', 'Piezas técnicas y repuestos'],
+        conditions: ['Cotización técnica según requerimientos', 'Posibilidad de fabricación por volumen', 'Coordinación y seguimiento del proyecto'],
+        ctaText: 'Cotizar proyecto B2B',
+        ctaAction: 'quote'
+      }
     ],
     format: 'Físico',
     fileSize: 'N/A',
     license: 'Standard',
-    tags: ['impresion3d', 'manufactura', 'servicios', 'prototipado'],
+    tags: ['impresion3d', 'ingenieria', 'prototipado', 'manufactura', 'fdm', 'resina', 'general-service'],
     downloadCount: 0,
     rating: 4.9,
     reviewCount: 25,
@@ -1140,8 +1265,10 @@ export const mockProducts: Product[] = [
     createdAt: new Date('2024-03-02'),
     updatedAt: new Date('2024-03-02')
   },
+
   {
     id: '19',
+    displayOrder: 80,
     slug: 'acabado-profesional-postprocesado',
     name: 'Acabado Profesional y Postprocesado',
     description: 'Servicio de postprocesado y acabados premium para resultados excepcionales. Llevamos tus impresiones 3D al siguiente nivel mediante técnicas de lijado, masillado, pintura, barnizado y tratamientos superficiales. Eliminamos las líneas de capa para obtener piezas con apariencia de producto final inyectado.',
@@ -1171,56 +1298,34 @@ export const mockProducts: Product[] = [
       { name: 'Técnicas', value: 'Lijado, Masillado, Aerografía, Pincel' },
       { name: 'Acabados', value: 'Mate, Brillante, Metálico, Texturizado' }
     ],
+    tabsTitle: 'ESTE SERVICIO SE ADAPTA SEGÚN EL TIPO DE CLIENTE',
+    tabs: [
+      {
+        id: 'b2c',
+        label: 'General / Personas (B2C)',
+        description: 'Llevamos tus impresiones 3D o proyectos personales al siguiente nivel. Eliminamos las líneas de impresión, aplicamos pintura profesional y detallado a mano para que tus figuras, props de cosplay o piezas de colección luzcan increíbles.\nIdeal si ya tienes una pieza impresa pero quieres darle un acabado de tienda o exhibición.',
+        idealFor: ['Piezas de cosplay y props', 'Figuras de colección y arte', 'Mejora de impresiones caseras', 'Regalos con acabado premium'],
+        conditions: ['Cotización según tamaño y complejidad', 'Acabados a elección (pintura, alisado)', 'Trato directo y personalizado'],
+        ctaText: 'Solicitar cotización',
+        ctaAction: 'quote'
+      },
+      {
+        id: 'b2b',
+        label: 'Empresas / B2B',
+        description: 'Servicio de acabado superficial profesional para prototipos y series cortas. Transformamos piezas impresas en bruto en modelos de alta fidelidad visual (Look & Feel) para presentaciones, validación de diseño o marketing.\nLogramos acabados lisos, brillantes, texturizados o con colores corporativos, simulando la apariencia de un producto final inyectado.',
+        idealFor: ['Prototipos de alta fidelidad para presentación', 'Modelos de marketing y exhibición', 'Acabado de series cortas de producción', 'Mockups para validación estética'],
+        conditions: ['Acabados industriales o específicos', 'Consistencia en lotes de producción', 'Plazos ajustados a lanzamientos'],
+        ctaText: 'Cotizar proyecto B2B',
+        ctaAction: 'quote'
+      }
+    ],
     format: 'Físico',
     fileSize: 'N/A',
     license: 'Standard',
-    tags: ['postprocesado', 'pintura', 'acabado', 'premium', 'servicios'],
+    tags: ['postprocesado', 'pintura', 'acabado', 'premium', 'servicios', 'general-service'],
     downloadCount: 0,
     rating: 4.8,
     reviewCount: 12,
-    isFeatured: true,
-    isActive: true,
-    createdAt: new Date('2024-03-01'),
-    updatedAt: new Date('2024-03-01')
-  },
-  {
-    id: '20',
-    slug: 'trofeos-3d-tematicos-personalizados',
-    name: 'Trofeos 3D Temáticos',
-    description: 'Trofeos únicos y personalizados para eventos, torneos y reconocimientos. Diseñamos y fabricamos premios temáticos que capturan la esencia de tu evento. Desde copas clásicas hasta figuras de personajes o logotipos corporativos en 3D.',
-    shortDescription: 'Trofeos únicos y personalizados para eventos y reconocimientos',
-    price: 0,
-    customPriceDisplay: 'Cotización según diseño',
-    currency: 'PEN',
-    categoryId: 'arte-diseno',
-    categoryName: 'Arte y Diseño',
-    sellerId: '1',
-    sellerName: 'Ddreams 3D',
-    images: [
-      {
-        id: '20-a',
-        productId: '20',
-        url: '/images/marketplace/copa-piston-20cm-regalo-personalizado-autos-3d-frontal.png',
-        alt: 'Trofeos Temáticos Personalizados 3D',
-        isPrimary: true,
-        width: 800,
-        height: 600,
-        createdAt: new Date('2024-03-01'),
-        updatedAt: new Date('2024-03-01')
-      }
-    ],
-    specifications: [
-      { name: 'Servicio', value: 'Diseño y Fabricación de Trofeos' },
-      { name: 'Personalización', value: 'Total (Forma, Tamaño, Color)' },
-      { name: 'Uso', value: 'Torneos, Eventos, Reconocimientos' }
-    ],
-    format: 'Físico',
-    fileSize: 'N/A',
-    license: 'Standard',
-    tags: ['trofeos', 'premios', 'eventos', 'tematico', 'personalizado'],
-    downloadCount: 0,
-    rating: 4.9,
-    reviewCount: 18,
     isFeatured: true,
     isActive: true,
     createdAt: new Date('2024-03-01'),

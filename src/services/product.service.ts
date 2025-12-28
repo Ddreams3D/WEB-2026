@@ -49,7 +49,7 @@ const convertCategoryData = (doc: DocumentData): Category => {
 // Simple in-memory cache
 let productsCache: { data: Product[], timestamp: number } | null = null;
 let categoriesCache: { data: Category[], timestamp: number } | null = null;
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+const CACHE_DURATION = process.env.NODE_ENV === 'development' ? 0 : 5 * 60 * 1000; // 0 in dev, 5 mins in prod
 
 // Circuit breaker state
 let _firebaseCircuitOpen = false;
@@ -111,7 +111,7 @@ const fetchAllProductsFromFirebase = async (): Promise<Product[]> => {
 const getCachedProducts = unstable_cache(
   async () => fetchAllProductsFromFirebase(),
   ['all-products'],
-  { revalidate: 3600, tags: ['products'] } // Cache for 1 hour
+  { revalidate: 1, tags: ['products'] } // Cache for 1 second to avoid stale data during dev
 );
 
 export const ProductService = {

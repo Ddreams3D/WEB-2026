@@ -44,7 +44,8 @@ const Navbar: React.FC = () => {
   const { isAdmin } = useAdminPermissions();
 
   // Determine if navbar should be solid based on scroll or specific paths
-  const isNavbarSolid = isScrolled || pathname === '/login';
+  // Navbar should be transparent only on the homepage (when not scrolled)
+  const isNavbarSolid = isScrolled || pathname !== '/';
 
   const toggleMenu = (e?: React.MouseEvent) => {
     e?.stopPropagation();
@@ -122,7 +123,7 @@ const Navbar: React.FC = () => {
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-700 ease-in-out",
         isNavbarSolid
-          ? colors.gradients.navbarScrolled
+          ? (darkMode ? colors.gradients.navbarScrolled : "bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100")
           : darkMode
           ? colors.gradients.navbarDark
           : colors.gradients.navbarLight
@@ -206,7 +207,7 @@ const Navbar: React.FC = () => {
                           ? "text-white/90 hover:text-white hover:bg-white/10"
                           : darkMode 
                             ? "text-white/90 hover:text-white hover:bg-white/10"
-                            : "text-neutral-700 hover:text-primary-600 hover:bg-primary-50"
+                            : "text-neutral-900 hover:text-primary-600 hover:bg-primary-50"
                       )
                 )}
               >

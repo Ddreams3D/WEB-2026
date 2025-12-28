@@ -1,6 +1,7 @@
 import React from 'react';
 import { JsonLd } from './JsonLd';
 import { getAppUrl } from '@/lib/url-utils';
+import { PHONE_DISPLAY } from '@/shared/constants/contactInfo';
 
 export function OrganizationJsonLd() {
   const data = {
@@ -11,7 +12,7 @@ export function OrganizationJsonLd() {
     logo: `${getAppUrl()}/logo-ddreams-3d.jpg`,
     contactPoint: {
       '@type': 'ContactPoint',
-      telephone: '+51 987 654 321', // Replace with actual number if available
+      telephone: PHONE_DISPLAY, // Replace with actual number if available
       contactType: 'customer service',
       areaServed: 'PE',
       availableLanguage: 'es'

@@ -15,6 +15,7 @@ import { ArrowLeft, ShoppingCart, Star, Share2, Heart, Check, MessageSquare } fr
 import { cn } from '@/lib/utils';
 import { colors } from '@/shared/styles/colors';
 import { ProductCard } from '@/components/marketplace/ProductCard';
+import { ProductTabs } from './ProductTabs';
 
 interface Props {
   product: Product;
@@ -46,7 +47,10 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
                  ...img,
                  createdAt: img.createdAt ? new Date(img.createdAt) : undefined,
                  updatedAt: img.updatedAt ? new Date(img.updatedAt) : undefined
-               }))
+               })),
+               // Ensure new fields like tabs are preserved if missing in storage
+               tabs: found.tabs || initialProduct.tabs,
+               tabsTitle: found.tabsTitle || initialProduct.tabsTitle
              };
              setProduct(hydrated);
           }
@@ -62,6 +66,14 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
   const [selectedImageId, setSelectedImageId] = useState<string>(
     product.images.find(img => img.isPrimary)?.id || product.images[0]?.id
   );
+  
+  // Estado para las Tabs (usa la primera tab disponible o 'b2c' por defecto)
+  const [activeTab, setActiveTab] = useState<string>(() => {
+    if (initialProduct.tabs && initialProduct.tabs.length > 0) {
+      return initialProduct.tabs[0].id;
+    }
+    return 'b2c';
+  });
   
   // Update selectedImageId if product changes (e.g. from storage sync)
   useEffect(() => {
@@ -189,6 +201,25 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
     // For now, we'll just add to cart as per standard behavior
   };
 
+  const handleShare = async () => {
+    const shareData = {
+      title: product.name,
+      text: product.shortDescription || `Mira este producto: ${product.name}`,
+      url: window.location.href,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        showSuccess('Enlace copiado', 'El enlace del producto ha sido copiado al portapapeles.');
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 pt-24 pb-12 lg:pt-32 lg:pb-20 max-w-7xl font-sans text-gray-900 dark:text-gray-100 min-h-screen">
       <Button 
@@ -256,54 +287,62 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
               <Badge variant="outline" className="text-sm font-medium px-3 py-1 border-primary/20 text-primary bg-primary/5">
                 {product.categoryName}
               </Badge>
-              <div className="flex items-center bg-yellow-50 dark:bg-yellow-900/20 px-2 py-1 rounded-md">
-                <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                <span className="ml-1.5 text-sm font-semibold text-gray-700 dark:text-gray-300">
-                  {product.rating} <span className="text-gray-400 font-normal">({product.reviewCount} reseñas)</span>
-                </span>
+              <div className="flex items-center gap-3">
+                <Button 
+                  onClick={handleShare}
+                  variant="outline" 
+                  size="icon" 
+                  title="Compartir" 
+                  className="h-8 w-8 rounded-full border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-blue-500 transition-colors"
+                >
+                  <Share2 className="w-4 h-4" />
+                </Button>
+                <div className="flex items-center bg-yellow-50 dark:bg-yellow-900/20 px-2 py-1 rounded-md">
+                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                  <span className="ml-1.5 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    {product.rating} <span className="text-gray-400 font-normal">({product.reviewCount} reseñas)</span>
+                  </span>
+                </div>
               </div>
             </div>
             <h1 className="text-3xl lg:text-4xl font-extrabold text-gray-900 dark:text-white mb-3 tracking-tight leading-tight">
               {product.name}
             </h1>
+            {/* Subtítulo reforzado */}
+            {product.shortDescription && (
+              <h2 className="text-lg lg:text-xl font-medium text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
+                {product.shortDescription}
+              </h2>
+            )}
             <p className="text-gray-500 dark:text-gray-400 text-base lg:text-lg flex items-center gap-2">
               Vendido por <span className="font-semibold text-primary underline decoration-primary/30 underline-offset-4">{product.sellerName}</span>
             </p>
           </div>
 
-          <div className="flex items-center justify-between py-6 border-y border-gray-100 dark:border-gray-800">
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-1.5 font-medium uppercase tracking-wide">Precio Total</p>
-              <div className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white flex items-baseline gap-1">
-                {product.price > 0 
-                  ? (
-                    <>
-                      <span className="text-lg text-gray-500 font-normal self-start mt-1">S/</span>
-                      {product.price.toFixed(2)}
-                    </>
-                  )
-                  : <span className="text-primary">{product.customPriceDisplay || 'Consultar'}</span>
-                }
-              </div>
-              {product.price > 0 && (
+          {/* Se oculta la sección de precio si el precio es 0 (para servicios) */}
+          {product.price > 0 && (
+            <div className="flex items-center justify-between py-6 border-y border-gray-100 dark:border-gray-800">
+              <div>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1.5 font-medium uppercase tracking-wide">Precio Total</p>
+                <div className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white flex items-baseline gap-1">
+                  <span className="text-lg text-gray-500 font-normal self-start mt-1">S/</span>
+                  {product.price.toFixed(2)}
+                </div>
                 <p className="text-xs text-gray-400 mt-2 font-medium bg-gray-100 dark:bg-gray-800 inline-block px-2 py-0.5 rounded">IGV incluido</p>
-              )}
+              </div>
             </div>
-            <div className="flex gap-3">
-              <Button variant="outline" size="icon" title="Guardar en favoritos" className="h-12 w-12 rounded-full border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-red-500 transition-colors">
-                <Heart className="w-5 h-5" />
-              </Button>
-              <Button variant="outline" size="icon" title="Compartir" className="h-12 w-12 rounded-full border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-blue-500 transition-colors">
-                <Share2 className="w-5 h-5" />
-              </Button>
-            </div>
-          </div>
+          )}
 
-          <div className="prose prose-lg dark:prose-invert max-w-none text-gray-600 dark:text-gray-300 leading-relaxed">
-            <p className="whitespace-pre-line">
-              {product.description}
-            </p>
-          </div>
+          {/* Sistema de Tabs B2C / B2B */}
+          {product.tabs ? (
+            <ProductTabs product={product} activeTab={activeTab} setActiveTab={setActiveTab} />
+          ) : (
+            <div className="prose prose-lg dark:prose-invert max-w-none text-gray-600 dark:text-gray-300 leading-relaxed">
+              <p className="whitespace-pre-line">
+                {product.description}
+              </p>
+            </div>
+          )}
 
           {/* Opciones del Producto */}
           {product.options && product.options.length > 0 && (
@@ -498,7 +537,7 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
                   ) : (
                     <>
                       <MessageSquare className="w-5 h-5 mr-2.5" />
-                      Solicitar Cotización
+                      {product.tabs ? (product.tabs.find(t => t.id === activeTab)?.ctaText || 'Solicitar Cotización') : 'Solicitar Cotización'}
                     </>
                   )}
                 </>
@@ -550,3 +589,4 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
     </div>
   );
 }
+

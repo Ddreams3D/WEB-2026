@@ -110,6 +110,25 @@ export default function MarketplacePageClient() {
     
   }, [searchQuery, filters, pathname, router, searchParams]);
 
+  // Restore scroll position when returning from product page
+  useEffect(() => {
+    // Only try to restore if we're not loading and have content
+    if (!isLoading && products.length > 0) {
+      const savedPos = sessionStorage.getItem('marketplace_scroll_pos');
+      if (savedPos) {
+        // Small timeout to ensure DOM is fully painted
+        setTimeout(() => {
+          window.scrollTo({
+            top: parseInt(savedPos),
+            behavior: 'instant'
+          });
+          // Clear the saved position so it doesn't affect other navigations
+          sessionStorage.removeItem('marketplace_scroll_pos');
+        }, 50);
+      }
+    }
+  }, [isLoading, products.length]);
+
   // Removed activeTab state as we only show products here
   
   const handleFiltersChange = (filters: ProductFiltersType) => {

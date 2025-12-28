@@ -4,10 +4,9 @@ import React from 'react';
 import { FileText } from 'lucide-react';
 import { ProductCard } from '@/components/marketplace/ProductCard';
 import { useServiceProducts } from '@/hooks/useServiceProducts';
-import { GENERAL_SERVICE_IDS } from '@/config/services';
 
 const GeneralServicesView = () => {
-  const { services, isLoading } = useServiceProducts(GENERAL_SERVICE_IDS);
+  const { services, isLoading } = useServiceProducts({ tag: 'general-service' });
 
   if (isLoading) {
     return (
@@ -42,19 +41,21 @@ const GeneralServicesView = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {services.map((service) => (
-          <ProductCard 
-            key={service.id} 
-            product={service} 
-            showAddToCart={false}
-            source="services"
-            customAction={{
-              label: "Cotizar Servicio",
-              href: "/contact",
-              icon: <FileText className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
-            }}
-          />
-        ))}
+        {services.map((service) => {
+          return (
+            <ProductCard 
+              key={service.id} 
+              product={service} 
+              showAddToCart={false}
+              source="services"
+              customAction={{
+                label: "Cotizar Servicio",
+                href: "/contact",
+                icon: <FileText className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
+              }}
+            />
+          );
+        })}
       </div>
     </div>
   );
