@@ -1,8 +1,8 @@
 import { MetadataRoute } from 'next';
-import { mockProducts } from '@/shared/data/mockData';
+import { ProductService } from '@/services/product.service';
 import { getAppUrl } from '@/lib/url-utils';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getAppUrl();
 
   // Rutas estáticas
@@ -23,7 +23,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   // Rutas dinámicas de productos
-  const products = mockProducts.map((product) => ({
+  const productsData = await ProductService.getAllProducts();
+  const products = productsData.map((product) => ({
     url: `${baseUrl}/marketplace/product/${product.slug || product.id}`,
     lastModified: product.updatedAt || new Date(),
     changeFrequency: 'weekly' as const,

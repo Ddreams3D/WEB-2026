@@ -8,6 +8,8 @@ import ConditionalFooter from '../shared/components/layout/ConditionalFooter';
 import WhatsAppFloatingButton from '../shared/components/layout/WhatsAppFloatingButton';
 import PageTransition from '../shared/components/ui/PageTransition';
 import { getAppUrl } from '@/lib/url-utils';
+import { CookieBanner } from '@/components/ui';
+import { OrganizationJsonLd } from '@/components/seo/OrganizationJsonLd';
 
 export const dynamic = 'force-dynamic';
 
@@ -80,7 +82,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={inter.variable} suppressHydrationWarning>
-      <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || ''} />
+      {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID && (
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />
+      )}
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -97,7 +101,8 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="antialiased bg-background dark:bg-neutral-900 text-foreground dark:text-white transition-colors duration-300">
+      <body className="antialiased text-foreground dark:text-white">
+        <OrganizationJsonLd />
         <Providers>
           <div className="min-h-screen flex flex-col">
             <ConditionalNavbar />
@@ -106,6 +111,7 @@ export default function RootLayout({
             </main>
             <ConditionalFooter />
             <WhatsAppFloatingButton />
+            <CookieBanner />
           </div>
         </Providers>
       </body>

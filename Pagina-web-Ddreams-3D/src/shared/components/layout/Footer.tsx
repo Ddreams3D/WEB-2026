@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   Facebook,
   Instagram,
@@ -10,29 +12,52 @@ import {
   Clock,
   Mail,
   ChevronUp,
+  Lock,
+  X,
 } from '@/lib/icons';
-import { CompanyLogo } from '../ui/DefaultImage';
-import {
-  getButtonClasses,
-  getTransitionClasses,
-  getIconClasses,
-  getSocialIconClasses,
-  getGradientClasses,
-  commonStyles,
-  responsiveStyles,
-} from '../../styles';
 import {
   PHONE_BUSINESS,
   WHATSAPP_REDIRECT,
-} from '@/shared/constants/infoBusiness';
-import Image from 'next/image';
+  PHONE_DISPLAY,
+  EMAIL_BUSINESS,
+  ADDRESS_BUSINESS,
+  SCHEDULE_BUSINESS,
+} from '@/shared/constants/contactInfo';
+import { Button, Input } from '@/components/ui';
+import { cn } from '@/lib/utils';
+import { colors } from '@/shared/styles/colors';
 
 const Footer = () => {
+  const router = useRouter();
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [showSecretModal, setShowSecretModal] = useState(false);
+  const [secretPassword, setSecretPassword] = useState('');
+  const [secretError, setSecretError] = useState('');
+
+  const handleSecretClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setShowSecretModal(true);
+  };
+
+  const handleSecretLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (secretPassword === 'ddreams2026') {
+      localStorage.setItem('theme_secret_access', 'granted');
+      router.push('/admin/temas');
+      setShowSecretModal(false);
+      setSecretPassword('');
+      setSecretError('');
+    } else {
+      setSecretError('Contraseña incorrecta');
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 300);
+      // Mostrar cuando se ha scrolleado más del 50% de la página
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercentage = (window.scrollY / totalHeight) * 100;
+      setShowScrollTop(scrollPercentage > 50);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -47,10 +72,9 @@ const Footer = () => {
   };
 
   return (
+    // Footer component with centralized styles
     <footer
-      className={`${getGradientClasses(
-        'backgroundDark'
-      )} text-white dark:text-white relative overflow-hidden`}
+      className={cn(colors.gradients.backgroundDark, "text-white dark:text-white relative overflow-hidden")}
     >
       {/* Patrón de fondo decorativo */}
       <div className="absolute inset-0 opacity-5">
@@ -63,7 +87,7 @@ const Footer = () => {
       </div>
 
       <div
-        className={`relative z-10 ${responsiveStyles.container['6xl']} ${commonStyles.section}`}
+        className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12"
       >
         {/* Sección principal del footer - Estilo elegante y compacto */}
         <div className="space-y-8">
@@ -71,7 +95,7 @@ const Footer = () => {
           <div className="text-center">
             <div className="flex justify-center mb-4">
               <Image
-                src="/logo/isotipo_DD_negro.svg"
+                src="/logo/isotipo_DD_blanco_V2.svg"
                 alt="isotipo"
                 width={100}
                 height={40}
@@ -81,6 +105,9 @@ const Footer = () => {
               Estudio creativo de impresión y modelado 3D. Proyectos
               personalizados, trato directo y soluciones técnicas a medida.
             </p>
+            <p className="text-neutral-300 dark:text-neutral-300 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto mt-2">
+              📍 Arequipa, Perú · Modelado & Impresión 3D · Envíos a todo el Perú
+            </p>
           </div>
 
           {/* Información de contacto - Centrada */}
@@ -88,37 +115,36 @@ const Footer = () => {
             <a
               href={`${WHATSAPP_REDIRECT}`}
               target="_blank"
-              className={`text-neutral-400 dark:text-neutral-400 hover:text-primary-400 ${getTransitionClasses(
-                'colors'
-              )} font-medium flex items-center gap-1`}
+              className="text-neutral-400 dark:text-neutral-400 hover:text-primary-400 transition-colors duration-200 font-medium flex items-center gap-1"
             >
-              <Phone className={getIconClasses('sm')} />
-              +51 901 843 288
+              <Phone className="w-4 h-4" />
+              {PHONE_DISPLAY}
             </a>
             <span className="text-neutral-600 hidden sm:inline">•</span>
             <a
-              href="mailto:dreamings.desings.3d@gmail.com"
-              className={`text-neutral-400 dark:text-neutral-400 hover:text-primary-400 ${getTransitionClasses(
-                'colors'
-              )} font-medium flex items-center gap-1`}
+              href={`mailto:${EMAIL_BUSINESS}`}
+              className="text-neutral-400 dark:text-neutral-400 hover:text-primary-400 transition-colors duration-200 font-medium flex items-center gap-1"
             >
-              <Mail className={getIconClasses('sm')} />
-              dreamings.desings.3d@gmail.com
+              <Mail className="w-4 h-4" />
+              {EMAIL_BUSINESS}
             </a>
           </div>
 
           {/* Dirección y horarios - Horizontal */}
           <div className="flex flex-col lg:flex-row justify-between items-center gap-4 text-sm sm:text-base">
             <div className="flex items-center gap-1 text-neutral-400 dark:text-neutral-400">
-              <MapPin className={getIconClasses('sm')} />
-              <span>
-                Urb. Chapi Chico Mz. A Lt 5, Miraflores, Arequipa, Perú
-              </span>
+              <MapPin className="w-4 h-4" />
+              <Link 
+                href="/contact#location"
+                className="hover:text-primary-400 transition-colors duration-200"
+              >
+                {ADDRESS_BUSINESS}
+              </Link>
             </div>
 
             <div className="flex items-center gap-1 text-neutral-400 dark:text-neutral-400">
-              <Clock className={getIconClasses('sm')} />
-              <span>Lun-Vie: 9:00-18:00 | Sáb: 9:00-14:00</span>
+              <Clock className="w-4 h-4" />
+              <span>{SCHEDULE_BUSINESS}</span>
             </div>
           </div>
 
@@ -128,43 +154,57 @@ const Footer = () => {
               Síguenos en nuestras redes sociales
             </p>
             <div className="flex justify-center space-x-4">
-              <a
-                href="https://www.facebook.com/ddreams3d"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={getSocialIconClasses('facebook')}
-                aria-label="Síguenos en Facebook"
-                style={{ width: '28px', height: '28px' }}
+              <Button
+                asChild
+                variant="glass"
+                size="icon"
+                className="rounded-full hover:scale-110 border-0 bg-white/10 hover:bg-white/20 text-white"
               >
-                <Facebook className={getIconClasses('lg', 'white')} style={{ width: '28px', height: '28px' }} />
-              </a>
-              <a
-                href="https://www.instagram.com/ddreams3d/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={getSocialIconClasses('instagram')}
-                aria-label="Síguenos en Instagram"
-                style={{ width: '28px', height: '28px' }}
-              >
-                <Instagram className={getIconClasses('lg', 'white')} style={{ width: '28px', height: '28px' }} />
-              </a>
-              <a
-                href="https://www.tiktok.com/@ddreams3d"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={getSocialIconClasses('twitter')}
-                aria-label="Síguenos en TikTok"
-                style={{ width: '28px', height: '28px' }}
-              >
-                <svg
-                  className={getIconClasses('lg', 'white')}
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  style={{ width: '28px', height: '28px' }}
+                <a
+                  href="https://www.facebook.com/ddreams3d"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Síguenos en Facebook"
                 >
-                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.10z" />
-                </svg>
-              </a>
+                  <Facebook className="w-5 h-5" />
+                </a>
+              </Button>
+              <Button
+                asChild
+                variant="glass"
+                size="icon"
+                className="rounded-full hover:scale-110 border-0 bg-white/10 hover:bg-white/20 text-white"
+              >
+                <a
+                  href="https://www.instagram.com/ddreams3d/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Síguenos en Instagram"
+                >
+                  <Instagram className="w-5 h-5" />
+                </a>
+              </Button>
+              <Button
+                asChild
+                variant="glass"
+                size="icon"
+                className="rounded-full hover:scale-110 border-0 bg-white/10 hover:bg-white/20 text-white"
+              >
+                <a
+                  href="https://www.tiktok.com/@ddreams3d"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Síguenos en TikTok"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.10z" />
+                  </svg>
+                </a>
+              </Button>
             </div>
           </div>
 
@@ -172,9 +212,7 @@ const Footer = () => {
           <div className="flex flex-wrap justify-start gap-4 text-sm sm:text-base">
             <Link
               href="/services"
-              className={`text-neutral-400 dark:text-neutral-400 hover:text-primary-400 ${getTransitionClasses(
-                'colors'
-              )} font-medium`}
+              className="text-neutral-400 dark:text-neutral-400 hover:text-primary-400 transition-colors duration-200 font-medium"
             >
               Servicios
             </Link>
@@ -183,9 +221,7 @@ const Footer = () => {
             </span>
             <Link
               href="/marketplace"
-              className={`text-neutral-400 dark:text-neutral-400 hover:text-primary-400 ${getTransitionClasses(
-                'colors'
-              )} font-medium`}
+              className="text-neutral-400 dark:text-neutral-400 hover:text-primary-400 transition-colors duration-200 font-medium"
             >
               Marketplace
             </Link>
@@ -194,9 +230,7 @@ const Footer = () => {
             </span>
             <Link
               href="/process"
-              className={`text-neutral-400 dark:text-neutral-400 hover:text-primary-400 ${getTransitionClasses(
-                'colors'
-              )} font-medium`}
+              className="text-neutral-400 dark:text-neutral-400 hover:text-primary-400 transition-colors duration-200 font-medium"
             >
               Proceso
             </Link>
@@ -205,9 +239,7 @@ const Footer = () => {
             </span>
             <Link
               href="/about"
-              className={`text-neutral-400 dark:text-neutral-400 hover:text-primary-400 ${getTransitionClasses(
-                'colors'
-              )} font-medium`}
+              className="text-neutral-400 dark:text-neutral-400 hover:text-primary-400 transition-colors duration-200 font-medium"
             >
               Nosotros
             </Link>
@@ -216,9 +248,7 @@ const Footer = () => {
             </span>
             <Link
               href="/contact"
-              className={`text-neutral-400 dark:text-neutral-400 hover:text-primary-400 ${getTransitionClasses(
-                'colors'
-              )} font-medium`}
+              className="text-neutral-400 dark:text-neutral-400 hover:text-primary-400 transition-colors duration-200 font-medium"
             >
               Contacto
             </Link>
@@ -227,7 +257,7 @@ const Footer = () => {
 
         {/* Separador decorativo */}
         <div className="my-6 lg:my-8">
-          <div className={`h-px ${getGradientClasses('primary')}`}></div>
+          <div className={cn("h-px", colors.gradients.primary)}></div>
         </div>
 
         {/* Sección inferior - Enlaces legales, Copyright y scroll */}
@@ -236,9 +266,7 @@ const Footer = () => {
           <div className="flex flex-wrap justify-center lg:justify-start gap-3 text-xs sm:text-sm">
             <Link
               href="/terms"
-              className={`text-neutral-400 dark:text-neutral-400 hover:text-primary-400 ${getTransitionClasses(
-                'colors'
-              )} font-medium`}
+              className="text-neutral-400 dark:text-neutral-400 hover:text-primary-400 transition-colors duration-200 font-medium"
             >
               Términos de Servicio
             </Link>
@@ -247,9 +275,7 @@ const Footer = () => {
             </span>
             <Link
               href="/privacy"
-              className={`text-neutral-400 dark:text-neutral-400 hover:text-primary-400 ${getTransitionClasses(
-                'colors'
-              )} font-medium`}
+              className="text-neutral-400 dark:text-neutral-400 hover:text-primary-400 transition-colors duration-200 font-medium"
             >
               Política de Privacidad
             </Link>
@@ -258,9 +284,7 @@ const Footer = () => {
             </span>
             <Link
               href="/complaints"
-              className={`text-neutral-400 dark:text-neutral-400 hover:text-primary-400 ${getTransitionClasses(
-                'colors'
-              )} font-medium`}
+              className="text-neutral-400 dark:text-neutral-400 hover:text-primary-400 transition-colors duration-200 font-medium"
             >
               Libro de Reclamaciones
             </Link>
@@ -269,24 +293,86 @@ const Footer = () => {
           {/* Copyright y botón scroll */}
           <div className="flex items-center gap-4">
             <p className="text-neutral-300 dark:text-neutral-300 text-sm sm:text-base text-center">
-              © 2025{' '}
-              <span className="font-semibold text-primary-400">Ddreams 3D</span>
+              © 2026{' '}
+              <button 
+                onClick={handleSecretClick}
+                className="font-semibold text-primary-400 hover:text-primary-300 transition-colors cursor-pointer focus:outline-none focus:underline"
+                type="button"
+                title="Acceso Admin"
+              >
+                Ddreams 3D
+              </button>
               . Todos los derechos reservados.
             </p>
 
-            {/* Botón scroll to top - Ajustado para no chocar con WhatsApp */}
+            {/* Botón scroll to top - Rediseñado y reposicionado (esquina inferior) */}
             {showScrollTop && (
-              <button
+              <Button
                 onClick={scrollToTop}
-                className={`${getButtonClasses('primary', 'sm', 'pill')} fixed bottom-24 right-6 z-40 shadow-lg`}
+                variant="glass"
+                size="icon"
+                className="fixed bottom-6 right-6 z-40 rounded-full bg-neutral-900/60 hover:bg-neutral-900/90 border-white/10 hover:-translate-y-1 shadow-lg"
                 aria-label="Volver arriba"
               >
-                <ChevronUp className={getIconClasses('sm', 'white')} />
-              </button>
+                <ChevronUp className="w-5 h-5" />
+              </Button>
             )}
           </div>
         </div>
       </div>
+
+      {/* Secret Access Modal */}
+      {showSecretModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="relative w-full max-w-md bg-white dark:bg-neutral-800 rounded-xl shadow-2xl p-6 transform animate-in zoom-in-95 duration-200">
+            <button
+              onClick={() => {
+                setShowSecretModal(false);
+                setSecretError('');
+                setSecretPassword('');
+              }}
+              className="absolute top-4 right-4 text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            <div className="flex flex-col items-center mb-6">
+              <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center mb-4 text-primary-600 dark:text-primary-400">
+                <Lock className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-neutral-900 dark:text-white">
+                Acceso Administrativo
+              </h3>
+              <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
+                Ingresa la contraseña para gestionar temas
+              </p>
+            </div>
+
+            <form onSubmit={handleSecretLogin} className="space-y-4">
+              <div>
+                <Input
+                  type="password"
+                  placeholder="Contraseña"
+                  value={secretPassword}
+                  onChange={(e) => setSecretPassword(e.target.value)}
+                  className="w-full bg-neutral-50 dark:bg-neutral-900 border-neutral-200 dark:border-neutral-700"
+                  autoFocus
+                />
+                {secretError && (
+                  <p className="text-red-500 text-sm mt-2">{secretError}</p>
+                )}
+              </div>
+              
+              <Button 
+                type="submit" 
+                className="w-full bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-700 hover:to-secondary-700 text-white"
+              >
+                Acceder
+              </Button>
+            </form>
+          </div>
+        </div>
+      )}
     </footer>
   );
 };

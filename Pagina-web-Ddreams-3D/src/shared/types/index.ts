@@ -68,8 +68,6 @@ export interface ApiResponse<T = unknown> {
 // Tipos de configuración
 export interface AppConfig {
   apiUrl: string;
-  supabaseUrl: string;
-  supabaseAnonKey: string;
   googleAnalyticsId?: string;
 }
 

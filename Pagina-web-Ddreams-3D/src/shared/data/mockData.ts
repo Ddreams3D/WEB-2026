@@ -295,129 +295,7 @@ export const mockProducts: Product[] = [
     createdAt: new Date('2024-02-01'),
     updatedAt: new Date('2024-02-01')
   },
-  {
-    id: '7',
-    slug: 'proyectos-anatomicos-3d-especializados',
-    name: 'Proyectos Anatómicos 3D – Especializados (B2B)',
-    description: 'Desarrollo, modelado y fabricación de modelos anatómicos personalizados impresos en 3D, orientados a instituciones educativas, centros de salud, universidades y proyectos académicos o médicos.\n\nCada proyecto se diseña a medida según requerimientos técnicos, escala, nivel de detalle, material y uso final.',
-    shortDescription: 'Desarrollo, modelado y fabricación de modelos anatómicos personalizados',
-    price: 0,
-    customPriceDisplay: 'Cotización personalizada según proyecto',
-    currency: 'PEN',
-    categoryId: 'medicina',
-    categoryName: 'Medicina',
-    sellerId: '1',
-    sellerName: 'Ddreams 3D',
-    images: [
-      {
-        id: '7-a',
-        productId: '7',
-        url: '/images/marketplace/proyectos-anatomicos-3d-b2b-vista-general.jpg',
-        alt: 'Proyectos Anatómicos 3D Personalizados para Medicina y Educación - Vista General',
-        isPrimary: true,
-        width: 800,
-        height: 600,
-        createdAt: new Date('2024-02-05'),
-        updatedAt: new Date('2024-02-05')
-      },
-      {
-        id: '7-b',
-        productId: '7',
-        url: '/images/marketplace/proyectos-anatomicos-3d-b2b-detalle-columna.jpg',
-        alt: 'Proyectos Anatómicos 3D - Detalle de Columna Vertebral y Nervios',
-        isPrimary: false,
-        width: 800,
-        height: 600,
-        createdAt: new Date('2024-02-05'),
-        updatedAt: new Date('2024-02-05')
-      },
-      {
-        id: '7-c',
-        productId: '7',
-        url: '/images/marketplace/proyectos-anatomicos-3d-b2b-detalle-organos.jpg',
-        alt: 'Proyectos Anatómicos 3D - Detalle de Órganos Internos',
-        isPrimary: false,
-        width: 800,
-        height: 600,
-        createdAt: new Date('2024-02-05'),
-        updatedAt: new Date('2024-02-05')
-      },
-      {
-        id: '7-d',
-        productId: '7',
-        url: '/images/marketplace/proyectos-anatomicos-3d-b2b-detalle-craneo.jpg',
-        alt: 'Proyectos Anatómicos 3D - Detalle de Cráneo Humano',
-        isPrimary: false,
-        width: 800,
-        height: 600,
-        createdAt: new Date('2024-02-05'),
-        updatedAt: new Date('2024-02-05')
-      },
-      {
-        id: '7-e',
-        productId: '7',
-        url: '/images/marketplace/proyectos-anatomicos-3d-b2b-detalle-muscular.jpg',
-        alt: 'Proyectos Anatómicos 3D - Detalle Muscular y Tejidos',
-        isPrimary: false,
-        width: 800,
-        height: 600,
-        createdAt: new Date('2024-02-05'),
-        updatedAt: new Date('2024-02-05')
-      },
-      {
-        id: '7-f',
-        productId: '7',
-        url: '/images/marketplace/proyectos-anatomicos-3d-b2b-detalle-oseo.jpg',
-        alt: 'Proyectos Anatómicos 3D - Detalle Óseo Estructural',
-        isPrimary: false,
-        width: 800,
-        height: 600,
-        createdAt: new Date('2024-02-05'),
-        updatedAt: new Date('2024-02-05')
-      },
-      {
-        id: '7-g',
-        productId: '7',
-        url: '/images/marketplace/proyectos-anatomicos-3d-b2b-detalle-completo.jpg',
-        alt: 'Proyectos Anatómicos 3D - Vista Completa del Modelo',
-        isPrimary: false,
-        width: 800,
-        height: 600,
-        createdAt: new Date('2024-02-05'),
-        updatedAt: new Date('2024-02-05')
-      }
-    ],
-    specifications: [
-      {
-        id: 'spec-7-1',
-        name: 'Incluye',
-        value: '• Análisis del requerimiento\n• Modelado 3D anatómico personalizado\n• Fabricación en impresión 3D\n• Ensamblaje (cuando aplica)\n• Adaptación para uso educativo o institucional'
-      },
-      {
-        id: 'spec-7-2',
-        name: 'Información importante',
-        value: '• Fabricación bajo pedido\n• Precio sujeto a cotización según proyecto\n• Servicio B2B / institucional'
-      },
-      {
-        id: 'spec-7-3',
-        name: 'Sectores',
-        value: 'Universidades, institutos, colegios, centros de salud, proyectos de investigación y empresas del sector educativo o médico.'
-      }
-    ],
-    tags: ['proyectosAnatomicos3D', 'modelosAnatomicos3D', 'anatomiaHumana3D', 'modeladoAnatomico', 'educacionMedica', 'modelosEducativos3D', 'serviciosB2B', 'fabricacionPersonalizada', 'impresion3DProfesional', 'prototipado3D', 'Arequipa', 'Peru'],
-    sku: 'ANATOMY-B2B-001',
-    stock: 999,
-    minQuantity: 1,
-    materials: ['PLA', 'Resina', 'Filamento Flexible'],
-    complexity: 'high',
-    rating: 4.9,
-    reviewCount: 12,
-    downloadCount: 0,
-    isActive: true,
-    isFeatured: true,
-    createdAt: new Date('2024-02-05'),
-    updatedAt: new Date('2024-02-05')
-  },
+
   {
     id: '2',
     slug: 'regalo-personalizado-fanaticos-autos-copa-piston',
@@ -679,7 +557,7 @@ export const mockProducts: Product[] = [
       {
         id: 'spec-8-2',
         name: 'Información importante',
-        value: '• Fabricación bajo pedido\n• Precio sujeto a cotización según cantidad, diseño y complejidad\n• Servicio orientado a clientes B2B / institucionales\n• Entregas coordinadas según cronograma del evento'
+        value: '• Fabricación bajo pedido\n• Precio sujeto a cotización según cantidad, diseño y complejidad\n• Servicio orientado a clientes institucionales\n• Entregas coordinadas según cronograma del evento'
       },
       {
         id: 'spec-8-3',
@@ -688,7 +566,7 @@ export const mockProducts: Product[] = [
       }
     ],
     tags: ['trofeos', 'medallas', 'b2b', 'eventos', 'corporativo'],
-    sku: 'TROPHY-B2B-001',
+    sku: 'TROPHY-CORP-001',
     stock: 999,
     minQuantity: 1,
     materials: ['PLA', 'Resina', 'Filamento Metálico'],
@@ -1093,7 +971,7 @@ export const mockProducts: Product[] = [
   {
     id: 'b2b-1',
     slug: 'proyectos-anatomicos-3d-especializados-b2b',
-    name: 'Proyectos Anatómicos 3D – Especializados (B2B)',
+    name: 'Proyectos Anatómicos 3D – Especializados',
     description: 'Desarrollo, modelado y fabricación de modelos anatómicos personalizados para instituciones médicas y educativas. Creamos réplicas exactas a partir de tomografías (DICOM) o modelos 3D para planificación quirúrgica, educación médica y simuladores de entrenamiento.',
     shortDescription: 'Desarrollo, modelado y fabricación de modelos anatómicos personalizados',
     price: 0,

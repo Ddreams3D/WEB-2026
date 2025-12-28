@@ -14,7 +14,10 @@ import { MessageSquare } from 'lucide-react';
 import { useCart } from '../../../contexts/CartContext';
 import Link from 'next/link';
 import { ProductImage } from './DefaultImage';
-import { PHONE_BUSINESS } from '@/shared/constants/infoBusiness';
+import { PHONE_BUSINESS } from '@/shared/constants/contactInfo';
+import { colors } from '@/shared/styles/colors';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -24,28 +27,6 @@ interface CartDrawerProps {
 export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const { items, itemCount, total, updateQuantity, removeFromCart, isLoading } =
     useCart();
-
-  // Detectar tema oscuro
-  const [isDarkMode, setIsDarkMode] = React.useState(false);
-
-  React.useEffect(() => {
-    const checkDarkMode = () => {
-      setIsDarkMode(document.documentElement.classList.contains('dark'));
-    };
-
-    checkDarkMode();
-
-    // Observar cambios en el tema
-    const observer = new MutationObserver(checkDarkMode);
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class'],
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
-  // No bloquear el scroll del body - permitir scroll natural
 
   const handleQuantityChange = (productId: string, newQuantity: number) => {
     if (newQuantity < 1) {
@@ -96,26 +77,18 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
       {/* Drawer */}
       <div
-        className={`fixed right-0 top-0 h-full w-full max-w-md shadow-2xl z-50 transform transition-all duration-300 ease-out border-l flex flex-col ${
+        className={cn(
+          "fixed right-0 top-0 h-full w-full max-w-md shadow-2xl z-50 transform transition-all duration-300 ease-out border-l flex flex-col",
+          colors.backgrounds.card,
+          "border-l-gray-200 dark:border-l-gray-600",
           isOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
-        style={{
-          backgroundColor: isDarkMode
-            ? 'rgb(31, 41, 55)'
-            : 'rgb(255, 255, 255)',
-          borderLeftColor: isDarkMode
-            ? 'rgb(75, 85, 99)'
-            : 'rgb(229, 231, 235)',
-          boxShadow: isDarkMode
-            ? '0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.1)'
-            : '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-        }}
+        )}
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-neutral-200/30 dark:border-neutral-700/30">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-              <ShoppingBag className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+            <div className={cn("p-2 rounded-lg", colors.backgrounds.highlight)}>
+              <ShoppingBag className="h-5 w-5 text-primary-600 dark:text-primary-400" />
             </div>
             <div>
               <h2 className="text-xl font-bold text-neutral-900 dark:text-white">
@@ -126,24 +99,26 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               </p>
             </div>
           </div>
-          <button
+          <Button
             onClick={onClose}
-            className="p-2 hover:bg-white/50 dark:hover:bg-neutral-700/50 rounded-full transition-all duration-200 hover:scale-105"
+            variant="ghost"
+            size="icon"
+            className="rounded-full hover:bg-white/50 dark:hover:bg-neutral-700/50 transition-all duration-200 hover:scale-105"
             aria-label="Cerrar carrito"
           >
             <X className="h-5 w-5 text-neutral-500 dark:text-neutral-400" />
-          </button>
+          </Button>
         </div>
 
         {/* Content */}
-        <div className="bg-neutral-100 dark:bg-neutral-600 flex-1 flex flex-col min-h-[55vh]">
+        <div className={cn("flex-1 flex flex-col min-h-[55vh]", colors.backgrounds.neutral)}>
           <div
             className="flex-1 overflow-y-auto min-h-100"
             style={{ scrollbarWidth: 'thin' }}
           >
             {items.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center py-12 px-6">
-                <div className="p-4 bg-neutral-100 dark:bg-neutral-800 rounded-full mb-6">
+                <div className={cn("p-4 rounded-full mb-6", colors.backgrounds.card)}>
                   <ShoppingCart className="h-12 w-12 text-neutral-400 dark:text-neutral-500" />
                 </div>
                 <h3 className="text-xl font-semibold text-neutral-900 dark:text-white mb-3">
@@ -153,23 +128,30 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   Descubre nuestros increíbles productos y comienza a llenar tu
                   carrito
                 </p>
-                <button
+                <Button
                   onClick={onClose}
-                  className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
+                  variant="gradient"
+                  className="px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
                 >
                   Explorar Productos
-                </button>
+                </Button>
               </div>
             ) : (
               <div className="p-6 space-y-4">
                 {items.map((item) => (
                   <div
                     key={item.id}
-                    className="group bg-white dark:bg-neutral-800 rounded-xl p-4 shadow-sm border border-neutral-100 dark:border-neutral-700 hover:shadow-md transition-all duration-200"
+                    className={cn(
+                      "group rounded-xl p-4 shadow-sm border border-neutral-100 dark:border-neutral-700 hover:shadow-md transition-all duration-200",
+                      colors.backgrounds.card
+                    )}
                   >
                     <div className="flex items-start space-x-4">
                       {/* Product Image */}
-                      <div className="flex-shrink-0 w-20 h-20 bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-700 dark:to-neutral-800 rounded-xl overflow-hidden shadow-sm">
+                      <div className={cn(
+                        "flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden shadow-sm",
+                        colors.gradients.backgroundNeutral
+                      )}>
                         <ProductImage
                           src={item.product.images?.[0]?.url}
                           alt={item.product.name}
@@ -185,7 +167,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                           {item.product.name}
                         </h4>
                         <div className="flex items-center justify-between mb-3">
-                          <p className="text-lg font-bold text-blue-600 dark:text-blue-400">
+                          <p className="text-lg font-bold text-primary-600 dark:text-primary-400">
                             S/.{' '}
                             {item.product.price
                               ? item.product.price.toFixed(2)
@@ -203,7 +185,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                         <div className="flex items-center justify-between">
                           {/* Quantity Controls */}
                           <div className="flex items-center bg-neutral-50 dark:bg-neutral-700 rounded-lg border border-neutral-200 dark:border-neutral-600">
-                            <button
+                            <Button
                               onClick={() =>
                                 handleQuantityChange(
                                   item.productId,
@@ -211,14 +193,16 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                 )
                               }
                               disabled={isLoading}
-                              className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-600 rounded-l-lg transition-all duration-200 disabled:opacity-50 hover:scale-105"
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 rounded-none rounded-l-lg hover:bg-neutral-100 dark:hover:bg-neutral-600"
                             >
                               <Minus className="h-3 w-3 text-neutral-600 dark:text-neutral-300" />
-                            </button>
+                            </Button>
                             <span className="px-4 py-2 font-semibold text-sm min-w-[3rem] text-center text-neutral-900 dark:text-white">
                               {item.quantity}
                             </span>
-                            <button
+                            <Button
                               onClick={() =>
                                 handleQuantityChange(
                                   item.productId,
@@ -226,20 +210,24 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                 )
                               }
                               disabled={isLoading}
-                              className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-600 rounded-r-lg transition-all duration-200 disabled:opacity-50 hover:scale-105"
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 rounded-none rounded-r-lg hover:bg-neutral-100 dark:hover:bg-neutral-600"
                             >
                               <Plus className="h-3 w-3 text-neutral-600 dark:text-neutral-300" />
-                            </button>
+                            </Button>
                           </div>
 
-                          <button
+                          <Button
                             onClick={() => removeFromCart(item.productId)}
                             disabled={isLoading}
-                            className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all duration-200 disabled:opacity-50 hover:scale-105"
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
                             title="Eliminar producto"
                           >
                             <Trash2 className="h-4 w-4" />
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     </div>
@@ -252,9 +240,12 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
         {/* Footer */}
         {items.length > 0 && (
-          <div className="p-6 space-y-6 bg-neutral-100 dark:bg-neutral-600">
+          <div className={cn("p-6 space-y-6", colors.backgrounds.neutral)}>
             {/* Price Summary */}
-            <div className="bg-white dark:bg-neutral-800 rounded-xl p-4 shadow-sm border border-neutral-100 dark:border-neutral-700 space-y-3">
+            <div className={cn(
+              "rounded-xl p-4 shadow-sm border border-neutral-100 dark:border-neutral-700 space-y-3",
+              colors.backgrounds.card
+            )}>
               <div className="flex justify-between items-center text-sm">
                 <span className="text-neutral-600 dark:text-neutral-400">
                   Subtotal ({itemCount}{' '}
@@ -286,26 +277,33 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
             {/* Action Buttons */}
             <div className="space-y-3">
-              <button
+              <Button
                 onClick={handleWhatsAppCheckout}
-                className="w-full flex items-center justify-center px-6 py-4 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02] group"
+                variant="success"
+                className="w-full h-auto flex items-center justify-center px-6 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02] group"
               >
                 <MessageSquare className="mr-2 h-5 w-5" />
                 Finalizar pedido en WhatsApp
-              </button>
+              </Button>
 
-              <Link
-                href="/cart"
+              <Button
+                asChild
                 onClick={onClose}
-                className="w-full flex items-center justify-center px-6 py-3 border-2 border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-300 bg-white dark:bg-neutral-800 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-500 transition-all duration-200 font-medium group shadow-sm"
+                variant="outline"
+                className="w-full h-auto flex items-center justify-center px-6 py-3 rounded-xl font-medium group shadow-sm"
               >
-                Ver Carrito Completo
-                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />
-              </Link>
+                <Link href="/cart">
+                  Ver Carrito Completo
+                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />
+                </Link>
+              </Button>
             </div>
 
             {/* Security Badge */}
-            <div className="bg-white dark:bg-neutral-800 rounded-xl p-3 shadow-sm border border-neutral-100 dark:border-neutral-700">
+            <div className={cn(
+              "rounded-xl p-3 shadow-sm border border-neutral-100 dark:border-neutral-700",
+              colors.backgrounds.card
+            )}>
               <div className="flex items-center justify-center space-x-2 text-xs text-neutral-500 dark:text-neutral-400">
                 <div className="w-3 h-3 bg-green-500 rounded-full flex items-center justify-center">
                   <div className="w-1.5 h-1.5 bg-white rounded-full"></div>

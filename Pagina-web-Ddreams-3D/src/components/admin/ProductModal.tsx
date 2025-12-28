@@ -1,12 +1,13 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
 import { X, Upload, ImageIcon } from '@/lib/icons';
 import { useToast } from '@/components/ui/ToastManager';
 import ImageUpload from './ImageUpload';
+import { Product } from '@/shared/types';
 
-interface Product {
-  id: string;
+interface ProductFormData {
   name: string;
   description: string;
   category: string;
@@ -14,12 +15,14 @@ interface Product {
   price: number;
   stock: number;
   image_url: string;
+  customPriceDisplay?: string;
+  isService: boolean;
 }
 
 interface ProductModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (product: Omit<Product, 'id' | 'created_at' | 'updated_at'>) => void;
+  onSave: (data: ProductFormData) => void;
   product?: Product | null;
 }
 
@@ -47,14 +50,16 @@ const materials = [
 ];
 
 export default function ProductModal({ isOpen, onClose, onSave, product }: ProductModalProps) {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ProductFormData>({
     name: '',
     description: '',
     category: '',
     material: '',
     price: 0,
     stock: 0,
-    image_url: ''
+    image_url: '',
+    isService: false,
+    customPriceDisplay: ''
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -64,11 +69,13 @@ export default function ProductModal({ isOpen, onClose, onSave, product }: Produ
       setFormData({
         name: product.name,
         description: product.description,
-        category: product.category,
-        material: product.material,
+        category: product.categoryName || '',
+        material: product.materials?.[0] || '',
         price: product.price,
-        stock: product.stock,
-        image_url: product.image_url
+        stock: product.stock || 0,
+        image_url: product.images?.[0]?.url || '',
+        isService: !!product.customPriceDisplay,
+        customPriceDisplay: product.customPriceDisplay || ''
       });
     } else {
       setFormData({
@@ -78,7 +85,9 @@ export default function ProductModal({ isOpen, onClose, onSave, product }: Produ
         material: '',
         price: 0,
         stock: 0,
-        image_url: ''
+        image_url: '',
+        isService: false,
+        customPriceDisplay: ''
       });
     }
     setErrors({});
@@ -95,6 +104,7 @@ export default function ProductModal({ isOpen, onClose, onSave, product }: Produ
       newErrors.description = 'La descripción es requerida';
     }
 
+
     if (!formData.category) {
       newErrors.category = 'La categoría es requerida';
     }
@@ -103,7 +113,8 @@ export default function ProductModal({ isOpen, onClose, onSave, product }: Produ
       newErrors.material = 'El material es requerido';
     }
 
-    if (formData.price <= 0) {
+    // Validación de precio: Solo requerido si NO es servicio
+    if (!formData.isService && formData.price <= 0) {
       newErrors.price = 'El precio debe ser mayor a 0';
     }
 
@@ -113,6 +124,10 @@ export default function ProductModal({ isOpen, onClose, onSave, product }: Produ
 
     if (!formData.image_url.trim()) {
       newErrors.image_url = 'La URL de la imagen es requerida';
+    }
+    
+    if (formData.isService && !formData.customPriceDisplay?.trim()) {
+      newErrors.customPriceDisplay = 'El texto de precio es requerido para servicios';
     }
 
     setErrors(newErrors);
@@ -137,11 +152,17 @@ export default function ProductModal({ isOpen, onClose, onSave, product }: Produ
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: name === 'price' || name === 'stock' ? parseFloat(value) || 0 : value
-    }));
+    const { name, value, type } = e.target;
+    
+    if (type === 'checkbox') {
+        const checked = (e.target as HTMLInputElement).checked;
+        setFormData(prev => ({ ...prev, [name]: checked }));
+    } else {
+        setFormData(prev => ({
+          ...prev,
+          [name]: name === 'price' || name === 'stock' ? parseFloat(value) || 0 : value
+        }));
+    }
     
     // Clear error when user starts typing
     if (errors[name]) {
@@ -159,12 +180,14 @@ export default function ProductModal({ isOpen, onClose, onSave, product }: Produ
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
             {product ? 'Editar Producto' : 'Nuevo Producto'}
           </h2>
-          <button
+          <Button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+            variant="ghost"
+            size="icon"
+            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors h-auto w-auto p-2"
           >
             <X className="h-6 w-6" />
-          </button>
+          </Button>
         </div>
 
         {/* Form */}
@@ -277,27 +300,53 @@ export default function ProductModal({ isOpen, onClose, onSave, product }: Produ
 
           {/* Price and Stock */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label htmlFor="price" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Precio (S/.) *
-              </label>
-              <input
-                type="number"
-                id="price"
-                name="price"
-                value={formData.price}
-                onChange={handleInputChange}
-                min="0"
-                step="0.01"
-                placeholder="0.00"
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
-                  errors.price ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                }`}
-              />
-              {errors.price && (
-                <p className="text-sm text-red-600 dark:text-red-400">{errors.price}</p>
-              )}
-            </div>
+            {/* Price - Only show if not service */}
+            {!formData.isService && (
+              <div className="space-y-2">
+                <label htmlFor="price" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Precio (S/.) *
+                </label>
+                <input
+                  type="number"
+                  id="price"
+                  name="price"
+                  value={formData.price}
+                  onChange={handleInputChange}
+                  min="0"
+                  step="0.01"
+                  placeholder="0.00"
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
+                    errors.price ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                  }`}
+                />
+                {errors.price && (
+                  <p className="text-sm text-red-600 dark:text-red-400">{errors.price}</p>
+                )}
+              </div>
+            )}
+
+            {/* Custom Price Display - Only show if service */}
+            {formData.isService && (
+              <div className="space-y-2">
+                <label htmlFor="customPriceDisplay" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Texto de Precio (Cotización) *
+                </label>
+                <input
+                  type="text"
+                  id="customPriceDisplay"
+                  name="customPriceDisplay"
+                  value={formData.customPriceDisplay}
+                  onChange={handleInputChange}
+                  placeholder="Ej: Precio sujeto a cotización"
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
+                    errors.customPriceDisplay ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                  }`}
+                />
+                {errors.customPriceDisplay && (
+                  <p className="text-sm text-red-600 dark:text-red-400">{errors.customPriceDisplay}</p>
+                )}
+              </div>
+            )}
 
             <div className="space-y-2">
               <label htmlFor="stock" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -323,23 +372,25 @@ export default function ProductModal({ isOpen, onClose, onSave, product }: Produ
 
           {/* Actions */}
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <button
+            <Button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
+              variant="outline"
+              className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 border-none"
             >
               Cancelar
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
               disabled={isSubmitting}
-              className="px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              variant="gradient"
+              className="flex items-center gap-2"
             >
               {isSubmitting && (
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
               )}
               {product ? 'Actualizar' : 'Crear'} Producto
-            </button>
+            </Button>
           </div>
         </form>
       </div>

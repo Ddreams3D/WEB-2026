@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import Image from 'next/image';
+import { Button } from '@/components/ui/button';
 import { Upload, X, ImageIcon } from '@/lib/icons';
 
 interface ImageUploadProps {
@@ -80,22 +81,25 @@ export default function ImageUpload({ value, onChange, onRemove }: ImageUploadPr
               fill
               className="object-cover"
             />
-            <button
+            <Button
               type="button"
               onClick={handleRemove}
-              className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+              variant="ghost"
+              size="icon"
+              className="absolute top-2 right-2 h-6 w-6 bg-red-500 text-white rounded-full hover:bg-red-600 hover:text-white transition-colors"
             >
               <X className="h-4 w-4" />
-            </button>
+            </Button>
           </div>
-          <button
+          <Button
             type="button"
             onClick={handleClick}
             disabled={isUploading}
-            className="mt-2 w-full px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            variant="outline"
+            className="mt-2 w-full"
           >
             {isUploading ? 'Subiendo...' : 'Cambiar imagen'}
-          </button>
+          </Button>
         </div>
       ) : (
         <div

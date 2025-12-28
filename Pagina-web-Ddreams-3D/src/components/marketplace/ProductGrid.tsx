@@ -4,14 +4,13 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { Product } from '../../shared/types';
 import { ProductCard, ProductCardSkeleton } from './ProductCard';
-import { ProductDetailsModal } from './ProductDetailsModal';
+import { Button } from '@/components/ui';
 
 interface ProductGridProps {
   products: Product[];
   isLoading?: boolean;
   className?: string;
   showAddToCart?: boolean;
-  showWishlist?: boolean;
   emptyMessage?: string;
   skeletonCount?: number;
   customAction?: {
@@ -26,7 +25,6 @@ export function ProductGrid({
   isLoading = false,
   className = '',
   showAddToCart = true,
-  showWishlist = true,
   emptyMessage = 'No se encontraron productos',
   skeletonCount = 8,
   customAction
@@ -84,18 +82,18 @@ export function ProductGrid({
             key={product.id}
             product={product}
             showAddToCart={showAddToCart}
-            showWishlist={showWishlist}
-            onViewDetails={setSelectedProduct}
+            // onViewDetails removed to enforce navigation to product page
             customAction={customAction}
           />
         ))}
       </div>
 
-      <ProductDetailsModal 
+      {/* Modal removed/disabled as per user request to always navigate to product page */}
+      {/* <ProductDetailsModal 
         product={selectedProduct}
         isOpen={!!selectedProduct}
         onClose={() => setSelectedProduct(null)}
-      />
+      /> */}
     </>
   );
 }
@@ -143,7 +141,6 @@ export function CompactProductGrid({
           key={product.id}
           product={product}
           showAddToCart={true}
-          showWishlist={false}
         />
       ))}
     </div>
@@ -221,9 +218,13 @@ export function ProductList({
                 S/ {product.price.toFixed(2)}
               </span>
               {showAddToCart && (
-                <button className="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg text-sm font-medium transition-colors">
+                <Button 
+                  variant="gradient"
+                  size="sm"
+                  className="px-4 py-2 text-sm font-medium shadow-sm hover:shadow-md transform hover:scale-105"
+                >
                   Agregar
-                </button>
+                </Button>
               )}
             </div>
           </div>

@@ -2,7 +2,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
+import { isSuperAdmin, ADMIN_EMAILS } from '@/config/roles';
 import { ShieldAlert } from '@/lib/icons';
 
 interface AdminProtectionProps {
@@ -10,25 +12,21 @@ interface AdminProtectionProps {
   requiredRole?: 'admin' | 'moderator';
 }
 
-// Lista de usuarios administradores (en un entorno real esto vendría del backend)
-const ADMIN_EMAILS = [
-  'admin@mapasconceptuales.com',
-  'administrador@ejemplo.com',
-  'admin@test.com',
-  'dreamings.desings.3d@gmail.com'
-];
-
 // Función para verificar si un usuario es administrador
 function isUserAdmin(userEmail: string | undefined): boolean {
-  if (!userEmail) return false;
-  return ADMIN_EMAILS.includes(userEmail.toLowerCase());
+  return isSuperAdmin(userEmail);
 }
 
 // Función para verificar permisos desde localStorage
-function getUserPermissions(userEmail: string | undefined) {
+function getUserPermissions(userEmail: string | undefined, userRole: string | undefined) {
   if (!userEmail) return { isAdmin: false, role: 'user' };
   
-  // Verificar en la lista de administradores
+  // Verificar rol directo del usuario (desde AuthContext/Firestore)
+  if (userRole === 'admin') {
+    return { isAdmin: true, role: 'admin' };
+  }
+
+  // Verificar en la lista de administradores (config)
   if (isUserAdmin(userEmail)) {
     return { isAdmin: true, role: 'admin' };
   }
@@ -60,16 +58,24 @@ export default function AdminProtection({ children, requiredRole = 'admin' }: Ad
   const [hasAccess, setHasAccess] = useState(false);
 
   useEffect(() => {
+    // Check for secret access first
+    const secretAccess = localStorage.getItem('theme_secret_access');
+    if (secretAccess === 'granted') {
+      setHasAccess(true);
+      setChecking(false);
+      return;
+    }
+
     if (isLoading) return;
 
     if (!user) {
       // Usuario no autenticado, redirigir al login
-      router.push('/auth/login?redirect=/admin');
+      router.push('/login?redirect=/admin');
       return;
     }
 
     // Verificar permisos del usuario
-    const permissions = getUserPermissions(user.email);
+    const permissions = getUserPermissions(user.email, user.role);
     
     if (!permissions.isAdmin) {
       // Usuario sin permisos de administrador
@@ -119,18 +125,20 @@ export default function AdminProtection({ children, requiredRole = 'admin' }: Ad
             No tienes permisos para acceder a esta área administrativa.
           </p>
           <div className="space-y-3">
-            <button
+            <Button
               onClick={() => router.push('/')}
-              className="w-full px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+              variant="gradient"
+              className="w-full transform hover:scale-105"
             >
               Volver al Inicio
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => router.back()}
-              className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-300 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors"
+              variant="outline"
+              className="w-full"
             >
               Regresar
-            </button>
+            </Button>
           </div>
           
           {/* Información para desarrollo */}
@@ -169,7 +177,7 @@ export function useAdminPermissions() {
 
   useEffect(() => {
     if (user?.email) {
-      const userPermissions = getUserPermissions(user.email);
+      const userPermissions = getUserPermissions(user.email, user.role);
       setPermissions(userPermissions);
     } else {
       setPermissions({ isAdmin: false, role: 'user' });

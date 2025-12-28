@@ -52,7 +52,7 @@ describe('Hero Component', () => {
   test('renders call-to-action buttons', () => {
     render(<MockedHero />);
     
-    const buttons = screen.getAllByRole('button');
+    const buttons = screen.getAllByRole('link');
     expect(buttons.length).toBeGreaterThan(0);
   });
 

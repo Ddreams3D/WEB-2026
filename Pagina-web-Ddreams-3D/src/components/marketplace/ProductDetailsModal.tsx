@@ -5,6 +5,9 @@ import { Product } from '../../shared/types';
 import { useCart } from '../../contexts/CartContext';
 import { useToast } from '../ui/ToastManager';
 import { ProductImage } from '../../shared/components/ui/DefaultImage';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { colors } from '@/shared/styles/colors';
 
 interface ProductDetailsModalProps {
   product: Product | null;
@@ -64,51 +67,66 @@ export function ProductDetailsModal({ product, isOpen, onClose }: ProductDetails
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-      <div className="bg-white dark:bg-neutral-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative animate-scale-in">
-        <button
+      <div className={cn(
+        "rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative animate-scale-in",
+        colors.backgrounds.card
+      )}>
+        <Button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-full bg-neutral-100 dark:bg-neutral-700 text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 transition-colors z-10"
+          variant="overlay"
+          size="icon"
+          className="absolute top-4 right-4 rounded-full z-10 opacity-70 hover:opacity-100"
           aria-label="Cerrar detalles"
         >
           <X className="w-5 h-5" />
-        </button>
+        </Button>
 
         <div className="relative h-48 sm:h-64 w-full group">
           <ProductImage
             src={currentImage?.url}
             alt={currentImage?.alt || product.name}
             fill
-            className="object-contain bg-neutral-100 dark:bg-neutral-900"
+            className={cn("object-contain", colors.backgrounds.neutral)}
           />
           
           {/* Navigation Arrows */}
           {product.images.length > 1 && (
             <>
-              <button
+              <Button
                 onClick={prevImage}
-                className="absolute left-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/80 dark:bg-neutral-800/80 text-neutral-700 dark:text-neutral-200 hover:bg-white dark:hover:bg-neutral-700 shadow-md opacity-0 group-hover:opacity-100 transition-all duration-200"
+                variant="overlay"
+                size="icon"
+                className={cn(
+                  "absolute left-2 top-1/2 -translate-y-1/2 rounded-full",
+                  "opacity-0 group-hover:opacity-100 transition-all duration-200"
+                )}
                 aria-label="Imagen anterior"
               >
                 <ChevronLeft className="w-6 h-6" />
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={nextImage}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/80 dark:bg-neutral-800/80 text-neutral-700 dark:text-neutral-200 hover:bg-white dark:hover:bg-neutral-700 shadow-md opacity-0 group-hover:opacity-100 transition-all duration-200"
+                variant="overlay"
+                size="icon"
+                className={cn(
+                  "absolute right-2 top-1/2 -translate-y-1/2 rounded-full",
+                  "opacity-0 group-hover:opacity-100 transition-all duration-200"
+                )}
                 aria-label="Siguiente imagen"
               >
                 <ChevronRight className="w-6 h-6" />
-              </button>
+              </Button>
               
-              {/* Image Indicators */}
               <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
                 {product.images.map((_, index) => (
                   <div
                     key={index}
-                    className={`w-2 h-2 rounded-full transition-all ${
+                    className={cn(
+                      "w-2 h-2 rounded-full transition-all duration-300",
                       index === currentImageIndex 
-                        ? 'bg-primary-500 w-4' 
-                        : 'bg-neutral-400/50 hover:bg-neutral-400'
-                    }`}
+                        ? "w-4 bg-primary-600 dark:bg-primary-400" 
+                        : "bg-neutral-400/50 hover:bg-neutral-400 dark:bg-neutral-600/50 dark:hover:bg-neutral-600"
+                    )}
                   />
                 ))}
               </div>
@@ -116,7 +134,10 @@ export function ProductDetailsModal({ product, isOpen, onClose }: ProductDetails
           )}
 
           <div className="absolute top-4 left-4">
-            <span className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg">
+            <span className={cn(
+              "text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg",
+              colors.gradients.primary
+            )}>
               {product.categoryName}
             </span>
           </div>
@@ -145,7 +166,10 @@ export function ProductDetailsModal({ product, isOpen, onClose }: ProductDetails
 
           {/* Specifications / Details */}
           {product.specifications && product.specifications.length > 0 && (
-            <div className="bg-neutral-50 dark:bg-neutral-700/30 rounded-xl p-4 mb-6 space-y-3">
+            <div className={cn(
+              "rounded-xl p-4 mb-6 space-y-3",
+              colors.backgrounds.neutral
+            )}>
               {product.specifications.map((spec) => (
                 <div key={spec.id || spec.name} className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2">
                   <span className="font-semibold text-neutral-900 dark:text-white min-w-[120px]">
@@ -160,13 +184,14 @@ export function ProductDetailsModal({ product, isOpen, onClose }: ProductDetails
           )}
 
           <div className="mt-8 flex justify-end">
-            <button
+            <Button
               onClick={handleAddToCart}
-              className="w-full sm:w-auto bg-primary-600 text-white py-3 px-6 rounded-xl font-medium hover:bg-primary-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              variant="gradient"
+              className="w-full sm:w-auto flex items-center justify-center gap-2"
             >
               <ShoppingCart className="w-5 h-5" />
               Agregar al carrito
-            </button>
+            </Button>
           </div>
         </div>
       </div>

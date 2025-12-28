@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { ImageIcon } from '@/lib/icons';
+import { colors } from '@/shared/styles/colors';
 
 interface DefaultImageProps {
   src?: string;
@@ -88,7 +89,7 @@ export default function DefaultImage({
     <div className={`relative ${fill ? 'w-full h-full' : ''}`}>
       {/* Loading skeleton */}
       {isLoading && (
-        <div className={`absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700 animate-pulse ${className}`} />
+        <div className={`absolute inset-0 animate-pulse ${colors.gradients.skeleton} ${className}`} />
       )}
       
       <Image
@@ -99,6 +100,7 @@ export default function DefaultImage({
     </div>
   );
 }
+
 
 // Componente específico para productos
 export function ProductImage({

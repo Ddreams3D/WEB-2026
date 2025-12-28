@@ -1,133 +1,209 @@
 import React, { useState } from 'react';
+import Link from 'next/link';
 
-import { MessageCircle, Plus, Minus, HelpCircle } from '@/lib/icons';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { colors } from '@/shared/styles/colors';
 import {
-  getButtonClasses,
-  getTransitionClasses,
-  getIconClasses,
-  getGradientClasses,
-} from '../../../shared/styles';
-import ButtonPrincipal from '@/shared/components/ButtonPrincipal';
+  CheckCircle,
+  ChevronDown,
+  ChevronUp,
+  Clock,
+  HelpCircle,
+} from '@/lib/icons';
 
-const faqs = [
+import {
+  useCounterAnimation,
+  useStaggeredItemsAnimation,
+} from '@/shared/hooks/useIntersectionAnimation';
+
+import { WHATSAPP_REDIRECT } from '@/shared/constants/contactInfo';
+
+const faqData = [
   {
-    question: '¿Qué tipos de archivos aceptan para impresión 3D?',
+    question: '¿Qué materiales trabajan?',
     answer:
-      'Aceptamos archivos en formato STL, OBJ y STEP. Los archivos deben estar correctamente modelados y ser imprimibles. Para asegurar la mejor calidad, recomendamos una resolución mínima de 0.1mm. También ofrecemos servicio de optimización de archivos si es necesario.',
+      'Trabajamos principalmente con PLA, PETG y ABS, entre otros materiales. La elección depende del uso final, resistencia y acabado requerido. Te asesoramos para seleccionar la mejor opción según tu proyecto.',
   },
   {
-    question: '¿Cuál es el tiempo de entrega promedio?',
+    question: '¿Cuánto tiempo demora un proyecto?',
     answer:
-      'Los tiempos de entrega varían según la complejidad y tamaño del proyecto. Para piezas simples, el tiempo estimado es de 2-3 días hábiles. Para proyectos más complejos o producción en serie, proporcionamos un cronograma detallado al momento de la cotización. Siempre mantenemos comunicación constante sobre el avance de tu proyecto.',
+      'El tiempo de entrega varía según la complejidad, tamaño y cantidad de piezas. Antes de iniciar, definimos plazos claros de producción y entrega según el proyecto.',
   },
   {
-    question: '¿Qué materiales utilizan y cuáles son sus características?',
+    question: '¿Pueden diseñar el modelo si no tengo archivo 3D?',
     answer:
-      'Trabajamos con una amplia gama de materiales, cada uno con propiedades específicas:\n- PLA: Ideal para prototipos y modelos decorativos\n- PETG: Excelente resistencia y durabilidad\n- ABS: Perfecto para piezas funcionales y resistentes al calor\n- TPU: Material flexible para aplicaciones especiales\n- Resinas: Alta precisión y acabado superficial superior',
+      'Sí. Ofrecemos servicio de modelado 3D personalizado a partir de ideas, bocetos o referencias, adaptando el diseño a los requerimientos técnicos y de fabricación.',
   },
   {
-    question: '¿Ofrecen servicio de modelado 3D?',
+    question: '¿Realizan acabados y postprocesado?',
     answer:
-      'Sí, contamos con un equipo especializado en modelado 3D. Podemos crear modelos desde cero basados en tus especificaciones, convertir bocetos o planos en modelos 3D, o modificar archivos existentes para optimizarlos para impresión. Trabajamos con software profesional y garantizamos la calidad del modelado.',
+      'Sí. Según el proyecto, podemos ofrecer opciones de postprocesado y acabados para mejorar la apariencia, resistencia o funcionalidad de las piezas.',
   },
   {
-    question: '¿Cómo se determina el precio de un proyecto?',
+    question: '¿Realizan envíos a otras ciudades del Perú?',
     answer:
-      'El precio se calcula considerando varios factores:\n- Volumen y complejidad del modelo\n- Material seleccionado\n- Tiempo de impresión\n- Acabados requeridos\n- Cantidad de unidades\nProporcionamos cotizaciones detalladas y transparentes, sin costos ocultos.',
+      'Sí. Realizamos envíos a todo el Perú, incluyendo Lima y provincias, mediante empresas de transporte confiables. El costo y tiempo de envío se definen según el destino y el tipo de proyecto.',
   },
   {
-    question: '¿Qué garantía ofrecen?',
+    question: '¿Cómo solicito una cotización?',
     answer:
-      'Todos nuestros productos tienen garantía de calidad por 7 días contra defectos de fabricación. Si encuentras algún problema relacionado con la calidad de impresión, ofrecemos reimpresión gratuita o reembolso según el caso. La garantía no cubre daños por mal uso o modificaciones realizadas por el cliente.',
+      'Puedes contactarnos por WhatsApp o completar el formulario de cotización. Con la información del proyecto (archivos, referencias o descripción), evaluamos los requerimientos y te enviamos una propuesta personalizada.',
   },
 ];
+
+// FAQ Statistics Component
+function FAQStats() {
+  const { ref: statsRef, visibleItems } = useStaggeredItemsAnimation(3, 150, {
+    threshold: 0.3,
+    triggerOnce: true,
+  });
+
+  const counter1 = useCounterAnimation(150, 2000, { threshold: 0.3 });
+  const counter2 = useCounterAnimation(24, 2000, { threshold: 0.3 });
+  const counter3 = useCounterAnimation(98, 2000, { threshold: 0.3 });
+
+  const counters = [counter1, counter2, counter3];
+
+  const stats = [
+    {
+      id: 1,
+      icon: HelpCircle,
+      label: 'Preguntas Respondidas',
+      suffix: '+',
+    },
+    {
+      id: 2,
+      icon: Clock,
+      label: 'Horas de Soporte',
+      suffix: 'h',
+    },
+    {
+      id: 3,
+      icon: CheckCircle,
+      label: 'Satisfacción',
+      suffix: '%',
+    },
+  ];
+
+  return (
+    <div ref={statsRef} className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      {stats.map((stat, index) => {
+        const counter = counters[index];
+        const IconComponent = stat.icon;
+        return (
+          <div
+            key={stat.id}
+            ref={counter.ref}
+            className={cn(
+              "rounded-xl p-6 text-center shadow-lg border border-neutral-200 dark:border-neutral-600 hover:shadow-xl transition-all duration-300 group cursor-pointer transform hover:-translate-y-1",
+              colors.backgrounds.card,
+              visibleItems?.[index]
+                ? 'opacity-100 translate-y-0'
+                : 'opacity-0 translate-y-4'
+            )}
+            style={{
+              animationDelay: `${index * 150}ms`,
+              transition: 'all 0.7s ease-out',
+            }}
+          >
+            <div className="flex justify-center mb-4">
+              <IconComponent className="h-10 w-10 text-primary-600 dark:text-primary-400 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300" />
+            </div>
+            <div className="text-2xl font-bold text-neutral-900 dark:text-white mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+              {counter.value}
+              {stat.suffix}
+            </div>
+            <div className="text-sm font-medium text-neutral-600 dark:text-neutral-300">
+              {stat.label}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 export default function ContactFAQ() {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
 
-  return (
-    <section className="mt-12 sm:mt-16" aria-labelledby="faq">
-      <header className="text-center mb-6 sm:mb-8">
-        <h2
-          id="faq"
-          className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary-500 to-secondary-500 bg-clip-text text-transparent"
-        >
-          Preguntas Frecuentes
-        </h2>
-        <p className="text-neutral-600 dark:text-neutral-400 mt-2">
-          Encuentra respuestas a las preguntas más comunes sobre nuestros
-          servicios
-        </p>
-      </header>
+  const toggleFaq = (index: number) => {
+    setOpenFaqIndex(openFaqIndex === index ? null : index);
+  };
 
-      <div className="space-y-4">
-        {faqs.map((faq, index) => (
-          <div
-            key={index}
-            className="bg-white dark:bg-neutral-800 rounded-xl shadow-lg overflow-hidden border border-neutral-200/50 dark:border-neutral-700/50"
-          >
-            <button
-              onClick={() =>
-                setOpenFaqIndex(openFaqIndex === index ? null : index)
-              }
-              className="w-full px-4 py-4 sm:px-6 sm:py-5 text-left flex justify-between items-center hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-200"
-              aria-expanded={openFaqIndex === index}
-              aria-controls={`faq-answer-${index}`}
-            >
-              <h3 className="text-base sm:text-lg font-semibold text-neutral-900 dark:text-white pr-4">
-                <HelpCircle
-                  className="inline-block w-4 h-4 sm:w-5 sm:h-5 mr-2 text-primary-500"
-                  aria-hidden="true"
-                />
-                {faq.question}
-              </h3>
-              {openFaqIndex === index ? (
-                <Minus
-                  className="w-5 h-5 text-neutral-500 dark:text-neutral-400 flex-shrink-0"
-                  aria-hidden="true"
-                />
-              ) : (
-                <Plus
-                  className="w-5 h-5 text-neutral-500 dark:text-neutral-400 flex-shrink-0"
-                  aria-hidden="true"
-                />
+  return (
+    <section className={cn("py-20", colors.backgrounds.neutral)}>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <span className="text-neutral-500 dark:text-white/60 font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-6 block">
+            Soporte & Claridad
+          </span>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-900 dark:text-white mb-4">
+            Preguntas{' '}
+            <span className={cn(
+              "bg-clip-text text-transparent",
+              colors.gradients.textPrimary
+            )}>
+              Frecuentes
+            </span>
+          </h2>
+          <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto mb-12">
+            Encuentra respuestas a las preguntas más comunes sobre nuestros
+            servicios de impresión 3D
+          </p>
+
+          {/* FAQ Stats */}
+          <FAQStats />
+        </div>
+
+        <div className="space-y-4">
+          {faqData.map((faq, index) => (
+            <div
+              key={index}
+              className={cn(
+                "rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg hover-lift border border-neutral-200 dark:border-neutral-700",
+                colors.backgrounds.card
               )}
-            </button>
-            {openFaqIndex === index && (
+            >
+              <Button
+                onClick={() => toggleFaq(index)}
+                variant="ghost"
+                className={cn(
+                  "w-full px-6 py-5 text-left flex items-center justify-between",
+                  "h-auto rounded-none"
+                )}
+                aria-expanded={openFaqIndex === index}
+                aria-controls={`faq-answer-${index}`}
+              >
+                <span className="text-lg font-semibold text-neutral-900 dark:text-white pr-4">
+                  {faq.question}
+                </span>
+                <div className="flex-shrink-0">
+                  {openFaqIndex === index ? (
+                    <ChevronUp className="w-5 h-5 text-primary-600 dark:text-primary-400 transition-transform duration-200" />
+                  ) : (
+                    <ChevronDown className="w-5 h-5 text-neutral-500 dark:text-neutral-400 transition-transform duration-200" />
+                  )}
+                </div>
+              </Button>
               <div
                 id={`faq-answer-${index}`}
-                className="px-4 pb-4 sm:px-6 sm:pb-5"
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                  openFaqIndex === index
+                    ? 'max-h-96 opacity-100'
+                    : 'max-h-0 opacity-0'
+                }`}
               >
-                <div className="text-neutral-600 dark:text-neutral-300 leading-relaxed text-sm sm:text-base whitespace-pre-line">
-                  {faq.answer}
+                <div className="px-6 pb-5">
+                  <div className="border-t border-neutral-200 dark:border-neutral-600 pt-4">
+                    <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">
+                      {faq.answer}
+                    </p>
+                  </div>
                 </div>
               </div>
-            )}
-          </div>
-        ))}
-      </div>
-
-      {/* Call to Action */}
-      <div className="mt-8 sm:mt-12 text-center">
-        <div className="bg-gradient-to-r from-primary-50 to-secondary-50 dark:from-primary-900/20 dark:to-secondary-900/20 rounded-xl p-6 sm:p-8 border border-primary-200/50 dark:border-primary-700/30">
-          <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-neutral-900 dark:text-white mb-3 sm:mb-4">
-            ¿No encontraste lo que buscabas?
-          </h3>
-          <p className="text-neutral-600 dark:text-neutral-300 mb-4 sm:mb-6 text-sm sm:text-base">
-            Nuestro equipo está aquí para ayudarte con cualquier pregunta
-            específica
-          </p>
-          <a href="#contact-form">
-            <ButtonPrincipal
-              icon={
-                <MessageCircle
-                  className="h-4 w-4 sm:h-5 sm:w-5 mr-2"
-                  aria-hidden="true"
-                />
-              }
-              msgLg="Contáctanos Directamente"
-            />
-          </a>
+            </div>
+          ))}
         </div>
       </div>
     </section>

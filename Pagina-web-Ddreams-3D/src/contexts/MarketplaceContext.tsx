@@ -1,23 +1,14 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
-import { Product, Category, ProductFilters, SearchResult, SearchResultItem } from '../shared/types';
-import {
-  mockProducts,
-  mockCategories
-} from '../shared/data/mockData';
-import {
-  getProductById,
-  getProductsByCategory,
-  getFeaturedProducts,
-  searchProducts,
-  getProductsByPriceRange,
-  getCategoryById
-} from '../shared/data/mockDataHelpers';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from 'react';
+import { Product, Category, ProductFilters, SearchResultItem } from '../shared/types';
+import { ProductService } from '../services/product.service';
+import { isFirebaseConfigured } from '@/lib/firebase';
 
 interface MarketplaceContextType {
   // Products
   products: Product[];
+  allProducts: Product[];
   featuredProducts: Product[];
   currentProduct: Product | null;
   
@@ -60,32 +51,65 @@ const initialFilters: ProductFilters = {
 };
 
 export function MarketplaceProvider({ children }: MarketplaceProviderProps) {
-  // Filter out service products (IDs: 7, 8, 9, 10, 12, 13, 14, 15) from the marketplace
-  const marketplaceProducts = mockProducts.filter(p => !['7', '8', '9', '10', '12', '13', '14', '15'].includes(p.id));
-
-  const [products, setProducts] = useState<Product[]>(marketplaceProducts);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [currentProduct, setCurrentProductState] = useState<Product | null>(null);
-  
-  // Calculate real product counts for categories based on marketplaceProducts
-  const categoriesWithRealCounts = mockCategories.map(category => {
-    const count = marketplaceProducts.filter(p => p.categoryId === category.id).length;
-    return {
-      ...category,
-      productCount: count
-    };
-  }).filter(category => category.productCount > 0); // Optional: Hide empty categories
-
-  const [categories] = useState<Category[]>(categoriesWithRealCounts);
   const [currentCategory, setCurrentCategoryState] = useState<Category | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [searchResults, setSearchResults] = useState<SearchResultItem[]>([]);
   const [filters, setFilters] = useState<ProductFilters>(initialFilters);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Load featured products on mount
+  // Initialize data from Firestore
   useEffect(() => {
-    loadFeaturedProducts();
+    const initData = async () => {
+      setIsLoading(true);
+      
+      if (!isFirebaseConfigured) {
+        console.info('Firebase is not configured. Using mock data for Marketplace.');
+      }
+
+      try {
+        const [fetchedProducts, fetchedCategories] = await Promise.all([
+          ProductService.getAllProducts(),
+          ProductService.getCategories()
+        ]);
+        
+        // We want to show all products in the marketplace for now
+        // Filtering by customPriceDisplay might hide legitimate products
+        const marketplaceProducts = fetchedProducts;
+        
+        setAllProducts(fetchedProducts);
+        setProducts(marketplaceProducts);
+        
+        // Calculate product counts for categories
+        const categoriesWithCounts = fetchedCategories.map(cat => {
+          const count = fetchedProducts.filter(p => p.categoryId === cat.id).length;
+          return { ...cat, productCount: count };
+        });
+        
+        setCategories(categoriesWithCounts);
+        
+        // Set featured
+        const featured = marketplaceProducts.filter(p => p.isFeatured);
+        setFeaturedProducts(featured);
+        
+        console.log('Marketplace loaded:', { 
+          total: fetchedProducts.length, 
+          marketplace: marketplaceProducts.length,
+          categories: categoriesWithCounts.length 
+        });
+
+      } catch (error) {
+        console.error('Error loading marketplace data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initData();
   }, []);
 
   // Update search results when query changes
@@ -95,24 +119,19 @@ export function MarketplaceProvider({ children }: MarketplaceProviderProps) {
     } else {
       setSearchResults([]);
     }
-  }, [searchQuery]);
+  }, [searchQuery, allProducts]);
 
   const loadFeaturedProducts = useCallback(() => {
-    setIsLoading(true);
-    try {
-      const featured = getFeaturedProducts().filter(p => !['7', '8', '9', '10', '12', '13', '14', '15'].includes(p.id));
-      setFeaturedProducts(featured);
-    } catch (error) {
-      console.error('Error loading featured products:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+    const marketplaceProducts = allProducts;
+    const featured = marketplaceProducts.filter(p => p.isFeatured);
+    setFeaturedProducts(featured);
+  }, [allProducts]);
 
   const loadProductsByCategory = (categoryId: string) => {
     setIsLoading(true);
     try {
-      const categoryProducts = getProductsByCategory(categoryId).filter(p => !['7', '8', '9', '10', '12', '13', '14', '15'].includes(p.id));
+      const marketplaceProducts = allProducts;
+      const categoryProducts = marketplaceProducts.filter(p => p.categoryId === categoryId);
       setProducts(categoryProducts);
     } catch (error) {
       console.error('Error loading products by category:', error);
@@ -123,7 +142,7 @@ export function MarketplaceProvider({ children }: MarketplaceProviderProps) {
 
   const setCurrentProduct = (productId: string | null) => {
     if (productId) {
-      const product = getProductById(productId);
+      const product = allProducts.find(p => p.id === productId || p.slug === productId);
       setCurrentProductState(product || null);
     } else {
       setCurrentProductState(null);
@@ -132,21 +151,26 @@ export function MarketplaceProvider({ children }: MarketplaceProviderProps) {
 
   const setCurrentCategory = (categoryId: string | null) => {
     if (categoryId) {
-      const category = getCategoryById(categoryId);
+      const category = categories.find(c => c.id === categoryId);
       setCurrentCategoryState(category || null);
       if (category) {
         loadProductsByCategory(categoryId);
       }
     } else {
       setCurrentCategoryState(null);
-      setProducts(marketplaceProducts);
+      setProducts(allProducts);
     }
   };
 
   const searchProductsAction = (query: string) => {
     setIsLoading(true);
     try {
-      const results = searchProducts(query).filter(p => !['7', '8', '9', '10', '12', '13', '14', '15'].includes(p.id));
+      const term = query.toLowerCase();
+      const results = allProducts.filter(p => 
+        (p.name.toLowerCase().includes(term) || 
+         p.description.toLowerCase().includes(term))
+      );
+      
       const searchResultsFormatted: SearchResultItem[] = results.map(product => ({
         id: product.id,
         title: product.name,
@@ -173,7 +197,7 @@ export function MarketplaceProvider({ children }: MarketplaceProviderProps) {
     setIsLoading(true);
     
     try {
-      let filteredProducts = [...marketplaceProducts];
+      let filteredProducts = allProducts;
 
       // Filter by categories
       if (newFilters.categoryIds && newFilters.categoryIds.length > 0) {
@@ -252,7 +276,7 @@ export function MarketplaceProvider({ children }: MarketplaceProviderProps) {
 
   const clearFilters = () => {
     setFilters(initialFilters);
-    setProducts(marketplaceProducts);
+    setProducts(allProducts);
   };
 
   const getProductsByFilters = (): Product[] => {
@@ -262,6 +286,7 @@ export function MarketplaceProvider({ children }: MarketplaceProviderProps) {
   return (
     <MarketplaceContext.Provider value={{
       products,
+      allProducts,
       featuredProducts,
       currentProduct,
       categories,

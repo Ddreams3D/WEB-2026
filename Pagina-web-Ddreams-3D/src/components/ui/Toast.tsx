@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from '@/lib/icons';
+import { Button } from '@/components/ui/button';
 
 type ToastType = 'success' | 'error' | 'info' | 'warning';
 
@@ -103,12 +104,14 @@ const Toast: React.FC<ToastProps> = ({
           </div>
           
           <div className="ml-4 flex-shrink-0">
-            <button
+            <Button
               onClick={handleClose}
-              className="inline-flex text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition-colors"
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
             >
               <X className="h-4 w-4" />
-            </button>
+            </Button>
           </div>
         </div>
       </div>

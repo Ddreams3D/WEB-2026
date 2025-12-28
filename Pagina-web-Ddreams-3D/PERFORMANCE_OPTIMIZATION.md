@@ -35,7 +35,7 @@ import { User, Mail, Phone } from '@/lib/icons';
 - **Archivo**: `next.config.js`
 - **Mejoras**:
   - Split chunks optimizado por biblioteca
-  - Chunks separados para lucide-react y supabase
+  - Chunks separados para lucide-react
   - Tree-shaking mejorado
   - Alias de importación optimizado
 

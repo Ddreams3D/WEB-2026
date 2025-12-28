@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { cn } from "../../lib/utils";
+import { Button } from "./button";
 
 export interface PopoverProps {
   children: React.ReactNode;
@@ -97,28 +98,23 @@ const PopoverTrigger: React.FC<PopoverTriggerProps> = ({ children, className, as
       ...childProps,
       ref: triggerRef,
       onClick: handleClick,
-      className: cn(childProps.className, className),
       'aria-expanded': open,
-      'aria-haspopup': 'dialog'
+      'aria-haspopup': 'dialog',
     });
   }
 
   return (
-    <button
+    <Button
       ref={triggerRef as React.RefObject<HTMLButtonElement>}
       type="button"
-      className={cn(
-        "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-        "disabled:pointer-events-none disabled:opacity-50",
-        className
-      )}
+      variant="ghost"
+      className={className}
       onClick={handleClick}
       aria-expanded={open}
       aria-haspopup="dialog"
     >
       {children}
-    </button>
+    </Button>
   );
 };
 

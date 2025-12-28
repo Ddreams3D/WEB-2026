@@ -2,12 +2,16 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Plus, Edit, Trash2, Search, Package, Eye } from '@/lib/icons';
+import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/ToastManager';
 import { ProductImage } from '@/shared/components/ui/DefaultImage';
 import ProductModal from './ProductModal';
+import { Product } from '@/shared/types';
+import { ProductService } from '@/services/product.service';
+import { isFirebaseConfigured } from '@/lib/firebase';
 
-interface Product {
-  id: string;
+// Definimos la estructura de datos que devuelve el formulario
+interface ProductFormData {
   name: string;
   description: string;
   category: string;
@@ -15,8 +19,7 @@ interface Product {
   price: number;
   stock: number;
   image_url: string;
-  created_at?: string;
-  updated_at?: string;
+  customPriceDisplay?: string; // Para servicios
 }
 
 export default function ProductManager() {
@@ -27,52 +30,18 @@ export default function ProductManager() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { showToast } = useToast();
 
-  // Datos mock para desarrollo sin base de datos
-  const mockProducts: Product[] = [
-    {
-      id: '1',
-      name: 'Prototipo Mecánico',
-      description: 'Prototipo funcional de alta precisión',
-      category: 'Prototipado',
-      material: 'PETG',
-      price: 299.99,
-      stock: 10,
-      image_url: 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=600',
-      created_at: '2024-01-15T10:00:00Z',
-      updated_at: '2024-01-15T10:00:00Z'
-    },
-    {
-      id: '2',
-      name: 'Maqueta Arquitectónica',
-      description: 'Maqueta detallada para presentaciones',
-      category: 'Arquitectura',
-      material: 'PLA',
-      price: 499.99,
-      stock: 5,
-      image_url: 'https://images.unsplash.com/photo-1615947164771-6c878ebd144b?auto=format&fit=crop&q=80&w=600',
-      created_at: '2024-01-14T09:00:00Z',
-      updated_at: '2024-01-14T09:00:00Z'
-    },
-    {
-      id: '3',
-      name: 'Modelo Anatómico',
-      description: 'Modelo educativo con estructuras detalladas',
-      category: 'Medicina',
-      material: 'Resina',
-      price: 399.99,
-      stock: 8,
-      image_url: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&q=80&w=600',
-      created_at: '2024-01-13T08:00:00Z',
-      updated_at: '2024-01-13T08:00:00Z'
-    }
-  ];
-
   const loadProducts = useCallback(async () => {
+    if (!isFirebaseConfigured) {
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
-      // Simular carga de datos
-      await new Promise(resolve => setTimeout(resolve, 500));
-      setProducts(mockProducts);
+      const fetchedProducts = await ProductService.getAllProducts();
+      
+      // Mostrar todos los productos, incluidos los servicios (que tienen customPriceDisplay)
+      setProducts(fetchedProducts);
     } catch (error) {
       console.error('Error loading products:', error);
       showToast('error', 'Error', 'Error al cargar los productos');
@@ -99,9 +68,10 @@ export default function ProductManager() {
     if (!confirm('¿Estás seguro de eliminar este producto?')) return;
 
     try {
-      // Simular eliminación
-      await new Promise(resolve => setTimeout(resolve, 300));
-      setProducts(prev => prev.filter(product => product.id !== id));
+      await ProductService.deleteProduct(id);
+      
+      const newProducts = products.filter(product => product.id !== id);
+      setProducts(newProducts);
       showToast('success', 'Producto eliminado', 'Producto eliminado correctamente');
     } catch (error) {
       console.error('Error deleting product:', error);
@@ -109,28 +79,66 @@ export default function ProductManager() {
     }
   };
 
-  const handleSaveProduct = async (productData: Omit<Product, 'id' | 'created_at' | 'updated_at'>) => {
+  const handleSaveProduct = async (formData: ProductFormData) => {
     try {
-      // Simular guardado
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
       if (selectedProduct) {
         // Actualizar producto existente
-        setProducts(prev => prev.map(product => 
-          product.id === selectedProduct.id 
-            ? { ...product, ...productData, updated_at: new Date().toISOString() }
-            : product
-        ));
+        const updatedData: Partial<Product> = {
+          name: formData.name,
+          description: formData.description,
+          price: formData.price,
+          stock: formData.stock,
+          categoryName: formData.category,
+          materials: [formData.material],
+          images: selectedProduct.images.length > 0 
+            ? [{ ...selectedProduct.images[0], url: formData.image_url }]
+            : [{ 
+                id: `img-${Date.now()}`, 
+                productId: selectedProduct.id, 
+                url: formData.image_url, 
+                alt: formData.name, 
+                isPrimary: true,
+                createdAt: new Date(),
+                updatedAt: new Date()
+              }]
+        };
+
+        await ProductService.updateProduct(selectedProduct.id, updatedData);
+        await loadProducts(); // Recargar para obtener datos actualizados
         showToast('success', 'Producto actualizado', 'Producto actualizado correctamente');
       } else {
         // Crear nuevo producto
-        const newProduct: Product = {
-          ...productData,
-          id: Date.now().toString(),
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+        const newProductData: Partial<Product> = {
+          name: formData.name,
+          description: formData.description,
+          price: formData.price,
+          currency: 'PEN',
+          categoryId: 'general', // Default category ID if not mapped
+          categoryName: formData.category,
+          customPriceDisplay: formData.customPriceDisplay, // Guardar campo de servicio
+          sellerId: 'admin',
+          sellerName: 'Admin',
+          images: [{
+            id: `img-${Date.now()}`, 
+            productId: 'temp-id', // Will be replaced in service
+            url: formData.image_url, 
+            alt: formData.name, 
+            isPrimary: true,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          }],
+          specifications: [],
+          tags: [],
+          stock: formData.stock,
+          materials: [formData.material],
+          isActive: true,
+          isFeatured: false,
+          rating: 0,
+          reviewCount: 0
         };
-        setProducts(prev => [newProduct, ...prev]);
+        
+        await ProductService.createProduct(newProductData);
+        await loadProducts(); // Recargar para obtener el nuevo producto con su ID real
         showToast('success', 'Producto creado', 'Producto creado correctamente');
       }
 
@@ -145,7 +153,7 @@ export default function ProductManager() {
   const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.category.toLowerCase().includes(searchTerm.toLowerCase())
+    (product.categoryName || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (loading) {
@@ -166,13 +174,14 @@ export default function ProductManager() {
             Gestión de Productos
           </h1>
         </div>
-        <button
+        <Button
           onClick={handleAddProduct}
-          className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg transition-colors font-medium"
+          variant="gradient"
+          className="flex items-center gap-2"
         >
           <Plus className="h-5 w-5" />
           Nuevo Producto
-        </button>
+        </Button>
       </div>
 
       {/* Stats Cards */}
@@ -191,7 +200,7 @@ export default function ProductManager() {
             <div>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Stock Total</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {products.reduce((sum, product) => sum + product.stock, 0)}
+                {products.reduce((sum, product) => sum + (product.stock || 0), 0)}
               </p>
             </div>
             <Eye className="h-8 w-8 text-green-500" />
@@ -202,7 +211,7 @@ export default function ProductManager() {
             <div>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Valor Inventario</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                S/. {products.reduce((sum, product) => sum + (product.price * product.stock), 0).toFixed(2)}
+                S/. {products.reduce((sum, product) => sum + (product.price * (product.stock || 0)), 0).toFixed(2)}
               </p>
             </div>
             <div className="h-8 w-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
@@ -237,12 +246,12 @@ export default function ProductManager() {
             {searchTerm ? 'Intenta con otros términos de búsqueda' : 'Comienza agregando tu primer producto'}
           </p>
           {!searchTerm && (
-            <button
+            <Button
               onClick={handleAddProduct}
-              className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg transition-colors"
+              variant="gradient"
             >
               Agregar Producto
-            </button>
+            </Button>
           )}
         </div>
       ) : (
@@ -254,7 +263,7 @@ export default function ProductManager() {
             >
               <div className="aspect-w-16 aspect-h-9 relative h-48">
                 <ProductImage
-                  src={product.image_url}
+                  src={product.images?.[0]?.url || ''}
                   alt={product.name}
                   fill
                   className="object-cover"
@@ -273,32 +282,34 @@ export default function ProductManager() {
                     S/. {product.price.toFixed(2)}
                   </span>
                   <span className="text-sm text-gray-600 dark:text-gray-400">
-                    Stock: {product.stock}
+                    Stock: {product.stock || 0}
                   </span>
                 </div>
                 <div className="flex items-center justify-between mb-4">
                   <span className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-xs font-medium text-gray-700 dark:text-gray-300">
-                    {product.category}
+                    {product.categoryName || 'General'}
                   </span>
                   <span className="bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded text-xs font-medium text-blue-700 dark:text-blue-300">
-                    {product.material}
+                    {product.materials?.[0] || 'N/A'}
                   </span>
                 </div>
                 <div className="flex gap-2">
-                  <button
+                  <Button
                     onClick={() => handleEditProduct(product)}
-                    className="flex-1 flex items-center justify-center gap-2 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 text-blue-600 dark:text-blue-400 px-3 py-2 rounded-lg transition-colors text-sm font-medium"
+                    variant="ghost"
+                    className="flex-1 flex items-center justify-center gap-2 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 text-blue-600 dark:text-blue-400 px-3 py-2 rounded-lg transition-colors text-sm font-medium h-auto"
                   >
                     <Edit className="h-4 w-4" />
                     Editar
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => handleDeleteProduct(product.id)}
-                    className="flex-1 flex items-center justify-center gap-2 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 px-3 py-2 rounded-lg transition-colors text-sm font-medium"
+                    variant="ghost"
+                    className="flex-1 flex items-center justify-center gap-2 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 px-3 py-2 rounded-lg transition-colors text-sm font-medium h-auto"
                   >
                     <Trash2 className="h-4 w-4" />
                     Eliminar
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>

@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { colors } from '@/shared/styles/colors';
 import {
   CheckCircle,
   ChevronDown,
@@ -14,12 +17,12 @@ import {
   useStaggeredItemsAnimation,
 } from '../../../shared/hooks/useIntersectionAnimation';
 
-import { WHATSAPP_REDIRECT } from '@/shared/constants/infoBusiness';
+import { WHATSAPP_REDIRECT } from '@/shared/constants/contactInfo';
 const faqData = [
   {
-    question: '¿Qué materiales utilizan para la impresión 3D?',
+    question: '¿Qué materiales utilizamos?',
     answer:
-      'Trabajamos con una amplia variedad de materiales incluyendo PLA, ABS, PETG, TPU, resinas fotopoliméricas, y materiales especializados como fibra de carbono, metal y cerámicas. Cada material tiene propiedades específicas que se adaptan a diferentes aplicaciones y requisitos del proyecto.',
+      'Imprimimos en PLA, PETG, ABS entre otras, seleccionando el material adecuado según el uso y acabado que necesite tu proyecto. Si no sabes cuál elegir, nosotros te asesoramos.',
   },
   {
     question: '¿Cuánto tiempo toma completar un proyecto?',
@@ -101,18 +104,20 @@ function FAQStats() {
           <div
             key={stat.id}
             ref={counter.ref}
-            className={`bg-white dark:bg-neutral-700 rounded-xl p-6 text-center shadow-lg border border-neutral-200 dark:border-neutral-600 hover:shadow-xl transition-all duration-300 group cursor-pointer transform hover:-translate-y-1 ${
+            className={cn(
+              "rounded-xl p-6 text-center shadow-lg border border-neutral-200 dark:border-neutral-600 hover:shadow-xl transition-all duration-300 group cursor-pointer transform hover:-translate-y-1",
+              colors.backgrounds.card,
               visibleItems?.[index]
                 ? 'opacity-100 translate-y-0'
                 : 'opacity-0 translate-y-4'
-            }`}
+            )}
             style={{
               animationDelay: `${index * 150}ms`,
               transition: 'all 0.7s ease-out',
             }}
           >
-            <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center mb-4 mx-auto shadow-md group-hover:scale-110 transition-transform duration-300">
-              <IconComponent className="h-6 w-6 text-white" />
+            <div className="flex justify-center mb-4">
+              <IconComponent className="h-10 w-10 text-primary-600 dark:text-primary-400 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300" />
             </div>
             <div className="text-2xl font-bold text-neutral-900 dark:text-white mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
               {counter.value}
@@ -136,15 +141,18 @@ export default function ServicesFAQ() {
   };
 
   return (
-    <section className="py-20 bg-neutral-50 dark:bg-neutral-800">
+    <section className={cn("py-20", colors.backgrounds.neutral)}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 dark:bg-primary-900/30 rounded-full mb-6">
-            <HelpCircle className="w-8 h-8 text-primary-600 dark:text-primary-400" />
-          </div>
+          <span className="text-neutral-500 dark:text-white/60 font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-6 block">
+            Soporte & Claridad
+          </span>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-900 dark:text-white mb-4">
             Preguntas{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
+            <span className={cn(
+              "bg-clip-text text-transparent",
+              colors.gradients.textPrimary
+            )}>
               Frecuentes
             </span>
           </h2>
@@ -161,12 +169,18 @@ export default function ServicesFAQ() {
           {faqData.map((faq, index) => (
             <div
               key={index}
-              className={`bg-white dark:bg-neutral-800 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg hover-lift animate-fade-in-up border border-neutral-200 dark:border-neutral-700`}
-              style={{ animationDelay: `${index * 0.1}s` }}
+              className={cn(
+                "rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg hover-lift border border-neutral-200 dark:border-neutral-700",
+                colors.backgrounds.card
+              )}
             >
-              <button
+              <Button
                 onClick={() => toggleFaq(index)}
-                className="w-full px-6 py-5 text-left flex items-center justify-between hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-inset"
+                variant="ghost"
+                className={cn(
+                  "w-full px-6 py-5 text-left flex items-center justify-between",
+                  "h-auto rounded-none"
+                )}
                 aria-expanded={openFaqIndex === index}
                 aria-controls={`faq-answer-${index}`}
               >
@@ -180,7 +194,7 @@ export default function ServicesFAQ() {
                     <ChevronDown className="w-5 h-5 text-neutral-500 dark:text-neutral-400 transition-transform duration-200" />
                   )}
                 </div>
-              </button>
+              </Button>
               <div
                 id={`faq-answer-${index}`}
                 className={`overflow-hidden transition-all duration-300 ease-in-out ${

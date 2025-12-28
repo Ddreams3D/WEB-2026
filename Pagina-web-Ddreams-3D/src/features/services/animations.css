@@ -94,7 +94,7 @@
 
 .service-card:hover .service-card-icon {
   transform: scale(1.1);
-  color: #3b82f6;
+  color: hsl(var(--primary));
 }
 
 .service-card-entrance {

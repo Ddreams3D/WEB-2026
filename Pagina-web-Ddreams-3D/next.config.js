@@ -16,12 +16,6 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'ncnkmrjfmxxncqqhdqcz.supabase.co',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
         hostname: 'images.unsplash.com',
         port: '',
         pathname: '/**',
@@ -29,6 +23,16 @@ const nextConfig = {
     ],
     formats: ['image/webp', 'image/avif'],
     minimumCacheTTL: 60,
+    localPatterns: [
+      {
+        pathname: '/images/**',
+        search: '', // Permitir cualquier parámetro de consulta (como ?v=2)
+      },
+      {
+        pathname: '/logo/**',
+        search: '', // Permitir cualquier parámetro de consulta
+      },
+    ],
   },
   experimental: {
     optimizePackageImports: ['framer-motion'],
@@ -40,7 +44,7 @@ const nextConfig = {
   turbopack: {},
   
   // Paquetes externos del servidor
-  serverExternalPackages: ['@supabase/supabase-js'],
+  serverExternalPackages: [],
   // Optimizaciones de rendimiento
   compress: true,
   poweredByHeader: false,
@@ -86,12 +90,6 @@ const nextConfig = {
             chunks: 'all',
             priority: 20,
             reuseExistingChunk: true,
-          },
-          supabase: {
-            test: /[\/]node_modules[\/]@supabase[\/]/,
-            name: 'supabase',
-            chunks: 'all',
-            priority: 15,
           },
           common: {
             name: 'common',

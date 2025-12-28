@@ -42,7 +42,6 @@ interface OrderItem {
 
 interface Order {
   id: string;
-  companyId: string;
   orderNumber: string;
   title: string;
   items: OrderItem[];
@@ -63,7 +62,6 @@ interface Order {
 interface Notification {
   id: string;
   orderId: string;
-  companyId: string;
   type: 'status_change' | 'delay' | 'quality_issue' | 'delivery' | 'urgent';
   title: string;
   message: string;
@@ -169,7 +167,6 @@ export const OrderTrackingProvider: React.FC<OrderTrackingProviderProps> = ({ ch
       const mockOrders: Order[] = [
         {
           id: 'order-1',
-          companyId: '1',
           orderNumber: 'DD3D-2024-001',
           title: 'Prototipos Automotrices - Lote 1',
           items: [
@@ -245,7 +242,6 @@ export const OrderTrackingProvider: React.FC<OrderTrackingProviderProps> = ({ ch
         },
         {
           id: 'order-2',
-          companyId: '1',
           orderNumber: 'DD3D-2024-002',
           title: 'Componentes Médicos',
           items: [
@@ -323,7 +319,6 @@ export const OrderTrackingProvider: React.FC<OrderTrackingProviderProps> = ({ ch
         {
           id: 'notif-1',
           orderId: 'order-1',
-          companyId: 'company-1',
           type: 'status_change',
           title: 'Progreso de Impresión',
           message: 'La pieza brake_caliper.stl ha alcanzado el 50% de progreso',
@@ -334,7 +329,6 @@ export const OrderTrackingProvider: React.FC<OrderTrackingProviderProps> = ({ ch
         {
           id: 'notif-2',
           orderId: 'order-2',
-          companyId: 'company-2',
           type: 'quality_issue',
           title: 'Control de Calidad',
           message: 'Orden DD3D-2024-002 lista para revisión final',
@@ -379,7 +373,6 @@ export const OrderTrackingProvider: React.FC<OrderTrackingProviderProps> = ({ ch
       if (order) {
         addNotification({
           orderId,
-          companyId: order.companyId,
           type: 'status_change',
           title: 'Estado Actualizado',
           message: `La orden ha cambiado a estado: ${newStatus}`,
