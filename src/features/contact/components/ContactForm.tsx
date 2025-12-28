@@ -322,7 +322,7 @@ export default function ContactForm() {
             </div>
             <textarea
               name="message"
-              placeholder="¿Cómo podemos ayudarte? Cuéntanos sobre tu proyecto..."
+              placeholder="Cuéntanos tu proyecto (atendemos pedidos desde Arequipa y enviamos a todo el Perú)"
               rows={5}
               value={formData.message}
               onChange={handleChange}
@@ -351,6 +351,9 @@ export default function ContactForm() {
           icon={<Send className="h-5 w-5" />}
           msgLg="Enviar Mensaje"
         />
+        <p className="text-xs sm:text-sm text-center text-neutral-500 dark:text-neutral-400 mt-3">
+          Respondemos normalmente en menos de 24 horas hábiles.
+        </p>
       </form>
     </div>
   );

@@ -105,6 +105,9 @@ const Footer = () => {
               Estudio creativo de impresión y modelado 3D. Proyectos
               personalizados, trato directo y soluciones técnicas a medida.
             </p>
+            <p className="text-neutral-300 dark:text-neutral-300 font-medium text-sm sm:text-base mt-2">
+              Arequipa, Perú · Modelado & Impresión 3D · Envíos a todo el Perú
+            </p>
           </div>
 
           {/* Información de contacto - Centrada */}

@@ -1,40 +1,13 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Building2 } from 'lucide-react';
-import { ProductService } from '@/services/product.service';
 import { ProductCard } from '@/components/marketplace/ProductCard';
-import { Product } from '@/shared/types';
+import { useServiceProducts } from '@/hooks/useServiceProducts';
+import { BUSINESS_SERVICE_IDS } from '@/config/services';
 
 const BusinessServicesView = () => {
-  const [services, setServices] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // IDs de Servicios Empresariales B2B
-  const businessServiceIds = ['b2b-1', 'b2b-2'];
-  
-  useEffect(() => {
-    const loadServices = async () => {
-      try {
-        const allProducts = await ProductService.getAllProducts();
-        
-        // Sort services based on the order of IDs in businessServiceIds
-        const filteredServices = allProducts
-          .filter(product => businessServiceIds.includes(product.id))
-          .sort((a, b) => {
-            return businessServiceIds.indexOf(a.id) - businessServiceIds.indexOf(b.id);
-          });
-          
-        setServices(filteredServices);
-      } catch (error) {
-        console.error('Error loading business services:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadServices();
-  }, []);
+  const { services, isLoading } = useServiceProducts(BUSINESS_SERVICE_IDS);
 
   if (isLoading) {
     return (

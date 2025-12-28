@@ -49,6 +49,7 @@ export const commonStyles = {
   
   // Animaciones
   ...commonAnimations,
+  transition: "transition-all duration-300 ease-in-out",
   
   // Iconos
   ...commonIconClasses,

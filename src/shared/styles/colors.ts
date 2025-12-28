@@ -71,7 +71,7 @@ export const colors = {
     textPrimary:
       'bg-gradient-to-r from-primary-500 to-secondary-600 bg-clip-text text-transparent',
     textHighlight:
-      'bg-gradient-to-r from-primary-400 to-secondary-600 bg-clip-text text-transparent',
+      'bg-gradient-to-r from-primary-400 to-secondary-600 bg-clip-text text-transparent dark:text-transparent',
     textPrimaryHover:
       'group-hover:from-primary-700 group-hover:to-secondary-700',
 

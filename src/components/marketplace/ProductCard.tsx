@@ -34,7 +34,7 @@ export function ProductCard({
   source
 }: ProductCardProps) {
   const { addToCart } = useCart();
-  const { showToast } = useToast();
+  const { showSuccess } = useToast();
 
   const productUrl = `/marketplace/product/${product.slug || product.id || ''}${source ? `?from=${source}` : ''}`;
 
@@ -43,7 +43,7 @@ export function ProductCard({
     e.stopPropagation();
     
     addToCart(product, 1);
-    showToast('success', 'Producto agregado', `${product.name} agregado al carrito`);
+    showSuccess('Producto agregado', `${product.name} agregado al carrito`);
   };
 
   const images = product.images || [];

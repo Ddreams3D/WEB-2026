@@ -6,7 +6,7 @@ import { Input } from '../ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Label } from '../ui/label';
 import { useAuth } from '../../contexts/AuthContext';
-import { useToast } from '../../hooks/use-toast';
+import { useToast } from '@/components/ui/ToastManager';
 import { Loader2 } from '@/lib/icons';
 
 interface LoginFormProps {
@@ -24,9 +24,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
     
     if (!email || !password) {
       toast({
+        type: 'error',
         title: 'Error',
-        description: 'Por favor completa todos los campos',
-        variant: 'destructive',
+        message: 'Por favor completa todos los campos',
       });
       return;
     }
@@ -35,15 +35,16 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
     
     if (success) {
       toast({
+        type: 'success',
         title: 'Éxito',
-        description: 'Has iniciado sesión correctamente',
+        message: 'Has iniciado sesión correctamente',
       });
       onSuccess?.();
     } else {
       toast({
+        type: 'error',
         title: 'Error',
-        description: 'Credenciales incorrectas.',
-        variant: 'destructive',
+        message: 'Credenciales incorrectas.',
       });
     }
   };

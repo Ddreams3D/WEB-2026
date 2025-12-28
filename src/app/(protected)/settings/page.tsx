@@ -27,7 +27,7 @@ import {
 
 export default function SettingsPage() {
   const { darkMode, toggleDarkMode } = useTheme();
-  const { showToast } = useToast();
+  const { showSuccess } = useToast();
   
   const [notifications, setNotifications] = useState({
     email: true,
@@ -40,14 +40,14 @@ export default function SettingsPage() {
   const handleNotificationChange = (key: keyof typeof notifications) => {
     setNotifications(prev => {
       const newState = { ...prev, [key]: !prev[key] };
-      showToast('success', 'Configuración actualizada');
+      showSuccess('Configuración actualizada');
       return newState;
     });
   };
 
   const handleLanguageChange = (value: string) => {
     setLanguage(value);
-    showToast('success', 'Idioma actualizado');
+    showSuccess('Idioma actualizado');
   };
 
   return (

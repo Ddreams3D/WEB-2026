@@ -14,13 +14,10 @@ import { Button } from '@/components/ui';
 type ViewMode = 'grid' | 'list';
 
 export default function MarketplacePageClient() {
-<<<<<<<< HEAD:Pagina-web-Ddreams-3D/src/features/marketplace/MarketplacePageClient.tsx
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   
-========
->>>>>>>> 60a4e35fef242b73d88d099ddf4f6327c2077510:src/features/marketplace/MarketplacePageClient.tsx
   const {
     products,
     allProducts,

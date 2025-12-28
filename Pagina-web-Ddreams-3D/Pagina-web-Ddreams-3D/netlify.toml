@@ -1,8 +1,0 @@
-[build]
-  base = "Pagina-web-Ddreams-3D"
-  publish = ".next"
-  command = "npm run build"
-  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF . ../"
-
-[[plugins]]
-  package = "@netlify/plugin-nextjs"

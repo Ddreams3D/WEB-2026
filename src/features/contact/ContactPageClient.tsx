@@ -33,10 +33,10 @@ export default function ContactPageClient() {
 
         {/* CTA Section */}
         <CallToAction
-          title={ctaData.process.title}
-          description={ctaData.process.description}
-          primaryButtonText={ctaData.process.primaryButtonText}
-          primaryButtonLink="#contact-form"
+          title={ctaData.contactBottom.title}
+          description={ctaData.contactBottom.description}
+          primaryButtonText={ctaData.contactBottom.primaryButtonText}
+          primaryButtonLink={ctaData.contactBottom.primaryButtonLink}
         />
       </div>
     </main>

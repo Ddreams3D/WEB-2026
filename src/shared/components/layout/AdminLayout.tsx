@@ -72,7 +72,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                   isActive
                     ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
                     : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 hover:text-neutral-900 dark:hover:text-white'
-                } ${getTransitionClasses('default')}`}
+                } ${getTransitionClasses()}`}
               >
                 <item.icon className={`mr-3 h-5 w-5 ${
                   isActive
@@ -122,7 +122,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                       isActive
                         ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
                         : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 hover:text-neutral-900 dark:hover:text-white'
-                    } ${getTransitionClasses('default')}`}
+                    } ${getTransitionClasses()}`}
                   >
                     <item.icon className={`mr-2 h-4 w-4 ${
                       isActive

@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import './animations.css';
 import ServicesHero from '@/features/services/components/ServicesHero';
 import ServicesBenefits from '@/features/services/components/ServicesBenefits';
-import ServicesFAQ from '@/features/services/components/ServicesFAQ';
 import ServicesCTA from '@/features/services/components/ServicesCTA';
 import { GeneralServicesView } from '@/features/services/components/GeneralServicesView';
 import { BusinessServicesView } from '@/features/services/components/BusinessServicesView';
@@ -55,9 +54,6 @@ export default function ServicesPageClient() {
         </div>
       </div>
       
-      {/* FAQ Section */}
-      <ServicesFAQ />
-
       {/* CTA */}
       <ServicesCTA />
     </main>

@@ -68,7 +68,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-  const { showToast } = useToast();
+  const { showSuccess, showError } = useToast();
 
   const isAuthenticated = !!user;
 
@@ -90,7 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUserIfChanged(JSON.parse(storedUser));
       }
     } catch (e) {
-      console.error('Error parsing stored user:', e);
+      // Ignore error parsing stored user
     }
   }, []);
 
@@ -294,10 +294,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
       // onAuthStateChanged manejará el resto
-      showToast('success', 'Bienvenido', 'Has iniciado sesión con Google correctamente');
+      showSuccess('Bienvenido', 'Has iniciado sesión con Google correctamente');
     } catch (error: any) {
       console.error('Google login failed:', error);
-      showToast('error', 'Error de inicio de sesión', error.message || 'No se pudo iniciar sesión con Google');
+      showError('Error de inicio de sesión', error.message || 'No se pudo iniciar sesión con Google');
       setIsLoading(false);
       throw error;
     }
@@ -313,7 +313,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const updatedUser = { ...user, ...data };
         setUser(updatedUser);
         localStorage.setItem(AUTH_USER_KEY, JSON.stringify(updatedUser));
-        showToast('success', 'Perfil actualizado', 'Datos guardados localmente (Modo Mock)');
+        showSuccess('Perfil actualizado', 'Datos guardados localmente (Modo Mock)');
         return true;
       }
 
@@ -331,11 +331,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(updatedUser);
       localStorage.setItem(AUTH_USER_KEY, JSON.stringify(updatedUser));
       
-      showToast('success', 'Perfil actualizado', 'Tus datos se han guardado correctamente');
+      showSuccess('Perfil actualizado', 'Tus datos se han guardado correctamente');
       return true;
     } catch (error: any) {
       console.error('Error updating user:', error);
-      showToast('error', 'Error', error.message || 'No se pudo actualizar el perfil');
+      showError('Error', error.message || 'No se pudo actualizar el perfil');
       return false;
     } finally {
       setIsLoading(false);

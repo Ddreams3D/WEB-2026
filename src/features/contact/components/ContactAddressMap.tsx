@@ -7,14 +7,20 @@ export default function ContactAddressMap() {
   return (
     <section className="mt-20 sm:mt-24" aria-labelledby="location">
       <div className="text-center mb-12 sm:mb-16">
-        <span className="text-primary-600 dark:text-primary-400 font-semibold tracking-wider uppercase text-sm mb-2 block">
+        <span className="text-neutral-500 dark:text-white/60 font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-2 block">
           Ubicación
         </span>
         <h2
           id="location"
-          className={cn("text-3xl sm:text-4xl font-bold mb-4", colors.gradients.textPrimary)}
+          className="text-3xl sm:text-4xl font-bold mb-4 text-neutral-900 dark:text-white"
         >
-          Visítanos en Arequipa
+          Visítanos en{' '}
+          <span className={cn(
+            "bg-clip-text text-transparent",
+            colors.gradients.textPrimary
+          )}>
+            Arequipa
+          </span>
         </h2>
         <p className="text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto text-lg">
           Estamos ubicados en {ADDRESS_BUSINESS} para atenderte mejor.

@@ -96,12 +96,6 @@ export function MarketplaceProvider({ children }: MarketplaceProviderProps) {
         const featured = marketplaceProducts.filter(p => p.isFeatured);
         setFeaturedProducts(featured);
         
-        console.log('Marketplace loaded:', { 
-          total: fetchedProducts.length, 
-          marketplace: marketplaceProducts.length,
-          categories: categoriesWithCounts.length 
-        });
-
       } catch (error) {
         console.error('Error loading marketplace data:', error);
       } finally {

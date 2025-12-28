@@ -13,15 +13,15 @@ export default function UserMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const { user, logout } = useAuth();
   const router = useRouter();
-  const { showToast } = useToast();
+  const { showSuccess, showError } = useToast();
 
   const handleLogout = async () => {
     try {
       await logout();
-      showToast('success', 'Sesión cerrada', '¡Hasta pronto!');
+      showSuccess('Sesión cerrada', '¡Hasta pronto!');
     } catch (error) {
       console.error('Error during logout:', error);
-      showToast('error', 'Error', 'Error al cerrar sesión');
+      showError('Error', 'Error al cerrar sesión');
     }
   };
 

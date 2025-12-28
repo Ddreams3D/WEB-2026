@@ -56,7 +56,7 @@ export default function ProductDetailClient({ product: initialProduct }: Props) 
   }, [initialProduct.id]);
 
   const { addToCart } = useCart();
-  const { showToast } = useToast();
+  const { showSuccess, showError } = useToast();
   const [selectedImageId, setSelectedImageId] = useState<string>(
     product.images.find(img => img.isPrimary)?.id || product.images[0]?.id
   );
@@ -131,7 +131,7 @@ export default function ProductDetailClient({ product: initialProduct }: Props) 
         const value = option?.values.find(v => v.id === valueId);
         
         if (value?.hasInput && (!customInputs[optionId] || customInputs[optionId].trim() === '')) {
-          showToast('error', 'Faltan datos', `Por favor especifica tu ${option?.name.toLowerCase()}.`);
+          showError('Faltan datos', `Por favor especifica tu ${option?.name.toLowerCase()}.`);
           return;
         }
       }
@@ -164,9 +164,9 @@ export default function ProductDetailClient({ product: initialProduct }: Props) 
       });
 
       await addToCart(productWithOptions, 1, customizations);
-      showToast('success', 'Producto agregado', `${product.name} se añadió al carrito correctamente.`);
+      showSuccess('Producto agregado', `${product.name} se añadió al carrito correctamente.`);
     } catch (error) {
-      showToast('error', 'Error', 'No se pudo agregar el producto al carrito.');
+      showError('Error', 'No se pudo agregar el producto al carrito.');
       console.error(error);
     } finally {
       setIsAdding(false);

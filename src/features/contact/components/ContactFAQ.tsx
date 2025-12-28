@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 
-import { MessageCircle, Plus, Minus, HelpCircle } from '@/lib/icons';
+import { MessageCircle, Plus, Minus, HelpCircle, CheckCircle, Clock } from '@/lib/icons';
 import { Button } from '@/components/ui/button';
 import { colors } from '@/shared/styles/colors';
+import { cn } from '@/lib/utils';
 import ButtonPrincipal from '@/shared/components/ButtonPrincipal';
+import { StatCard } from '@/shared/components/StatCard';
+import { useStaggeredItemsAnimation } from '@/shared/hooks/useIntersectionAnimation';
 
 const faqs = [
   {
@@ -38,23 +41,86 @@ const faqs = [
   },
 ];
 
+// FAQ Statistics Component
+function FAQStats() {
+  const { ref: statsRef, visibleItems } = useStaggeredItemsAnimation(3, 150, {
+    threshold: 0.3,
+    triggerOnce: true,
+  });
+
+  const stats = [
+    {
+      id: 1,
+      icon: HelpCircle,
+      label: 'Preguntas Respondidas',
+      value: 150,
+      suffix: '+',
+    },
+    {
+      id: 2,
+      icon: Clock,
+      label: 'Horas de Soporte',
+      value: 24,
+      suffix: 'h',
+    },
+    {
+      id: 3,
+      icon: CheckCircle,
+      label: 'Satisfacción',
+      value: 98,
+      suffix: '%',
+    },
+  ];
+
+  return (
+    <div ref={statsRef} className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      {stats.map((stat, index) => (
+        <StatCard
+          key={stat.id}
+          icon={stat.icon}
+          endValue={stat.value}
+          label={stat.label}
+          suffix={stat.suffix}
+          isVisible={visibleItems[index]}
+          animationDelay={index * 150}
+          className="bg-transparent border-none shadow-none hover:shadow-none hover:translate-y-0 p-0 sm:p-0"
+          iconClassName="w-16 h-16 text-primary-500 mb-6"
+          valueClassName={cn(
+            "text-4xl sm:text-5xl font-bold mb-3",
+            colors.gradients.textHighlight
+          )}
+          labelClassName="text-neutral-600 dark:text-neutral-300 text-base font-medium"
+        />
+      ))}
+    </div>
+  );
+}
+
 export default function ContactFAQ() {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
 
   return (
     <section className="mt-12 sm:mt-16" aria-labelledby="faq">
-      <header className="text-center mb-6 sm:mb-8">
-        <h2
-          id="faq"
-          className={`text-2xl sm:text-3xl font-bold ${colors.gradients.textPrimary}`}
-        >
-          Preguntas Frecuentes
+      <div className="text-center mb-16">
+        <span className="text-neutral-500 dark:text-white/60 font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-6 block">
+          Soporte & Claridad
+        </span>
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-900 dark:text-white mb-4">
+          Preguntas{' '}
+          <span className={cn(
+            "bg-clip-text text-transparent",
+            colors.gradients.textPrimary
+          )}>
+            Frecuentes
+          </span>
         </h2>
-        <p className="text-neutral-600 dark:text-neutral-400 mt-2">
-          Encuentra respuestas a las preguntas más comunes sobre nuestros
-          servicios
+        <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto mb-12">
+          Encuentra respuestas a las preguntas más comunes sobre nuestros servicios de impresión 3D
         </p>
-      </header>
+
+        {/* FAQ Stats */}
+        <FAQStats />
+      </div>
 
       <div className="space-y-4">
         {faqs.map((faq, index) => (
@@ -102,30 +168,6 @@ export default function ContactFAQ() {
             )}
           </div>
         ))}
-      </div>
-
-      {/* Call to Action */}
-      <div className="mt-8 sm:mt-12 text-center">
-        <div className={`rounded-xl p-6 sm:p-8 border border-primary-200/50 dark:border-primary-700/30 ${colors.gradients.boxHighlight}`}>
-          <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-neutral-900 dark:text-white mb-3 sm:mb-4">
-            ¿No encontraste lo que buscabas?
-          </h3>
-          <p className="text-neutral-600 dark:text-neutral-300 mb-4 sm:mb-6 text-sm sm:text-base">
-            Nuestro equipo está aquí para ayudarte con cualquier pregunta
-            específica
-          </p>
-          <a href="#contact-form">
-            <ButtonPrincipal
-              icon={
-                <MessageCircle
-                  className="h-4 w-4 sm:h-5 sm:w-5 mr-2"
-                  aria-hidden="true"
-                />
-              }
-              msgLg="Contáctanos Directamente"
-            />
-          </a>
-        </div>
       </div>
     </section>
   );

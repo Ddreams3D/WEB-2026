@@ -29,5 +29,11 @@ export const ctaData = {
     description: 'Si tienes dudas específicas o un proyecto especial, no dudes en escribirnos directamente.',
     primaryButtonText: 'Escribir mensaje',
     primaryButtonLink: '/contact',
+  },
+  contactBottom: {
+    title: '¿No encontraste lo que buscabas?',
+    description: 'Nuestro equipo está aquí para ayudarte con cualquier pregunta específica',
+    primaryButtonText: 'Contactar ahora',
+    primaryButtonLink: '#contact-form',
   }
 };

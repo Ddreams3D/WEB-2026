@@ -17,7 +17,7 @@ interface ProductDetailsModalProps {
 
 export function ProductDetailsModal({ product, isOpen, onClose }: ProductDetailsModalProps) {
   const { addToCart } = useCart();
-  const { showToast } = useToast();
+  const { showSuccess } = useToast();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // Reset image index when product changes or modal opens
@@ -49,7 +49,7 @@ export function ProductDetailsModal({ product, isOpen, onClose }: ProductDetails
 
   const handleAddToCart = () => {
     addToCart(product, 1);
-    showToast('success', 'Producto agregado', `${product.name} agregado al carrito`);
+    showSuccess('Producto agregado', `${product.name} agregado al carrito`);
     onClose();
   };
 

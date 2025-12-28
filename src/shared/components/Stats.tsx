@@ -2,35 +2,39 @@
 
 import React from 'react';
 import { Users, Printer, Star, Clock } from '@/lib/icons';
-import { useStaggeredItemsAnimation, useCounterAnimation, getAnimationClasses } from '../hooks/useIntersectionAnimation';
-import { getTransitionClasses } from '../styles';
-import { colors } from '@/shared/styles/colors';
+import { useStaggeredItemsAnimation } from '../hooks/useIntersectionAnimation';
+import { StatCard } from '@/shared/components/StatCard';
 import { cn } from '@/lib/utils';
+import { colors } from '@/shared/styles/colors';
 
 const stats = [
   {
     id: 1,
-    value: "1000+",
+    value: 1000,
     label: "Proyectos Completados",
-    icon: Printer
+    icon: Printer,
+    suffix: '+'
   },
   {
     id: 2,
-    value: "500+",
+    value: 500,
     label: "Clientes Satisfechos",
-    icon: Users
+    icon: Users,
+    suffix: '+'
   },
   {
     id: 3,
-    value: "4.9",
+    value: 4.9,
     label: "Valoración Media",
-    icon: Star
+    icon: Star,
+    suffix: ''
   },
   {
     id: 4,
-    value: "24h",
+    value: 24,
     label: "Tiempo de Respuesta",
-    icon: Clock
+    icon: Clock,
+    suffix: 'h'
   }
 ];
 
@@ -39,26 +43,6 @@ export default function Stats() {
     threshold: 0.3,
     triggerOnce: true
   });
-
-  // Hook personalizado para cada contador
-  const counter1 = useCounterAnimation(1000, 2000, { threshold: 0.3 });
-  const counter2 = useCounterAnimation(500, 2000, { threshold: 0.3 });
-  const counter3 = useCounterAnimation(4.9, 2000, { threshold: 0.3 });
-  const counter4 = useCounterAnimation(24, 2000, { threshold: 0.3 });
-
-  const counters = [counter1, counter2, counter3, counter4];
-
-  const formatValue = (stat: typeof stats[0], index: number) => {
-    const counter = counters[index];
-    const value = counter.value;
-    
-    if (stat.id === 1) return `${value}+`;
-    if (stat.id === 2) return `${value}+`;
-    if (stat.id === 3) return value.toFixed(1);
-    if (stat.id === 4) return `${value}h`;
-    
-    return value.toString();
-  };
 
   return (
     <section 
@@ -77,33 +61,22 @@ export default function Stats() {
         </h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 opacity-90 hover:opacity-100 transition-opacity duration-300">
           {stats.map((stat, index) => (
-            <article 
-              key={stat.id} 
-              ref={counters[index].ref}
-              className={cn("text-center group", getAnimationClasses(visibleItems?.[index] || false, index))}
-              role="listitem"
-            >
-              <div className="flex justify-center mb-3 sm:mb-4">
-                <stat.icon 
-                  className="w-10 h-10 sm:w-14 sm:h-14 text-primary-600 dark:text-primary-400 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300" 
-                  aria-hidden="true" 
-                  aria-label={`Icono de ${stat.label}`}
-                />
-              </div>
-              <div 
-                className={cn(
-                  "text-2xl sm:text-3xl lg:text-4xl font-bold mb-1 sm:mb-2",
-                  colors.gradients.textPrimary,
-                  colors.gradients.textPrimaryHover
-                )}
-                aria-label={`${stat.value} ${stat.label}`}
-              >
-                {formatValue(stat, index)}
-              </div>
-              <div className="text-neutral-700 dark:text-neutral-300 text-sm sm:text-base font-medium">
-                {stat.label}
-              </div>
-            </article>
+            <StatCard
+              key={stat.id}
+              icon={stat.icon}
+              endValue={stat.value}
+              label={stat.label}
+              suffix={stat.suffix}
+              isVisible={visibleItems[index]}
+              animationDelay={index * 150}
+              className="bg-transparent border-none shadow-none hover:shadow-none hover:translate-y-0 p-0 sm:p-0"
+              iconClassName="w-16 h-16 text-primary-500 mb-6"
+              valueClassName={cn(
+                 "text-4xl sm:text-5xl font-bold mb-3",
+                 colors.gradients.textHighlight
+               )}
+              labelClassName="text-neutral-600 dark:text-neutral-300 text-base font-medium"
+            />
           ))}
         </div>
       </div>

@@ -76,6 +76,11 @@ export default function ContactInfo() {
                     {info.value}
                   </p>
                 )}
+                {info.title === 'Dirección' && (
+                  <span className="block mt-1 text-sm text-primary-600 dark:text-primary-400 font-medium">
+                    Si no te encuentras en Arequipa, realizamos envíos a todo el Perú.
+                  </span>
+                )}
               </div>
             </div>
           ))}

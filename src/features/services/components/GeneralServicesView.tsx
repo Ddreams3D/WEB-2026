@@ -1,57 +1,13 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { FileText } from 'lucide-react';
-import { ProductService } from '@/services/product.service';
 import { ProductCard } from '@/components/marketplace/ProductCard';
-import { Product } from '@/shared/types';
+import { useServiceProducts } from '@/hooks/useServiceProducts';
+import { GENERAL_SERVICE_IDS } from '@/config/services';
 
 const GeneralServicesView = () => {
-  const [services, setServices] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // IDs of General services/products
-  // 18: Impresión 3D por encargo
-  // 17: Modelado 3D personalizado
-  // 19: Acabado profesional
-  // 13: Maquetas Arquitectónicas
-  // 14: Prototipado de Ingeniería
-  // 20: Trofeos 3D temáticos
-  // 16: Regalos Personalizados
-  // 15: Material Didáctico
-  const generalServiceIds = ['18', '17', '19', '13', '14', '20', '16', '15'];
-  
-  useEffect(() => {
-    const loadServices = async () => {
-      try {
-        console.log('Iniciando carga de servicios generales...');
-        const allProducts = await ProductService.getAllProducts();
-        console.log('Total productos obtenidos:', allProducts?.length);
-        
-        if (!allProducts) {
-          console.error('Error: allProducts es undefined o null');
-          setServices([]);
-          return;
-        }
-
-        // Sort services based on the order of IDs in generalServiceIds
-        const filteredServices = allProducts
-          .filter(product => generalServiceIds.includes(product.id))
-          .sort((a, b) => {
-            return generalServiceIds.indexOf(a.id) - generalServiceIds.indexOf(b.id);
-          });
-          
-        console.log('Servicios filtrados:', filteredServices.length);
-        setServices(filteredServices);
-      } catch (error) {
-        console.error('Error loading general services:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadServices();
-  }, []);
+  const { services, isLoading } = useServiceProducts(GENERAL_SERVICE_IDS);
 
   if (isLoading) {
     return (

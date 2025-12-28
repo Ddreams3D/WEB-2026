@@ -28,7 +28,7 @@ export default function ProductManager() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { showToast } = useToast();
+  const { showSuccess, showError } = useToast();
 
   const loadProducts = useCallback(async () => {
     if (!isFirebaseConfigured) {
@@ -44,11 +44,11 @@ export default function ProductManager() {
       setProducts(fetchedProducts);
     } catch (error) {
       console.error('Error loading products:', error);
-      showToast('error', 'Error', 'Error al cargar los productos');
+      showError('Error', 'Error al cargar los productos');
     } finally {
       setLoading(false);
     }
-  }, [showToast]);
+  }, [showError]);
 
   useEffect(() => {
     loadProducts();
@@ -72,10 +72,10 @@ export default function ProductManager() {
       
       const newProducts = products.filter(product => product.id !== id);
       setProducts(newProducts);
-      showToast('success', 'Producto eliminado', 'Producto eliminado correctamente');
+      showSuccess('Producto eliminado', 'Producto eliminado correctamente');
     } catch (error) {
       console.error('Error deleting product:', error);
-      showToast('error', 'Error', 'Error al eliminar el producto');
+      showError('Error', 'Error al eliminar el producto');
     }
   };
 
@@ -105,7 +105,7 @@ export default function ProductManager() {
 
         await ProductService.updateProduct(selectedProduct.id, updatedData);
         await loadProducts(); // Recargar para obtener datos actualizados
-        showToast('success', 'Producto actualizado', 'Producto actualizado correctamente');
+        showSuccess('Producto actualizado', 'Producto actualizado correctamente');
       } else {
         // Crear nuevo producto
         const newProductData: Partial<Product> = {
@@ -139,14 +139,14 @@ export default function ProductManager() {
         
         await ProductService.createProduct(newProductData);
         await loadProducts(); // Recargar para obtener el nuevo producto con su ID real
-        showToast('success', 'Producto creado', 'Producto creado correctamente');
+        showSuccess('Producto creado', 'Producto creado correctamente');
       }
 
       setIsModalOpen(false);
       setSelectedProduct(null);
     } catch (error) {
       console.error('Error saving product:', error);
-      showToast('error', 'Error', 'Error al guardar el producto');
+      showError('Error', 'Error al guardar el producto');
     }
   };
 
