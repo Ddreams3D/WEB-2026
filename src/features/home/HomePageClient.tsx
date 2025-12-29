@@ -10,11 +10,6 @@ import {
 import { ArrowRight } from '@/lib/icons';
 import Link from 'next/link';
 import { Button } from '@/components/ui';
-import {
-  getTransitionClasses,
-  getIconClasses,
-} from '@/shared/styles';
-import { colors } from '@/shared/styles/colors';
 import { cn } from '@/lib/utils';
 import CallToAction from '@/shared/components/CallToAction';
 import { ctaData } from '@/shared/data/ctaData';
@@ -36,19 +31,19 @@ export default function HomePageClient() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <header className="text-center mb-16">
-            <span className="text-neutral-500 dark:text-white/60 font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-6 block">
+            <span className="text-muted-foreground font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-6 block">
               Innovación & Detalle
             </span>
             <h2
               id="projects-heading"
-              className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-900 dark:text-white mb-6"
+              className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-6"
             >
               Proyectos{' '}
-              <span className={colors.gradients.textHighlight}>
+              <span className="text-primary">
                 Destacados
               </span>
             </h2>
-            <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-300 max-w-3xl mx-auto">
+            <p className="text-sm sm:text-base text-muted-foreground max-w-3xl mx-auto">
               Explora algunos de nuestros trabajos más innovadores y creativos
             </p>
           </header>

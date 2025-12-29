@@ -1,8 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Award, Users, Shield } from '@/lib/icons';
-import { colors } from '@/shared/styles/colors';
+import { Award, Users, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import InfoCard from './InfoCard';
 
@@ -29,16 +28,16 @@ export default function BenefitsSection() {
     <section className="py-20" aria-labelledby="benefits-heading">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <header className="text-center mb-16">
-          <span className="block text-neutral-500 dark:text-white/60 font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-3">
+          <span className="block text-muted-foreground font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-3">
             Nuestras Ventajas
           </span>
-          <h2 id="benefits-heading" className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-900 dark:text-white mb-6">
+          <h2 id="benefits-heading" className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-6">
             ¿Por Qué{' '}
-            <span className={colors.gradients.textHighlight}>
+            <span className="text-primary">
               Elegirnos?
             </span>
           </h2>
-          <p className="text-base sm:text-lg lg:text-xl text-neutral-600 dark:text-neutral-300 max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto">
             Descubre las ventajas que nos convierten en tu mejor opción para proyectos de impresión 3D
           </p>
         </header>
@@ -46,7 +45,7 @@ export default function BenefitsSection() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {benefits.map((benefit, index) => (
             <InfoCard
-              key={index}
+              key={benefit.title}
               title={benefit.title}
               description={benefit.description}
               icon={benefit.icon}

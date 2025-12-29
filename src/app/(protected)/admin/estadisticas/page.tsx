@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { BarChart3 as ChartBarIcon, Users as UsersIcon, FileText as DocumentTextIcon, Eye as EyeIcon, TrendingUp as TrendingUpIcon, TrendingDown as TrendingDownIcon, Calendar as CalendarIcon } from '@/lib/icons';
-import { colors } from '@/shared/styles/colors';
 import { cn } from '@/lib/utils';
 
 // Datos simulados para estadísticas
@@ -60,42 +59,40 @@ function StatCard({ title, value, change, icon: Icon, trend, subtitle }: {
 }) {
   return (
     <div className={cn(
-      "rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6",
-      colors.backgrounds.card
+      "rounded-xl shadow-sm border border-border p-6 bg-card"
     )}>
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium text-neutral-600 dark:text-neutral-400">
+          <p className="text-sm font-medium text-muted-foreground">
             {title}
           </p>
-          <p className="text-2xl font-bold text-neutral-900 dark:text-white mt-1">
+          <p className="text-2xl font-bold text-foreground mt-1">
             {typeof value === 'number' ? value.toLocaleString() : value}
           </p>
           {subtitle && (
-            <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               {subtitle}
             </p>
           )}
         </div>
         <div className={cn(
-          "p-3 rounded-lg",
-          colors.backgrounds.highlight
+          "p-3 rounded-lg bg-accent"
         )}>
-          <Icon className="w-6 h-6 text-primary-600 dark:text-primary-400" />
+          <Icon className="w-6 h-6 text-primary" />
         </div>
       </div>
       <div className="flex items-center mt-4">
         {trend === 'up' ? (
-          <TrendingUpIcon className="w-4 h-4 text-green-500 mr-1" />
+          <TrendingUpIcon className="w-4 h-4 text-success mr-1" />
         ) : (
-          <TrendingDownIcon className="w-4 h-4 text-red-500 mr-1" />
+          <TrendingDownIcon className="w-4 h-4 text-destructive mr-1" />
         )}
         <span className={`text-sm font-medium ${
-          trend === 'up' ? 'text-green-600' : 'text-red-600'
+          trend === 'up' ? 'text-success' : 'text-destructive'
         }`}>
           {change > 0 ? '+' : ''}{change}%
         </span>
-        <span className="text-sm text-neutral-500 dark:text-neutral-400 ml-1">
+        <span className="text-sm text-muted-foreground ml-1">
           vs mes anterior
         </span>
       </div>
@@ -113,10 +110,9 @@ function SimpleBarChart({ data, title, dataKey, color = 'primary' }: {
   
   return (
     <div className={cn(
-      "rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6",
-      colors.backgrounds.card
+      "rounded-xl shadow-sm border border-border p-6 bg-card"
     )}>
-      <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">
+      <h3 className="text-lg font-semibold text-foreground mb-4">
         {title}
       </h3>
       <div className="space-y-3">
@@ -124,23 +120,23 @@ function SimpleBarChart({ data, title, dataKey, color = 'primary' }: {
           const percentage = (item[dataKey] / maxValue) * 100;
           return (
             <div key={index} className="flex items-center space-x-3">
-              <div className="w-12 text-sm text-neutral-600 dark:text-neutral-400">
+              <div className="w-12 text-sm text-muted-foreground">
                 {item.month || item.day || item.category || item.name}
               </div>
               <div className="flex-1">
-                <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-2">
+                <div className="w-full bg-muted rounded-full h-2">
                   <div 
-                    className={`h-2 rounded-full ${
-                      color === 'primary' ? 'bg-primary-500' :
-                      color === 'green' ? 'bg-green-500' :
+                    className={cn("h-2 rounded-full", 
+                      color === 'primary' ? 'bg-primary' :
+                      color === 'green' ? 'bg-success' :
                       color === 'blue' ? 'bg-blue-500' :
                       'bg-purple-500'
-                    }`}
+                    )}
                     style={{ width: `${percentage}%` }}
                   />
                 </div>
               </div>
-              <div className="w-16 text-sm font-medium text-neutral-900 dark:text-white text-right">
+              <div className="w-16 text-sm font-medium text-foreground text-right">
                 {item[dataKey].toLocaleString()}
               </div>
             </div>
@@ -153,20 +149,19 @@ function SimpleBarChart({ data, title, dataKey, color = 'primary' }: {
 
 function CategoryChart({ data }: { data: typeof mockStats.mapsByCategory }) {
   const colorsList = [
-    'bg-blue-500',
-    'bg-green-500',
+    'bg-primary',
+    'bg-success',
     'bg-purple-500',
     'bg-yellow-500',
-    'bg-red-500',
+    'bg-destructive',
     'bg-indigo-500'
   ];
   
   return (
     <div className={cn(
-      "rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6",
-      colors.backgrounds.card
+      "rounded-xl shadow-sm border border-border p-6 bg-card"
     )}>
-      <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">
+      <h3 className="text-lg font-semibold text-foreground mb-4">
         Mapas por Categoría
       </h3>
       <div className="space-y-4">
@@ -174,15 +169,15 @@ function CategoryChart({ data }: { data: typeof mockStats.mapsByCategory }) {
           <div key={index} className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className={`w-4 h-4 rounded-full ${colorsList[index % colorsList.length]}`} />
-              <span className="text-sm font-medium text-neutral-900 dark:text-white">
+              <span className="text-sm font-medium text-foreground">
                 {item.category}
               </span>
             </div>
             <div className="flex items-center space-x-3">
-              <span className="text-sm text-neutral-600 dark:text-neutral-400">
+              <span className="text-sm text-muted-foreground">
                 {item.count.toLocaleString()}
               </span>
-              <span className="text-sm font-medium text-neutral-900 dark:text-white">
+              <span className="text-sm font-medium text-foreground">
                 {item.percentage}%
               </span>
             </div>
@@ -214,8 +209,7 @@ export default function Statistics() {
               value={timeRange}
               onChange={(e) => setTimeRange(e.target.value)}
               className={cn(
-                "px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:text-white",
-                colors.backgrounds.input
+                "px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:text-white bg-background"
               )}
             >
               <option value="7d">Últimos 7 días</option>
@@ -288,10 +282,10 @@ export default function Statistics() {
           
           {/* Top Authors */}
           <div className={cn(
-            "rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6",
-            colors.backgrounds.card
+            "rounded-xl shadow-sm border border-border p-6",
+            "bg-card text-card-foreground"
           )}>
-            <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">
+            <h3 className="text-lg font-semibold text-foreground mb-4">
               Autores Más Activos
             </h3>
             <div className="space-y-4">
@@ -300,26 +294,26 @@ export default function Statistics() {
                   <div className="flex items-center space-x-3">
                     <div className={cn(
                       "w-8 h-8 rounded-full flex items-center justify-center",
-                      colors.backgrounds.highlight
+                      "bg-primary/10 text-primary"
                     )}>
-                      <span className="text-primary-700 dark:text-primary-300 font-medium text-sm">
+                      <span className="font-medium text-sm">
                         {author.name.charAt(0)}
                       </span>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-neutral-900 dark:text-white">
+                      <p className="text-sm font-medium text-foreground">
                         {author.name}
                       </p>
-                      <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                      <p className="text-xs text-muted-foreground">
                         {author.maps} mapas
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-medium text-neutral-900 dark:text-white">
+                    <p className="text-sm font-medium text-foreground">
                       {author.views.toLocaleString()}
                     </p>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                    <p className="text-xs text-muted-foreground">
                       visualizaciones
                     </p>
                   </div>
@@ -331,27 +325,27 @@ export default function Statistics() {
 
         {/* Detailed Metrics */}
         <div className={cn(
-          "rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6",
-          colors.backgrounds.card
+          "rounded-xl shadow-sm border border-border p-6",
+          "bg-card text-card-foreground"
         )}>
-          <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">
+          <h3 className="text-lg font-semibold text-foreground mb-4">
             Métricas Detalladas
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className={cn(
               "text-center p-4 rounded-lg",
-              colors.backgrounds.neutral
+              "bg-muted/50"
             )}>
-              <p className="text-2xl font-bold text-neutral-900 dark:text-white">
+              <p className="text-2xl font-bold text-foreground">
                 4.8
               </p>
-              <p className="text-sm text-neutral-600 dark:text-neutral-400">
+              <p className="text-sm text-muted-foreground">
                 Calificación Promedio
               </p>
               <div className="flex justify-center mt-2">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <span key={star} className={`text-lg ${
-                    star <= 4.8 ? 'text-yellow-400' : 'text-neutral-300'
+                    star <= 4.8 ? 'text-yellow-400' : 'text-muted'
                   }`}>
                     ★
                   </span>
@@ -361,33 +355,33 @@ export default function Statistics() {
             
             <div className={cn(
               "text-center p-4 rounded-lg",
-              colors.backgrounds.neutral
+              "bg-muted/50"
             )}>
-              <p className="text-2xl font-bold text-neutral-900 dark:text-white">
+              <p className="text-2xl font-bold text-foreground">
                 2.3 min
               </p>
-              <p className="text-sm text-neutral-600 dark:text-neutral-400">
+              <p className="text-sm text-muted-foreground">
                 Tiempo Promedio de Sesión
               </p>
               <div className="mt-2">
-                <div className="w-full bg-neutral-200 dark:bg-neutral-600 rounded-full h-2">
-                  <div className="bg-green-500 h-2 rounded-full" style={{ width: '75%' }} />
+                <div className="w-full bg-muted rounded-full h-2">
+                  <div className="bg-success h-2 rounded-full" style={{ width: '75%' }} />
                 </div>
               </div>
             </div>
             
             <div className={cn(
               "text-center p-4 rounded-lg",
-              colors.backgrounds.neutral
+              "bg-muted/50"
             )}>
-              <p className="text-2xl font-bold text-neutral-900 dark:text-white">
+              <p className="text-2xl font-bold text-foreground">
                 68%
               </p>
-              <p className="text-sm text-neutral-600 dark:text-neutral-400">
+              <p className="text-sm text-muted-foreground">
                 Tasa de Retención
               </p>
               <div className="mt-2">
-                <div className="w-full bg-neutral-200 dark:bg-neutral-600 rounded-full h-2">
+                <div className="w-full bg-muted rounded-full h-2">
                   <div className="bg-blue-500 h-2 rounded-full" style={{ width: '68%' }} />
                 </div>
               </div>

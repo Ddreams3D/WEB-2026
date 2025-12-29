@@ -28,8 +28,23 @@ import Image from 'next/image';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { colors } from '@/shared/styles/colors';
 import { ScrollManager } from '@/hooks/useScrollRestoration';
+
+const NAV_LINKS = [
+  { href: '/', label: 'Inicio', ariaLabel: 'Página de inicio' },
+  { href: '/services', label: 'Servicios', ariaLabel: 'Nuestros servicios' },
+  {
+    href: '/marketplace',
+    label: 'Marketplace',
+    ariaLabel: 'Página de productos',
+  },
+  {
+    href: '/process',
+    label: 'Proceso',
+    ariaLabel: 'Información del proceso',
+  },
+  { href: '/about', label: 'Nosotros', ariaLabel: 'Acerca de nosotros' },
+];
 
 const Navbar: React.FC = () => {
   const { darkMode } = useTheme();
@@ -108,28 +123,12 @@ const Navbar: React.FC = () => {
     };
   }, []);
 
-  const navLinks = [
-    { href: '/', label: 'Inicio', ariaLabel: 'Página de inicio' },
-    { href: '/services', label: 'Servicios', ariaLabel: 'Nuestros servicios' },
-    {
-      href: '/marketplace',
-      label: 'Marketplace',
-      ariaLabel: 'Página de productos',
-    },
-    {
-      href: '/process',
-      label: 'Proceso',
-      ariaLabel: 'Información del proceso',
-    },
-    { href: '/about', label: 'Nosotros', ariaLabel: 'Acerca de nosotros' },
-  ];
-
   return (
     <nav
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ease-in-out border-b",
         isNavbarSolid
-          ? "bg-white/95 dark:bg-neutral-900/95 backdrop-blur-md shadow-sm border-neutral-200 dark:border-white/10"
+          ? "bg-background/95 backdrop-blur-md shadow-sm border-border"
           : "bg-transparent border-transparent"
       )}
       role="navigation"
@@ -190,7 +189,7 @@ const Navbar: React.FC = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-1">
-            {navLinks.map((link) => (
+            {NAV_LINKS.map((link) => (
               <Button
                 key={link.href}
                 asChild
@@ -201,7 +200,7 @@ const Navbar: React.FC = () => {
                     ? cn(
                         "shadow-sm hover:shadow-md",
                         isNavbarSolid && !darkMode
-                          ? "bg-primary-200 text-primary-950 hover:bg-primary-300" // Active state in light mode + scrolled
+                          ? "bg-primary/20 text-primary hover:bg-primary/30" // Active state in light mode + scrolled
                           : "bg-white/20 text-white hover:bg-white/30" // Active state in dark mode or transparent
                       )
                     : cn(
@@ -211,7 +210,7 @@ const Navbar: React.FC = () => {
                           ? "text-white/90 hover:text-white hover:bg-white/10"
                           : darkMode 
                             ? "text-white/90 hover:text-white hover:bg-white/10"
-                            : "text-neutral-900 hover:text-primary-600 hover:bg-primary-50"
+                            : "text-foreground hover:text-primary hover:bg-primary/5"
                       )
                 )}
               >
@@ -245,7 +244,7 @@ const Navbar: React.FC = () => {
                     ? "text-white hover:bg-white/20 hover:text-white"
                     : darkMode
                       ? "text-white hover:bg-white/20 hover:text-white"
-                      : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 )}
                 aria-label="Iniciar sesión con Google"
               >
@@ -308,12 +307,10 @@ const Navbar: React.FC = () => {
                   }}
                   variant="ghost"
                   className={cn(
-                    "flex items-center space-x-2 px-3 py-2 rounded-lg h-auto hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2",
+                    "flex items-center space-x-2 px-3 py-2 rounded-lg h-auto hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
                     !isNavbarSolid
                       ? 'text-white hover:bg-white/20 focus:ring-offset-transparent'
-                      : darkMode
-                        ? 'text-neutral-200 hover:bg-neutral-800 focus:ring-offset-neutral-900'
-                        : 'text-neutral-700 hover:bg-neutral-100 focus:ring-offset-white'
+                      : 'text-foreground hover:bg-muted focus:ring-offset-background'
                   )}
                   aria-label="Menú de usuario"
                   aria-expanded={isUserMenuOpen}
@@ -326,10 +323,10 @@ const Navbar: React.FC = () => {
                       className={cn(
                         "w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-200",
                         isNavbarSolid
-                          ? cn(colors.backgrounds.highlight, "text-primary-700 dark:text-primary-300")
+                          ? cn("bg-primary/10", "text-primary")
                           : darkMode
                           ? 'bg-white/20 text-white'
-                          : 'bg-neutral-100 text-neutral-700'
+                          : 'bg-muted text-muted-foreground'
                       )}
                     >
                       <User className="w-4 h-4" />
@@ -346,10 +343,10 @@ const Navbar: React.FC = () => {
                       className={cn(
                         "text-xs leading-tight",
                         isNavbarSolid
-                          ? 'text-neutral-500 dark:text-neutral-400'
+                          ? 'text-muted-foreground'
                           : darkMode
                           ? 'text-white/70'
-                          : 'text-neutral-500'
+                          : 'text-muted-foreground'
                       )}
                     >
                       En línea
@@ -368,8 +365,8 @@ const Navbar: React.FC = () => {
                 {isUserMenuOpen && (
                   <div
                     className={cn(
-                      "absolute right-0 mt-2 w-64 rounded-xl shadow-2xl border border-neutral-200 dark:border-neutral-700 py-2 z-50 navbar-menu transition-all duration-200 ease-in-out transform opacity-100 scale-100",
-                      colors.backgrounds.card
+                      "absolute right-0 mt-2 w-64 rounded-xl shadow-2xl border border-border py-2 z-50 navbar-menu transition-all duration-200 ease-in-out transform opacity-100 scale-100",
+                      "bg-popover text-popover-foreground"
                     )}
                     role="menu"
                     aria-orientation="vertical"
@@ -378,18 +375,18 @@ const Navbar: React.FC = () => {
                   >
                     {/* User Header */}
                     <Link href="/profile" onClick={() => setIsUserMenuOpen(false)}>
-                      <div className="px-4 py-3 border-b border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/50 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer">
+                      <div className="px-4 py-3 border-b border-border bg-muted/50 hover:bg-muted transition-colors cursor-pointer">
                         <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
-                            <span className="text-primary-700 dark:text-primary-300 font-bold text-lg">
+                          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                            <span className="text-primary font-bold text-lg">
                               {(user.username || 'U')[0].toUpperCase()}
                             </span>
                           </div>
                           <div>
-                            <p className="text-sm font-medium text-neutral-900 dark:text-white">
+                            <p className="text-sm font-medium text-foreground">
                               {user.username || 'Usuario'}
                             </p>
-                            <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                            <p className="text-xs text-muted-foreground">
                               {user.email || 'usuario@ejemplo.com'}
                             </p>
                           </div>
@@ -403,7 +400,7 @@ const Navbar: React.FC = () => {
                         <Button
                           asChild
                           variant="ghost"
-                          className="w-full justify-start px-4 py-3 h-auto hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-none"
+                          className="w-full justify-start px-4 py-3 h-auto hover:bg-muted rounded-none"
                           onClick={() => setIsUserMenuOpen(false)}
                         >
                           <Link
@@ -414,7 +411,7 @@ const Navbar: React.FC = () => {
                             <Shield className="w-4 h-4 mr-3" />
                             <div className="flex flex-col items-start">
                               <span className="font-medium">Administración</span>
-                              <p className="text-xs text-neutral-500 dark:text-neutral-400 font-normal">
+                              <p className="text-xs text-muted-foreground font-normal">
                                 Panel de administrador
                               </p>
                             </div>
@@ -425,7 +422,7 @@ const Navbar: React.FC = () => {
                       <Button
                         asChild
                         variant="ghost"
-                        className="w-full justify-start px-4 py-3 h-auto hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-none"
+                        className="w-full justify-start px-4 py-3 h-auto hover:bg-muted rounded-none"
                         onClick={() => setIsUserMenuOpen(false)}
                       >
                         <Link
@@ -436,7 +433,7 @@ const Navbar: React.FC = () => {
                           <Settings className="w-4 h-4 mr-3" />
                           <div className="flex flex-col items-start">
                             <span className="font-medium">Configuración</span>
-                            <p className="text-xs text-neutral-500 dark:text-neutral-400 font-normal">
+                            <p className="text-xs text-muted-foreground font-normal">
                               Preferencias de la cuenta
                             </p>
                           </div>
@@ -445,18 +442,18 @@ const Navbar: React.FC = () => {
                     </div>
 
                     {/* Logout Section */}
-                    <div className="border-t border-neutral-200 dark:border-neutral-700 pt-1">
+                    <div className="border-t border-border pt-1">
                       <Button
                         onClick={handleLogout}
                         variant="ghost"
-                        className="w-full justify-start px-4 py-3 h-auto text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-700 dark:hover:text-red-300 rounded-none"
+                        className="w-full justify-start px-4 py-3 h-auto text-destructive hover:bg-destructive/10 hover:text-destructive rounded-none"
                         role="menuitem"
                         tabIndex={0}
                       >
                         <LogOut className="w-4 h-4 mr-3" />
                         <span className="flex flex-col items-start">
                           <span className="font-medium">Cerrar sesión</span>
-                          <span className="text-xs text-red-500 dark:text-red-400 font-normal">
+                          <span className="text-xs text-destructive font-normal">
                             Salir de tu cuenta
                           </span>
                         </span>
@@ -489,9 +486,7 @@ const Navbar: React.FC = () => {
                 "relative p-2 rounded-lg hover:scale-105 hover:shadow-lg transition-all duration-300 ease-in-out",
                 !isNavbarSolid
                   ? 'text-white hover:bg-white/10 hover:text-white'
-                  : darkMode
-                    ? 'text-neutral-300 hover:bg-neutral-800 hover:text-white'
-                    : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900'
+                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
               )}
               aria-label="Abrir carrito de compras"
             >
@@ -548,17 +543,17 @@ const Navbar: React.FC = () => {
           <div className="px-3 py-4 space-y-2">
             {/* Mobile Navigation Links */}
             <div className="space-y-1">
-              {navLinks.map((link) => (
+              {NAV_LINKS.map((link) => (
                 <Button
                   key={link.href}
                   asChild
                   variant="ghost"
                   className={cn(
-                    "w-full justify-center px-4 py-2 rounded-lg text-sm font-medium touch-manipulation min-h-[40px] flex items-center transition-all duration-200 border border-transparent",
-                    pathname === link.href
-                      ? cn(colors.backgrounds.highlight, "text-primary-600 dark:text-primary-400 shadow-sm border-primary-100 dark:border-primary-900/50")
-                      : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800/80'
-                  )}
+                  "w-full justify-center px-4 py-2 rounded-lg text-sm font-medium touch-manipulation min-h-[40px] flex items-center transition-all duration-200 border border-transparent",
+                  pathname === link.href
+                    ? cn("bg-primary/10", "text-primary-600 dark:text-primary-400 shadow-sm border-primary-100 dark:border-primary-900/50")
+                    : 'text-muted-foreground hover:bg-muted dark:hover:bg-muted/80'
+                )}
                   onClick={() => {
                     setIsOpen(false);
                     if (link.href === '/marketplace' && typeof window !== 'undefined') {

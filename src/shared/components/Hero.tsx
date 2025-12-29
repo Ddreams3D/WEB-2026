@@ -7,11 +7,7 @@ import Image from 'next/image';
 import { useIntersectionAnimation, getAnimationClasses } from '../hooks/useIntersectionAnimation';
 import { Button } from '@/components/ui';
 import { cn } from '@/lib/utils';
-import { colors } from '@/shared/styles/colors';
-import { 
-  getTransitionClasses, 
-  getIconClasses
-} from '../styles';
+import { ArrowRight } from 'lucide-react';
 
 const heroContent = {
   title: "Tus ideas. Nuestro arte. En 3D.",
@@ -44,9 +40,9 @@ export default function Hero() {
       <div className="absolute top-0 left-0 w-full h-full">
         <div className="absolute inset-0 bg-black/60 z-10" />
         {/* Top Gradient to blend with Navbar */}
-        <div className={cn("absolute top-0 left-0 w-full h-40 z-20 pointer-events-none", colors.gradients.heroTopOverlay)} />
+        <div className={cn("absolute top-0 left-0 w-full h-40 z-20 pointer-events-none", "bg-gradient-to-b from-black/90 to-transparent")} />
         {/* Visual Separator - Gradient to blend with next section */}
-        <div className={cn("absolute bottom-0 left-0 w-full h-24 z-20 pointer-events-none", colors.gradients.overlayFadeUp)} />
+        <div className={cn("absolute bottom-0 left-0 w-full h-24 z-20 pointer-events-none", "bg-gradient-to-t from-background to-transparent")} />
         <Image
           src={heroContent.image}
           alt={heroContent.title}
@@ -77,14 +73,14 @@ export default function Hero() {
             
             {/* Semantic Subtitle - Visible for SEO & Users */}
             <p 
-              className={cn("text-xl sm:text-2xl font-medium mb-6 text-gray-100 max-w-3xl mx-auto drop-shadow-md tracking-wide", getAnimClass(300))}
+              className={cn("text-xl sm:text-2xl font-medium mb-6 text-white/90 max-w-3xl mx-auto drop-shadow-md tracking-wide", getAnimClass(300))}
               style={getDelayStyle(300)}
             >
               Estudio de diseño e impresión 3D en Arequipa · Envíos a todo el Perú
             </p>
 
             <p 
-              className={cn("text-lg sm:text-xl md:text-2xl mb-8 text-gray-200 max-w-2xl mx-auto font-light leading-relaxed drop-shadow-md", getAnimClass(400))}
+              className={cn("text-lg sm:text-xl md:text-2xl mb-8 text-white/80 max-w-2xl mx-auto font-light leading-relaxed drop-shadow-md", getAnimClass(400))}
               style={getDelayStyle(400)}
             >
               {heroContent.description}
@@ -105,9 +101,7 @@ export default function Hero() {
                   aria-label="Comenzar un nuevo proyecto de impresión 3D"
                 >
                   Comenzar Proyecto
-                  <svg className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
+                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
                 </Link>
               </Button>
               <Button 
@@ -122,9 +116,7 @@ export default function Hero() {
                   aria-label="Explorar productos disponibles en el marketplace"
                 >
                   Ver Productos
-                  <svg className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
+                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
                 </Link>
               </Button>
             </div>
@@ -133,7 +125,7 @@ export default function Hero() {
       </div>
       
       {/* Separador visual suave - Minimizado extremo */}
-      <div className={cn("absolute bottom-0 left-0 w-full h-8 z-20 pointer-events-none", colors.gradients.overlayFadeUp)} />
+      <div className={cn("absolute bottom-0 left-0 w-full h-8 z-20 pointer-events-none", "bg-gradient-to-t from-background to-transparent")} />
     </section>
   );
 }

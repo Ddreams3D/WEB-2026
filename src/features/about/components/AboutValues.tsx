@@ -1,7 +1,6 @@
 import React from 'react';
 import { Heart, Rocket, Target, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { colors } from '@/shared/styles/colors';
 import InfoCard from '@/shared/components/InfoCard';
 
 const values = [
@@ -36,19 +35,19 @@ export default function AboutValues() {
     <section className="py-20" aria-labelledby="values-heading">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <header className="text-center mb-16">
-          <span className="block text-neutral-500 dark:text-white/60 font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-3">
+          <span className="block text-muted-foreground font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-3">
             Nuestros Valores
           </span>
           <h2
             id="values-heading"
-            className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-900 dark:text-white mb-6"
+            className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-6"
           >
             Principios que nos{' '}
-            <span className={colors.gradients.textHighlight}>
+            <span className="text-primary">
               Guían
             </span>
           </h2>
-          <p className="text-base sm:text-lg lg:text-xl text-neutral-600 dark:text-neutral-300 max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto">
             Los principios que guían nuestra forma de trabajar en cada proyecto.
           </p>
         </header>

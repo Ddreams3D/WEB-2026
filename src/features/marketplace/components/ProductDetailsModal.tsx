@@ -9,7 +9,6 @@ import { useToast } from '@/components/ui/ToastManager';
 import { ProductImage } from '@/shared/components/ui/DefaultImage';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { colors } from '@/shared/styles/colors';
 
 interface ProductDetailsModalProps {
   product: Product | Service | null;
@@ -72,7 +71,7 @@ export function ProductDetailsModal({ product, isOpen, onClose }: ProductDetails
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
       <div className={cn(
         "rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative animate-scale-in",
-        colors.backgrounds.card
+        "bg-card text-card-foreground"
       )}>
         <Button
           onClick={onClose}
@@ -89,7 +88,7 @@ export function ProductDetailsModal({ product, isOpen, onClose }: ProductDetails
             src={currentImage?.url}
             alt={currentImage?.alt || product.name}
             fill
-            className={cn("object-contain", colors.backgrounds.neutral)}
+            className="object-contain bg-muted"
           />
           
           {/* Navigation Arrows */}
@@ -127,8 +126,8 @@ export function ProductDetailsModal({ product, isOpen, onClose }: ProductDetails
                     className={cn(
                       "w-2 h-2 rounded-full transition-all duration-300",
                       index === currentImageIndex 
-                        ? "w-4 bg-primary-600 dark:bg-primary-400" 
-                        : "bg-neutral-400/50 hover:bg-neutral-400 dark:bg-neutral-600/50 dark:hover:bg-neutral-600"
+                        ? "w-4 bg-primary" 
+                        : "bg-muted-foreground/50 hover:bg-muted-foreground"
                     )}
                   />
                 ))}
@@ -138,8 +137,8 @@ export function ProductDetailsModal({ product, isOpen, onClose }: ProductDetails
 
           <div className="absolute top-4 left-4">
             <span className={cn(
-              "text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg",
-              colors.gradients.primary
+              "text-primary-foreground px-3 py-1 rounded-full text-sm font-medium shadow-lg",
+              "bg-primary"
             )}>
               {product.categoryName}
             </span>
@@ -148,37 +147,34 @@ export function ProductDetailsModal({ product, isOpen, onClose }: ProductDetails
 
         <div className="p-6 sm:p-8">
           <div className="flex justify-between items-start mb-4">
-            <h3 className="text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-white">
+            <h3 className="text-2xl sm:text-3xl font-bold text-foreground">
               {product.name}
             </h3>
             <div className="text-right">
-              <p className="text-2xl font-bold text-primary-600 dark:text-primary-400">
+              <p className="text-2xl font-bold text-primary">
                 S/ {product.price.toFixed(2)}
               </p>
-              <p className="text-xs text-neutral-500 dark:text-neutral-400">
+              <p className="text-xs text-muted-foreground">
                 IGV incluido
               </p>
             </div>
           </div>
 
           <div className="prose dark:prose-invert max-w-none mb-6">
-            <p className="text-neutral-600 dark:text-neutral-300 text-base leading-relaxed">
+            <p className="text-muted-foreground text-base leading-relaxed">
               {product.description}
             </p>
           </div>
 
           {/* Specifications / Details */}
           {product.specifications && product.specifications.length > 0 && (
-            <div className={cn(
-              "rounded-xl p-4 mb-6 space-y-3",
-              colors.backgrounds.neutral
-            )}>
+            <div className="rounded-xl p-4 mb-6 space-y-3 bg-muted/50">
               {product.specifications.map((spec) => (
                 <div key={spec.id || spec.name} className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2">
-                  <span className="font-semibold text-neutral-900 dark:text-white min-w-[120px]">
+                  <span className="font-semibold text-foreground min-w-[120px]">
                     {spec.name}:
                   </span>
-                  <span className="text-neutral-700 dark:text-neutral-300 whitespace-pre-line">
+                  <span className="text-muted-foreground whitespace-pre-line">
                     {spec.value}
                   </span>
                 </div>

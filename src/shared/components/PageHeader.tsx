@@ -3,7 +3,6 @@
 import React from 'react';
 import ImageOptimizer from './ImageOptimizer';
 import { cn } from '@/lib/utils';
-import { colors } from '@/shared/styles/colors';
 import { useIntersectionAnimation } from '@/shared/hooks/useIntersectionAnimation';
 
 interface PageHeaderProps {
@@ -32,9 +31,9 @@ export default function PageHeader({ title, description, image }: PageHeaderProp
     >
       <div className="absolute inset-0 bg-black/60 z-10" />
       {/* Top Gradient to blend with Navbar - Matching Hero style */}
-      <div className={cn("absolute top-0 left-0 w-full h-40 z-20 pointer-events-none", colors.gradients.heroTopOverlay)} />
+      <div className={cn("absolute top-0 left-0 w-full h-40 z-20 pointer-events-none", "bg-gradient-to-b from-black/50 to-transparent")} />
       {/* Bottom fade - Matching Hero style */}
-      <div className={cn("absolute bottom-0 left-0 w-full h-24 z-20 pointer-events-none", colors.gradients.overlayFadeUp)} />
+      <div className={cn("absolute bottom-0 left-0 w-full h-24 z-20 pointer-events-none", "bg-gradient-to-t from-background to-transparent")} />
       
       <ImageOptimizer
         src={image}
@@ -55,7 +54,7 @@ export default function PageHeader({ title, description, image }: PageHeaderProp
             {title}
           </h1>
           <p 
-            className={cn("text-lg sm:text-xl md:text-2xl text-gray-100 font-light leading-relaxed drop-shadow-md", getAnimClass(200))}
+            className={cn("text-lg sm:text-xl md:text-2xl text-white/90 font-light leading-relaxed drop-shadow-md", getAnimClass(200))}
             style={getDelayStyle(200)}
           >
             {description}

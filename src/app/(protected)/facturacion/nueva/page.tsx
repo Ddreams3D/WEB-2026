@@ -357,10 +357,10 @@ export default function NewInvoicePage() {
                     value={formData.clientEmail}
                     onChange={(e) => updateFormData('clientEmail', e.target.value)}
                     placeholder="cliente@empresa.com"
-                    className={errors.clientEmail ? 'border-red-500' : ''}
+                    className={errors.clientEmail ? 'border-destructive' : ''}
                   />
                   {errors.clientEmail && (
-                    <p className="text-sm text-red-500 mt-1">{errors.clientEmail}</p>
+                    <p className="text-sm text-destructive mt-1">{errors.clientEmail}</p>
                   )}
                 </div>
                 

@@ -1,6 +1,5 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
-import { colors } from "@/shared/styles/colors"
 
 interface SwitchProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   checked?: boolean
@@ -20,8 +19,8 @@ const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
           onClick?.(e)
         }}
         className={cn(
-          "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-all duration-500 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-          checked ? cn(colors.gradients.primary, colors.gradients.primaryHover) : "bg-neutral-200 dark:bg-neutral-700",
+          "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-all duration-500 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+          checked ? "bg-primary hover:bg-primary/90" : "bg-input",
           className
         )}
         {...props}

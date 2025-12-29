@@ -11,12 +11,11 @@ import {
   TrendingUp,
   ChevronDown,
   ChevronUp,
-} from '@/lib/icons';
+} from 'lucide-react';
 import {
   useIntersectionAnimation,
   getAnimationClasses,
 } from '@/shared/hooks/useIntersectionAnimation';
-import { colors } from '@/shared/styles/colors';
 import { StatCard } from '@/shared/components/StatCard';
 import { cn } from '@/lib/utils';
 
@@ -58,23 +57,23 @@ export default function AboutStadistics() {
     <section ref={heroRef} className="py-20" aria-labelledby="stats-heading">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <header className="text-center mb-16">
-          <span className="block text-neutral-500 dark:text-white/60 font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-3">
+          <span className="block text-muted-foreground font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-3">
             Nuestra Trayectoria
           </span>
           <h2
             id="stats-heading"
-            className={`text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-900 dark:text-white mb-6 ${getAnimationClasses(
+            className={`text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-6 ${getAnimationClasses(
               heroVisible,
               0
             )}`}
           >
             Transformando Ideas en{' '}
-            <span className={colors.gradients.textHighlight}>
+            <span className="text-primary">
               Realidad
             </span>
           </h2>
           <p
-            className={`text-base sm:text-lg lg:text-xl text-neutral-600 dark:text-neutral-300 max-w-4xl mx-auto leading-relaxed ${getAnimationClasses(
+            className={`text-base sm:text-lg lg:text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed ${getAnimationClasses(
               heroVisible,
               1
             )}`}
@@ -98,12 +97,12 @@ export default function AboutStadistics() {
               suffix={stat.suffix}
               description={stat.description}
               className="bg-transparent border-none shadow-none hover:shadow-none hover:translate-y-0 p-0 sm:p-0"
-              iconClassName="w-16 h-16 text-primary-500 mb-6"
+              iconClassName="w-16 h-16 text-primary mb-6"
               valueClassName={cn(
                 "text-4xl sm:text-5xl font-bold mb-3",
-                colors.gradients.textHighlight
+                "text-primary"
               )}
-              labelClassName="text-neutral-600 dark:text-neutral-300 text-base font-medium"
+              labelClassName="text-muted-foreground text-base font-medium"
             />
           ))}
         </div>

@@ -1,5 +1,4 @@
 import React from 'react';
-import { colors } from '@/shared/styles/colors';
 import { processAdvantages } from '@/shared/data/processData';
 import InfoCard from '@/shared/components/InfoCard';
 
@@ -7,19 +6,19 @@ export default function ProcessAdvantages() {
   return (
     <section className="py-20" aria-labelledby="advantages-heading">
       <header className="text-center mb-16">
-        <span className="block text-neutral-500 dark:text-white/60 font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-3">
+        <span className="block text-muted-foreground font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-3">
           ¿Por qué elegirnos?
         </span>
         <h2
           id="advantages-heading"
-          className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-900 dark:text-white mb-6"
+          className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-6"
         >
           Ventajas{' '}
-          <span className={colors.gradients.textHighlight}>
+          <span className="text-primary">
             Competitivas
           </span>
         </h2>
-        <p className="text-base sm:text-lg lg:text-xl text-neutral-600 dark:text-neutral-300 max-w-3xl mx-auto">
+        <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto">
           Nuestras ventajas competitivas que nos distinguen en el mercado
         </p>
       </header>
@@ -31,7 +30,7 @@ export default function ProcessAdvantages() {
       >
         {processAdvantages.map((advantage, index) => (
           <InfoCard
-            key={index}
+            key={advantage.title}
             title={advantage.title}
             description={advantage.description}
             icon={advantage.icon}

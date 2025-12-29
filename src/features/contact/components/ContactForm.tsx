@@ -1,10 +1,8 @@
 import { Button } from '@/components/ui';
 import { cn } from '@/lib/utils';
-import { colors } from '@/shared/styles/colors';
 import React, { useState } from 'react';
 
-import { Send, CheckCircle2, AlertCircle } from '@/lib/icons';
-import { User, Mail, Phone, MessageSquare, Tag } from 'lucide-react';
+import { Send, CheckCircle2, AlertCircle, User, Mail, Phone, MessageSquare, Tag } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import ButtonPrincipal from '@/shared/components/ButtonPrincipal';
 import { WHATSAPP_REDIRECT } from '@/shared/constants/contactInfo';
@@ -184,16 +182,16 @@ export default function ContactForm() {
   };
 
   return (
-    <div className="bg-white dark:bg-neutral-800/50 backdrop-blur-md rounded-2xl shadow-xl border border-neutral-100 dark:border-white/10 p-8 sm:p-10 h-full">
+    <div className="bg-card backdrop-blur-md rounded-2xl shadow-xl border border-border p-8 sm:p-10 h-full">
       <div className="mb-8">
-        <h3 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">Envíanos un mensaje</h3>
-        <p className="text-neutral-600 dark:text-neutral-400">
+        <h3 className="text-2xl font-bold text-foreground mb-2">Envíanos un mensaje</h3>
+        <p className="text-muted-foreground">
           Estamos listos para hacer realidad tu proyecto. Cuéntanos qué necesitas.
         </p>
       </div>
 
       {submitMessage && (
-        <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg flex items-center gap-3 text-green-700 dark:text-green-400">
+        <div className="mb-6 p-4 bg-success/10 border border-success/20 rounded-lg flex items-center gap-3 text-success">
           <CheckCircle2 className="h-5 w-5 flex-shrink-0" />
           <p className="font-medium">{submitMessage}</p>
         </div>
@@ -203,7 +201,7 @@ export default function ContactForm() {
         <div className="space-y-5">
           {/* Nombre */}
           <div className="relative group">
-            <div className="absolute left-3 top-3 text-neutral-400 group-focus-within:text-primary-500 transition-colors">
+            <div className="absolute left-3 top-3 text-muted-foreground group-focus-within:text-primary transition-colors">
                 <User className="h-5 w-5" />
             </div>
             <input
@@ -214,14 +212,14 @@ export default function ContactForm() {
               onChange={handleChange}
               onBlur={handleBlur}
               className={cn(
-                "w-full pl-10 pr-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border rounded-xl transition-all outline-none",
+                "w-full pl-10 pr-4 py-3 bg-muted/50 border rounded-xl transition-all outline-none",
                 errors.name && touched.name
-                  ? "border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500"
-                  : "border-neutral-200 dark:border-neutral-700 focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+                  ? "border-destructive focus:border-destructive focus:ring-1 focus:ring-destructive"
+                  : "border-input focus:border-primary focus:ring-1 focus:ring-primary"
               )}
             />
             {errors.name && touched.name && (
-              <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
+              <p className="mt-1 text-xs text-destructive flex items-center gap-1">
                 <AlertCircle className="h-3 w-3" /> {errors.name}
               </p>
             )}
@@ -230,7 +228,7 @@ export default function ContactForm() {
           {/* Email y Teléfono */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div className="relative group">
-                <div className="absolute left-3 top-3 text-neutral-400 group-focus-within:text-primary-500 transition-colors">
+                <div className="absolute left-3 top-3 text-muted-foreground group-focus-within:text-primary transition-colors">
                     <Mail className="h-5 w-5" />
                 </div>
               <input
@@ -241,21 +239,21 @@ export default function ContactForm() {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 className={cn(
-                  "w-full pl-10 pr-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border rounded-xl transition-all outline-none",
+                  "w-full pl-10 pr-4 py-3 bg-muted/50 border rounded-xl transition-all outline-none",
                   errors.email && touched.email
-                    ? "border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500"
-                    : "border-neutral-200 dark:border-neutral-700 focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+                    ? "border-destructive focus:border-destructive focus:ring-1 focus:ring-destructive"
+                    : "border-input focus:border-primary focus:ring-1 focus:ring-primary"
                 )}
               />
               {errors.email && touched.email && (
-                <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
+                <p className="mt-1 text-xs text-destructive flex items-center gap-1">
                   <AlertCircle className="h-3 w-3" /> {errors.email}
                 </p>
               )}
             </div>
 
             <div className="relative group">
-                <div className="absolute left-3 top-3 text-neutral-400 group-focus-within:text-primary-500 transition-colors">
+                <div className="absolute left-3 top-3 text-muted-foreground group-focus-within:text-primary transition-colors">
                     <Phone className="h-5 w-5" />
                 </div>
               <input
@@ -266,14 +264,14 @@ export default function ContactForm() {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 className={cn(
-                  "w-full pl-10 pr-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border rounded-xl transition-all outline-none",
+                  "w-full pl-10 pr-4 py-3 bg-muted/50 border rounded-xl transition-all outline-none",
                   errors.phone && touched.phone
-                    ? "border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500"
-                    : "border-neutral-200 dark:border-neutral-700 focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+                    ? "border-destructive focus:border-destructive focus:ring-1 focus:ring-destructive"
+                    : "border-input focus:border-primary focus:ring-1 focus:ring-primary"
                 )}
               />
               {errors.phone && touched.phone && (
-                <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
+                <p className="mt-1 text-xs text-destructive flex items-center gap-1">
                   <AlertCircle className="h-3 w-3" /> {errors.phone}
                 </p>
               )}
@@ -282,7 +280,7 @@ export default function ContactForm() {
 
           {/* Asunto */}
           <div className="relative group">
-            <div className="absolute left-3 top-3 text-neutral-400 group-focus-within:text-primary-500 transition-colors">
+            <div className="absolute left-3 top-3 text-muted-foreground group-focus-within:text-primary transition-colors">
                 <Tag className="h-5 w-5" />
             </div>
             <select
@@ -291,10 +289,10 @@ export default function ContactForm() {
               onChange={handleChange}
               onBlur={handleBlur}
               className={cn(
-                "w-full pl-10 pr-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border rounded-xl transition-all outline-none appearance-none",
+                "w-full pl-10 pr-4 py-3 bg-muted/50 border rounded-xl transition-all outline-none appearance-none",
                 errors.subject && touched.subject
-                  ? "border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500"
-                  : "border-neutral-200 dark:border-neutral-700 focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+                  ? "border-destructive focus:border-destructive focus:ring-1 focus:ring-destructive"
+                  : "border-input focus:border-primary focus:ring-1 focus:ring-primary"
               )}
             >
               <option value="" disabled>Selecciona un asunto</option>
@@ -303,13 +301,13 @@ export default function ContactForm() {
               <option value="soporte">Soporte técnico</option>
               <option value="otro">Otro</option>
             </select>
-             <div className="absolute right-3 top-3 pointer-events-none text-neutral-400">
+             <div className="absolute right-3 top-3 pointer-events-none text-muted-foreground">
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
             </div>
             {errors.subject && touched.subject && (
-              <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
+              <p className="mt-1 text-xs text-destructive flex items-center gap-1">
                 <AlertCircle className="h-3 w-3" /> {errors.subject}
               </p>
             )}
@@ -317,7 +315,7 @@ export default function ContactForm() {
 
           {/* Mensaje */}
           <div className="relative group">
-            <div className="absolute left-3 top-3 text-neutral-400 group-focus-within:text-primary-500 transition-colors">
+            <div className="absolute left-3 top-3 text-muted-foreground group-focus-within:text-primary transition-colors">
                 <MessageSquare className="h-5 w-5" />
             </div>
             <textarea
@@ -328,14 +326,14 @@ export default function ContactForm() {
               onChange={handleChange}
               onBlur={handleBlur}
               className={cn(
-                "w-full pl-10 pr-4 py-3 bg-neutral-50 dark:bg-neutral-900/50 border rounded-xl transition-all outline-none resize-none",
+                "w-full pl-10 pr-4 py-3 bg-muted/50 border rounded-xl transition-all outline-none resize-none",
                 errors.message && touched.message
-                  ? "border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500"
-                  : "border-neutral-200 dark:border-neutral-700 focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+                  ? "border-destructive focus:border-destructive focus:ring-1 focus:ring-destructive"
+                  : "border-input focus:border-primary focus:ring-1 focus:ring-primary"
               )}
             />
             {errors.message && touched.message && (
-              <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
+              <p className="mt-1 text-xs text-destructive flex items-center gap-1">
                 <AlertCircle className="h-3 w-3" /> {errors.message}
               </p>
             )}
@@ -344,14 +342,14 @@ export default function ContactForm() {
 
         <ButtonPrincipal
           type="submit"
-          className="w-full py-4 text-lg font-semibold shadow-lg hover:shadow-primary-500/25"
+          className="w-full py-4 text-lg font-semibold shadow-lg hover:shadow-primary/25"
           disabled={isSubmitting}
           isLoading={isSubmitting}
           msgLoading="Enviando..."
           icon={<Send className="h-5 w-5" />}
           msgLg="Enviar Mensaje"
         />
-        <p className="text-xs sm:text-sm text-center text-neutral-500 dark:text-neutral-400 mt-3">
+        <p className="text-xs sm:text-sm text-center text-muted-foreground mt-3">
           Respondemos normalmente en menos de 24 horas hábiles.
         </p>
       </form>

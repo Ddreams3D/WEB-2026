@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { colors } from '@/shared/styles/colors';
 
 import { CartItem } from '@/shared/types';
 
@@ -141,34 +140,34 @@ DDreams 3D - Impresión 3D Personalizada
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
-          <p className="text-neutral-600 dark:text-neutral-400">Cargando información del pedido...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Cargando información del pedido...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 py-8">
+    <div className="min-h-screen bg-muted/30 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header de Confirmación */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full mb-4">
-            <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-success/20 rounded-full mb-4">
+            <CheckCircle className="h-8 w-8 text-success" />
           </div>
-          <h1 className="text-3xl font-bold text-neutral-900 dark:text-white mb-2">¡Pedido Confirmado!</h1>
-          <p className="text-neutral-600 dark:text-neutral-400 text-lg">
+          <h1 className="text-3xl font-bold text-foreground mb-2">¡Pedido Confirmado!</h1>
+          <p className="text-muted-foreground text-lg">
             Tu pedido ha sido recibido y está siendo procesado
           </p>
         </div>
 
         {/* Información del Pedido */}
-        <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-sm mb-8 overflow-hidden">
-          <div className="p-6 border-b border-neutral-200 dark:border-neutral-700">
+        <div className="bg-card rounded-lg shadow-sm mb-8 overflow-hidden border border-border">
+          <div className="p-6 border-b border-border">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-semibold text-neutral-900 dark:text-white">Pedido #{orderData.id}</h2>
-                <p className="text-neutral-600 dark:text-neutral-400 mt-1">
+                <h2 className="text-xl font-semibold text-foreground">Pedido #{orderData.id}</h2>
+                <p className="text-muted-foreground mt-1">
                   Realizado el {new Date(orderData.createdAt).toLocaleDateString('es-PE', {
                     year: 'numeric',
                     month: 'long',
@@ -191,12 +190,12 @@ DDreams 3D - Impresión 3D Personalizada
           </div>
 
           {/* Estado del Pedido */}
-          <div className="p-6 border-b border-neutral-200 dark:border-neutral-700">
-            <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">Estado del Pedido</h3>
+          <div className="p-6 border-b border-border">
+            <h3 className="text-lg font-semibold text-foreground mb-4">Estado del Pedido</h3>
             <div className="flex items-center space-x-8">
               <div className="flex items-center">
-                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                  <CheckCircle className="h-5 w-5 text-white" />
+                <div className="w-8 h-8 bg-success rounded-full flex items-center justify-center">
+                  <CheckCircle className="h-5 w-5 text-primary-foreground" />
                 </div>
                 <span className="ml-3 text-sm font-medium text-neutral-900 dark:text-white">Confirmado</span>
               </div>
@@ -222,8 +221,7 @@ DDreams 3D - Impresión 3D Personalizada
               {orderData.items.map((item, index) => (
                 <div key={index} className="flex items-center space-x-4">
                   <div className={cn(
-                    "w-16 h-16 rounded-lg flex items-center justify-center",
-                    colors.gradients.backgroundNeutral
+                    "w-16 h-16 rounded-lg flex items-center justify-center bg-muted"
                   )}>
                     <Package className="h-6 w-6 text-neutral-500 dark:text-neutral-400" />
                   </div>

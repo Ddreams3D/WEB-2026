@@ -1,7 +1,6 @@
 import React from 'react';
 
-import { Clock, Shield, Users, Printer } from '@/lib/icons';
-import { colors } from '@/shared/styles/colors';
+import { Clock, Shield, Users, Printer } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import InfoCard from '@/shared/components/InfoCard';
 
@@ -35,20 +34,20 @@ export default function ServicesBenefits() {
   return (
     <section className="mb-12 sm:mb-16 lg:mb-20" aria-labelledby="benefits">
       <div className="text-center mb-4">
-        <span className="text-neutral-500 dark:text-white/60 font-medium tracking-[0.2em] uppercase text-xs sm:text-sm">
+        <span className="text-muted-foreground font-medium tracking-[0.2em] uppercase text-xs sm:text-sm">
           Excelencia & Calidad
         </span>
       </div>
       <h2
         id="benefits"
-        className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center mb-4 sm:mb-6 text-neutral-900 dark:text-white"
+        className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center mb-4 sm:mb-6 text-foreground"
       >
         ¿Cómo{' '}
-        <span className={cn(colors.gradients.textHighlight)}>
+        <span className="text-primary">
           trabajamos?
         </span>
       </h2>
-      <p className="text-center text-neutral-600 dark:text-neutral-300 max-w-3xl mx-auto mb-8 sm:mb-12 text-base sm:text-lg px-4">
+      <p className="text-center text-muted-foreground max-w-3xl mx-auto mb-8 sm:mb-12 text-base sm:text-lg px-4">
         Trabajamos cada proyecto de forma personalizada, cuidando el diseño, la fabricación y los acabados según el uso final de la pieza.
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">

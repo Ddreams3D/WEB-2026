@@ -8,7 +8,6 @@ import {
   getAnimationClasses,
 } from '../hooks/useIntersectionAnimation';
 import { cn } from '@/lib/utils';
-import { colors } from '@/shared/styles/colors';
 
 interface Testimonial {
   id: string;
@@ -125,17 +124,16 @@ export default function Testimonials() {
         <div className="text-center mb-8 sm:mb-12">
           <h2
             id="testimonials-heading"
-            className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-900 dark:text-white mb-3 sm:mb-4"
+            className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-3 sm:mb-4"
           >
             Lo que dicen nuestros{' '}
             <span className={cn(
-              "bg-clip-text text-transparent",
-              colors.gradients.textPrimary
+              "bg-clip-text text-transparent bg-primary",
             )}>
               clientes
             </span>
           </h2>
-          <p className="text-base sm:text-lg text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             Descubre cómo hemos transformado las ideas de nuestros clientes en
             soluciones digitales exitosas
           </p>
@@ -188,7 +186,7 @@ export default function Testimonials() {
         {/* Filter Status */}
         <div className="flex justify-center mb-6">
           <div
-            className="text-sm text-neutral-600 dark:text-neutral-400"
+            className="text-sm text-muted-foreground"
             aria-live="polite"
           >
             Mostrando {filteredTestimonials.length} testimonio
@@ -206,8 +204,8 @@ export default function Testimonials() {
             <article
               key={testimonial.id}
               className={cn(
-                "group rounded-xl shadow-md hover:shadow-lg transition-all duration-200 p-4 sm:p-5 relative transform hover:scale-[1.005] hover:-translate-y-0.5 border border-neutral-300 dark:border-neutral-600 overflow-hidden focus-within:ring-2 focus-within:ring-primary-500 focus-within:ring-offset-2 dark:focus-within:ring-offset-neutral-900",
-                colors.gradients.cardNeutral,
+                "group rounded-xl shadow-md hover:shadow-lg transition-all duration-200 p-4 sm:p-5 relative transform hover:scale-[1.005] hover:-translate-y-0.5 border border-border overflow-hidden focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2",
+                "bg-card text-card-foreground",
                 getAnimationClasses(visibleItems?.[index] || false, index)
               )}
               tabIndex={0}
@@ -218,17 +216,17 @@ export default function Testimonials() {
               <div
                 className={cn(
                   "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300",
-                  colors.gradients.cardHover
+                  "bg-accent/50"
                 )}
                 aria-hidden="true"
               />
               <Quote
-                className="absolute top-3 sm:top-4 right-3 sm:right-4 h-6 w-6 sm:h-8 sm:w-8 text-primary-200 dark:text-primary-700 group-hover:text-primary-400 transition-colors duration-300 group-hover:scale-110 transform"
+                className="absolute top-3 sm:top-4 right-3 sm:right-4 h-6 w-6 sm:h-8 sm:w-8 text-primary/20 group-hover:text-primary/40 transition-colors duration-300 group-hover:scale-110 transform"
                 aria-hidden="true"
               />
 
               <div className="flex items-start gap-3 sm:gap-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 text-sm sm:text-base font-bold flex-shrink-0 shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all duration-200 ring-2 ring-primary-200 dark:ring-primary-800">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center bg-primary/10 text-primary text-sm sm:text-base font-bold flex-shrink-0 shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all duration-200 ring-2 ring-primary/20">
                 {testimonial.name.charAt(0)}
               </div>
 
@@ -244,7 +242,7 @@ export default function Testimonials() {
                         className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${
                           i < testimonial.rating
                             ? 'text-yellow-400 fill-current'
-                            : 'text-neutral-300 dark:text-neutral-600'
+                            : 'text-muted'
                         }`}
                         aria-hidden="true"
                       />
@@ -253,7 +251,7 @@ export default function Testimonials() {
 
                   <blockquote
                     id={`testimonial-${testimonial.id}-content`}
-                    className="text-neutral-800 dark:text-neutral-200 mb-3 text-sm sm:text-base leading-relaxed font-medium group-hover:text-neutral-900 dark:group-hover:text-neutral-100 transition-colors duration-300 line-clamp-3 italic"
+                    className="text-foreground mb-3 text-sm sm:text-base leading-relaxed font-medium group-hover:text-foreground transition-colors duration-300 line-clamp-3 italic"
                   >
                     &quot;{testimonial.content}&quot;
                   </blockquote>
@@ -264,18 +262,18 @@ export default function Testimonials() {
                         id={`testimonial-${testimonial.id}-name`}
                         className={cn(
                           "font-bold text-sm sm:text-base lg:text-lg bg-clip-text text-transparent transition-all duration-300 leading-tight",
-                          colors.gradients.textPrimary,
-                          colors.gradients.textPrimaryHover
+                          "bg-primary",
+                          "group-hover:text-primary"
                         )}
                       >
                         {testimonial.name}
                       </h4>
-                      <p className="text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 group-hover:text-neutral-800 dark:group-hover:text-neutral-200 transition-colors duration-300 font-medium leading-tight">
+                      <p className="text-xs sm:text-sm text-muted-foreground group-hover:text-foreground transition-colors duration-300 font-medium leading-tight">
                         {testimonial.role}
                         {testimonial.company && (
                           <span className="block sm:inline">
                             <span className="hidden sm:inline"> - </span>
-                            <span className="text-primary-600 dark:text-primary-400 font-semibold">
+                            <span className="text-primary font-semibold">
                               {testimonial.company}
                             </span>
                           </span>
@@ -284,11 +282,11 @@ export default function Testimonials() {
 
                       {/* Project Type and Industry Tags */}
                       <div className="flex flex-wrap gap-1.5 mt-2">
-                        <span className="inline-flex items-center px-2 py-0.5 text-xs font-semibold bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 rounded-full">
+                        <span className="inline-flex items-center px-2 py-0.5 text-xs font-semibold bg-primary/10 text-primary rounded-full">
                           {testimonial.industry}
                         </span>
                         {testimonial.projectType && (
-                          <span className="inline-flex items-center px-2 py-0.5 text-xs font-semibold bg-secondary-100 dark:bg-secondary-900 text-secondary-700 dark:text-secondary-300 rounded-full">
+                          <span className="inline-flex items-center px-2 py-0.5 text-xs font-semibold bg-secondary/10 text-secondary-foreground rounded-full">
                             {testimonial.projectType}
                           </span>
                         )}

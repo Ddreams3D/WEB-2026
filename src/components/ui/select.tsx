@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { cn } from "../../lib/utils";
-import { colors } from '@/shared/styles/colors';
 import { ChevronDown, Check } from '@/lib/icons';
 import { Button } from "./button";
 
@@ -142,8 +141,7 @@ const SelectItem = React.forwardRef<HTMLDivElement, SelectItemProps>(
       <div
         ref={ref}
         className={cn(
-          "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none",
-          colors.hover.neutralBg,
+          "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none hover:bg-muted",
           "hover:text-neutral-900 dark:hover:text-neutral-100 focus:bg-neutral-100 dark:focus:bg-neutral-700 focus:text-neutral-900 dark:focus:text-neutral-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
           className
         )}

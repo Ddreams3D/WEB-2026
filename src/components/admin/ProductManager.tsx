@@ -185,7 +185,7 @@ export default function ProductManager() {
         } else {
            await ProductService.createProduct({
              ...commonData,
-            stock: formData.stock,
+             stock: formData.stock,
              kind: 'product',
              materials: [formData.material]
            } as Partial<StoreProduct>);
@@ -223,7 +223,7 @@ export default function ProductManager() {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <Package className="h-8 w-8 text-primary" />
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-3xl font-bold text-foreground">
             Gestión de Productos
           </h1>
         </div>
@@ -239,36 +239,36 @@ export default function ProductManager() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+        <div className="bg-card p-6 rounded-lg shadow-sm border border-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Productos</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{products.length}</p>
+              <p className="text-sm font-medium text-muted-foreground">Total Productos</p>
+              <p className="text-2xl font-bold text-foreground">{products.length}</p>
             </div>
             <Package className="h-8 w-8 text-primary" />
           </div>
         </div>
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+        <div className="bg-card p-6 rounded-lg shadow-sm border border-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Stock Total</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+              <p className="text-sm font-medium text-muted-foreground">Stock Total</p>
+              <p className="text-2xl font-bold text-foreground">
                 {products.reduce((sum, product) => sum + ((product.kind === 'product' && product.stock) || 0), 0)}
               </p>
             </div>
             <Eye className="h-8 w-8 text-green-500" />
           </div>
         </div>
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+        <div className="bg-card p-6 rounded-lg shadow-sm border border-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Valor Inventario</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+              <p className="text-sm font-medium text-muted-foreground">Valor Inventario</p>
+              <p className="text-2xl font-bold text-foreground">
                 S/. {products.reduce((sum, product) => sum + (product.price * ((product.kind === 'product' && product.stock) || 0)), 0).toFixed(2)}
               </p>
             </div>
-            <div className="h-8 w-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
-              <span className="text-blue-600 dark:text-blue-400 font-bold text-sm">S/.</span>
+            <div className="h-8 w-8 bg-primary/10 rounded-full flex items-center justify-center">
+              <span className="text-primary font-bold text-sm">S/.</span>
             </div>
           </div>
         </div>
@@ -277,13 +277,13 @@ export default function ProductManager() {
       {/* Search Bar */}
       <div className="mb-6">
         <div className="relative max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Buscar productos..."
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+            className="w-full pl-10 pr-4 py-2 border border-input rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-background text-foreground placeholder:text-muted-foreground"
           />
         </div>
       </div>
@@ -291,11 +291,11 @@ export default function ProductManager() {
       {/* Products Grid */}
       {filteredProducts.length === 0 ? (
         <div className="text-center py-12">
-          <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+          <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-foreground mb-2">
             {searchTerm ? 'No se encontraron productos' : 'No hay productos'}
           </h3>
-          <p className="text-gray-600 dark:text-gray-400 mb-4">
+          <p className="text-muted-foreground mb-4">
             {searchTerm ? 'Intenta con otros términos de búsqueda' : 'Comienza agregando tu primer producto'}
           </p>
           {!searchTerm && (
@@ -312,7 +312,7 @@ export default function ProductManager() {
           {filteredProducts.map((product) => (
             <div
               key={product.id}
-              className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow"
+              className="bg-card rounded-lg shadow-sm border border-border overflow-hidden hover:shadow-md transition-shadow"
             >
               <div className="aspect-w-16 aspect-h-9 relative h-48">
                 <ProductImage
@@ -324,10 +324,10 @@ export default function ProductManager() {
                 />
               </div>
               <div className="p-4">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 line-clamp-1">
+                <h3 className="text-lg font-semibold text-foreground mb-2 line-clamp-1">
                   {product.name}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-3 line-clamp-2 text-sm">
+                <p className="text-muted-foreground mb-3 line-clamp-2 text-sm">
                   {product.description}
                 </p>
                 <div className="flex items-center justify-between mb-3">
@@ -335,17 +335,17 @@ export default function ProductManager() {
                     S/. {product.price.toFixed(2)}
                   </span>
                   {product.kind === 'product' && (
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                    <span className="text-sm text-muted-foreground">
                       Stock: {product.stock || 0}
                     </span>
                   )}
                 </div>
                 <div className="flex items-center justify-between mb-4">
-                  <span className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-xs font-medium text-gray-700 dark:text-gray-300">
+                  <span className="bg-muted px-2 py-1 rounded text-xs font-medium text-muted-foreground">
                     {product.categoryName || 'General'}
                   </span>
                   {product.kind === 'product' && (
-                    <span className="bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded text-xs font-medium text-blue-700 dark:text-blue-300">
+                    <span className="bg-primary/10 px-2 py-1 rounded text-xs font-medium text-primary">
                       {product.materials?.[0] || 'N/A'}
                     </span>
                   )}
@@ -354,7 +354,7 @@ export default function ProductManager() {
                   <Button
                     onClick={() => handleEditProduct(product)}
                     variant="ghost"
-                    className="flex-1 flex items-center justify-center gap-2 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 text-blue-600 dark:text-blue-400 px-3 py-2 rounded-lg transition-colors text-sm font-medium h-auto"
+                    className="flex-1 flex items-center justify-center gap-2 bg-primary/5 hover:bg-primary/10 text-primary px-3 py-2 rounded-lg transition-colors text-sm font-medium h-auto"
                   >
                     <Edit className="h-4 w-4" />
                     Editar
@@ -362,7 +362,7 @@ export default function ProductManager() {
                   <Button
                     onClick={() => handleDeleteProduct(product.id)}
                     variant="ghost"
-                    className="flex-1 flex items-center justify-center gap-2 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 px-3 py-2 rounded-lg transition-colors text-sm font-medium h-auto"
+                    className="flex-1 flex items-center justify-center gap-2 bg-destructive/5 hover:bg-destructive/10 text-destructive px-3 py-2 rounded-lg transition-colors text-sm font-medium h-auto"
                   >
                     <Trash2 className="h-4 w-4" />
                     Eliminar

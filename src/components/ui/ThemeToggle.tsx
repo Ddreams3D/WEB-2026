@@ -3,7 +3,7 @@
 import React from 'react';
 import { Moon, Sun } from '@/lib/icons';
 import { useTheme } from '@/contexts/ThemeContext';
-import { Button } from '@/components/ui';
+import { Button } from './button';
 import { cn } from '@/lib/utils';
 
 interface ThemeToggleProps {
@@ -22,9 +22,7 @@ export default function ThemeToggle({ isScrolled = false }: ThemeToggleProps) {
         "relative p-2 rounded-lg overflow-hidden hover:scale-105 hover:shadow-lg transition-all duration-300 ease-in-out",
         !isScrolled
           ? 'text-white hover:bg-white/10 hover:text-white'
-          : darkMode
-            ? 'text-neutral-300 hover:bg-neutral-800 hover:text-white'
-            : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900'
+          : 'text-foreground hover:bg-muted hover:text-primary'
       )}
       aria-label={darkMode ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
       title={darkMode ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}

@@ -74,7 +74,7 @@ export default function ImageUpload({ value, onChange, onRemove }: ImageUploadPr
       
       {value ? (
         <div className="relative">
-          <div className="relative w-full h-48 bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
+          <div className="relative w-full h-48 bg-muted rounded-lg overflow-hidden">
             <Image
               src={value}
               alt="Product image"
@@ -86,7 +86,7 @@ export default function ImageUpload({ value, onChange, onRemove }: ImageUploadPr
               onClick={handleRemove}
               variant="ghost"
               size="icon"
-              className="absolute top-2 right-2 h-6 w-6 bg-red-500 text-white rounded-full hover:bg-red-600 hover:text-white transition-colors"
+              className="absolute top-2 right-2 h-6 w-6 bg-destructive text-destructive-foreground rounded-full hover:bg-destructive/90 transition-colors"
             >
               <X className="h-4 w-4" />
             </Button>
@@ -96,7 +96,7 @@ export default function ImageUpload({ value, onChange, onRemove }: ImageUploadPr
             onClick={handleClick}
             disabled={isUploading}
             variant="outline"
-            className="mt-2 w-full"
+            className="mt-2 w-full border-border hover:bg-accent hover:text-accent-foreground"
           >
             {isUploading ? 'Subiendo...' : 'Cambiar imagen'}
           </Button>
@@ -104,19 +104,19 @@ export default function ImageUpload({ value, onChange, onRemove }: ImageUploadPr
       ) : (
         <div
           onClick={handleClick}
-          className="relative cursor-pointer w-full h-48 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-gray-400 dark:hover:border-gray-500 transition-colors"
+          className="relative cursor-pointer w-full h-48 border-2 border-dashed border-input rounded-lg hover:border-primary transition-colors bg-muted/30 hover:bg-muted/50"
         >
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-500 dark:text-gray-400">
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground">
             {isUploading ? (
               <div className="flex flex-col items-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                 <p className="mt-2 text-sm">Subiendo imagen...</p>
               </div>
             ) : (
               <>
-                <ImageIcon className="h-12 w-12 mb-4" />
+                <ImageIcon className="h-12 w-12 mb-4 opacity-50" />
                 <p className="text-sm font-medium">Haz clic para subir una imagen</p>
-                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                <p className="text-xs opacity-70 mt-1">
                   PNG, JPG, GIF hasta 5MB
                 </p>
               </>

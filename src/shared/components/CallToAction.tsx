@@ -1,9 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
-import { ArrowRight } from '@/lib/icons';
+import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ButtonRedirectWhatsapp from '@/shared/components/ButtonRedirectWhatsapp';
-import { colors } from '@/shared/styles/colors';
 import { cn } from '@/lib/utils';
 
 interface CallToActionProps {
@@ -12,6 +11,7 @@ interface CallToActionProps {
   primaryButtonText: string;
   primaryButtonLink: string;
   showWhatsapp?: boolean;
+  whatsappText?: string;
   className?: string;
 }
 
@@ -21,6 +21,7 @@ export default function CallToAction({
   primaryButtonText,
   primaryButtonLink,
   showWhatsapp = true,
+  whatsappText,
   className,
 }: CallToActionProps) {
   return (
@@ -28,13 +29,12 @@ export default function CallToAction({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div
           className={cn(
-            colors.gradients.primary,
-            colors.gradients.primaryHover,
+            "bg-gradient-to-r from-primary-600 via-secondary-500 to-primary-600 bg-[length:200%_auto] transition-all duration-500 ease-in-out bg-left hover:bg-right",
             "rounded-xl shadow-2xl p-6 sm:p-8 text-center text-white relative overflow-hidden"
           )}
         >
           <div
-            className={cn("absolute inset-0 backdrop-blur-sm", colors.gradients.overlayColor)}
+            className={cn("absolute inset-0 backdrop-blur-sm", "bg-gradient-to-r from-primary-500/20 to-secondary-500/20")}
             aria-hidden="true"
           />
           <div className="relative z-10">
@@ -64,7 +64,7 @@ export default function CallToAction({
                   <ArrowRight className="w-5 h-5" aria-hidden="true" />
                 </Link>
               </Button>
-              {showWhatsapp && <ButtonRedirectWhatsapp />}
+              {showWhatsapp && <ButtonRedirectWhatsapp text={whatsappText} />}
             </div>
           </div>
         </div>

@@ -34,12 +34,11 @@ import {
   Eye,
   Copy,
   Share
-} from '@/lib/icons';
+} from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { colors } from '@/shared/styles/colors';
 
 interface QuoteItemDetail {
   id: string;
@@ -83,27 +82,27 @@ interface QuoteDetail {
 const statusConfig = {
   draft: {
     label: 'Borrador',
-    color: cn(colors.status.info.bg, colors.status.info.text),
+    color: 'bg-secondary/20 text-secondary',
     icon: Edit
   },
   pending: {
     label: 'Pendiente',
-    color: cn(colors.status.warning.bg, colors.status.warning.text),
+    color: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
     icon: Clock
   },
   approved: {
     label: 'Aprobada',
-    color: cn(colors.status.success.bg, colors.status.success.text),
+    color: 'bg-success/20 text-success',
     icon: CheckCircle
   },
   rejected: {
     label: 'Rechazada',
-    color: cn(colors.status.error.bg, colors.status.error.text),
+    color: 'bg-destructive/20 text-destructive',
     icon: XCircle
   },
   expired: {
     label: 'Expirada',
-    color: cn(colors.backgrounds.neutral, "text-gray-600 dark:text-gray-400"),
+    color: 'bg-muted text-muted-foreground',
     icon: AlertCircle
   }
 };
@@ -244,16 +243,16 @@ export default function QuoteDetailClient() {
 
   if (loading) {
     return (
-      <div className={cn("min-h-screen py-12", colors.gradients.backgroundInfo)}>
+      <div className="min-h-screen py-12 bg-muted/30">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="animate-pulse">
-            <div className={cn("h-8 rounded w-1/4 mb-6", colors.backgrounds.neutral)}></div>
+            <div className="h-8 rounded w-1/4 mb-6 bg-muted"></div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2">
-                <div className={cn("h-64 rounded mb-6", colors.backgrounds.neutral)}></div>
-                <div className={cn("h-48 rounded", colors.backgrounds.neutral)}></div>
+                <div className="h-64 rounded mb-6 bg-muted"></div>
+                <div className="h-48 rounded bg-muted"></div>
               </div>
-              <div className={cn("h-96 rounded", colors.backgrounds.neutral)}></div>
+              <div className="h-96 rounded bg-muted"></div>
             </div>
           </div>
         </div>
@@ -263,7 +262,7 @@ export default function QuoteDetailClient() {
 
   if (!quote) {
     return (
-      <div className={cn("min-h-screen py-12", colors.gradients.backgroundPage)}>
+      <div className="min-h-screen py-12 bg-background">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Card className="text-center py-12">
             <CardContent>
@@ -293,7 +292,7 @@ export default function QuoteDetailClient() {
   if (!currentQuote) return null;
 
   return (
-    <div className={cn("min-h-screen py-12", colors.gradients.backgroundInfo)}>
+    <div className="min-h-screen py-12 bg-muted/30">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">

@@ -1,14 +1,15 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Filter, Grid, List, Search, FileText, X } from '@/lib/icons';
-import { ProductGrid, ProductList } from '@/features/marketplace/components/ProductGrid';
+import { Filter, Grid, List } from '@/lib/icons';
+import { ProductGrid, ProductGridSkeleton } from '@/features/marketplace/components/ProductGrid';
 import { ProductFilters as ProductFiltersComponent } from '@/features/marketplace/components/ProductFilters';
 import { useMarketplace } from '@/contexts/MarketplaceContext';
 import { ProductFilters as ProductFiltersType } from '@/shared/types';
 import PageHeader from '@/shared/components/PageHeader';
 import { Button } from '@/components/ui';
 import { useScrollRestoration } from '@/hooks/useScrollRestoration';
+import { cn } from '@/lib/utils';
 
 type ViewMode = 'grid' | 'list';
 
@@ -60,7 +61,7 @@ export default function MarketplacePageClient() {
   const productCount = displayProducts.length;
 
   return (
-    <div className="min-h-screen bg-background dark:bg-neutral-900">
+    <div className="min-h-screen bg-background">
       <PageHeader
         title="Catálogo de Productos"
         description="Descubre nuestra colección de productos de impresión 3D listos para ti"
@@ -74,7 +75,6 @@ export default function MarketplacePageClient() {
             <div className="hidden lg:block w-64 flex-shrink-0">
               <div className="sticky top-24">
                 <ProductFiltersComponent 
-                  onFiltersChange={handleFiltersChange}
                   showSearch={false}
                   availableProducts={baseProducts}
                 />
@@ -86,12 +86,18 @@ export default function MarketplacePageClient() {
             {/* Tabs and Controls */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 space-y-4 sm:space-y-0">
               {/* Product Count / Header */}
-              <div className="flex space-x-2 bg-neutral-100 dark:bg-neutral-800/50 p-1.5 rounded-xl self-start sm:self-auto">
+              <div className="flex space-x-2 bg-muted p-1.5 rounded-xl self-start sm:self-auto">
                 <div
-                  className="px-6 py-2.5 rounded-lg text-sm font-semibold bg-white dark:bg-neutral-700 text-primary-600 dark:text-primary-400 shadow-md ring-1 ring-black/5 dark:ring-white/10 transition-all duration-200"
+                  className={cn(
+                    "px-6 py-2.5 rounded-lg text-sm font-semibold shadow-md ring-1 ring-black/5 dark:ring-white/10 transition-all duration-200",
+                    "bg-card text-primary"
+                  )}
                 >
                   Productos
-                  <span className="ml-2 text-xs opacity-80 bg-primary-100 dark:bg-primary-900/30 px-2 py-0.5 rounded-full text-primary-700 dark:text-primary-300">
+                  <span className={cn(
+                    "ml-2 text-xs opacity-80 px-2 py-0.5 rounded-full",
+                    "bg-primary/10 text-primary"
+                  )}>
                     {productCount}
                   </span>
                 </div>
@@ -102,32 +108,34 @@ export default function MarketplacePageClient() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="lg:hidden flex items-center space-x-2 border-neutral-200 dark:border-neutral-700"
+                  className="lg:hidden flex items-center space-x-2 border-border"
                   onClick={() => setShowFilters(!showFilters)}
                 >
                   <Filter className="w-4 h-4" />
                   <span>Filtros</span>
                 </Button>
 
-                <div className="flex bg-neutral-100 dark:bg-neutral-800 p-1 rounded-lg border border-neutral-200 dark:border-neutral-700">
+                <div className="flex bg-muted p-1 rounded-lg border border-border">
                   <button
                     onClick={() => setViewMode('grid')}
-                    className={`p-2 rounded-md transition-all ${
+                    className={cn(
+                      "p-2 rounded-md transition-all",
                       viewMode === 'grid'
-                        ? 'bg-white dark:bg-neutral-700 text-primary-600 shadow-sm'
-                        : 'text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'
-                    }`}
+                        ? 'bg-card text-primary shadow-sm'
+                        : 'text-muted-foreground hover:text-foreground'
+                    )}
                     aria-label="Vista de cuadrícula"
                   >
                     <Grid className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => setViewMode('list')}
-                    className={`p-2 rounded-md transition-all ${
+                    className={cn(
+                      "p-2 rounded-md transition-all",
                       viewMode === 'list'
-                        ? 'bg-white dark:bg-neutral-700 text-primary-600 shadow-sm'
-                        : 'text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'
-                    }`}
+                        ? 'bg-card text-primary shadow-sm'
+                        : 'text-muted-foreground hover:text-foreground'
+                    )}
                     aria-label="Vista de lista"
                   >
                     <List className="w-4 h-4" />
@@ -151,15 +159,10 @@ export default function MarketplacePageClient() {
             {/* Product Grid */}
             <div className="min-h-[400px]">
               {isLoading ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {[...Array(6)].map((_, i) => (
-                    <div key={i} className="bg-white dark:bg-neutral-800 rounded-xl h-[400px] animate-pulse" />
-                  ))}
-                </div>
+                <ProductGridSkeleton count={6} />
               ) : (
                 <ProductGrid
                   products={displayProducts}
-                  isLoading={isLoading}
                   emptyMessage="No se encontraron productos con los filtros seleccionados."
                   className={viewMode === 'grid' 
                     ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" 

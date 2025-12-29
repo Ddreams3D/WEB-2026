@@ -9,6 +9,7 @@ export default function ServicesCTA() {
       description={ctaData.services.description}
       primaryButtonText={ctaData.services.primaryButtonText}
       primaryButtonLink={ctaData.services.primaryButtonLink}
+      whatsappText="Chatear por WhatsApp"
     />
   );
 }

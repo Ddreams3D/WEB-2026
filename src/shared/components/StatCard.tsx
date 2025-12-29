@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { colors } from '@/shared/styles/colors';
 import { useCounterAnimation, getAnimationClasses } from '@/shared/hooks/useIntersectionAnimation';
 
 interface StatCardProps {
@@ -61,7 +60,7 @@ export function StatCard({
       className={cn(
         "rounded-xl p-6 text-center transition-all duration-300 group cursor-pointer transform",
         // Fondo y bordes: Visible en light mode, transparente y sin borde en dark mode
-        "bg-white dark:bg-transparent shadow-lg dark:shadow-none border border-primary-100 dark:border-none hover:shadow-xl hover:-translate-y-1",
+        "bg-card text-card-foreground shadow-lg dark:shadow-none border border-border dark:border-none hover:shadow-xl hover:-translate-y-1",
         getAnimationClasses(shouldShow, 0),
         className
       )}
@@ -71,7 +70,7 @@ export function StatCard({
     >
       <div className="flex justify-center mb-4">
         <Icon className={cn(
-          "h-10 w-10 sm:h-12 sm:w-12 text-primary-600 dark:text-primary-400 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300",
+          "h-10 w-10 sm:h-12 sm:w-12 text-primary group-hover:scale-110 group-hover:rotate-3 transition-all duration-300",
           iconClassName
         )} />
       </div>
@@ -79,7 +78,7 @@ export function StatCard({
         className={cn(
           "text-2xl sm:text-3xl font-bold mb-2 transition-colors tabular-nums",
           // Color base: Oscuro en light, Blanco en dark (luego sobreescrito por el gradiente si se aplica)
-          "text-neutral-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400",
+          "text-foreground group-hover:text-primary",
           valueClassName
         )}
       >
@@ -87,13 +86,13 @@ export function StatCard({
         {suffix}
       </div>
       <div className={cn(
-        "text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1",
+        "text-sm font-semibold text-muted-foreground mb-1",
         labelClassName
       )}>
         {label}
       </div>
       {description && (
-        <div className="text-xs text-neutral-500 dark:text-neutral-400 hidden sm:block mt-2">
+        <div className="text-xs text-muted-foreground hidden sm:block mt-2">
           {description}
         </div>
       )}

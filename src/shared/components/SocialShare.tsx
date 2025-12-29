@@ -3,10 +3,6 @@
 import React, { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Facebook, Twitter, Instagram, Send } from '@/lib/icons';
-import {
-  getTransitionClasses,
-  getIconClasses,
-} from '../styles';
 import { analytics } from '../utils/analytics';
 
 interface SocialShareProps {
@@ -92,7 +88,7 @@ export default function SocialShare({
             className="rounded-full shadow-lg hover:scale-105"
             aria-label="Compartir en Facebook"
           >
-            <Facebook className={getIconClasses('md')} />
+            <Facebook className="w-5 h-5" />
           </Button>
           <Button
             onClick={() => handleShare('twitter')}
@@ -102,7 +98,7 @@ export default function SocialShare({
             className="rounded-full shadow-lg hover:scale-105"
             aria-label="Compartir en Twitter"
           >
-            <Twitter className={getIconClasses('md')} />
+            <Twitter className="w-5 h-5" />
           </Button>
           <Button
             onClick={() => handleShare('whatsapp')}
@@ -112,7 +108,7 @@ export default function SocialShare({
             className="rounded-full shadow-lg hover:scale-105"
             aria-label="Compartir en WhatsApp"
           >
-            <Send className={getIconClasses('md')} />
+            <Send className="w-5 h-5" />
           </Button>
         </div>
       </div>

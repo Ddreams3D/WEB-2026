@@ -1,8 +1,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { colors } from '@/shared/styles/colors';
 
-import { Mail, Phone, MapPin, Clock, HelpCircle } from '@/lib/icons';
+import { Mail, Phone, MapPin, Clock, HelpCircle } from 'lucide-react';
 import {
   PHONE_BUSINESS,
   PHONE_DISPLAY,
@@ -45,7 +44,7 @@ export default function ContactInfo() {
     <section aria-labelledby="contact-info">
       <h2
         id="contact-info"
-        className={cn("text-2xl sm:text-3xl lg:text-4xl font-bold mb-6 sm:mb-8", colors.gradients.textPrimary)}
+        className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6 sm:mb-8 text-foreground"
       >
         Información de Contacto
       </h2>
@@ -53,17 +52,17 @@ export default function ContactInfo() {
         <div className="grid grid-cols-1 gap-6">
           {contactInfo.map((info, index) => (
             <div key={index} className="flex items-start space-x-4">
-              <div className="flex-shrink-0 p-3 bg-primary-50 dark:bg-primary-900/20 rounded-xl text-primary-600 dark:text-primary-400">
+              <div className="flex-shrink-0 p-3 bg-primary/10 rounded-xl text-primary">
                 <info.icon className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="font-semibold text-neutral-900 dark:text-white mb-1">
+                <h3 className="font-semibold text-foreground mb-1">
                   {info.title}
                 </h3>
                 {info.link ? (
                   <a
                     href={info.link}
-                    className="text-neutral-600 dark:text-neutral-400 hover:text-primary-500 transition-colors duration-300"
+                    className="text-muted-foreground hover:text-primary transition-colors duration-300"
                     {...(info.link.startsWith('http') && {
                       target: '_blank',
                       rel: 'noopener noreferrer',
@@ -72,12 +71,12 @@ export default function ContactInfo() {
                     {info.value}
                   </a>
                 ) : (
-                  <p className="text-neutral-600 dark:text-neutral-400">
+                  <p className="text-muted-foreground">
                     {info.value}
                   </p>
                 )}
                 {info.title === 'Dirección' && (
-                  <span className="block mt-1 text-sm text-neutral-600 dark:text-white/90 font-medium">
+                  <span className="block mt-1 text-sm text-muted-foreground/80 font-medium">
                     Si no te encuentras en Arequipa, realizamos envíos a todo el Perú.
                   </span>
                 )}
@@ -87,16 +86,16 @@ export default function ContactInfo() {
         </div>
 
         {/* CTA Card */}
-        <div className="p-6 bg-primary-50 dark:bg-primary-900/10 rounded-2xl border border-primary-100 dark:border-primary-800/30">
+        <div className="p-6 bg-primary/5 rounded-2xl border border-primary/10">
           <div className="flex items-start space-x-4">
-            <div className="flex-shrink-0 p-2 bg-white dark:bg-primary-800 rounded-lg text-primary-600 dark:text-primary-300">
+            <div className="flex-shrink-0 p-2 bg-background rounded-lg text-primary shadow-sm">
               <HelpCircle className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
+              <h3 className="text-lg font-semibold text-foreground mb-2">
                 ¿No encontraste lo que buscabas?
               </h3>
-              <p className="text-neutral-600 dark:text-neutral-300 mb-4">
+              <p className="text-muted-foreground mb-4">
                 Nuestro equipo está aquí para ayudarte con cualquier pregunta específica
               </p>
               <ButtonRedirectWhatsapp

@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { colors } from '@/shared/styles/colors';
 import { Button } from '@/components/ui/button';
 import { User, Mail, Phone, MapPin, Calendar, Edit3, Save, X, Camera } from '@/lib/icons';
 import { useAuth } from '@/contexts/AuthContext';
@@ -53,10 +52,10 @@ export default function ProfilePage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-4">
+          <h1 className="text-2xl font-bold text-foreground mb-4">
             Acceso denegado
           </h1>
-          <p className="text-neutral-600 dark:text-neutral-300">
+          <p className="text-muted-foreground">
             Debes iniciar sesión para ver tu perfil.
           </p>
         </div>
@@ -65,36 +64,36 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 py-8">
+    <div className="min-h-screen bg-muted/30 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-sm p-6 mb-6">
+        <div className="bg-card rounded-lg shadow-sm p-6 mb-6 border border-border">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="relative">
-                <div className={cn("w-20 h-20 rounded-full flex items-center justify-center", colors.gradients.cardPrimary)}>
-                  <User className="h-10 w-10 text-white" />
+                <div className={cn("w-20 h-20 rounded-full flex items-center justify-center bg-gradient-to-br from-primary to-primary/80")}>
+                  <User className="h-10 w-10 text-primary-foreground" />
                 </div>
                 <Button 
                   variant="ghost"
                   size="icon"
-                  className="absolute -bottom-1 -right-1 bg-white dark:bg-neutral-700 rounded-full shadow-md border border-neutral-200 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-600 transition-colors h-8 w-8 p-0"
+                  className="absolute -bottom-1 -right-1 bg-card rounded-full shadow-md border border-border hover:bg-muted transition-colors h-8 w-8 p-0"
                 >
-                  <Camera className="h-4 w-4 text-neutral-600 dark:text-neutral-300" />
+                  <Camera className="h-4 w-4 text-muted-foreground" />
                 </Button>
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">
+                <h1 className="text-2xl font-bold text-foreground">
                   {user.name}
                 </h1>
-                <p className="text-neutral-600 dark:text-neutral-300">
+                <p className="text-muted-foreground">
                   {user.email}
                 </p>
               </div>
             </div>
             <Button
               onClick={() => setIsEditing(!isEditing)}
-              variant="gradient"
+              variant="default"
               className="transform hover:scale-105"
             >
               <Edit3 className="h-4 w-4 mr-2" />
@@ -104,15 +103,15 @@ export default function ProfilePage() {
         </div>
 
         {/* Profile Information */}
-        <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-sm p-6">
-          <h2 className="text-xl font-semibold text-neutral-900 dark:text-white mb-6">
+        <div className="bg-card rounded-lg shadow-sm p-6 border border-border">
+          <h2 className="text-xl font-semibold text-foreground mb-6">
             Información personal
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Name */}
             <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 <User className="h-4 w-4 inline mr-2" />
                 Nombre completo
               </label>
@@ -122,16 +121,16 @@ export default function ProfilePage() {
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white"
+                  className="w-full px-3 py-2 border border-input rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-background text-foreground"
                 />
               ) : (
-                <p className="text-neutral-900 dark:text-white py-2">{user.name}</p>
+                <p className="text-foreground py-2">{user.name}</p>
               )}
             </div>
 
             {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 <Mail className="h-4 w-4 inline mr-2" />
                 Correo electrónico
               </label>
@@ -141,16 +140,16 @@ export default function ProfilePage() {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white"
+                  className="w-full px-3 py-2 border border-input rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-background text-foreground"
                 />
               ) : (
-                <p className="text-neutral-900 dark:text-white py-2">{user.email}</p>
+                <p className="text-foreground py-2">{user.email}</p>
               )}
             </div>
 
             {/* Phone */}
             <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 <Phone className="h-4 w-4 inline mr-2" />
                 Teléfono
               </label>
@@ -160,11 +159,11 @@ export default function ProfilePage() {
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white"
+                  className="w-full px-3 py-2 border border-input rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-background text-foreground"
                   placeholder="Ingresa tu teléfono"
                 />
               ) : (
-                <p className="text-neutral-900 dark:text-white py-2">
+                <p className="text-foreground py-2">
                   {user.phone || 'No especificado'}
                 </p>
               )}
@@ -172,7 +171,7 @@ export default function ProfilePage() {
 
             {/* Address */}
             <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 <MapPin className="h-4 w-4 inline mr-2" />
                 Dirección
               </label>
@@ -182,11 +181,11 @@ export default function ProfilePage() {
                   name="address"
                   value={formData.address}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white"
+                  className="w-full px-3 py-2 border border-input rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-background text-foreground"
                   placeholder="Ingresa tu dirección"
                 />
               ) : (
-                <p className="text-neutral-900 dark:text-white py-2">
+                <p className="text-foreground py-2">
                   {user.address || 'No especificada'}
                 </p>
               )}
@@ -194,7 +193,7 @@ export default function ProfilePage() {
 
             {/* Birth Date */}
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 <Calendar className="h-4 w-4 inline mr-2" />
                 Fecha de nacimiento
               </label>

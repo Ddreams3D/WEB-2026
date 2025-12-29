@@ -3,7 +3,7 @@
 import React from 'react';
 import { useTheme, THEMES } from '@/contexts/ThemeContext';
 import { THEME_CONFIG } from '@/config/themes';
-import { Button } from '@/components/ui';
+import { Button } from './button';
 import { cn } from '@/lib/utils';
 
 interface ThemeSelectorProps {

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { GoogleAnalytics } from '@next/third-parties/google';
+import Script from 'next/script';
 import './globals.css';
 import { Providers } from '@/contexts/Providers';
 import { getAppUrl } from '@/lib/url-utils';
@@ -85,26 +86,31 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={inter.variable} suppressHydrationWarning>
-      {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID && (
-        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />
-      )}
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  var darkMode = localStorage.getItem('darkMode');
-                  if (darkMode && JSON.parse(darkMode)) {
-                    document.documentElement.classList.add('dark');
-                  }
-                } catch (e) {}
-              })()
-            `,
-          }}
-        />
+        <Script id="theme-analytics-init" strategy="beforeInteractive">
+          {`
+            (function() {
+              try {
+                var gaId = '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || ''}';
+                if (gaId && localStorage.getItem('ddreams_exclude_analytics') === 'true') {
+                  window['ga-disable-' + gaId] = true;
+                  console.log('Analytics disabled for this session');
+                }
+              } catch(e) {}
+              try {
+                var darkMode = localStorage.getItem('darkMode');
+                if (darkMode && JSON.parse(darkMode)) {
+                  document.documentElement.classList.add('dark');
+                }
+              } catch (e) {}
+            })()
+          `}
+        </Script>
       </head>
       <body className="antialiased text-foreground dark:text-white">
+        {process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID && (
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />
+        )}
         <LocalBusinessJsonLd />
         <Providers>
           {children}

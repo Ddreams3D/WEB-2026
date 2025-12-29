@@ -1,4 +1,4 @@
-import { colors } from '@/shared/styles/colors';
+// import { Button } from '@/components/ui/button';
 import { Button } from '@/components/ui/button';
 
 /**
@@ -10,12 +10,10 @@ import { Button } from '@/components/ui/button';
 
 export const DesignSystem = {
   tokens: {
-    colors,
   },
   components: {
     Button,
   }
 };
 
-export { colors as designTokens };
 export { Button };

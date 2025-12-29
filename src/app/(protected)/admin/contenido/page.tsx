@@ -5,7 +5,6 @@ import { Search as MagnifyingGlassIcon, Eye as EyeIcon, Trash2 as TrashIcon, Fil
 import AdminLayout from '@/shared/components/layout/AdminLayout';
 import AdminProtection from '@/components/admin/AdminProtection';
 import { Button } from '@/components/ui/button';
-import { colors } from '@/shared/styles/colors';
 import { cn } from '@/lib/utils';
 
 
@@ -122,21 +121,20 @@ function MapDetailsModal({ map, isOpen, onClose }: {
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-        <div className="fixed inset-0 transition-opacity bg-neutral-500 bg-opacity-75" onClick={onClose} />
+        <div className="fixed inset-0 transition-opacity bg-background/80" onClick={onClose} />
         
         <div className={cn(
-          "inline-block w-full max-w-2xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform shadow-xl rounded-2xl",
-          colors.backgrounds.card
+          "inline-block w-full max-w-2xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform shadow-xl rounded-2xl bg-card"
         )}>
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-semibold text-neutral-900 dark:text-white">
+            <h3 className="text-xl font-semibold text-foreground">
               Detalles del Mapa
             </h3>
             <Button
               onClick={onClose}
               variant="ghost"
               size="icon"
-              className="p-2 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 h-auto w-auto"
+              className="p-2 text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted h-auto w-auto"
             >
               ×
             </Button>
@@ -144,73 +142,73 @@ function MapDetailsModal({ map, isOpen, onClose }: {
           
           <div className="space-y-6">
             <div>
-              <h4 className="text-lg font-medium text-neutral-900 dark:text-white mb-2">
+              <h4 className="text-lg font-medium text-foreground mb-2">
                 {map.title}
               </h4>
-              <p className="text-neutral-600 dark:text-neutral-400">
+              <p className="text-muted-foreground">
                 {map.description}
               </p>
             </div>
             
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Autor
                 </label>
-                <p className="text-sm text-neutral-900 dark:text-white">{map.author}</p>
+                <p className="text-sm text-foreground">{map.author}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Categoría
                 </label>
-                <p className="text-sm text-neutral-900 dark:text-white">{map.category}</p>
+                <p className="text-sm text-foreground">{map.category}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Estado
                 </label>
-                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                <span className={cn("inline-flex px-2 py-1 text-xs font-semibold rounded-full",
                   map.status === 'published'
-                    ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                    ? 'bg-success/20 text-success'
                     : map.status === 'draft'
                     ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
-                    : 'bg-neutral-100 text-neutral-800 dark:bg-neutral-700 dark:text-neutral-300'
-                }`}>
+                    : 'bg-muted text-muted-foreground'
+                )}>
                   {map.status === 'published' ? 'Publicado' : map.status === 'draft' ? 'Borrador' : 'Archivado'}
                 </span>
               </div>
               <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Visibilidad
                 </label>
-                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                <span className={cn("inline-flex px-2 py-1 text-xs font-semibold rounded-full",
                   map.visibility === 'public'
-                    ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
+                    ? 'bg-primary/20 text-primary'
                     : map.visibility === 'shared'
                     ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
-                    : 'bg-neutral-100 text-neutral-800 dark:bg-neutral-700 dark:text-neutral-300'
-                }`}>
+                    : 'bg-muted text-muted-foreground'
+                )}>
                   {map.visibility === 'public' ? 'Público' : map.visibility === 'shared' ? 'Compartido' : 'Privado'}
                 </span>
               </div>
             </div>
             
             <div className="grid grid-cols-3 gap-4">
-              <div className={cn("text-center p-4 rounded-lg", colors.backgrounds.neutral)}>
-                <EyeIcon className="w-6 h-6 text-neutral-400 mx-auto mb-2" />
+              <div className={cn("text-center p-4 rounded-lg bg-muted")}>
+                <EyeIcon className="w-6 h-6 text-muted-foreground mx-auto mb-2" />
                 <p className="text-lg font-semibold text-neutral-900 dark:text-white">
                   {map.views.toLocaleString()}
                 </p>
                 <p className="text-sm text-neutral-500 dark:text-neutral-400">Visualizaciones</p>
               </div>
-              <div className={cn("text-center p-4 rounded-lg", colors.backgrounds.neutral)}>
+              <div className={cn("text-center p-4 rounded-lg bg-muted")}>
                 <span className="text-red-500 text-xl">♥</span>
                 <p className="text-lg font-semibold text-neutral-900 dark:text-white">
                   {map.likes.toLocaleString()}
                 </p>
                 <p className="text-sm text-neutral-500 dark:text-neutral-400">Me gusta</p>
               </div>
-              <div className={cn("text-center p-4 rounded-lg", colors.backgrounds.neutral)}>
+              <div className={cn("text-center p-4 rounded-lg bg-muted")}>
                 <ShareIcon className="w-6 h-6 text-neutral-400 mx-auto mb-2" />
                 <p className="text-lg font-semibold text-neutral-900 dark:text-white">
                   {map.shares.toLocaleString()}
@@ -228,8 +226,7 @@ function MapDetailsModal({ map, isOpen, onClose }: {
                   <span
                     key={index}
                     className={cn(
-                      "px-2 py-1 text-xs rounded-full text-primary-700 dark:text-primary-300",
-                      colors.backgrounds.highlight
+                      "px-2 py-1 text-xs rounded-full text-primary-700 dark:text-primary-300 bg-primary/10"
                     )}
                   >
                     #{tag}
@@ -326,7 +323,7 @@ export default function ContentManagement() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className={cn("rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 p-4", colors.backgrounds.card)}>
+          <div className={cn("rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 p-4 bg-card")}>
             <div className="flex items-center">
               <DocumentTextIcon className="w-8 h-8 text-primary-600 dark:text-primary-400 mr-3" />
               <div>
@@ -335,7 +332,7 @@ export default function ContentManagement() {
               </div>
             </div>
           </div>
-          <div className={cn("rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 p-4", colors.backgrounds.card)}>
+          <div className={cn("rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 p-4 bg-card")}>
             <div className="flex items-center">
               <div className="w-3 h-3 bg-green-500 rounded-full mr-3" />
               <div>
@@ -346,7 +343,7 @@ export default function ContentManagement() {
               </div>
             </div>
           </div>
-          <div className={cn("rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 p-4", colors.backgrounds.card)}>
+          <div className={cn("rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 p-4 bg-card")}>
             <div className="flex items-center">
               <div className="w-3 h-3 bg-yellow-500 rounded-full mr-3" />
               <div>
@@ -357,7 +354,7 @@ export default function ContentManagement() {
               </div>
             </div>
           </div>
-          <div className={cn("rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 p-4", colors.backgrounds.card)}>
+          <div className={cn("rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 p-4 bg-card")}>
             <div className="flex items-center">
               <div className="w-3 h-3 bg-neutral-500 rounded-full mr-3" />
               <div>
@@ -371,7 +368,7 @@ export default function ContentManagement() {
         </div>
 
         {/* Filters and Search */}
-        <div className={cn("rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6", colors.backgrounds.card)}>
+        <div className={cn("rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6 bg-card")}>
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1">
               <div className="relative">
@@ -382,8 +379,7 @@ export default function ContentManagement() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className={cn(
-                    "w-full pl-10 pr-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:text-white",
-                    colors.backgrounds.input
+                    "w-full pl-10 pr-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:text-white bg-background"
                   )}
                 />
               </div>
@@ -392,8 +388,7 @@ export default function ContentManagement() {
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value)}
               className={cn(
-                "px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:text-white",
-                colors.backgrounds.input
+                "px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:text-white bg-background"
               )}
             >
               {categories.map(category => (
@@ -404,8 +399,7 @@ export default function ContentManagement() {
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value as 'all' | 'published' | 'draft' | 'archived')}
               className={cn(
-                "px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:text-white",
-                colors.backgrounds.input
+                "px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:text-white bg-background"
               )}
             >
               <option value="all">Todos los estados</option>
@@ -417,8 +411,7 @@ export default function ContentManagement() {
               value={filterVisibility}
               onChange={(e) => setFilterVisibility(e.target.value as 'all' | 'public' | 'private' | 'shared')}
               className={cn(
-                "px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:text-white",
-                colors.backgrounds.input
+                "px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:text-white bg-background"
               )}
             >
               <option value="all">Todas las visibilidades</option>
@@ -430,10 +423,10 @@ export default function ContentManagement() {
         </div>
 
         {/* Maps Table */}
-        <div className={cn("rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden", colors.backgrounds.card)}>
+        <div className={cn("rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden bg-card")}>
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className={cn(colors.backgrounds.neutral)}>
+              <thead className="bg-muted">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
                     Mapa
@@ -474,8 +467,7 @@ export default function ContentManagement() {
                             <span
                               key={index}
                               className={cn(
-                                "px-1.5 py-0.5 text-xs rounded text-neutral-600 dark:text-neutral-400",
-                                colors.backgrounds.neutral
+                                "px-1.5 py-0.5 text-xs rounded text-neutral-600 dark:text-neutral-400 bg-muted"
                               )}
                             >
                               #{tag}
@@ -524,21 +516,21 @@ export default function ContentManagement() {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-neutral-900 dark:text-white">
+                      <div className="text-sm text-foreground">
                         <div className="flex items-center space-x-3">
                           <span className="flex items-center">
-                            <EyeIcon className="w-3 h-3 mr-1 text-neutral-400" />
+                            <EyeIcon className="w-3 h-3 mr-1 text-muted-foreground" />
                             {map.views}
                           </span>
                           <span className="flex items-center">
-                            <span className="text-red-500 mr-1">♥</span>
+                            <span className="text-destructive mr-1">♥</span>
                             {map.likes}
                           </span>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-neutral-500 dark:text-neutral-400">
+                      <div className="text-sm text-muted-foreground">
                         <div className="flex items-center">
                           <CalendarIcon className="w-3 h-3 mr-1" />
                           {new Date(map.updatedAt).toLocaleDateString('es-ES')}
@@ -551,7 +543,7 @@ export default function ContentManagement() {
                           onClick={() => openModal(map)}
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                          className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-muted"
                           title="Ver detalles"
                         >
                           <EyeIcon className="w-4 h-4" />
@@ -560,7 +552,7 @@ export default function ContentManagement() {
                           onClick={() => handleDeleteMap(map.id)}
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 text-neutral-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
+                          className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                           title="Eliminar"
                         >
                           <TrashIcon className="w-4 h-4" />
@@ -575,7 +567,7 @@ export default function ContentManagement() {
         </div>
 
         {/* Results count */}
-        <div className="text-sm text-neutral-500 dark:text-neutral-400">
+        <div className="text-sm text-muted-foreground">
           Mostrando {filteredMaps.length} de {maps.length} mapas conceptuales
         </div>
       </div>

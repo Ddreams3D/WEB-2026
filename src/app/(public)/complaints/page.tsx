@@ -15,7 +15,7 @@ export default function Complaints() {
       />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="bg-surface dark:bg-neutral-800 rounded-lg shadow-soft p-8">
+        <div className="bg-card rounded-lg shadow-soft p-8">
           <div className="text-center mb-8">
             <Image 
               src="/images/logo-libro-reclamaciones.svg"
@@ -25,7 +25,7 @@ export default function Complaints() {
               className="h-24 mx-auto mb-4"
             />
             <h2 className="text-2xl font-bold mb-4">Libro de Reclamaciones Virtual</h2>
-            <p className="text-neutral-600 dark:text-neutral-300">
+            <p className="text-muted-foreground">
               Conforme a lo establecido en el Código de Protección y Defensa del Consumidor 
               y en cumplimiento con el Decreto Supremo N° 011-2011-PCM, ponemos a tu disposición 
               nuestro Libro de Reclamaciones Virtual a través del portal de INDECOPI.
@@ -33,7 +33,7 @@ export default function Complaints() {
           </div>
 
           <div className="space-y-6">
-            <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+            <div className="p-4 bg-primary/10 rounded-lg">
               <h3 className="font-semibold mb-2">Información Importante</h3>
               <ul className="list-disc list-inside space-y-2 text-neutral-600 dark:text-neutral-300">
                 <li>El plazo máximo de atención es de 30 días calendario</li>

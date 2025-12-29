@@ -15,7 +15,6 @@ import { useCart } from '../../../contexts/CartContext';
 import Link from 'next/link';
 import { ProductImage } from './DefaultImage';
 import { PHONE_BUSINESS } from '@/shared/constants/contactInfo';
-import { colors } from '@/shared/styles/colors';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
@@ -79,22 +78,22 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
       <div
         className={cn(
           "fixed right-0 top-0 h-full w-full max-w-md shadow-2xl z-50 transform transition-all duration-300 ease-out border-l flex flex-col",
-          colors.backgrounds.card,
-          "border-l-gray-200 dark:border-l-gray-600",
+          "bg-card",
+          "border-l-border",
           isOpen ? 'translate-x-0' : 'translate-x-full'
         )}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-neutral-200/30 dark:border-neutral-700/30">
+        <div className="flex items-center justify-between p-6 border-b border-border/30">
           <div className="flex items-center gap-3">
-            <div className={cn("p-2 rounded-lg", colors.backgrounds.highlight)}>
-              <ShoppingBag className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+            <div className={cn("p-2 rounded-lg", "bg-accent/50")}>
+              <ShoppingBag className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-neutral-900 dark:text-white">
+              <h2 className="text-xl font-bold text-foreground">
                 Mi Carrito
               </h2>
-              <p className="text-sm text-neutral-500 dark:text-neutral-400">
+              <p className="text-sm text-muted-foreground">
                 {itemCount} {itemCount === 1 ? 'producto' : 'productos'}
               </p>
             </div>
@@ -111,14 +110,14 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         </div>
 
         {/* Content */}
-        <div className={cn("flex-1 flex flex-col min-h-[55vh]", colors.backgrounds.neutral)}>
+        <div className="flex-1 flex flex-col min-h-[55vh] bg-muted">
           <div
             className="flex-1 overflow-y-auto min-h-100"
             style={{ scrollbarWidth: 'thin' }}
           >
             {items.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center py-12 px-6">
-                <div className={cn("p-4 rounded-full mb-6", colors.backgrounds.card)}>
+                <div className="p-4 rounded-full mb-6 bg-card">
                   <ShoppingCart className="h-12 w-12 text-neutral-400 dark:text-neutral-500" />
                 </div>
                 <h3 className="text-xl font-semibold text-neutral-900 dark:text-white mb-3">
@@ -152,16 +151,12 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   <div
                     key={item.id}
                     className={cn(
-                      "group rounded-xl p-4 shadow-sm border border-neutral-100 dark:border-neutral-700 hover:shadow-md transition-all duration-200",
-                      colors.backgrounds.card
+                      "group rounded-xl p-4 shadow-sm border border-neutral-100 dark:border-neutral-700 hover:shadow-md transition-all duration-200 bg-card"
                     )}
                   >
                     <div className="flex items-start space-x-4">
                       {/* Product Image */}
-                      <div className={cn(
-                        "flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden shadow-sm",
-                        colors.gradients.backgroundNeutral
-                      )}>
+                      <div className="flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden shadow-sm bg-muted">
                         <ProductImage
                           src={item.product.images?.[0]?.url}
                           alt={item.product.name}
@@ -250,35 +245,35 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
         {/* Footer */}
         {items.length > 0 && (
-          <div className={cn("p-6 space-y-6", colors.backgrounds.neutral)}>
+          <div className={cn("p-6 space-y-6", "bg-muted/50")}>
             {/* Price Summary */}
             <div className={cn(
-              "rounded-xl p-4 shadow-sm border border-neutral-100 dark:border-neutral-700 space-y-3",
-              colors.backgrounds.card
+              "rounded-xl p-4 shadow-sm border border-border space-y-3",
+              "bg-card"
             )}>
               <div className="flex justify-between items-center text-sm">
-                <span className="text-neutral-600 dark:text-neutral-400">
+                <span className="text-muted-foreground">
                   Subtotal ({itemCount}{' '}
                   {itemCount === 1 ? 'producto' : 'productos'}):
                 </span>
-                <span className="font-medium text-neutral-900 dark:text-white">
+                <span className="font-medium text-foreground">
                   S/ {total.toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between items-center text-sm">
-                <span className="text-neutral-600 dark:text-neutral-400">
+                <span className="text-muted-foreground">
                   Envío:
                 </span>
-                <span className="font-medium text-green-600 dark:text-green-400">
+                <span className="font-medium text-success">
                   Gratis
                 </span>
               </div>
-              <div className="border-t border-neutral-200 dark:border-neutral-600 pt-3">
+              <div className="border-t border-border pt-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-lg font-bold text-neutral-900 dark:text-white">
+                  <span className="text-lg font-bold text-foreground">
                     Total:
                   </span>
-                  <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                  <span className="text-2xl font-bold text-primary">
                     S/ {total.toFixed(2)}
                   </span>
                 </div>
@@ -290,7 +285,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               <Button
                 onClick={handleWhatsAppCheckout}
                 variant="success"
-                className="w-full h-auto flex items-center justify-center px-6 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02] group"
+                className="w-full h-auto flex items-center justify-center px-6 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-95 group"
               >
                 <MessageSquare className="mr-2 h-5 w-5" />
                 Finalizar pedido en WhatsApp
@@ -300,7 +295,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                 asChild
                 onClick={onClose}
                 variant="outline"
-                className="w-full h-auto flex items-center justify-center px-6 py-3 rounded-xl font-medium group shadow-sm"
+                className="w-full h-auto flex items-center justify-center px-6 py-3 rounded-xl font-medium group shadow-sm active:scale-95"
               >
                 <Link href="/cart">
                   Ver Carrito Completo
@@ -311,12 +306,12 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
             {/* Security Badge */}
             <div className={cn(
-              "rounded-xl p-3 shadow-sm border border-neutral-100 dark:border-neutral-700",
-              colors.backgrounds.card
+              "rounded-xl p-3 shadow-sm border border-border",
+              "bg-card"
             )}>
-              <div className="flex items-center justify-center space-x-2 text-xs text-neutral-500 dark:text-neutral-400">
-                <div className="w-3 h-3 bg-green-500 rounded-full flex items-center justify-center">
-                  <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+              <div className="flex items-center justify-center space-x-2 text-xs text-muted-foreground">
+                <div className="w-3 h-3 bg-success rounded-full flex items-center justify-center">
+                  <div className="w-1.5 h-1.5 bg-primary-foreground rounded-full"></div>
                 </div>
                 <span>Compra 100% segura y protegida</span>
               </div>

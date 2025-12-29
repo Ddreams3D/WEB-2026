@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 
-import { MessageCircle, Plus, Minus, HelpCircle, CheckCircle, Clock } from '@/lib/icons';
+import { MessageCircle, Plus, Minus, HelpCircle, CheckCircle, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { colors } from '@/shared/styles/colors';
 import { cn } from '@/lib/utils';
-import ButtonPrincipal from '@/shared/components/ButtonPrincipal';
 import { StatCard } from '@/shared/components/StatCard';
 import { useStaggeredItemsAnimation } from '@/shared/hooks/useIntersectionAnimation';
 
@@ -84,12 +82,12 @@ function FAQStats() {
           isVisible={visibleItems[index]}
           animationDelay={index * 150}
           className="bg-transparent border-none shadow-none hover:shadow-none hover:translate-y-0 p-0 sm:p-0"
-          iconClassName="w-16 h-16 text-primary-500 mb-6"
+          iconClassName="w-16 h-16 text-primary mb-6"
           valueClassName={cn(
             "text-4xl sm:text-5xl font-bold mb-3",
-            colors.gradients.textHighlight
+            "text-primary"
           )}
-          labelClassName="text-neutral-600 dark:text-neutral-300 text-base font-medium"
+          labelClassName="text-muted-foreground text-base font-medium"
         />
       ))}
     </div>
@@ -102,19 +100,16 @@ export default function ContactFAQ() {
   return (
     <section className="mt-12 sm:mt-16" aria-labelledby="faq">
       <div className="text-center mb-16">
-        <span className="text-neutral-500 dark:text-white/60 font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-6 block">
+        <span className="text-muted-foreground font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-6 block">
           Soporte & Claridad
         </span>
-        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-900 dark:text-white mb-4">
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-4">
           Preguntas{' '}
-          <span className={cn(
-            "bg-clip-text text-transparent",
-            colors.gradients.textPrimary
-          )}>
+          <span className="text-primary">
             Frecuentes
           </span>
         </h2>
-        <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto mb-12">
+        <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto mb-12">
           Encuentra respuestas a las preguntas más comunes sobre nuestros servicios de impresión 3D
         </p>
 
@@ -126,32 +121,32 @@ export default function ContactFAQ() {
         {faqs.map((faq, index) => (
           <div
             key={index}
-            className="bg-white dark:bg-neutral-800 rounded-xl shadow-lg overflow-hidden border border-neutral-200/50 dark:border-neutral-700/50"
+            className="bg-card rounded-xl shadow-lg overflow-hidden border border-border"
           >
             <Button
               onClick={() =>
                 setOpenFaqIndex(openFaqIndex === index ? null : index)
               }
               variant="ghost"
-              className="w-full px-4 py-4 sm:px-6 sm:py-5 text-left flex justify-between items-center hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-200 h-auto rounded-none"
+              className="w-full px-4 py-4 sm:px-6 sm:py-5 text-left flex justify-between items-center hover:bg-accent transition-colors duration-200 h-auto rounded-none"
               aria-expanded={openFaqIndex === index}
               aria-controls={`faq-answer-${index}`}
             >
-              <h3 className="text-base sm:text-lg font-semibold text-neutral-900 dark:text-white pr-4 flex items-center">
+              <h3 className="text-base sm:text-lg font-semibold text-foreground pr-4 flex items-center">
                 <HelpCircle
-                  className="inline-block w-4 h-4 sm:w-5 sm:h-5 mr-2 text-primary-500"
+                  className="inline-block w-4 h-4 sm:w-5 sm:h-5 mr-2 text-primary"
                   aria-hidden="true"
                 />
                 {faq.question}
               </h3>
               {openFaqIndex === index ? (
                 <Minus
-                  className="w-5 h-5 text-neutral-500 dark:text-neutral-400 flex-shrink-0"
+                  className="w-5 h-5 text-muted-foreground flex-shrink-0"
                   aria-hidden="true"
                 />
               ) : (
                 <Plus
-                  className="w-5 h-5 text-neutral-500 dark:text-neutral-400 flex-shrink-0"
+                  className="w-5 h-5 text-muted-foreground flex-shrink-0"
                   aria-hidden="true"
                 />
               )}
@@ -161,7 +156,7 @@ export default function ContactFAQ() {
                 id={`faq-answer-${index}`}
                 className="px-4 pb-4 sm:px-6 sm:pb-5"
               >
-                <div className="text-neutral-600 dark:text-neutral-300 leading-relaxed text-sm sm:text-base whitespace-pre-line">
+                <div className="text-muted-foreground leading-relaxed text-sm sm:text-base whitespace-pre-line">
                   {faq.answer}
                 </div>
               </div>

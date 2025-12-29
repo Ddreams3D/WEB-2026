@@ -4,7 +4,6 @@ import React from 'react';
 import { ThemeProvider } from './ThemeContext';
 import { AuthProvider } from './AuthContext';
 import { CartProvider } from './CartContext';
-import { MarketplaceProvider } from './MarketplaceContext';
 import { OrderTrackingProvider } from './OrderTrackingContext';
 import { BillingProvider } from './BillingContext';
 import { QuoteProvider } from './QuoteContext';
@@ -22,11 +21,9 @@ export function Providers({ children }: ProvidersProps) {
           <OrderTrackingProvider>
             <BillingProvider>
               <QuoteProvider>
-                  <MarketplaceProvider>
-                    <CartProvider>
-                      {children}
-                    </CartProvider>
-                  </MarketplaceProvider>
+                  <CartProvider>
+                    {children}
+                  </CartProvider>
               </QuoteProvider>
             </BillingProvider>
           </OrderTrackingProvider>

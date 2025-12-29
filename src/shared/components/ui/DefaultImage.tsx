@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { ImageIcon } from '@/lib/icons';
-import { colors } from '@/shared/styles/colors';
 
 interface DefaultImageProps {
   src?: string;
@@ -40,11 +39,20 @@ export default function DefaultImage({
   onError,
   style
 }: DefaultImageProps) {
-  const [hasError, setHasError] = useState(false);
+  const [imgSrc, setImgSrc] = useState<string | undefined>(src);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Reset state when src prop changes
+  React.useEffect(() => {
+    setImgSrc(src);
+    setIsLoading(true);
+  }, [src]);
+
   const handleError = () => {
-    setHasError(true);
+    // Only switch to fallback if we haven't already
+    if (imgSrc !== fallbackSrc) {
+      setImgSrc(fallbackSrc);
+    }
     setIsLoading(false);
     onError?.();
   };
@@ -53,9 +61,10 @@ export default function DefaultImage({
     setIsLoading(false);
   };
 
-  // Si no hay src y no se debe mostrar placeholder, mostrar placeholder
+  // Logic for empty src
   if (!src && !showPlaceholder) {
-    return (
+     // ... same as before
+     return (
       <div className={`flex items-center justify-center bg-gray-100 dark:bg-gray-700 ${className}`}>
         <div className="text-center text-gray-400 dark:text-gray-500">
           <ImageIcon className="w-8 h-8 mx-auto mb-2" />
@@ -65,40 +74,26 @@ export default function DefaultImage({
     );
   }
 
-  // Si hay error y no hay fallback, mostrar placeholder
-  if (hasError && !fallbackSrc) {
-    return (
-      <div className={`flex items-center justify-center bg-gray-100 dark:bg-gray-700 ${className}`}>
-        <div className="text-center text-gray-400 dark:text-gray-500">
-          <ImageIcon className="w-8 h-8 mx-auto mb-2" />
-          <p className="text-sm">{placeholderText}</p>
-        </div>
-      </div>
-    );
-  }
-
-  const imageProps = {
-    alt,
-    className: `${className} ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`,
-    onError: handleError,
-    onLoad: handleLoad,
-    priority,
-    quality,
-    style,
-    ...(fill ? { fill: true, sizes } : { width, height })
-  };
+  // Use effective source
+  const finalSrc = imgSrc || fallbackSrc;
 
   return (
     <div className={`relative ${fill ? 'w-full h-full' : ''}`}>
       {/* Loading skeleton */}
       {isLoading && (
-        <div className={`absolute inset-0 animate-pulse ${colors.gradients.skeleton} ${className}`} />
+        <div className={`absolute inset-0 animate-pulse bg-muted ${className}`} />
       )}
       
       <Image
-        src={hasError ? fallbackSrc : (src || fallbackSrc)}
-        {...imageProps}
+        src={finalSrc}
         alt={alt}
+        className={`${className} ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+        onError={handleError}
+        onLoad={handleLoad}
+        priority={priority}
+        quality={quality}
+        style={style}
+        {...(fill ? { fill: true, sizes } : { width, height })}
       />
     </div>
   );

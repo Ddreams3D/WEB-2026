@@ -17,10 +17,10 @@ function SectionHeader({
 }) {
   return (
     <div className="flex items-center gap-4 mb-6">
-      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-100 dark:bg-primary-900/30 text-primary-600">
+      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
         {icon}
       </div>
-      <h2 className="text-2xl font-bold tracking-tight text-primary-600 m-0">
+      <h2 className="text-2xl font-bold tracking-tight text-primary m-0">
         {title}
       </h2>
     </div>
@@ -199,12 +199,12 @@ export default function PrivacyPolicy() {
           </section>
 
           {/* 7. Contacto */}
-          <section className="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 p-8 shadow-sm">
+          <section className="rounded-xl border border-border bg-card p-8 shadow-sm">
             <SectionHeader
               title="7. Contacto"
               icon={<Phone className="h-6 w-6" />}
             />
-            <ul className="space-y-2 text-neutral-700 dark:text-neutral-300">
+            <ul className="space-y-2 text-muted-foreground">
               <li>Email: {EMAIL_BUSINESS}</li>
               <li>Teléfono: {PHONE_DISPLAY}</li>
               <li>Ubicación: {ADDRESS_BUSINESS}</li>
@@ -212,7 +212,7 @@ export default function PrivacyPolicy() {
           </section>
 
           {/* Footer */}
-          <div className="rounded-lg bg-neutral-100 dark:bg-neutral-800 p-4 text-sm text-neutral-600 dark:text-neutral-400">
+          <div className="rounded-lg bg-muted p-4 text-sm text-muted-foreground">
             Última actualización: <strong>Enero 2026</strong>
           </div>
         </div>

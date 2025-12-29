@@ -14,7 +14,8 @@ import {
   ChevronUp,
   Lock,
   X,
-} from '@/lib/icons';
+  Music2 // Fallback for TikTok if needed, or keep SVG
+} from 'lucide-react';
 import {
   PHONE_BUSINESS,
   WHATSAPP_REDIRECT,
@@ -25,7 +26,6 @@ import {
 } from '@/shared/constants/contactInfo';
 import { Button, Input } from '@/components/ui';
 import { cn } from '@/lib/utils';
-import { colors } from '@/shared/styles/colors';
 
 const Footer = () => {
   const router = useRouter();
@@ -91,7 +91,7 @@ const Footer = () => {
   return (
     // Footer component with centralized styles
     <footer
-      className={cn(colors.gradients.backgroundDark, "text-white dark:text-white relative overflow-hidden")}
+      className={cn("bg-black text-white relative overflow-hidden")}
     >
       {/* Patrón de fondo decorativo */}
       <div className="absolute inset-0 opacity-5">
@@ -118,11 +118,11 @@ const Footer = () => {
                 height={40}
               />
             </div>
-            <p className="text-neutral-300 dark:text-neutral-300 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
+            <p className="text-white/80 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
               Estudio creativo de impresión y modelado 3D. Proyectos
               personalizados, trato directo y soluciones técnicas a medida.
             </p>
-            <p className="text-neutral-300 dark:text-neutral-300 font-medium text-sm sm:text-base mt-2">
+            <p className="text-white/80 font-medium text-sm sm:text-base mt-2">
               Arequipa, Perú · Modelado & Impresión 3D · Envíos a todo el Perú
             </p>
           </div>
@@ -132,15 +132,15 @@ const Footer = () => {
             <a
               href={`${WHATSAPP_REDIRECT}`}
               target="_blank"
-              className="text-neutral-400 dark:text-neutral-400 hover:text-primary-400 transition-colors duration-200 font-medium flex items-center gap-1"
+              className="text-white/60 hover:text-primary transition-colors duration-200 font-medium flex items-center gap-1"
             >
               <Phone className="w-4 h-4" />
               {PHONE_DISPLAY}
             </a>
-            <span className="text-neutral-600 hidden sm:inline">•</span>
+            <span className="text-white/40 hidden sm:inline">•</span>
             <a
               href={`mailto:${EMAIL_BUSINESS}`}
-              className="text-neutral-400 dark:text-neutral-400 hover:text-primary-400 transition-colors duration-200 font-medium flex items-center gap-1"
+              className="text-white/60 hover:text-primary transition-colors duration-200 font-medium flex items-center gap-1"
             >
               <Mail className="w-4 h-4" />
               {EMAIL_BUSINESS}
@@ -149,14 +149,14 @@ const Footer = () => {
 
           {/* Dirección y horarios - Horizontal */}
           <div className="flex flex-col lg:flex-row justify-between items-center gap-4 text-sm sm:text-base">
-            <div className="flex items-center gap-1 text-neutral-400 dark:text-neutral-400">
+            <div className="flex items-center gap-1 text-white/60">
               <MapPin className="w-4 h-4" />
               <span>
                 {ADDRESS_BUSINESS}
               </span>
             </div>
 
-            <div className="flex items-center gap-1 text-neutral-400 dark:text-neutral-400">
+            <div className="flex items-center gap-1 text-white/60">
               <Clock className="w-4 h-4" />
               <span>{SCHEDULE_BUSINESS}</span>
             </div>
@@ -164,15 +164,15 @@ const Footer = () => {
 
           {/* Redes sociales - Centradas */}
           <div className="text-center">
-            <p className="text-neutral-400 dark:text-neutral-400 text-sm sm:text-base mb-3">
+            <p className="text-white/60 text-sm sm:text-base mb-3">
               Síguenos en nuestras redes sociales
             </p>
             <div className="flex justify-center space-x-4">
               <Button
                 asChild
-                variant="glass"
+                variant="ghost"
                 size="icon"
-                className="rounded-full hover:scale-110 border-0 bg-white/10 hover:bg-white/20 text-white"
+                className="rounded-full hover:scale-110 bg-white/10 hover:bg-white/20 text-white"
               >
                 <a
                   href="https://www.facebook.com/ddreams3d"
@@ -185,9 +185,9 @@ const Footer = () => {
               </Button>
               <Button
                 asChild
-                variant="glass"
+                variant="ghost"
                 size="icon"
-                className="rounded-full hover:scale-110 border-0 bg-white/10 hover:bg-white/20 text-white"
+                className="rounded-full hover:scale-110 bg-white/10 hover:bg-white/20 text-white"
               >
                 <a
                   href="https://www.instagram.com/ddreams3d/"
@@ -200,9 +200,9 @@ const Footer = () => {
               </Button>
               <Button
                 asChild
-                variant="glass"
+                variant="ghost"
                 size="icon"
-                className="rounded-full hover:scale-110 border-0 bg-white/10 hover:bg-white/20 text-white"
+                className="rounded-full hover:scale-110 bg-white/10 hover:bg-white/20 text-white"
               >
                 <a
                   href="https://www.tiktok.com/@ddreams3d"
@@ -210,13 +210,7 @@ const Footer = () => {
                   rel="noopener noreferrer"
                   aria-label="Síguenos en TikTok"
                 >
-                  <svg
-                    className="w-5 h-5"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.10z" />
-                  </svg>
+                  <Music2 className="w-5 h-5" />
                 </a>
               </Button>
             </div>
@@ -226,43 +220,43 @@ const Footer = () => {
           <div className="flex flex-wrap justify-start gap-4 text-sm sm:text-base">
             <Link
               href="/services"
-              className="text-neutral-400 dark:text-neutral-400 hover:text-primary-400 transition-colors duration-200 font-medium"
+              className="text-white/60 hover:text-primary transition-colors duration-200 font-medium"
             >
               Servicios
             </Link>
-            <span className="text-neutral-600 dark:text-neutral-600 hidden sm:inline">
+            <span className="text-white/40 hidden sm:inline">
               •
             </span>
             <Link
               href="/marketplace"
-              className="text-neutral-400 dark:text-neutral-400 hover:text-primary-400 transition-colors duration-200 font-medium"
+              className="text-white/60 hover:text-primary transition-colors duration-200 font-medium"
             >
               Marketplace
             </Link>
-            <span className="text-neutral-600 dark:text-neutral-600 hidden sm:inline">
+            <span className="text-white/40 hidden sm:inline">
               •
             </span>
             <Link
               href="/process"
-              className="text-neutral-400 dark:text-neutral-400 hover:text-primary-400 transition-colors duration-200 font-medium"
+              className="text-white/60 hover:text-primary transition-colors duration-200 font-medium"
             >
               Proceso
             </Link>
-            <span className="text-neutral-600 dark:text-neutral-600 hidden sm:inline">
+            <span className="text-white/40 hidden sm:inline">
               •
             </span>
             <Link
               href="/about"
-              className="text-neutral-400 dark:text-neutral-400 hover:text-primary-400 transition-colors duration-200 font-medium"
+              className="text-white/60 hover:text-primary transition-colors duration-200 font-medium"
             >
               Nosotros
             </Link>
-            <span className="text-neutral-600 dark:text-neutral-600 hidden sm:inline">
+            <span className="text-white/40 hidden sm:inline">
               •
             </span>
             <Link
               href="/contact"
-              className="text-neutral-400 dark:text-neutral-400 hover:text-primary-400 transition-colors duration-200 font-medium"
+              className="text-white/60 hover:text-primary transition-colors duration-200 font-medium"
             >
               Contacto
             </Link>
@@ -271,7 +265,7 @@ const Footer = () => {
 
         {/* Separador decorativo */}
         <div className="my-6 lg:my-8">
-          <div className={cn("h-px", colors.gradients.primary)}></div>
+          <div className={cn("h-px bg-white/10")}></div>
         </div>
 
         {/* Sección inferior - Enlaces legales, Copyright y scroll */}
@@ -280,25 +274,25 @@ const Footer = () => {
           <div className="flex flex-wrap justify-center lg:justify-start gap-3 text-xs sm:text-sm">
             <Link
               href="/terms"
-              className="text-neutral-400 dark:text-neutral-400 hover:text-primary-400 transition-colors duration-200 font-medium"
+              className="text-white/60 hover:text-primary transition-colors duration-200 font-medium"
             >
               Términos de Servicio
             </Link>
-            <span className="text-neutral-600 dark:text-neutral-600 hidden sm:inline">
+            <span className="text-white/40 hidden sm:inline">
               •
             </span>
             <Link
               href="/privacy"
-              className="text-neutral-400 dark:text-neutral-400 hover:text-primary-400 transition-colors duration-200 font-medium"
+              className="text-white/60 hover:text-primary transition-colors duration-200 font-medium"
             >
               Política de Privacidad
             </Link>
-            <span className="text-neutral-600 dark:text-neutral-600 hidden sm:inline">
+            <span className="text-white/40 hidden sm:inline">
               •
             </span>
             <Link
               href="/complaints"
-              className="text-neutral-400 dark:text-neutral-400 hover:text-primary-400 transition-colors duration-200 font-medium"
+              className="text-white/60 hover:text-primary transition-colors duration-200 font-medium"
             >
               Libro de Reclamaciones
             </Link>
@@ -306,11 +300,11 @@ const Footer = () => {
 
           {/* Copyright y botón scroll */}
           <div className="flex items-center gap-4">
-            <p className="text-neutral-300 dark:text-neutral-300 text-sm sm:text-base text-center">
+            <p className="text-neutral-300 text-sm sm:text-base text-center">
               © 2026{' '}
               <button 
                 onClick={handleSecretClick}
-                className="font-semibold text-primary-400 hover:text-primary-300 transition-colors cursor-pointer focus:outline-none focus:underline"
+                className="font-semibold text-primary hover:text-primary/80 transition-colors cursor-pointer focus:outline-none focus:underline"
                 type="button"
                 title="Acceso Admin"
               >
@@ -331,7 +325,7 @@ const Footer = () => {
                   </button>
                   
                   <div className="text-center mb-6">
-                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary-500/20 text-primary-400 mb-4">
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/20 text-primary mb-4">
                       <Lock className="w-6 h-6" />
                     </div>
                     <h3 className="text-xl font-bold text-white">Acceso Administrativo</h3>
@@ -345,13 +339,13 @@ const Footer = () => {
                         placeholder="Contraseña del sistema"
                         value={secretPassword}
                         onChange={(e) => setSecretPassword(e.target.value)}
-                        className="bg-neutral-950 border-neutral-800 focus:border-primary-500"
+                        className="bg-neutral-950 border-neutral-800 focus:border-primary text-white"
                       />
                       {secretError && (
-                        <p className="text-red-500 text-xs mt-2">{secretError}</p>
+                        <p className="text-destructive text-xs mt-2">{secretError}</p>
                       )}
                     </div>
-                    <Button type="submit" className="w-full bg-primary-600 hover:bg-primary-500 text-white">
+                    <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
                       Acceder al Panel
                     </Button>
                   </form>
@@ -363,9 +357,9 @@ const Footer = () => {
             {showScrollTop && (
               <Button
                 onClick={scrollToTop}
-                variant="glass"
+                variant="ghost"
                 size="icon"
-                className="fixed bottom-6 right-6 z-40 rounded-full bg-neutral-900/60 hover:bg-neutral-900/90 border-white/10 hover:-translate-y-1 shadow-lg"
+                className="fixed bottom-6 right-6 z-40 rounded-full bg-neutral-900/60 hover:bg-neutral-900/90 border border-white/10 hover:-translate-y-1 shadow-lg text-white"
                 aria-label="Volver arriba"
               >
                 <ChevronUp className="w-5 h-5" />

@@ -3,15 +3,16 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn, formatImagePosition } from '@/lib/utils';
-import { colors } from '@/shared/styles/colors';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Star, ShoppingCart, Heart, FileText } from 'lucide-react';
-import { Product } from '@/shared/types';
+import { Product, type ProductImage as ProductImageType } from '@/shared/types';
 import { Service } from '@/shared/types/domain';
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/components/ui/ToastManager';
-import { ProductImage } from '@/shared/components/ui/DefaultImage';
+import ProductImage from '@/shared/components/ui/DefaultImage';
+import { ScrollManager } from '@/hooks/useScrollRestoration';
+import { usePathname } from 'next/navigation';
 
 interface ProductCardProps {
   product: Product | Service;
@@ -36,19 +37,19 @@ export function ProductCard({
 }: ProductCardProps) {
   const { addToCart } = useCart();
   const { showSuccess, showError } = useToast();
+  const pathname = usePathname();
+
+  const handleScrollSave = () => {
+    if (typeof window !== 'undefined') {
+      ScrollManager.save(pathname, window.scrollY);
+    }
+  };
 
   const isService = product.kind === 'service';
   
-  // Lógica de visualización de precio:
-  // 1. Si es servicio -> "Cotizar" (ya cubierto por customPriceDisplay usualmente)
-  // 2. Si es producto y precio es 0 -> "Cotizar"
-  // 3. Si tiene precio > 0 -> S/ Precio
-  const showPrice = !isService && product.price > 0;
-  const priceDisplay = showPrice ? `S/ ${product.price.toFixed(2)}` : (product.customPriceDisplay || 'Cotizar');
-
   const productUrl = isService 
     ? `/services/${product.slug || product.id}${source ? `?from=${source}` : ''}`
-    : `/marketplace/product/${product.slug || product.id || ''}${source ? `?from=${source}` : ''}`;
+    : `/marketplace/${product.categoryId || 'general'}/${product.slug || product.id || ''}${source ? `?from=${source}` : ''}`;
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -65,7 +66,7 @@ export function ProductCard({
   };
 
   const images = product.images || [];
-  const primaryImage = images.find((img) => img.isPrimary) || images[0];
+  const primaryImage = images.find((img: ProductImageType) => img.isPrimary) || images[0];
   const hasDiscount = product.kind === 'product' && product.originalPrice && product.originalPrice > product.price;
   const discountPercentage = hasDiscount && product.kind === 'product' && product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
@@ -73,12 +74,17 @@ export function ProductCard({
   
   const imagePosition = primaryImage?.imagePosition || 'object-center';
 
-  const CardContent = () => (
+  const imageStyle = React.useMemo(() => ({ 
+    objectFit: 'cover' as const, 
+    objectPosition: formatImagePosition(imagePosition)
+  }), [imagePosition]);
+
+  const renderContent = () => (
     <>
       {/* Product Image */}
       <div className={cn(
         "relative aspect-[4/3] overflow-hidden",
-        colors.backgrounds.neutral
+        "bg-muted/50"
       )}>
         <ProductImage
           src={primaryImage?.url}
@@ -88,73 +94,80 @@ export function ProductCard({
             "w-full h-full group-hover:scale-105 transition-transform duration-1000 ease-out z-10 relative",
             imagePosition
           )}
-          style={{ 
-            objectFit: 'cover', 
-            objectPosition: formatImagePosition(imagePosition)
-          }}
+          style={imageStyle}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
         {/* Soft Overlay on Hover */}
         <div className={cn(
           "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-in-out z-0",
-          colors.gradients.overlaySubtle
+          "bg-gradient-to-t from-black/10 via-transparent to-transparent"
         )} />
       </div>
 
       {/* Product Info */}
-      <div className="p-6 flex-1 flex flex-col">
+      <div className="p-4 flex-1 flex flex-col">
         {/* Category */}
-        <p className="text-xs text-primary-600 dark:text-primary-400 font-medium mb-1 uppercase tracking-wide">
-          {product.categoryName}
-        </p>
+        <div className="mb-2">
+          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-primary/10 text-primary uppercase tracking-wide">
+            {product.categoryName}
+          </span>
+        </div>
 
         {/* Product Name */}
-        <h3 className="font-semibold text-neutral-900 dark:text-white mb-2 line-clamp-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300">
+        <h3 className="font-bold text-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors duration-300 text-lg leading-tight">
           {product.name}
         </h3>
 
         {/* Short Description */}
-        <p className="text-sm text-neutral-600 dark:text-neutral-300 mb-3 line-clamp-2 flex-1 leading-relaxed">
+        <p className="text-sm text-muted-foreground mb-4 line-clamp-2 flex-1 leading-relaxed">
           {product.shortDescription || product.description}
         </p>
 
-        {/* Rating */}
-        <div className="flex items-center justify-between mb-3 mt-auto">
-          <div className="flex items-center space-x-1">
-            <Star className="w-4 h-4 text-yellow-400 fill-current" />
-            <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-              {product.rating?.toFixed(1) || '0.0'}
+        {/* Rating & Feature Badge */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center bg-warning-50 dark:bg-warning-900/20 px-2 py-1 rounded-md border border-warning-100 dark:border-warning-800/30">
+            <Star className="w-3.5 h-3.5 text-warning-500 fill-current mr-1" />
+            <span className="text-xs font-bold text-warning-700 dark:text-warning-400">
+              {product.rating?.toFixed(1) || '5.0'}
             </span>
+          </div>
+          
+          <div className="flex items-center px-2 py-1 rounded-md bg-muted border border-border">
+             <span className="w-1.5 h-1.5 rounded-full bg-success mr-1.5 shadow-[0_0_4px_rgba(16,185,129,0.6)] animate-pulse">
+             </span>
+             <span className="text-[10px] font-bold text-foreground uppercase tracking-wider">
+               Bajo Pedido
+             </span>
           </div>
         </div>
 
-        <div className="flex items-end justify-between">
+        <div className="flex items-end justify-between mt-auto pt-2 border-t border-border">
           <div className="flex flex-col">
             {product.customPriceDisplay ? (
-              <span className="text-sm font-bold text-neutral-900 dark:text-white whitespace-pre-line">
+              <span className="text-base font-bold text-foreground whitespace-pre-line">
                 {product.customPriceDisplay}
               </span>
             ) : (
               <>
-                <span className="text-lg font-bold text-neutral-900 dark:text-white">
+                <span className="text-lg font-bold text-foreground tracking-tight">
                   S/ {product.price.toFixed(2)}
                 </span>
-                <span className="text-[10px] text-neutral-500 dark:text-neutral-400 font-medium">
-                  IGV incluido
+                <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider opacity-80">
+                  Precio final
                 </span>
               </>
             )}
           </div>
           {hasDiscount && !product.customPriceDisplay && (
-            <span className="text-sm text-neutral-500 dark:text-neutral-400 line-through mb-1">
-              S/ {product.originalPrice!.toFixed(2)}
-            </span>
+            <div className="flex flex-col items-end">
+              <span className="text-xs text-destructive font-bold bg-destructive/10 px-1.5 py-0.5 rounded">
+                -{discountPercentage}%
+              </span>
+              <span className="text-sm text-muted-foreground line-through font-medium mt-0.5">
+                S/ {product.originalPrice!.toFixed(2)}
+              </span>
+            </div>
           )}
-        </div>
-
-        <div className="mt-2 text-xs text-neutral-500 dark:text-neutral-400 flex items-center">
-          <span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5"></span>
-          Fabricación bajo pedido
         </div>
       </div>
     </>
@@ -162,73 +175,52 @@ export function ProductCard({
 
   return (
     <div className={cn(
-      "group relative border border-gray-100 dark:border-white/10 rounded-xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-out overflow-hidden flex flex-col h-full",
-      colors.backgrounds.card,
+      "group relative border border-border rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 ease-out overflow-hidden flex flex-col h-full",
+      "bg-card text-card-foreground",
       className
     )}>
       {/* Discount Badge */}
       {hasDiscount && (
-        <div className="absolute top-3 left-3 z-20 bg-red-500 text-white px-2.5 py-1 rounded-full text-xs font-bold shadow-md pointer-events-none">
+        <div className="absolute top-3 left-3 z-20 bg-destructive text-destructive-foreground px-2.5 py-1 rounded-full text-xs font-bold shadow-md pointer-events-none">
           -{discountPercentage}%
-        </div>
-      )}
-
-      {/* Featured Badge */}
-      {product.isFeatured && source !== 'services' && (
-        <div className={`absolute top-3 ${hasDiscount ? 'left-16' : 'left-3'} z-20 bg-amber-400 text-white px-2.5 py-1 rounded-full text-xs font-bold shadow-md flex items-center gap-1 pointer-events-none`}>
-          <Star className="w-3 h-3 fill-current" />
-          <span>Destacado</span>
         </div>
       )}
 
       {onViewDetails ? (
         <button 
           onClick={() => onViewDetails(product)}
-          className="flex-1 flex flex-col relative cursor-pointer text-left w-full focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-t-xl"
+          className="flex-1 flex flex-col relative cursor-pointer text-left w-full focus:outline-none focus:ring-2 focus:ring-primary rounded-t-xl active:scale-[0.98] transition-transform duration-100"
           type="button"
           aria-label={`Ver detalles de ${product.name}`}
         >
-          <CardContent />
+          {renderContent()}
         </button>
       ) : (
         <Link 
           href={productUrl}
-          className="flex-1 flex flex-col relative cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-t-xl"
-          onClick={() => {
-            if (typeof window !== 'undefined') {
-              sessionStorage.setItem('marketplace_scroll_pos', window.scrollY.toString());
-            }
-          }}
+          className="flex-1 flex flex-col relative cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary rounded-t-xl active:scale-[0.98] transition-transform duration-100"
+          onClick={handleScrollSave}
           aria-label={`Ir a detalles de ${product.name}`}
         >
-          <CardContent />
+          {renderContent()}
         </Link>
       )}
 
       {/* Price & Action Container - Separated to avoid nesting interactive elements if card was a button */}
       <div className="p-4 pt-0 mt-auto">
-        <div className="flex items-center justify-between gap-3 pt-2">
-          <div className="flex flex-col">
-            {hasDiscount && showPrice && (
-              <span className="text-xs text-neutral-500 line-through">
-                S/ {product.originalPrice?.toFixed(2)}
-              </span>
-            )}
-            <span className={cn(
-              "font-bold text-neutral-900 dark:text-white",
-              showPrice ? "text-lg" : "text-base text-blue-600 dark:text-blue-400"
-            )}>
-              {priceDisplay}
-            </span>
-          </div>
-
+        <div className="pt-2">
           {customAction ? (
             <Button
               asChild
               variant="gradient"
-              className="w-full sm:w-auto"
+              className="w-full"
             >
-              <Link href={customAction.href} className="flex items-center justify-center space-x-2" aria-label={customAction.label}>
+              <Link 
+                href={customAction.href} 
+                className="flex items-center justify-center space-x-2" 
+                aria-label={customAction.label}
+                onClick={handleScrollSave}
+              >
                 {customAction.icon}
                 <span>{customAction.label}</span>
               </Link>
@@ -237,12 +229,13 @@ export function ProductCard({
             <Button
               asChild
               variant="outline"
-              className="w-full sm:w-auto group/btn border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800"
+              className="w-full group/btn border-border hover:bg-muted"
             >
               <Link
                 href="/contact"
                 className="flex items-center justify-center space-x-2"
                 aria-label="Solicitar cotización"
+                onClick={handleScrollSave}
               >
                 <FileText className="w-4 h-4 group-hover/btn:scale-110 transition-transform duration-300" aria-hidden="true" />
                 <span>Cotizar</span>
@@ -269,37 +262,37 @@ export function ProductCard({
 export function ProductCardSkeleton({ className = '' }: { className?: string }) {
   return (
     <div className={cn(
-      "rounded-xl shadow-sm border border-gray-100 dark:border-white/10 overflow-hidden animate-pulse flex flex-col h-full",
-      colors.backgrounds.card,
+      "rounded-xl shadow-sm border border-border overflow-hidden animate-pulse flex flex-col h-full",
+      "bg-card",
       className
     )}>
       {/* Image Skeleton */}
-      <div className={cn("aspect-[4/3]", colors.backgrounds.neutral)} />
+      <div className="aspect-[4/3] bg-muted" />
       
       {/* Content Skeleton */}
       <div className="p-4 flex-1">
-        <div className={cn("h-3 rounded mb-2 w-20", colors.backgrounds.neutral)} />
-        <div className={cn("h-5 rounded mb-2", colors.backgrounds.neutral)} />
-        <div className={cn("h-4 rounded mb-3 w-3/4", colors.backgrounds.neutral)} />
+        <div className="h-3 rounded mb-2 w-20 bg-muted" />
+        <div className="h-5 rounded mb-2 bg-muted" />
+        <div className="h-4 rounded mb-3 w-3/4 bg-muted" />
         
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center space-x-1">
-            <div className={cn("h-4 w-4 rounded", colors.backgrounds.neutral)} />
-            <div className={cn("h-4 rounded w-8", colors.backgrounds.neutral)} />
+            <div className="h-4 w-4 rounded bg-muted" />
+            <div className="h-4 rounded w-8 bg-muted" />
           </div>
         </div>
 
         <div className="flex items-end justify-between">
           <div className="flex flex-col space-y-1">
-            <div className={cn("h-6 rounded w-24", colors.backgrounds.neutral)} />
-            <div className={cn("h-3 rounded w-16", colors.backgrounds.neutral)} />
+            <div className="h-6 rounded w-24 bg-muted" />
+            <div className="h-3 rounded w-16 bg-muted" />
           </div>
         </div>
       </div>
 
       {/* Button Skeleton */}
       <div className="p-4 pt-0 mt-auto">
-        <div className={cn("h-10 rounded-lg w-full", colors.backgrounds.neutral)} />
+        <div className="h-10 rounded-lg w-full bg-muted" />
       </div>
     </div>
   );

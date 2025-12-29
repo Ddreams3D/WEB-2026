@@ -41,8 +41,8 @@ const nextConfig = {
     ],
   },
   experimental: {
-    optimizePackageImports: ['framer-motion'],
-    optimizeCss: true,
+    // optimizePackageImports: ['framer-motion'], // Deshabilitado para evitar bucles de compilación con Turbopack
+    // optimizeCss: true, // Desactivado temporalmente para estabilidad en dev
     scrollRestoration: true,
   },
   
@@ -113,10 +113,10 @@ const nextConfig = {
     }
     
     // Alias para optimizar importaciones
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      '@/lib/icons': require('path').resolve(__dirname, 'src/lib/icons.ts'),
-    };
+    // config.resolve.alias = {
+    //   ...config.resolve.alias,
+    //   '@/lib/icons': require('path').resolve(__dirname, 'src/lib/icons.ts'),
+    // };
     
     return config;
   },

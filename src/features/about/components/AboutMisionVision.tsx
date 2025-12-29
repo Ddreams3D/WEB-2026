@@ -1,7 +1,6 @@
 import { Rocket, Target } from 'lucide-react';
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { colors } from '@/shared/styles/colors';
 import InfoCard from '@/shared/components/InfoCard';
 
 export default function AboutMisionVision() {
@@ -9,15 +8,15 @@ export default function AboutMisionVision() {
     <section className="py-20" aria-labelledby="mission-vision-heading">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <header className="text-center mb-16">
-          <span className="block text-neutral-500 dark:text-white/60 font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-3">
+          <span className="block text-muted-foreground font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-3">
             Nuestro Propósito
           </span>
           <h2
             id="mission-vision-heading"
-            className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-900 dark:text-white mb-6"
+            className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-6"
           >
             Lo Que Nos{' '}
-            <span className={colors.gradients.textHighlight}>
+            <span className="text-primary">
               Impulsa
             </span>
           </h2>

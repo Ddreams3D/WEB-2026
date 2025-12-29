@@ -6,6 +6,7 @@ import { Switch } from '@/components/ui/switch';
 import { Settings as CogIcon, Paintbrush as PaintBrushIcon, ShieldCheck as ShieldCheckIcon, Bell as BellIcon, FileText as DocumentTextIcon, Eye as EyeIcon, Check as CheckIcon } from '@/lib/icons';
 import AdminLayout from '@/shared/components/layout/AdminLayout';
 import AdminProtection from '@/components/admin/AdminProtection';
+import { AnalyticsExclusion } from '@/components/admin/AnalyticsExclusion';
 
 // Configuraciones por defecto
 const defaultSettings = {
@@ -195,7 +196,8 @@ export default function Settings() {
     { id: 'security', label: 'Seguridad', icon: ShieldCheckIcon },
     { id: 'notifications', label: 'Notificaciones', icon: BellIcon },
     { id: 'content', label: 'Contenido', icon: DocumentTextIcon },
-    { id: 'privacy', label: 'Privacidad', icon: EyeIcon }
+    { id: 'privacy', label: 'Privacidad', icon: EyeIcon },
+    { id: 'analytics', label: 'Analytics', icon: ShieldCheckIcon }
   ];
 
   return (
@@ -487,6 +489,18 @@ export default function Settings() {
                     description="Anonimizar datos personales en reportes y estadísticas"
                   />
                 </div>
+              </div>
+            </SettingSection>
+          )}
+
+          {activeTab === 'analytics' && (
+            <SettingSection title="Exclusión de Analytics" icon={ShieldCheckIcon}>
+              <div className="space-y-6">
+                <p className="text-sm text-neutral-600 dark:text-neutral-300">
+                  Esta herramienta te permite evitar que tus visitas desde este dispositivo sean contadas en Google Analytics. 
+                  Es útil para administradores y desarrolladores para mantener limpias las estadísticas.
+                </p>
+                <AnalyticsExclusion />
               </div>
             </SettingSection>
           )}

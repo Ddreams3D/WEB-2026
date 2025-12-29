@@ -6,7 +6,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { colors } from '@/shared/styles/colors';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStaggeredItemsAnimation } from '../hooks/useIntersectionAnimation';
 import { useProjects } from '@/hooks/useProjects';
@@ -55,7 +54,7 @@ export default function ProjectGallery() {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center py-20">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -93,7 +92,7 @@ export default function ProjectGallery() {
                 duration: 0.6,
                 ease: [0.22, 1, 0.36, 1] // Custom easing for "exquisite" feel
               }}
-              className={cn("rounded-2xl max-w-2xl w-full shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto", colors.backgrounds.card)}
+              className={cn("rounded-2xl max-w-2xl w-full shadow-2xl relative overflow-hidden max-h-[90vh] overflow-y-auto", "bg-card text-card-foreground")}
               onClick={(e) => e.stopPropagation()}
             >
               <Button
@@ -119,8 +118,8 @@ export default function ProjectGallery() {
                 />
                 <div className="absolute top-4 left-4">
                   <span className={cn(
-                    "text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg",
-                    colors.gradients.primary
+                    "text-primary-foreground px-3 py-1 rounded-full text-sm font-medium shadow-lg",
+                    "bg-primary"
                   )}>
                     {selectedProject.category}
                   </span>
@@ -158,25 +157,25 @@ export default function ProjectGallery() {
               </div>
 
               <div className="p-6 sm:p-8">
-                <h3 className="text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-white mb-4">
+                <h3 className="text-2xl sm:text-3xl font-bold text-foreground mb-4">
                   {selectedProject.title}
                 </h3>
 
                 <div className="prose dark:prose-invert max-w-none">
-                  <p className="text-neutral-600 dark:text-neutral-300 text-base sm:text-lg leading-relaxed whitespace-pre-line">
+                  <p className="text-muted-foreground text-base sm:text-lg leading-relaxed whitespace-pre-line">
                     {selectedProject.description}
                   </p>
                   {selectedProject.applications && (
-                      <div className="mt-6 text-sm sm:text-base text-neutral-500 dark:text-neutral-400 border-t border-neutral-200 dark:border-neutral-700 pt-4">
-                        <span className="font-semibold text-neutral-900 dark:text-white block mb-2">Aplicaciones:</span>
-                        <span className="leading-relaxed block text-neutral-600 dark:text-neutral-300">
+                      <div className="mt-6 text-sm sm:text-base text-muted-foreground border-t border-border pt-4">
+                        <span className="font-semibold text-foreground block mb-2">Aplicaciones:</span>
+                        <span className="leading-relaxed block text-muted-foreground">
                           {selectedProject.applications}
                         </span>
                       </div>
                   )}
                   {selectedProject.client && (
-                      <div className="mt-4 text-sm sm:text-base text-neutral-500 dark:text-neutral-400">
-                        <span className="font-semibold text-neutral-700 dark:text-neutral-200">Cliente:</span> {selectedProject.client}
+                      <div className="mt-4 text-sm sm:text-base text-muted-foreground">
+                        <span className="font-semibold text-foreground">Cliente:</span> {selectedProject.client}
                       </div>
                   )}
                 </div>

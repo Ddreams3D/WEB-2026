@@ -1,6 +1,5 @@
 import { Rocket, TrendingUp } from 'lucide-react';
 import React from 'react';
-import { colors } from '@/shared/styles/colors';
 import InfoCard from '@/shared/components/InfoCard';
 
 export default function AboutHistory() {
@@ -8,22 +7,22 @@ export default function AboutHistory() {
     <section className="py-20" aria-labelledby="history-heading">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <header className="text-center mb-16">
-          <span className="block text-neutral-500 dark:text-white/60 font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-3">
+          <span className="block text-muted-foreground font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-3">
             Nuestra Historia
           </span>
           <h2
             id="history-heading"
-            className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-900 dark:text-white mb-6"
+            className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-6"
           >
             ¿Cómo nace{' '}
-            <span className={colors.gradients.textHighlight}>
+            <span className="text-primary">
               Ddreams3D?
             </span>
           </h2>
         </header>
 
         <div className="max-w-4xl mx-auto">
-          <div className="text-base sm:text-lg text-neutral-600 dark:text-neutral-300 leading-relaxed mb-12 space-y-6 text-center">
+          <div className="text-base sm:text-lg text-muted-foreground leading-relaxed mb-12 space-y-6 text-center">
             <p>
               Ddreams3D nace en Arequipa como un estudio creativo enfocado en modelado e impresión 3D, con el objetivo de desarrollar piezas funcionales, educativas y personalizadas para necesidades reales.
             </p>
