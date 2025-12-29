@@ -30,7 +30,7 @@ export function PageTransition({ children }: PageTransitionProps) {
   const pathname = usePathname();
 
   return (
-    <AnimatePresence mode="wait" initial={false} onExitComplete={() => window.scrollTo(0, 0)}>
+    <AnimatePresence mode="popLayout" initial={false} onExitComplete={() => window.scrollTo(0, 0)}>
       <motion.div
         key={pathname}
         initial="initial"
@@ -38,7 +38,7 @@ export function PageTransition({ children }: PageTransitionProps) {
         exit="out"
         variants={pageVariants}
         transition={pageTransition}
-        className="min-h-screen"
+        className="min-h-screen w-full"
       >
         {children}
       </motion.div>
