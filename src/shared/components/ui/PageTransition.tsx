@@ -14,6 +14,9 @@ const pageVariants = {
   },
   in: {
     opacity: 1,
+  },
+  out: {
+    opacity: 0,
   }
 };
 
@@ -27,11 +30,12 @@ export function PageTransition({ children }: PageTransitionProps) {
   const pathname = usePathname();
 
   return (
-    <AnimatePresence initial={false} onExitComplete={() => window.scrollTo(0, 0)}>
+    <AnimatePresence mode="wait" initial={false} onExitComplete={() => window.scrollTo(0, 0)}>
       <motion.div
         key={pathname}
         initial="initial"
         animate="in"
+        exit="out"
         variants={pageVariants}
         transition={pageTransition}
         className="min-h-screen"
