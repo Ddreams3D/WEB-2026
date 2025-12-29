@@ -1,21 +1,20 @@
 'use client';
 
-import React from 'react';
 import ProductManager from '@/components/admin/ProductManager';
 
-export default function ProductsPage() {
+export default function ServicesPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">
-          Gestión de Productos
+          Gestión de Servicios
         </h1>
         <p className="text-neutral-600 dark:text-neutral-400">
-          Administra tu inventario de productos físicos, stock y precios.
+          Administra tu catálogo de servicios, precios y descripciones.
         </p>
       </div>
 
-      <ProductManager mode="product" />
+      <ProductManager mode="service" />
     </div>
   );
 }

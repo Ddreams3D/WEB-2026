@@ -3,97 +3,127 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui';
 import { Switch } from '@/components/ui/switch';
-import { Settings as CogIcon, Paintbrush as PaintBrushIcon, ShieldCheck as ShieldCheckIcon, Bell as BellIcon, FileText as DocumentTextIcon, Eye as EyeIcon, Check as CheckIcon } from '@/lib/icons';
+import { 
+  Store as StoreIcon,
+  Globe as GlobeIcon,
+  CreditCard as CreditCardIcon,
+  Phone as PhoneIcon,
+  MapPin as MapPinIcon,
+  Mail as MailIcon,
+  Facebook as FacebookIcon,
+  Instagram as InstagramIcon,
+  Linkedin as LinkedinIcon,
+  // Alias manuales para iconos importados como componentes directos
+  Settings as CogIcon,
+  Paintbrush as PaintBrushIcon,
+  ShieldCheck as ShieldCheckIcon,
+  Check as CheckIcon,
+  Bell as BellIcon,
+  FileText as DocumentTextIcon,
+  Eye as EyeIcon,
+  Check
+} from '@/lib/icons';
 import AdminLayout from '@/shared/components/layout/AdminLayout';
 import AdminProtection from '@/components/admin/AdminProtection';
 import { AnalyticsExclusion } from '@/components/admin/AnalyticsExclusion';
+import { useTheme, THEMES } from '@/contexts/ThemeContext';
+import { THEME_CONFIG } from '@/config/themes';
+import { cn } from '@/lib/utils';
 
 // Configuraciones por defecto
 const defaultSettings = {
   general: {
-    siteName: 'Mapas Conceptuales',
-    siteDescription: 'Plataforma para crear y compartir mapas conceptuales',
-    language: 'es',
-    timezone: 'America/Mexico_City',
-    maintenanceMode: false
+    siteName: 'Ddreams 3D',
+    siteDescription: 'Tienda de impresión 3D y diseño',
+    contactEmail: 'contacto@ddreams3d.com',
+    contactPhone: '+51 999 888 777',
+    address: 'Av. Principal 123, Arequipa, Perú',
   },
-  appearance: {
-    theme: 'light',
-    primaryColor: '#3B82F6',
-    logoUrl: '',
-    favicon: '',
-    customCSS: ''
+  social: {
+    facebook: 'https://facebook.com/ddreams3d',
+    instagram: 'https://instagram.com/ddreams3d',
+    tiktok: 'https://tiktok.com/@ddreams3d'
   },
-  security: {
-    requireEmailVerification: true,
-    passwordMinLength: 8,
-    enableTwoFactor: false,
-    sessionTimeout: 24,
-    maxLoginAttempts: 5
+  store: {
+    currency: 'PEN',
+    currencySymbol: 'S/',
+    taxRate: 18,
+    enableReviews: true,
+    productsPerPage: 12,
+    lowStockThreshold: 5
   },
-  notifications: {
-    emailNotifications: true,
-    newUserNotifications: true,
-    systemAlerts: true,
-    weeklyReports: false,
-    marketingEmails: false
+  payment: {
+    yapeNumber: '999 888 777',
+    yapeName: 'Ddreams 3D SAC',
+    plinNumber: '999 888 777',
+    bankInfo: 'BCP Soles: 123-12345678-0-12'
   },
-  content: {
-    allowPublicMaps: true,
-    requireModeration: false,
-    maxMapsPerUser: 50,
-    maxFileSize: 10,
-    allowedFileTypes: ['jpg', 'png', 'gif', 'pdf']
-  },
-  privacy: {
-    showUserProfiles: true,
-    allowSearchEngineIndexing: true,
-    cookieConsent: true,
-    dataRetentionDays: 365,
-    anonymizeData: false
+  seo: {
+    allowIndexing: true,
+    googleAnalyticsId: '',
+    facebookPixelId: ''
   }
 };
 
-function SettingSection({ title, icon: Icon, children }: {
+function SettingSection({ title, icon: Icon, description, children }: {
   title: string;
   icon: React.ComponentType<{ className?: string }>;
+  description?: string;
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
-      <div className="flex items-center space-x-3 mb-6">
-        <div className="p-2 bg-primary-100 dark:bg-primary-900/30 rounded-lg">
-          <Icon className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+    <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex items-start space-x-4 mb-6 pb-6 border-b border-neutral-100 dark:border-neutral-700">
+        <div className="p-3 bg-primary-50 dark:bg-primary-900/20 rounded-xl text-primary-600 dark:text-primary-400">
+          <Icon className="w-6 h-6" />
         </div>
-        <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
-          {title}
-        </h3>
+        <div>
+          <h3 className="text-lg font-bold text-neutral-900 dark:text-white">
+            {title}
+          </h3>
+          {description && (
+            <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
+              {description}
+            </p>
+          )}
+        </div>
       </div>
       {children}
     </div>
   );
 }
 
-function InputField({ label, type = 'text', value, onChange, placeholder, description }: {
+function InputField({ label, type = 'text', value, onChange, placeholder, description, icon: Icon }: {
   label: string;
   type?: string;
   value: string | number;
   onChange: (value: string | number) => void;
   placeholder?: string;
   description?: string;
+  icon?: React.ComponentType<{ className?: string }>;
 }) {
   return (
     <div className="space-y-2">
       <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
         {label}
       </label>
-      <input
-        type={type}
-        value={value}
-        onChange={(e) => onChange(type === 'number' ? Number(e.target.value) : e.target.value)}
-        placeholder={placeholder}
-        className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-neutral-700 dark:text-white"
-      />
+      <div className="relative">
+        {Icon && (
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400">
+            <Icon className="w-4 h-4" />
+          </div>
+        )}
+        <input
+          type={type}
+          value={value}
+          onChange={(e) => onChange(type === 'number' ? Number(e.target.value) : e.target.value)}
+          placeholder={placeholder}
+          className={cn(
+            "w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-neutral-700 dark:text-white transition-shadow",
+            Icon && "pl-10"
+          )}
+        />
+      </div>
       {description && (
         <p className="text-xs text-neutral-500 dark:text-neutral-400">
           {description}
@@ -118,7 +148,7 @@ function SelectField({ label, value, onChange, options, description }: {
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-neutral-700 dark:text-white"
+        className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-neutral-700 dark:text-white cursor-pointer"
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>
@@ -142,9 +172,9 @@ function ToggleField({ label, value, onChange, description }: {
   description?: string;
 }) {
   return (
-    <div className="flex items-start justify-between">
-      <div className="flex-1">
-        <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+    <div className="flex items-start justify-between p-3 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors">
+      <div className="flex-1 mr-4">
+        <label className="block text-sm font-medium text-neutral-900 dark:text-white cursor-pointer" onClick={() => onChange(!value)}>
           {label}
         </label>
         {description && (
@@ -165,12 +195,27 @@ export default function Settings() {
   const [settings, setSettings] = useState(defaultSettings);
   const [activeTab, setActiveTab] = useState('general');
   const [saved, setSaved] = useState(false);
+  const { theme: currentTheme, setTheme } = useTheme();
 
   // Cargar configuraciones desde localStorage
   useEffect(() => {
     const savedSettings = localStorage.getItem('adminSettings');
     if (savedSettings) {
-      setSettings({ ...defaultSettings, ...JSON.parse(savedSettings) });
+      try {
+        const parsed = JSON.parse(savedSettings);
+        // Deep merge para asegurar que nuevos campos tengan valor por defecto
+        setSettings(prev => ({
+          ...prev,
+          ...parsed,
+          general: { ...prev.general, ...parsed.general },
+          social: { ...prev.social, ...parsed.social },
+          store: { ...prev.store, ...parsed.store },
+          payment: { ...prev.payment, ...parsed.payment },
+          seo: { ...prev.seo, ...parsed.seo }
+        }));
+      } catch (e) {
+        console.error('Error parsing settings', e);
+      }
     }
   }, []);
 
@@ -180,333 +225,334 @@ export default function Settings() {
     setTimeout(() => setSaved(false), 3000);
   };
 
-  const updateSetting = (section: string, key: string, value: string | number | boolean | string[]) => {
+  const updateSetting = (section: keyof typeof defaultSettings, key: string, value: any) => {
     setSettings(prev => ({
       ...prev,
       [section]: {
-        ...prev[section as keyof typeof prev],
+        ...prev[section],
         [key]: value
       }
     }));
   };
 
   const tabs = [
-    { id: 'general', label: 'General', icon: CogIcon },
+    { id: 'general', label: 'General y Contacto', icon: CogIcon },
     { id: 'appearance', label: 'Apariencia', icon: PaintBrushIcon },
-    { id: 'security', label: 'Seguridad', icon: ShieldCheckIcon },
-    { id: 'notifications', label: 'Notificaciones', icon: BellIcon },
-    { id: 'content', label: 'Contenido', icon: DocumentTextIcon },
-    { id: 'privacy', label: 'Privacidad', icon: EyeIcon },
+    { id: 'store', label: 'Tienda y Pagos', icon: StoreIcon },
     { id: 'analytics', label: 'Analytics', icon: ShieldCheckIcon }
   ];
 
   return (
-    <AdminProtection>
-      <AdminLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">
-              Configuración del Sistema
-            </h1>
-            <p className="text-neutral-600 dark:text-neutral-400 mt-1">
-              Personaliza y configura tu plataforma
-            </p>
-          </div>
-          <Button
-            onClick={handleSave}
-            variant={saved ? 'success' : 'gradient'}
-            className="rounded-lg"
-          >
-            {saved ? (
-              <div className="flex items-center space-x-2">
-                <CheckIcon className="w-4 h-4" />
-                <span>Guardado</span>
-              </div>
-            ) : (
-              'Guardar Cambios'
-            )}
-          </Button>
+    <div className="max-w-6xl mx-auto pb-10">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-neutral-900 dark:text-white tracking-tight">
+            Configuración
+          </h1>
+          <p className="text-neutral-600 dark:text-neutral-400 mt-2 text-lg">
+            Personaliza la experiencia de tu tienda y administra la información vital.
+          </p>
         </div>
+        <Button 
+          onClick={handleSave}
+          className="flex items-center gap-2 shadow-lg hover:shadow-xl transition-all"
+          size="lg"
+          disabled={saved}
+        >
+          {saved ? <CheckIcon className="w-5 h-5" /> : null}
+          {saved ? 'Guardado Exitosamente' : 'Guardar Cambios'}
+        </Button>
+      </div>
 
-        {/* Tabs */}
-        <div className="border-b border-neutral-200 dark:border-neutral-700">
-          <nav className="flex space-x-8">
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* Sidebar de navegación */}
+        <div className="w-full lg:w-72 flex-shrink-0">
+          <nav className="space-y-2 sticky top-8">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               return (
-                <Button
+                <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  variant="ghost"
-                  className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors rounded-none h-auto hover:bg-transparent ${
+                  className={cn(
+                    "w-full flex items-center px-4 py-4 text-sm font-medium rounded-xl transition-all duration-200",
                     activeTab === tab.id
-                      ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                      : 'border-transparent text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300'
-                  }`}
+                      ? "bg-primary-600 text-white shadow-md transform scale-[1.02]"
+                      : "text-neutral-600 dark:text-neutral-400 hover:bg-white dark:hover:bg-neutral-800 hover:shadow-sm"
+                  )}
                 >
-                  <Icon className="w-4 h-4" />
-                  <span>{tab.label}</span>
-                </Button>
+                  <Icon className={cn(
+                    "mr-3 h-5 w-5",
+                    activeTab === tab.id ? "text-white" : "text-neutral-400 dark:text-neutral-500"
+                  )} />
+                  {tab.label}
+                </button>
               );
             })}
           </nav>
         </div>
 
-        {/* Content */}
-        <div className="space-y-6">
+        {/* Contenido principal */}
+        <div className="flex-1 min-w-0">
           {activeTab === 'general' && (
-            <SettingSection title="Configuración General" icon={CogIcon}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <InputField
-                  label="Nombre del Sitio"
-                  value={settings.general.siteName}
-                  onChange={(value) => updateSetting('general', 'siteName', value)}
-                  placeholder="Mapas Conceptuales"
-                />
-                <SelectField
-                  label="Idioma"
-                  value={settings.general.language}
-                  onChange={(value) => updateSetting('general', 'language', value)}
-                  options={[
-                    { value: 'es', label: 'Español' },
-                    { value: 'en', label: 'English' },
-                    { value: 'fr', label: 'Français' }
-                  ]}
-                />
-                <div className="md:col-span-2">
+            <div className="space-y-6">
+              <SettingSection 
+                title="Información del Negocio" 
+                icon={GlobeIcon}
+                description="Estos datos aparecerán en el pie de página y en la sección de contacto."
+              >
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <InputField
+                      label="Nombre del Sitio"
+                      value={settings.general.siteName}
+                      onChange={(v) => updateSetting('general', 'siteName', v)}
+                      placeholder="Ej: Ddreams 3D"
+                    />
+                    <InputField
+                      label="Descripción Corta"
+                      value={settings.general.siteDescription}
+                      onChange={(v) => updateSetting('general', 'siteDescription', v)}
+                      placeholder="Tu slogan o descripción breve"
+                    />
+                  </div>
+                  
+                  <div className="border-t border-neutral-100 dark:border-neutral-700 pt-6">
+                    <h4 className="text-sm font-semibold text-neutral-900 dark:text-white mb-4 uppercase tracking-wider">
+                      Datos de Contacto
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <InputField
+                        label="Email de Contacto"
+                        value={settings.general.contactEmail}
+                        onChange={(v) => updateSetting('general', 'contactEmail', v)}
+                        icon={MailIcon}
+                      />
+                      <InputField
+                        label="Teléfono / WhatsApp"
+                        value={settings.general.contactPhone}
+                        onChange={(v) => updateSetting('general', 'contactPhone', v)}
+                        icon={PhoneIcon}
+                      />
+                      <div className="md:col-span-2">
+                        <InputField
+                          label="Dirección Física"
+                          value={settings.general.address}
+                          onChange={(v) => updateSetting('general', 'address', v)}
+                          icon={MapPinIcon}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </SettingSection>
+
+              <SettingSection 
+                title="Redes Sociales" 
+                icon={FacebookIcon}
+                description="Enlaces a tus perfiles sociales para mostrar en la web."
+              >
+                <div className="grid grid-cols-1 gap-6">
                   <InputField
-                    label="Descripción del Sitio"
-                    value={settings.general.siteDescription}
-                    onChange={(value) => updateSetting('general', 'siteDescription', value)}
-                    placeholder="Descripción de tu plataforma"
+                    label="Facebook URL"
+                    value={settings.social.facebook}
+                    onChange={(v) => updateSetting('social', 'facebook', v)}
+                    icon={FacebookIcon}
+                    placeholder="https://facebook.com/..."
+                  />
+                  <InputField
+                    label="Instagram URL"
+                    value={settings.social.instagram}
+                    onChange={(v) => updateSetting('social', 'instagram', v)}
+                    icon={InstagramIcon}
+                    placeholder="https://instagram.com/..."
+                  />
+                  <InputField
+                    label="TikTok URL"
+                    value={settings.social.tiktok}
+                    onChange={(v) => updateSetting('social', 'tiktok', v)}
+                    icon={GlobeIcon}
+                    placeholder="https://tiktok.com/..."
                   />
                 </div>
-                <SelectField
-                  label="Zona Horaria"
-                  value={settings.general.timezone}
-                  onChange={(value) => updateSetting('general', 'timezone', value)}
-                  options={[
-                    { value: 'America/Mexico_City', label: 'México (GMT-6)' },
-                    { value: 'America/New_York', label: 'Nueva York (GMT-5)' },
-                    { value: 'Europe/Madrid', label: 'Madrid (GMT+1)' }
-                  ]}
-                />
-                <div className="md:col-span-2">
-                  <ToggleField
-                    label="Modo Mantenimiento"
-                    value={settings.general.maintenanceMode}
-                    onChange={(value) => updateSetting('general', 'maintenanceMode', value)}
-                    description="Activa el modo mantenimiento para realizar actualizaciones"
-                  />
-                </div>
-              </div>
-            </SettingSection>
+              </SettingSection>
+            </div>
           )}
 
           {activeTab === 'appearance' && (
-            <SettingSection title="Configuración de Apariencia" icon={PaintBrushIcon}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <SelectField
-                  label="Tema"
-                  value={settings.appearance.theme}
-                  onChange={(value) => updateSetting('appearance', 'theme', value)}
-                  options={[
-                    { value: 'light', label: 'Claro' },
-                    { value: 'dark', label: 'Oscuro' },
-                    { value: 'auto', label: 'Automático' }
-                  ]}
-                />
-                <InputField
-                  label="Color Primario"
-                  type="color"
-                  value={settings.appearance.primaryColor}
-                  onChange={(value) => updateSetting('appearance', 'primaryColor', value)}
-                />
-                <InputField
-                  label="URL del Logo"
-                  value={settings.appearance.logoUrl}
-                  onChange={(value) => updateSetting('appearance', 'logoUrl', value)}
-                  placeholder="https://ejemplo.com/logo.png"
-                />
-                <InputField
-                  label="URL del Favicon"
-                  value={settings.appearance.favicon}
-                  onChange={(value) => updateSetting('appearance', 'favicon', value)}
-                  placeholder="https://ejemplo.com/favicon.ico"
-                />
-              </div>
-            </SettingSection>
-          )}
+            <SettingSection 
+              title="Apariencia y Temas" 
+              icon={PaintBrushIcon}
+              description="Personaliza la identidad visual de tu tienda."
+            >
+              <div className="space-y-8">
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {THEMES.map((themeKey) => {
+                    const config = THEME_CONFIG[themeKey];
+                    const isActive = currentTheme === themeKey;
+                    const Icon = config.icon;
 
-          {activeTab === 'security' && (
-            <SettingSection title="Configuración de Seguridad" icon={ShieldCheckIcon}>
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <InputField
-                    label="Longitud Mínima de Contraseña"
-                    type="number"
-                    value={settings.security.passwordMinLength}
-                    onChange={(value) => updateSetting('security', 'passwordMinLength', value)}
-                  />
-                  <InputField
-                    label="Tiempo de Sesión (horas)"
-                    type="number"
-                    value={settings.security.sessionTimeout}
-                    onChange={(value) => updateSetting('security', 'sessionTimeout', value)}
-                  />
-                  <InputField
-                    label="Máximo Intentos de Login"
-                    type="number"
-                    value={settings.security.maxLoginAttempts}
-                    onChange={(value) => updateSetting('security', 'maxLoginAttempts', value)}
-                  />
-                </div>
-                <div className="space-y-4">
-                  <ToggleField
-                    label="Verificación de Email Requerida"
-                    value={settings.security.requireEmailVerification}
-                    onChange={(value) => updateSetting('security', 'requireEmailVerification', value)}
-                    description="Los usuarios deben verificar su email antes de acceder"
-                  />
-                  <ToggleField
-                    label="Autenticación de Dos Factores"
-                    value={settings.security.enableTwoFactor}
-                    onChange={(value) => updateSetting('security', 'enableTwoFactor', value)}
-                    description="Permite a los usuarios habilitar 2FA en sus cuentas"
-                  />
-                </div>
-              </div>
-            </SettingSection>
-          )}
+                    return (
+                      <button 
+                        key={themeKey}
+                        onClick={() => setTheme(themeKey)}
+                        className={cn(
+                          "relative group rounded-xl border-2 transition-all duration-300 overflow-hidden bg-white dark:bg-neutral-800 text-left w-full",
+                          isActive 
+                            ? "border-primary-500 shadow-xl scale-[1.02]" 
+                            : "border-transparent hover:border-neutral-200 dark:hover:border-neutral-700 shadow-md hover:shadow-lg"
+                        )}
+                      >
+                        {/* Preview Header */}
+                        <div className="h-32 relative overflow-hidden bg-neutral-100 dark:bg-neutral-900">
+                          <div className={cn("absolute inset-0 opacity-20", config.previewColors[0])} />
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <Icon className={cn("w-16 h-16 transition-transform duration-500 group-hover:scale-110", config.colorClass || "text-neutral-900 dark:text-white")} />
+                          </div>
+                          {/* Color Swatches */}
+                          <div className="absolute bottom-4 right-4 flex -space-x-2">
+                            {config.previewColors.map((color, i) => (
+                              <div 
+                                key={i} 
+                                className={cn("w-8 h-8 rounded-full border-2 border-white dark:border-neutral-800 shadow-sm", color)}
+                              />
+                            ))}
+                          </div>
+                        </div>
 
-          {activeTab === 'notifications' && (
-            <SettingSection title="Configuración de Notificaciones" icon={BellIcon}>
-              <div className="space-y-4">
-                <ToggleField
-                  label="Notificaciones por Email"
-                  value={settings.notifications.emailNotifications}
-                  onChange={(value) => updateSetting('notifications', 'emailNotifications', value)}
-                  description="Enviar notificaciones importantes por email"
-                />
-                <ToggleField
-                  label="Notificar Nuevos Usuarios"
-                  value={settings.notifications.newUserNotifications}
-                  onChange={(value) => updateSetting('notifications', 'newUserNotifications', value)}
-                  description="Recibir notificación cuando se registre un nuevo usuario"
-                />
-                <ToggleField
-                  label="Alertas del Sistema"
-                  value={settings.notifications.systemAlerts}
-                  onChange={(value) => updateSetting('notifications', 'systemAlerts', value)}
-                  description="Notificaciones sobre el estado del sistema"
-                />
-                <ToggleField
-                  label="Reportes Semanales"
-                  value={settings.notifications.weeklyReports}
-                  onChange={(value) => updateSetting('notifications', 'weeklyReports', value)}
-                  description="Recibir resumen semanal de actividad"
-                />
-                <ToggleField
-                  label="Emails de Marketing"
-                  value={settings.notifications.marketingEmails}
-                  onChange={(value) => updateSetting('notifications', 'marketingEmails', value)}
-                  description="Enviar emails promocionales a los usuarios"
-                />
-              </div>
-            </SettingSection>
-          )}
+                        {/* Content */}
+                        <div className="p-6">
+                          <div className="flex justify-between items-start mb-4">
+                            <h3 className="text-xl font-bold text-neutral-900 dark:text-white">
+                              {config.label}
+                            </h3>
+                            {isActive && (
+                              <span className="bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1">
+                                <CheckIcon className="w-3 h-3" />
+                                Activo
+                              </span>
+                            )}
+                          </div>
+                          
+                          <p className="text-neutral-600 dark:text-neutral-400 text-sm mb-6 h-12 line-clamp-2">
+                            {config.description}
+                          </p>
 
-          {activeTab === 'content' && (
-            <SettingSection title="Configuración de Contenido" icon={DocumentTextIcon}>
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <InputField
-                    label="Máximo Mapas por Usuario"
-                    type="number"
-                    value={settings.content.maxMapsPerUser}
-                    onChange={(value) => updateSetting('content', 'maxMapsPerUser', value)}
-                  />
-                  <InputField
-                    label="Tamaño Máximo de Archivo (MB)"
-                    type="number"
-                    value={settings.content.maxFileSize}
-                    onChange={(value) => updateSetting('content', 'maxFileSize', value)}
-                  />
-                </div>
-                <div className="space-y-4">
-                  <ToggleField
-                    label="Permitir Mapas Públicos"
-                    value={settings.content.allowPublicMaps}
-                    onChange={(value) => updateSetting('content', 'allowPublicMaps', value)}
-                    description="Los usuarios pueden hacer sus mapas públicos"
-                  />
-                  <ToggleField
-                    label="Moderación Requerida"
-                    value={settings.content.requireModeration}
-                    onChange={(value) => updateSetting('content', 'requireModeration', value)}
-                    description="Los mapas públicos requieren aprobación antes de publicarse"
-                  />
+                          <div className={cn(
+                            "w-full py-2 text-center rounded-lg text-sm font-medium transition-colors",
+                            isActive 
+                              ? "bg-primary-600 text-white"
+                              : "bg-neutral-100 dark:bg-neutral-900 text-neutral-600 dark:text-neutral-400 group-hover:bg-primary-50 dark:group-hover:bg-primary-900/20 group-hover:text-primary-600 dark:group-hover:text-primary-400"
+                          )}>
+                            {isActive ? 'Tema Actual' : 'Activar Tema'}
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </SettingSection>
           )}
 
-          {activeTab === 'privacy' && (
-            <SettingSection title="Configuración de Privacidad" icon={EyeIcon}>
-              <div className="space-y-6">
-                <InputField
-                  label="Días de Retención de Datos"
-                  type="number"
-                  value={settings.privacy.dataRetentionDays}
-                  onChange={(value) => updateSetting('privacy', 'dataRetentionDays', value)}
-                  description="Tiempo que se conservan los datos de usuarios inactivos"
-                />
-                <div className="space-y-4">
-                  <ToggleField
-                    label="Mostrar Perfiles de Usuario"
-                    value={settings.privacy.showUserProfiles}
-                    onChange={(value) => updateSetting('privacy', 'showUserProfiles', value)}
-                    description="Los perfiles de usuario son visibles públicamente"
-                  />
-                  <ToggleField
-                    label="Permitir Indexación de Motores de Búsqueda"
-                    value={settings.privacy.allowSearchEngineIndexing}
-                    onChange={(value) => updateSetting('privacy', 'allowSearchEngineIndexing', value)}
-                    description="Google y otros motores pueden indexar el contenido público"
-                  />
-                  <ToggleField
-                    label="Consentimiento de Cookies"
-                    value={settings.privacy.cookieConsent}
-                    onChange={(value) => updateSetting('privacy', 'cookieConsent', value)}
-                    description="Mostrar banner de consentimiento de cookies"
-                  />
-                  <ToggleField
-                    label="Anonimizar Datos"
-                    value={settings.privacy.anonymizeData}
-                    onChange={(value) => updateSetting('privacy', 'anonymizeData', value)}
-                    description="Anonimizar datos personales en reportes y estadísticas"
+          {activeTab === 'store' && (
+            <div className="space-y-6">
+              <SettingSection 
+                title="Configuración de Tienda" 
+                icon={StoreIcon}
+                description="Ajustes generales del catálogo y experiencia de compra."
+              >
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <SelectField
+                      label="Moneda"
+                      value={settings.store.currency}
+                      onChange={(v) => updateSetting('store', 'currency', v)}
+                      options={[
+                        { value: 'PEN', label: 'Soles (S/)' },
+                        { value: 'USD', label: 'Dólares ($)' }
+                      ]}
+                    />
+                    <InputField
+                      label="Productos por página"
+                      type="number"
+                      value={settings.store.productsPerPage}
+                      onChange={(v) => updateSetting('store', 'productsPerPage', v)}
+                    />
+                  </div>
+                  <div className="pt-4 border-t border-neutral-100 dark:border-neutral-700">
+                     <ToggleField
+                        label="Permitir Reseñas de Clientes"
+                        value={settings.store.enableReviews}
+                        onChange={(v) => updateSetting('store', 'enableReviews', v)}
+                        description="Habilita la sección de comentarios y valoraciones en los productos."
+                      />
+                  </div>
+                </div>
+              </SettingSection>
+
+              <SettingSection 
+                title="Métodos de Pago" 
+                icon={CreditCardIcon}
+                description="Información que se mostrará al cliente para realizar pagos manuales."
+              >
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <InputField
+                      label="Número Yape"
+                      value={settings.payment.yapeNumber}
+                      onChange={(v) => updateSetting('payment', 'yapeNumber', v)}
+                      placeholder="999..."
+                    />
+                    <InputField
+                      label="Titular Yape"
+                      value={settings.payment.yapeName}
+                      onChange={(v) => updateSetting('payment', 'yapeName', v)}
+                      placeholder="Nombre del titular"
+                    />
+                    <InputField
+                      label="Número Plin"
+                      value={settings.payment.plinNumber}
+                      onChange={(v) => updateSetting('payment', 'plinNumber', v)}
+                      placeholder="999..."
+                    />
+                  </div>
+                  <InputField
+                    label="Información Bancaria Adicional"
+                    value={settings.payment.bankInfo}
+                    onChange={(v) => updateSetting('payment', 'bankInfo', v)}
+                    placeholder="Banco, CCI, Titular..."
                   />
                 </div>
-              </div>
-            </SettingSection>
+              </SettingSection>
+            </div>
           )}
 
           {activeTab === 'analytics' && (
-            <SettingSection title="Exclusión de Analytics" icon={ShieldCheckIcon}>
-              <div className="space-y-6">
-                <p className="text-sm text-neutral-600 dark:text-neutral-300">
-                  Esta herramienta te permite evitar que tus visitas desde este dispositivo sean contadas en Google Analytics. 
-                  Es útil para administradores y desarrolladores para mantener limpias las estadísticas.
-                </p>
-                <AnalyticsExclusion />
-              </div>
-            </SettingSection>
+             <SettingSection 
+                title="Configuración de Analytics" 
+                icon={ShieldCheckIcon}
+                description="Gestiona la recopilación de datos y privacidad."
+             >
+               <div className="space-y-6">
+                 <AnalyticsExclusion />
+                 
+                 <div className="pt-6 border-t border-neutral-100 dark:border-neutral-700">
+                    <h4 className="text-sm font-semibold text-neutral-900 dark:text-white mb-4 uppercase tracking-wider">
+                      SEO y Rastreo
+                    </h4>
+                    <ToggleField
+                      label="Indexación en Buscadores"
+                      value={settings.seo.allowIndexing}
+                      onChange={(v) => updateSetting('seo', 'allowIndexing', v)}
+                      description="Permitir que Google y otros motores de búsqueda muestren tu sitio."
+                    />
+                 </div>
+               </div>
+             </SettingSection>
           )}
         </div>
-        </div>
-      </AdminLayout>
-    </AdminProtection>
+      </div>
+    </div>
   );
 }

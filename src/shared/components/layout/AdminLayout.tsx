@@ -6,12 +6,10 @@ import { usePathname } from 'next/navigation';
 import {
   Home,
   Users,
-  FileText,
   Settings,
-  BarChart3,
   LogOut,
   ShoppingBag,
-  Palette,
+  Package,
   Menu,
   X
 } from 'lucide-react';
@@ -25,11 +23,10 @@ interface AdminLayoutProps {
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: Home },
-  { name: 'Usuarios', href: '/admin/usuarios', icon: Users },
   { name: 'Productos', href: '/admin/productos', icon: ShoppingBag },
-  { name: 'Contenido', href: '/admin/contenido', icon: FileText },
-  { name: 'Estadísticas', href: '/admin/estadisticas', icon: BarChart3 },
-  { name: 'Temas', href: '/admin/temas', icon: Palette },
+  { name: 'Servicios', href: '/admin/servicios', icon: Package }, // Reusing Package icon or maybe Briefcase if available
+  { name: 'Pedidos', href: '/admin/pedidos', icon: Package },
+  { name: 'Usuarios', href: '/admin/usuarios', icon: Users },
   { name: 'Configuración', href: '/admin/configuracion', icon: Settings },
 ];
 
@@ -175,8 +172,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           </div>
         </div>
       </div>
-
-
 
       {/* Main content */}
       <div className="flex flex-col min-h-screen pt-20">

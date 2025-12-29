@@ -255,7 +255,7 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
   }, [handleKeyDown]);
 
   return (
-    <div className="container mx-auto px-4 pt-24 pb-12 lg:pt-32 lg:pb-20 max-w-7xl font-sans text-foreground min-h-screen">
+    <div className="container mx-auto px-4 pt-24 pb-12 lg:pt-32 lg:pb-20 max-w-7xl font-sans text-foreground">
       <Button 
         asChild
         variant="outline"
@@ -371,11 +371,9 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
               {/* Stock Status - Ocultar para servicios */}
               {product.kind !== 'service' && (
                 <div className="flex items-center text-sm">
-                  <div className={`w-2 h-2 rounded-full mr-2 ${
-                    product.stock > 0 ? 'bg-success' : 'bg-destructive'
-                  }`} />
-                  <span className={product.stock > 0 ? 'text-success' : 'text-destructive'}>
-                    {product.stock > 0 ? 'En Stock' : 'Agotado'}
+                  <div className="w-2 h-2 rounded-full mr-2 bg-success animate-pulse" />
+                  <span className="text-success font-medium">
+                    Fabricación bajo pedido
                   </span>
                 </div>
               )}

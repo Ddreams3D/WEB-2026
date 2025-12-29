@@ -61,7 +61,7 @@ export default function MarketplacePageClient() {
   const productCount = displayProducts.length;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background">
       <PageHeader
         title="Catálogo de Productos"
         description="Descubre nuestra colección de productos de impresión 3D listos para ti"
