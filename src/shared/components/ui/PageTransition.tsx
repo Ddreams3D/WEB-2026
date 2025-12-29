@@ -38,7 +38,7 @@ export function PageTransition({ children }: PageTransitionProps) {
         exit="out"
         variants={pageVariants}
         transition={pageTransition}
-        className="min-h-screen w-full"
+        className="flex-1 w-full"
       >
         {children}
       </motion.div>
