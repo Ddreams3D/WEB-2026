@@ -62,10 +62,7 @@ export default function Hero() {
           <div 
             className="text-center text-white max-w-5xl px-4 sm:px-6 lg:px-8"
           >
-            <h1 className="sr-only">
-              {heroContent.seoTitle}
-            </h1>
-            <p 
+            <h1 
               className={cn("text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-4 tracking-tight drop-shadow-lg leading-tight text-white", getAnimClass(0))}
               style={getDelayStyle(0)}
             >
@@ -76,9 +73,18 @@ export default function Hero() {
               >
                 En 3D.
               </span>
-            </p>
+            </h1>
+            
+            {/* Semantic Subtitle - Visible for SEO & Users */}
             <p 
-              className={cn("text-lg sm:text-xl md:text-2xl mb-8 text-gray-100 max-w-2xl mx-auto font-light leading-relaxed drop-shadow-md", getAnimClass(400))}
+              className={cn("text-xl sm:text-2xl font-medium mb-6 text-gray-100 max-w-3xl mx-auto drop-shadow-md tracking-wide", getAnimClass(300))}
+              style={getDelayStyle(300)}
+            >
+              Estudio de diseño e impresión 3D en Arequipa · Envíos a todo el Perú
+            </p>
+
+            <p 
+              className={cn("text-lg sm:text-xl md:text-2xl mb-8 text-gray-200 max-w-2xl mx-auto font-light leading-relaxed drop-shadow-md", getAnimClass(400))}
               style={getDelayStyle(400)}
             >
               {heroContent.description}

@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { Metadata } from 'next';
 import MarketplacePageClient from '@/features/marketplace/MarketplacePageClient';
 
@@ -13,5 +14,9 @@ export const metadata: Metadata = {
 };
 
 export default function MarketplacePage() {
-  return <MarketplacePageClient />;
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Cargando catálogo...</div>}>
+      <MarketplacePageClient />
+    </Suspense>
+  );
 }

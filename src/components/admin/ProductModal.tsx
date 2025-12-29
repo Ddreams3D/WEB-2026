@@ -6,6 +6,7 @@ import { X, Upload, ImageIcon } from '@/lib/icons';
 import { useToast } from '@/components/ui/ToastManager';
 import ImageUpload from './ImageUpload';
 import { Product } from '@/shared/types';
+import { Service } from '@/shared/types/domain';
 
 interface ProductFormData {
   name: string;
@@ -23,7 +24,7 @@ interface ProductModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (data: ProductFormData) => void;
-  product?: Product | null;
+  product?: Product | Service | null;
 }
 
 const categories = [
@@ -70,11 +71,11 @@ export default function ProductModal({ isOpen, onClose, onSave, product }: Produ
         name: product.name,
         description: product.description,
         category: product.categoryName || '',
-        material: product.materials?.[0] || '',
+        material: (product.kind === 'product' && product.materials?.[0]) || '',
         price: product.price,
-        stock: product.stock || 0,
+        stock: (product.kind === 'product' && product.stock) || 0,
         image_url: product.images?.[0]?.url || '',
-        isService: !!product.customPriceDisplay,
+        isService: product.kind === 'service',
         customPriceDisplay: product.customPriceDisplay || ''
       });
     } else {

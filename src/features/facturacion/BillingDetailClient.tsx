@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useBilling } from '@/contexts/BillingContext';
 import type { Invoice } from '@/contexts/BillingContext';
@@ -86,50 +86,49 @@ export default function BillingDetailClient() {
   const [paymentHistory, setPaymentHistory] = useState<PaymentRecord[]>([]);
   const [activityHistory, setActivityHistory] = useState<InvoiceActivity[]>([]);
 
-  useEffect(() => {
-    const loadInvoiceData = async () => {
-      const invoiceId = params.id as string;
-      const foundInvoice = await getInvoiceById(invoiceId);
-      
-      if (foundInvoice) {
-        setInvoice(foundInvoice);
-        
-        // Cargar historial de pagos (mock data)
-        setPaymentHistory([
-          {
-            id: '1',
-            amount: foundInvoice.totalAmount * 0.5,
-            date: '2024-01-15T10:30:00Z',
-            method: 'Transferencia Bancaria',
-            reference: 'TXN-001234',
-            notes: 'Pago parcial'
-          }
-        ]);
-        
-        // Cargar historial de actividad (mock data)
-        setActivityHistory([
-          {
-            id: '1',
-            type: 'created',
-            description: 'Factura creada',
-            timestamp: foundInvoice.createdAt,
-            user: 'Sistema'
-          },
-          {
-            id: '2',
-            type: 'sent',
-            description: 'Factura enviada al cliente',
-            timestamp: foundInvoice.status === 'sent' ? foundInvoice.updatedAt : foundInvoice.createdAt,
-            user: 'Admin'
-          }
-        ]);
-      }
-      
-      setLoading(false);
-    };
+  const loadInvoiceData = useCallback(async () => {
+    // Si hay facturas en el contexto, buscar la que coincida
+    const foundInvoice = invoices.find(inv => inv.id === params.id);
     
+    if (foundInvoice) {
+      setInvoice(foundInvoice);
+      // Cargar pagos (mock data)
+      setPaymentHistory([
+        {
+          id: '1',
+          amount: foundInvoice.totalAmount * 0.5,
+          date: '2024-01-15T10:30:00Z',
+          method: 'Transferencia Bancaria',
+          reference: 'TXN-001234',
+          notes: 'Pago parcial'
+        }
+      ]);
+      
+      // Cargar historial de actividad (mock data)
+      setActivityHistory([
+        {
+          id: '1',
+          type: 'created',
+          description: 'Factura creada',
+          timestamp: foundInvoice.createdAt,
+          user: 'Sistema'
+        },
+        {
+          id: '2',
+          type: 'sent',
+          description: 'Factura enviada al cliente',
+          timestamp: foundInvoice.status === 'sent' ? foundInvoice.updatedAt : foundInvoice.createdAt,
+          user: 'Admin'
+        }
+      ]);
+    }
+    
+    setLoading(false);
+  }, [invoices, params.id]);
+
+  useEffect(() => {
     loadInvoiceData();
-  }, [params.id]);
+  }, [loadInvoiceData]);
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {

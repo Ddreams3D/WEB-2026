@@ -184,7 +184,7 @@ const PopoverContent: React.FC<PopoverContentProps> = ({
 
       setPosition({ top, left });
     }
-  }, [open, side, align, sideOffset]);
+  }, [open, side, align, sideOffset, triggerRef]);
 
   if (!open) return null;
 

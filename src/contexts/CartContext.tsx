@@ -1,7 +1,11 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { CartItem, Cart, Product } from '../shared/types';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import { CartItem, Cart, Product, CartItemCustomization } from '../shared/types';
+
+interface SerializedCartItem extends Omit<CartItem, 'addedAt'> {
+  addedAt: string;
+}
 
 interface CartContextType {
   cart: Cart | null;
@@ -9,7 +13,7 @@ interface CartContextType {
   itemCount: number;
   subtotal: number;
   total: number;
-  addToCart: (product: Product, quantity?: number, customizations?: any[]) => Promise<void>;
+  addToCart: (product: Product, quantity?: number, customizations?: CartItemCustomization[]) => Promise<void>;
   removeFromCart: (productId: string) => Promise<void>;
   updateQuantity: (productId: string, quantity: number) => Promise<void>;
   clearCart: () => Promise<void>;
@@ -26,12 +30,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState<string | null>(null);
 
   // Valores calculados
-  const itemCount = items.reduce((total, item) => total + item.quantity, 0);
-  const subtotal = items.reduce((total, item) => {
+  const itemCount = useMemo(() => items.reduce((total, item) => total + item.quantity, 0), [items]);
+  
+  const subtotal = useMemo(() => items.reduce((total, item) => {
     const price = item.product.price || 0;
     return total + (price * item.quantity);
-  }, 0);
-  const total = subtotal; // Por ahora sin impuestos ni envío
+  }, 0), [items]);
+
+  const total = useMemo(() => subtotal, [subtotal]); // Por ahora sin impuestos ni envío
 
   useEffect(() => {
     loadCartFromLocalStorage();
@@ -45,7 +51,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       if (savedCart) {
         const cartData = JSON.parse(savedCart);
         // Restaurar fechas que vienen como string del JSON
-        const parsedItems = (cartData.items || []).map((item: any) => ({
+        const parsedItems = (cartData.items || []).map((item: SerializedCartItem) => ({
           ...item,
           addedAt: new Date(item.addedAt)
         }));
@@ -89,10 +95,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const addToCart = async (product: Product, quantity: number = 1, customizations?: any[]) => {
+  const addToCart = async (product: Product, quantity: number = 1, customizations?: CartItemCustomization[]) => {
     try {
       setIsLoading(true);
       setError(null);
+
+      // Guard clause: Servicios no pueden ir al carrito
+      if ((product as any).kind === 'service') {
+        throw new Error('Los servicios requieren cotización y no se pueden agregar al carrito directamente.');
+      }
 
       // Buscar item existente considerando personalizaciones
       const existingItemIndex = items.findIndex(item => 
@@ -139,7 +150,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       setCart(updatedCart);
       saveCartToLocalStorage(updatedCart);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error adding to cart');
+      const errorMessage = err instanceof Error ? err.message : 'Error adding to cart';
+      setError(errorMessage);
+      throw err; // Re-throw para que el componente pueda manejar la UI (Toast)
     } finally {
       setIsLoading(false);
     }

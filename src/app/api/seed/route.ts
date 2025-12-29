@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/firebase';
 import { collection, doc, writeBatch } from 'firebase/firestore';
-import { mockCategories, mockProducts, mockUsers, mockReviews } from '@/shared/data/mockData';
+import { categories } from '@/data/categories.data';
+import { products } from '@/data/products.data';
+import { users } from '@/data/users.data';
+import { reviews } from '@/data/reviews.data';
+
+export const dynamic = 'force-dynamic';
 
 // Helper to remove undefined values since Firestore doesn't support them
 const deepClean = (obj: any): any => {
@@ -32,28 +37,28 @@ export async function GET() {
     let count = 0;
 
     // Categories
-    mockCategories.forEach((item) => {
+    categories.forEach((item) => {
       const ref = doc(collection(db, 'categories'), item.id);
       batch.set(ref, deepClean(item));
       count++;
     });
 
     // Products
-    mockProducts.forEach((item) => {
+    products.forEach((item) => {
       const ref = doc(collection(db, 'products'), item.id);
       batch.set(ref, deepClean(item));
       count++;
     });
     
     // Users
-    mockUsers.forEach((item) => {
+    users.forEach((item) => {
       const ref = doc(collection(db, 'users'), item.id);
       batch.set(ref, deepClean(item));
       count++;
     });
 
     // Reviews
-    mockReviews.forEach((item) => {
+    reviews.forEach((item) => {
       const ref = doc(collection(db, 'reviews'), item.id);
       batch.set(ref, deepClean(item));
       count++;
@@ -65,10 +70,10 @@ export async function GET() {
       success: true, 
       message: `Successfully seeded ${count} items to Firestore`,
       details: {
-        categories: mockCategories.length,
-        products: mockProducts.length,
-        users: mockUsers.length,
-        reviews: mockReviews.length
+        categories: categories.length,
+        products: products.length,
+        users: users.length,
+        reviews: reviews.length
       }
     });
   } catch (error) {

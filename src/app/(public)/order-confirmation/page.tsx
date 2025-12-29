@@ -8,10 +8,26 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { colors } from '@/shared/styles/colors';
 
+import { CartItem } from '@/shared/types';
+
+interface OrderCustomerData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: string;
+  district: string;
+  city: string;
+  postalCode: string;
+  reference?: string;
+  paymentMethod: string;
+  notes?: string;
+}
+
 interface OrderData {
   id: string;
-  items: any[];
-  customerData: any;
+  items: CartItem[];
+  customerData: OrderCustomerData;
   totals: {
     subtotal: number;
     shipping: number;

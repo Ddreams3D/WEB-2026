@@ -40,7 +40,7 @@ export default function BillingPage() {
     };
     
     loadData();
-  }, []);
+  }, [loadInvoices]);
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {

@@ -6,8 +6,9 @@ export async function POST(request: Request) {
     const { password } = body;
 
     // Validación en el servidor (Seguro: el usuario no puede ver esto)
-    // TODO: Idealmente mover esto a una variable de entorno process.env.ADMIN_PASSWORD
-    if (password === 'ddreams2026') {
+    const adminPassword = process.env.ADMIN_PASSWORD || 'ddreams2026';
+    
+    if (password === adminPassword) {
       
       const response = NextResponse.json({ success: true });
       

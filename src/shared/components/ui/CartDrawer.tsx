@@ -125,16 +125,26 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   Tu carrito está vacío
                 </h3>
                 <p className="text-neutral-500 dark:text-neutral-400 mb-6 max-w-sm">
-                  Descubre nuestros increíbles productos y comienza a llenar tu
-                  carrito
+                  ¿No encuentras lo que buscas? Podemos diseñarlo para ti.
                 </p>
-                <Button
-                  onClick={onClose}
-                  variant="gradient"
-                  className="px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
-                >
-                  Explorar Productos
-                </Button>
+                <div className="flex flex-col w-full gap-3">
+                  <Button
+                    onClick={onClose}
+                    asChild
+                    variant="gradient"
+                    className="w-full px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
+                  >
+                    <Link href="/marketplace">Explorar Productos</Link>
+                  </Button>
+                  <Button
+                    onClick={onClose}
+                    asChild
+                    variant="outline"
+                    className="w-full px-6 py-3 rounded-xl font-medium"
+                  >
+                    <Link href="/contact">Cotizar Diseño Único</Link>
+                  </Button>
+                </div>
               </div>
             ) : (
               <div className="p-6 space-y-4">

@@ -6,8 +6,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { User, Settings, LogOut, Bell } from '@/lib/icons';
 import { Button } from '@/components/ui/button';
-import { useAuth } from '../contexts/AuthContext';
-import { useToast } from './ui/ToastManager';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/components/ui/ToastManager';
 
 export default function UserMenu() {
   const [isOpen, setIsOpen] = useState(false);

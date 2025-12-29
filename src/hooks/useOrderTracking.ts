@@ -167,8 +167,7 @@ export const useOrderTrackingHook = (): UseOrderTrackingReturn => {
           comparison = priorityOrder[a.priority as keyof typeof priorityOrder] - priorityOrder[b.priority as keyof typeof priorityOrder];
           break;
         case 'amount':
-          // TODO: Implementar ordenamiento por monto cuando esté disponible en el tipo Order
-          comparison = 0;
+          comparison = a.totalAmount - b.totalAmount;
           break;
         case 'delivery':
           const aDelivery = a.estimatedDelivery ? new Date(a.estimatedDelivery).getTime() : 0;
@@ -190,8 +189,7 @@ export const useOrderTrackingHook = (): UseOrderTrackingReturn => {
     const inProduction = orders.filter(o => o.status === 'in-production').length;
     const completed = orders.filter(o => o.status === 'delivered').length;
     const cancelled = orders.filter(o => o.status === 'shipped').length; // Usando shipped como estado final antes de delivered
-    // TODO: Implementar cálculo de valor total cuando esté disponible en el tipo Order
-    const totalValue = 0; // orders.reduce((sum, o) => sum + o.total, 0);
+    const totalValue = orders.reduce((sum, o) => sum + o.totalAmount, 0);
     
     // Calcular tiempo promedio de entrega
     const completedOrders = orders.filter(o => o.status === 'delivered' && o.actualDelivery);
@@ -304,8 +302,6 @@ export const useOrderTrackingHook = (): UseOrderTrackingReturn => {
       // En una implementación real, esto llamaría a la API o al contexto
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      console.log(`Nota agregada al pedido ${orderId}: ${_note}`);
-      
     } catch (err) {
       const errorMessage = 'Error al agregar nota al pedido';
       setError(errorMessage);
@@ -346,8 +342,6 @@ export const useOrderTrackingHook = (): UseOrderTrackingReturn => {
       const estimatedDelivery = new Date();
       estimatedDelivery.setDate(estimatedDelivery.getDate() + estimatedDays);
 
-      // TODO: Implementar actualización de fecha estimada cuando esté disponible en el contexto
-      // await contextUpdateOrderStatus(orderId, order.status);
       return estimatedDelivery;
     } catch (err) {
       const errorMessage = 'Error al estimar fecha de entrega';

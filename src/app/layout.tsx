@@ -2,20 +2,15 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import './globals.css';
-import { Providers } from '../contexts/Providers';
-import ConditionalNavbar from '../shared/components/layout/ConditionalNavbar';
-import ConditionalFooter from '../shared/components/layout/ConditionalFooter';
-import WhatsAppFloatingButton from '../shared/components/layout/WhatsAppFloatingButton';
-import PageTransition from '../shared/components/ui/PageTransition';
+import { Providers } from '@/contexts/Providers';
 import { getAppUrl } from '@/lib/url-utils';
 import { CookieBanner } from '@/components/ui';
-import { OrganizationJsonLd } from '@/components/seo/OrganizationJsonLd';
-
-export const dynamic = 'force-dynamic';
+import { LocalBusinessJsonLd } from '@/components/seo/LocalBusinessJsonLd';
 
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -110,17 +105,10 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased text-foreground dark:text-white">
-        <OrganizationJsonLd />
+        <LocalBusinessJsonLd />
         <Providers>
-          <div className="min-h-screen flex flex-col">
-            <ConditionalNavbar />
-            <main className="flex-grow">
-              <PageTransition>{children}</PageTransition>
-            </main>
-            <ConditionalFooter />
-            <WhatsAppFloatingButton />
-            <CookieBanner />
-          </div>
+          {children}
+          <CookieBanner />
         </Providers>
       </body>
     </html>

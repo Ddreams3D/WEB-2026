@@ -1,11 +1,12 @@
 import React from 'react';
 import { Product } from '@/shared/types';
+import { Service } from '@/shared/types/domain';
 import { cn } from '@/lib/utils';
 import { colors } from '@/shared/styles/colors';
 import { Star, Check } from 'lucide-react';
 
 interface ProductTabsProps {
-  product: Product;
+  product: Product | Service;
   activeTab: string;
   setActiveTab: (id: string) => void;
 }

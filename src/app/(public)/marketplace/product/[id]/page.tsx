@@ -54,56 +54,7 @@ export default async function ProductPage({ params }: Props) {
     notFound();
   }
 
-  // Redirect to slug URL if accessing by ID or different slug
-  if (product.slug && id !== product.slug) {
-    redirect(`/marketplace/product/${product.slug}`);
-  }
-
-  // Fetch related products
-  const allProducts = await ProductService.getAllProducts();
-  const relatedProducts = allProducts
-    .filter(p => p.id !== product.id && (p.categoryId === product.categoryId || p.tags?.some(tag => product.tags?.includes(tag))))
-    .slice(0, 4);
-
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Product',
-    name: product.name,
-    image: product.images.map(img => img.url),
-    description: product.description,
-    sku: product.sku,
-    brand: {
-      '@type': 'Brand',
-      name: 'Ddreams 3D'
-    },
-    offers: {
-      '@type': 'Offer',
-      url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ddreams3d.com'}/marketplace/product/${product.slug || product.id}`,
-      priceCurrency: product.currency,
-      price: product.price,
-      availability: product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-      itemCondition: 'https://schema.org/NewCondition'
-    },
-    ...(product.rating && product.reviewCount ? {
-      aggregateRating: {
-        '@type': 'AggregateRating',
-        ratingValue: product.rating,
-        reviewCount: product.reviewCount
-      }
-    } : {})
-  };
-
-  const breadcrumbItems = [
-    { name: 'Inicio', item: process.env.NEXT_PUBLIC_APP_URL || 'https://ddreams3d.com' },
-    { name: 'Marketplace', item: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ddreams3d.com'}/marketplace` },
-    { name: product.name, item: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ddreams3d.com'}/marketplace/product/${product.slug || product.id}` },
-  ];
-
-  return (
-    <>
-      <JsonLd data={jsonLd} />
-      <BreadcrumbJsonLd items={breadcrumbItems} />
-      <ProductDetailClient product={product} relatedProducts={relatedProducts} />
-    </>
-  );
+  // Redirect to new silo structure: /marketplace/[category]/[slug]
+  const categorySlug = product.category?.slug || product.categoryId || 'general';
+  redirect(`/marketplace/${categorySlug}/${product.slug || product.id}`);
 }

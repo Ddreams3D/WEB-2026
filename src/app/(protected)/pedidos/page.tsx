@@ -38,7 +38,7 @@ export default function PedidosPage() {
 
   useEffect(() => {
     loadOrders();
-  }, []);
+  }, [loadOrders]);
 
   useEffect(() => {
     let filtered = orders;

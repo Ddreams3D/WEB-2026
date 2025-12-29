@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { X, ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Product } from '../../shared/types';
-import { useCart } from '../../contexts/CartContext';
-import { useToast } from '../ui/ToastManager';
-import { ProductImage } from '../../shared/components/ui/DefaultImage';
+import Link from 'next/link';
+import { X, ShoppingCart, ChevronLeft, ChevronRight, MessageSquare } from 'lucide-react';
+import { Product } from '@/shared/types';
+import { Service } from '@/shared/types/domain';
+import { useCart } from '@/contexts/CartContext';
+import { useToast } from '@/components/ui/ToastManager';
+import { ProductImage } from '@/shared/components/ui/DefaultImage';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { colors } from '@/shared/styles/colors';
 
 interface ProductDetailsModalProps {
-  product: Product | null;
+  product: Product | Service | null;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -48,7 +50,8 @@ export function ProductDetailsModal({ product, isOpen, onClose }: ProductDetails
   if (!isOpen || !product) return null;
 
   const handleAddToCart = () => {
-    addToCart(product, 1);
+    if (!product || product.kind !== 'product') return;
+    addToCart(product as Product, 1);
     showSuccess('Producto agregado', `${product.name} agregado al carrito`);
     onClose();
   };
@@ -184,14 +187,27 @@ export function ProductDetailsModal({ product, isOpen, onClose }: ProductDetails
           )}
 
           <div className="mt-8 flex justify-end">
-            <Button
-              onClick={handleAddToCart}
-              variant="gradient"
-              className="w-full sm:w-auto flex items-center justify-center gap-2"
-            >
-              <ShoppingCart className="w-5 h-5" />
-              Agregar al carrito
-            </Button>
+            {product.kind !== 'service' && product.price > 0 ? (
+              <Button
+                onClick={handleAddToCart}
+                variant="gradient"
+                className="w-full sm:w-auto flex items-center justify-center gap-2"
+              >
+                <ShoppingCart className="w-5 h-5" />
+                Agregar al carrito
+              </Button>
+            ) : (
+              <Button
+                asChild
+                variant="gradient"
+                className="w-full sm:w-auto flex items-center justify-center gap-2"
+              >
+                <Link href="/contact">
+                  <MessageSquare className="w-5 h-5" />
+                  Cotizar
+                </Link>
+              </Button>
+            )}
           </div>
         </div>
       </div>

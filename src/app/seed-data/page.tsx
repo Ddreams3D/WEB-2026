@@ -3,7 +3,10 @@
 import { useState } from 'react';
 import { db } from '@/lib/firebase';
 import { collection, doc, writeBatch } from 'firebase/firestore';
-import { mockCategories, mockProducts, mockUsers, mockReviews } from '@/shared/data/mockData';
+import { categories } from '@/data/categories.data';
+import { products } from '@/data/products.data';
+import { users } from '@/data/users.data';
+import { reviews } from '@/data/reviews.data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -39,32 +42,32 @@ export default function SeedPage() {
       let count = 0;
 
       // Categories
-      addLog(`Procesando ${mockCategories.length} categorías...`);
-      mockCategories.forEach((item) => {
+      addLog(`Procesando ${categories.length} categorías...`);
+      categories.forEach((item) => {
         const ref = doc(collection(db, 'categories'), item.id);
         batch.set(ref, deepClean(item));
         count++;
       });
 
       // Products
-      addLog(`Procesando ${mockProducts.length} productos...`);
-      mockProducts.forEach((item) => {
+      addLog(`Procesando ${products.length} productos...`);
+      products.forEach((item) => {
         const ref = doc(collection(db, 'products'), item.id);
         batch.set(ref, deepClean(item));
         count++;
       });
       
       // Users
-      addLog(`Procesando ${mockUsers.length} usuarios...`);
-      mockUsers.forEach((item) => {
+      addLog(`Procesando ${users.length} usuarios...`);
+      users.forEach((item) => {
         const ref = doc(collection(db, 'users'), item.id);
         batch.set(ref, deepClean(item));
         count++;
       });
 
       // Reviews
-      addLog(`Procesando ${mockReviews.length} reseñas...`);
-      mockReviews.forEach((item) => {
+      addLog(`Procesando ${reviews.length} reseñas...`);
+      reviews.forEach((item) => {
         const ref = doc(collection(db, 'reviews'), item.id);
         batch.set(ref, deepClean(item));
         count++;

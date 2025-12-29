@@ -91,7 +91,8 @@ export interface Category {
 // Productos del marketplace
 export interface Product {
   id: string;
-  slug?: string;
+  kind: 'product';
+  slug: string;
   name: string;
   description: string;
   shortDescription?: string;
@@ -203,10 +204,12 @@ export interface CartItem {
 }
 
 export interface CartItemCustomization {
-  type: 'color' | 'material' | 'size' | 'finish' | 'other';
+  id?: string;
+  type?: 'color' | 'material' | 'size' | 'finish' | 'other';
   name: string;
   value: string;
-  additionalCost?: number;
+  priceModifier?: number;
+  additionalCost?: number; // Kept for backward compatibility
 }
 
 export interface Cart {

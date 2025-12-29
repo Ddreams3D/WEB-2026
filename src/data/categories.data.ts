@@ -1,0 +1,65 @@
+import { Category } from '@/shared/types/domain';
+
+// Categories data
+export const categories: Category[] = [
+  {
+    id: 'medicina',
+    name: 'Medicina',
+    description: 'Prótesis personalizadas y modelos anatómicos de precisión médica',
+    slug: 'medicina',
+    imageUrl: '/images/categories/medical.jpg',
+    productCount: 15,
+    isActive: true,
+    sortOrder: 1,
+    createdAt: new Date('2024-01-01'),
+    updatedAt: new Date('2024-01-01')
+  },
+  {
+    id: 'arquitectura',
+    name: 'Arquitectura',
+    description: 'Maquetas arquitectónicas detalladas y visualización de proyectos',
+    slug: 'arquitectura',
+    imageUrl: '/images/categories/architecture.jpg',
+    productCount: 8,
+    isActive: true,
+    sortOrder: 2,
+    createdAt: new Date('2024-01-01'),
+    updatedAt: new Date('2024-01-01')
+  },
+  {
+    id: 'educacion',
+    name: 'Educación',
+    description: 'Material didáctico interactivo y modelos educativos innovadores',
+    slug: 'educacion',
+    imageUrl: '/images/categories/education.jpg',
+    productCount: 12,
+    isActive: true,
+    sortOrder: 3,
+    createdAt: new Date('2024-01-01'),
+    updatedAt: new Date('2024-01-01')
+  },
+  {
+    id: 'ingenieria',
+    name: 'Ingeniería',
+    description: 'Prototipos funcionales y componentes técnicos de alta precisión',
+    slug: 'ingenieria',
+    imageUrl: '/images/categories/engineering.jpg',
+    productCount: 10,
+    isActive: true,
+    sortOrder: 4,
+    createdAt: new Date('2024-01-01'),
+    updatedAt: new Date('2024-01-01')
+  },
+  {
+    id: 'arte-diseno',
+    name: 'Arte y Diseño',
+    description: 'Esculturas únicas, trofeos y objetos decorativos personalizados',
+    slug: 'arte-diseno',
+    imageUrl: '/images/categories/art.jpg',
+    productCount: 25,
+    isActive: true,
+    sortOrder: 5,
+    createdAt: new Date('2024-01-01'),
+    updatedAt: new Date('2024-01-01')
+  }
+];

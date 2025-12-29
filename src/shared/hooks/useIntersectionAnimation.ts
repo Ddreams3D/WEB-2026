@@ -62,7 +62,7 @@ export function useStaggeredItemsAnimation<T extends HTMLElement = HTMLDivElemen
     }
 
     return () => observer.disconnect();
-  }, [options.threshold, options.triggerOnce, count]);
+  }, [options.threshold, options.root, options.rootMargin, options.triggerOnce, count]);
 
   useEffect(() => {
     if (isVisible) {
@@ -109,7 +109,7 @@ export function useCounterAnimation<T extends HTMLElement = HTMLDivElement>(
     }
 
     return () => observer.disconnect();
-  }, [options.threshold, options.triggerOnce, hasStarted]);
+  }, [options.threshold, options.root, options.rootMargin, options.triggerOnce, hasStarted]);
 
   useEffect(() => {
     if (!hasStarted) return;

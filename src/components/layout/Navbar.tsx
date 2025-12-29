@@ -4,8 +4,8 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import ThemeToggle from '../ui/ThemeToggle';
-import ThemeSelector from '../ui/ThemeSelector';
+import ThemeToggle from '@/components/ui/ThemeToggle';
+import ThemeSelector from '@/components/ui/ThemeSelector';
 import CartDrawer from '@/shared/components/ui/CartDrawer';
 import {
   Menu,
@@ -29,6 +29,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { colors } from '@/shared/styles/colors';
+import { ScrollManager } from '@/hooks/useScrollRestoration';
 
 const Navbar: React.FC = () => {
   const { darkMode } = useTheme();
@@ -43,9 +44,14 @@ const Navbar: React.FC = () => {
   const { itemCount } = useCart();
   const { isAdmin } = useAdminPermissions();
 
+  // Define paths that have a hero section with image/dark background
+  // where the navbar should start transparent
+  const TRANSPARENT_NAVBAR_PATHS = ['/', '/services'];
+  const isTransparentPath = TRANSPARENT_NAVBAR_PATHS.includes(pathname);
+
   // Determine if navbar should be solid based on scroll or specific paths
-  // Navbar should be transparent only on the homepage (when not scrolled)
-  const isNavbarSolid = isScrolled || pathname !== '/';
+  // Navbar should be transparent only on specific paths (when not scrolled)
+  const isNavbarSolid = isScrolled || !isTransparentPath;
 
   const toggleMenu = (e?: React.MouseEvent) => {
     e?.stopPropagation();
@@ -121,12 +127,10 @@ const Navbar: React.FC = () => {
   return (
     <nav
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-700 ease-in-out",
+        "fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ease-in-out border-b",
         isNavbarSolid
-          ? (darkMode ? colors.gradients.navbarScrolled : "bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100")
-          : darkMode
-          ? colors.gradients.navbarDark
-          : colors.gradients.navbarLight
+          ? "bg-white/95 dark:bg-neutral-900/95 backdrop-blur-md shadow-sm border-neutral-200 dark:border-white/10"
+          : "bg-transparent border-transparent"
       )}
       role="navigation"
       aria-label="Navegación principal"
@@ -214,6 +218,12 @@ const Navbar: React.FC = () => {
                 <Link
                   href={link.href}
                   aria-label={link.ariaLabel}
+                  onClick={() => {
+                    // Clear scroll position for the target path to ensure fresh start
+                    if (typeof window !== 'undefined') {
+                      ScrollManager.clear(link.href);
+                    }
+                  }}
                 >
                   {link.label}
                 </Link>
@@ -549,7 +559,12 @@ const Navbar: React.FC = () => {
                       ? cn(colors.backgrounds.highlight, "text-primary-600 dark:text-primary-400 shadow-sm border-primary-100 dark:border-primary-900/50")
                       : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800/80'
                   )}
-                  onClick={() => setIsOpen(false)}
+                  onClick={() => {
+                    setIsOpen(false);
+                    if (link.href === '/marketplace' && typeof window !== 'undefined') {
+                      sessionStorage.removeItem('marketplace_scroll_pos');
+                    }
+                  }}
                 >
                   <Link
                     href={link.href}

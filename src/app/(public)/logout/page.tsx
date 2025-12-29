@@ -19,7 +19,7 @@ export default function LogoutPage() {
       // Si no está autenticado, redirigir a login
       router.push('/login');
     }
-  }, [isAuthenticated, logout, router]);
+  }, [isAuthenticated, logout, router, showInfo]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-neutral-50 dark:bg-neutral-900">

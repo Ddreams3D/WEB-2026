@@ -14,28 +14,24 @@ const pageVariants = {
   },
   in: {
     opacity: 1,
-  },
-  out: {
-    opacity: 0,
   }
 };
 
 const pageTransition = {
   type: 'tween' as const,
-  ease: 'easeInOut' as const,
-  duration: 0.3
+  ease: 'easeOut' as const,
+  duration: 0.2
 };
 
 export function PageTransition({ children }: PageTransitionProps) {
   const pathname = usePathname();
 
   return (
-    <AnimatePresence mode="wait" initial={false} onExitComplete={() => window.scrollTo(0, 0)}>
+    <AnimatePresence initial={false} onExitComplete={() => window.scrollTo(0, 0)}>
       <motion.div
         key={pathname}
         initial="initial"
         animate="in"
-        exit="out"
         variants={pageVariants}
         transition={pageTransition}
         className="min-h-screen"

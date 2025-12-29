@@ -45,7 +45,7 @@ export function CookieBanner() {
               </h3>
               <p className="text-sm text-neutral-600 dark:text-neutral-400">
                 Usamos cookies para mejorar tu experiencia de navegación, analizar nuestro tráfico y personalizar el contenido. 
-                Al hacer clic en "Aceptar", aceptas nuestro uso de cookies.
+                Al hacer clic en &quot;Aceptar&quot;, aceptas nuestro uso de cookies.
                 <Link href="/privacy" className="text-primary-600 hover:text-primary-700 ml-1 underline">
                   Leer Política de Privacidad
                 </Link>

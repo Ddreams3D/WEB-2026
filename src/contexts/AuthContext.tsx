@@ -64,6 +64,14 @@ const AUTH_USER_KEY = 'ddreams_auth_user';
 let globalLastSync = 0;
 let globalIsSyncing = false;
 
+const setAdminCookie = () => {
+  document.cookie = "ddreams_admin_session=true; path=/; max-age=86400; SameSite=Strict";
+};
+
+const removeAdminCookie = () => {
+  document.cookie = "ddreams_admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+};
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -82,13 +90,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const setAdminCookie = () => {
-    document.cookie = "ddreams_admin_session=true; path=/; max-age=86400; SameSite=Strict";
-  };
-
-  const removeAdminCookie = () => {
-    document.cookie = "ddreams_admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-  };
+  const checkStoredAuth = React.useCallback(() => {
+    try {
+      const storedUser = localStorage.getItem(AUTH_USER_KEY);
+      const token = localStorage.getItem(AUTH_TOKEN_KEY);
+      
+      if (storedUser && token) {
+        if (token.startsWith('mock_token_')) {
+          setUser(JSON.parse(storedUser));
+        } else {
+          localStorage.removeItem(AUTH_TOKEN_KEY);
+          localStorage.removeItem(AUTH_USER_KEY);
+          removeAdminCookie();
+          setUser(null);
+        }
+      } else {
+        removeAdminCookie();
+        setUser(null);
+      }
+    } catch (error) {
+      console.error('Error checking stored auth:', error);
+      setUser(null);
+    }
+  }, []);
 
   // Inicializar estado desde localStorage después del montaje para evitar errores de hidratación
   useEffect(() => {
@@ -245,36 +269,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [checkStoredAuth, user]);
 
-  const checkStoredAuth = () => {
-    try {
-      const storedUser = localStorage.getItem(AUTH_USER_KEY);
-      const token = localStorage.getItem(AUTH_TOKEN_KEY);
-      
-      if (storedUser && token) {
-        // Si hay datos en localStorage pero no en Firebase (o Firebase aún no cargó),
-        // podría ser una sesión mock.
-        // Pero si onAuthStateChanged disparó 'null', significa que Firebase ya verificó y no hay sesión real.
-        // Solo restauramos si parece ser una sesión mock (token empieza con mock_)
-        if (token.startsWith('mock_token_')) {
-          setUser(JSON.parse(storedUser));
-        } else {
-          // Si era token real pero Firebase dice null, limpiamos
-          localStorage.removeItem(AUTH_TOKEN_KEY);
-          localStorage.removeItem(AUTH_USER_KEY);
-          removeAdminCookie();
-          setUser(null);
-        }
-      } else {
-        removeAdminCookie();
-        setUser(null);
-      }
-    } catch (error) {
-      console.error('Error checking stored auth:', error);
-      setUser(null);
-    }
-  };
+
 
   const login = async (username: string, password: string): Promise<boolean> => {
     try {

@@ -10,7 +10,7 @@
     "build": "next build",
     "build:netlify": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint src",
     "analyze": "ANALYZE=true npm run build",
     "analyze:server": "BUNDLE_ANALYZE=server npm run build",
     "analyze:browser": "BUNDLE_ANALYZE=browser npm run build",

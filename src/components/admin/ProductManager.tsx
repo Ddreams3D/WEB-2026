@@ -7,7 +7,9 @@ import { useToast } from '@/components/ui/ToastManager';
 import { ProductImage } from '@/shared/components/ui/DefaultImage';
 import ProductModal from './ProductModal';
 import { Product } from '@/shared/types';
+import { Service, StoreProduct } from '@/shared/types/domain';
 import { ProductService } from '@/services/product.service';
+import { ServiceService } from '@/services/service.service';
 import { isFirebaseConfigured } from '@/lib/firebase';
 import { generateSlug } from '@/lib/utils';
 
@@ -21,13 +23,14 @@ interface ProductFormData {
   stock: number;
   image_url: string;
   customPriceDisplay?: string; // Para servicios
+  isService: boolean;
 }
 
 export default function ProductManager() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<(Product | Service)[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | Service | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { showSuccess, showError } = useToast();
 
@@ -39,10 +42,13 @@ export default function ProductManager() {
 
     try {
       setLoading(true);
-      const fetchedProducts = await ProductService.getAllProducts();
+      const [fetchedProducts, fetchedServices] = await Promise.all([
+        ProductService.getAllProducts(),
+        ServiceService.getAllServices()
+      ]);
       
-      // Mostrar todos los productos, incluidos los servicios (que tienen customPriceDisplay)
-      setProducts(fetchedProducts);
+      // Mostrar todos los productos y servicios
+      setProducts([...fetchedProducts, ...fetchedServices]);
     } catch (error) {
       console.error('Error loading products:', error);
       showError('Error', 'Error al cargar los productos');
@@ -60,7 +66,7 @@ export default function ProductManager() {
     setIsModalOpen(true);
   };
 
-  const handleEditProduct = (product: Product) => {
+  const handleEditProduct = (product: Product | Service) => {
     setSelectedProduct(product);
     setIsModalOpen(true);
   };
@@ -69,7 +75,14 @@ export default function ProductManager() {
     if (!confirm('¿Estás seguro de eliminar este producto?')) return;
 
     try {
-      await ProductService.deleteProduct(id);
+      const productToDelete = products.find(p => p.id === id);
+      if (!productToDelete) return;
+
+      if (productToDelete.kind === 'service') {
+        await ServiceService.deleteService(id);
+      } else {
+        await ProductService.deleteProduct(id);
+      }
       
       const newProducts = products.filter(product => product.id !== id);
       setProducts(newProducts);
@@ -84,13 +97,11 @@ export default function ProductManager() {
     try {
       if (selectedProduct) {
         // Actualizar producto existente
-        const updatedData: Partial<Product> = {
+        const baseUpdate = {
           name: formData.name,
           description: formData.description,
           price: formData.price,
-          stock: formData.stock,
           categoryName: formData.category,
-          materials: [formData.material],
           images: selectedProduct.images.length > 0 
             ? [{ ...selectedProduct.images[0], url: formData.image_url }]
             : [{ 
@@ -101,28 +112,43 @@ export default function ProductManager() {
                 isPrimary: true,
                 createdAt: new Date(),
                 updatedAt: new Date()
-              }]
+              }],
         };
 
-        await ProductService.updateProduct(selectedProduct.id, updatedData);
+        if (selectedProduct.kind === 'service') {
+           const serviceUpdate: Partial<Service> = {
+             ...baseUpdate,
+             kind: 'service',
+             customPriceDisplay: formData.customPriceDisplay
+           };
+           await ServiceService.updateService(selectedProduct.id, serviceUpdate);
+        } else {
+           const productUpdate: Partial<StoreProduct> = {
+             ...baseUpdate,
+             stock: formData.stock,
+             kind: 'product',
+             materials: [formData.material]
+           };
+           await ProductService.updateProduct(selectedProduct.id, productUpdate);
+        }
+        
         await loadProducts(); // Recargar para obtener datos actualizados
         showSuccess('Producto actualizado', 'Producto actualizado correctamente');
       } else {
         // Crear nuevo producto
-        const newProductData: Partial<Product> = {
+        const commonData = {
           name: formData.name,
-          slug: generateSlug(formData.name), // Generar slug inicial
+          slug: generateSlug(formData.name),
           description: formData.description,
           price: formData.price,
           currency: 'PEN',
-          categoryId: 'general', // Default category ID if not mapped
+          categoryId: 'general',
           categoryName: formData.category,
-          customPriceDisplay: formData.customPriceDisplay, // Guardar campo de servicio
           sellerId: 'admin',
           sellerName: 'Admin',
           images: [{
             id: `img-${Date.now()}`, 
-            productId: 'temp-id', // Will be replaced in service
+            productId: 'temp-id', 
             url: formData.image_url, 
             alt: formData.name, 
             isPrimary: true,
@@ -131,15 +157,40 @@ export default function ProductManager() {
           }],
           specifications: [],
           tags: [],
-          stock: formData.stock,
-          materials: [formData.material],
           isActive: true,
           isFeatured: false,
           rating: 0,
           reviewCount: 0
         };
+
+        if (formData.isService) {
+           await ServiceService.createService({
+             ...commonData,
+             kind: 'service',
+             isService: true,
+             customPriceDisplay: formData.customPriceDisplay,
+             displayOrder: 0,
+             categoryId: commonData.categoryId, // Ensure required fields
+             categoryName: commonData.categoryName,
+             tags: commonData.tags,
+             images: commonData.images,
+             price: commonData.price,
+             currency: commonData.currency,
+             rating: commonData.rating,
+             reviewCount: commonData.reviewCount,
+             createdAt: new Date(),
+             updatedAt: new Date(),
+             shortDescription: formData.description.substring(0, 150)
+           } as Partial<Service>);
+        } else {
+           await ProductService.createProduct({
+             ...commonData,
+            stock: formData.stock,
+             kind: 'product',
+             materials: [formData.material]
+           } as Partial<StoreProduct>);
+        }
         
-        await ProductService.createProduct(newProductData);
         await loadProducts(); // Recargar para obtener el nuevo producto con su ID real
         showSuccess('Producto creado', 'Producto creado correctamente');
       }
@@ -202,7 +253,7 @@ export default function ProductManager() {
             <div>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Stock Total</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {products.reduce((sum, product) => sum + (product.stock || 0), 0)}
+                {products.reduce((sum, product) => sum + ((product.kind === 'product' && product.stock) || 0), 0)}
               </p>
             </div>
             <Eye className="h-8 w-8 text-green-500" />
@@ -213,7 +264,7 @@ export default function ProductManager() {
             <div>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Valor Inventario</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                S/. {products.reduce((sum, product) => sum + (product.price * (product.stock || 0)), 0).toFixed(2)}
+                S/. {products.reduce((sum, product) => sum + (product.price * ((product.kind === 'product' && product.stock) || 0)), 0).toFixed(2)}
               </p>
             </div>
             <div className="h-8 w-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
@@ -283,17 +334,21 @@ export default function ProductManager() {
                   <span className="text-xl font-bold text-primary">
                     S/. {product.price.toFixed(2)}
                   </span>
-                  <span className="text-sm text-gray-600 dark:text-gray-400">
-                    Stock: {product.stock || 0}
-                  </span>
+                  {product.kind === 'product' && (
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      Stock: {product.stock || 0}
+                    </span>
+                  )}
                 </div>
                 <div className="flex items-center justify-between mb-4">
                   <span className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-xs font-medium text-gray-700 dark:text-gray-300">
                     {product.categoryName || 'General'}
                   </span>
-                  <span className="bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded text-xs font-medium text-blue-700 dark:text-blue-300">
-                    {product.materials?.[0] || 'N/A'}
-                  </span>
+                  {product.kind === 'product' && (
+                    <span className="bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded text-xs font-medium text-blue-700 dark:text-blue-300">
+                      {product.materials?.[0] || 'N/A'}
+                    </span>
+                  )}
                 </div>
                 <div className="flex gap-2">
                   <Button

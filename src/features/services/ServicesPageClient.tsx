@@ -4,9 +4,14 @@ import './animations.css';
 import ServicesHero from '@/features/services/components/ServicesHero';
 import ServicesBenefits from '@/features/services/components/ServicesBenefits';
 import ServicesCTA from '@/features/services/components/ServicesCTA';
-import { GeneralServicesView } from '@/features/services/components/GeneralServicesView';
+import { BusinessServicesView } from '@/features/services/components/BusinessServicesView';
+import { useScrollRestoration } from '@/hooks/useScrollRestoration';
 
 export default function ServicesPageClient() {
+  // Enable scroll restoration for services page
+  // Assuming services load statically or fast enough, we can set contentReady to true
+  useScrollRestoration(true, true);
+
   return (
     <main className="min-h-screen bg-background">
       <ServicesHero />
@@ -15,7 +20,7 @@ export default function ServicesPageClient() {
         
         {/* Contenido: Servicios Generales y B2B */}
         <div className="space-y-6">
-          <GeneralServicesView />
+          <BusinessServicesView />
         </div>
 
         {/* Beneficios */}

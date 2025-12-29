@@ -18,3 +18,18 @@ export function generateSlug(text: string): string {
     .replace(/^-+/, '') // Elimina guiones al inicio
     .replace(/-+$/, ''); // Elimina guiones al final
 }
+
+/**
+ * Formats a CSS object-position string for use in inline styles.
+ * Converts "object-center" or "50% 50%" formats to valid CSS values.
+ * Removes tailwind prefixes if present.
+ */
+export function formatImagePosition(position: string | undefined): string {
+  if (!position) return 'center';
+  
+  return position
+    .replace('object-', '')
+    .replace('[', '')
+    .replace(']', '')
+    .replace('_', ' ');
+}

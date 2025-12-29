@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Product } from '@/shared/types';
+import { Product, CartItemCustomization } from '@/shared/types';
+import { Service } from '@/shared/types/domain';
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/components/ui/ToastManager';
 import { ProductImage } from '@/shared/components/ui/DefaultImage';
@@ -18,8 +19,8 @@ import { ProductCard } from '@/components/marketplace/ProductCard';
 import { ProductTabs } from './ProductTabs';
 
 interface Props {
-  product: Product;
-  relatedProducts?: Product[];
+  product: Product | Service;
+  relatedProducts?: (Product | Service)[];
 }
 
 export default function ProductDetailClient({ product: initialProduct, relatedProducts = [] }: Props) {
@@ -27,7 +28,7 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
   const searchParams = useSearchParams();
   const fromSource = searchParams.get('from');
 
-  const [product, setProduct] = useState<Product>(initialProduct);
+  const [product, setProduct] = useState<Product | Service>(initialProduct);
 
   // Sync with localStorage for Admin Panel updates
   useEffect(() => {
@@ -36,7 +37,7 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
       if (storedProducts) {
         try {
           const parsed = JSON.parse(storedProducts);
-          const found = parsed.find((p: any) => p.id === initialProduct.id);
+          const found = parsed.find((p: Product | Service) => p.id === initialProduct.id);
           if (found) {
              const foundUpdatedAt = new Date(found.updatedAt);
              // Solo usar datos de localStorage si son más recientes que los datos iniciales (del servidor/mock)
@@ -87,8 +88,8 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(() => {
     // Inicializar opciones por defecto
     const defaults: Record<string, string> = {};
-    if (product.options) {
-      product.options.forEach(option => {
+    if (initialProduct.kind === 'product' && initialProduct.options) {
+      initialProduct.options.forEach(option => {
         const defaultVal = option.values.find(v => v.isDefault);
         if (defaultVal) {
           defaults[option.id] = defaultVal.id;
@@ -125,7 +126,8 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
 
   // Calcular precio total incluyendo opciones
   const currentPrice = product.price + Object.entries(selectedOptions).reduce((total, [optionId, valueId]) => {
-    const option = product.options?.find(o => o.id === optionId);
+    if (product.kind !== 'product' || !product.options) return total;
+    const option = product.options.find(o => o.id === optionId);
     const value = option?.values.find(v => v.id === valueId);
     return total + (value?.priceModifier || 0);
   }, 0);
@@ -143,6 +145,8 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
   };
 
   const handleAddToCart = async () => {
+    if (product.kind !== 'product') return;
+
     try {
       // Validar inputs personalizados requeridos
       for (const [optionId, valueId] of Object.entries(selectedOptions)) {
@@ -164,11 +168,11 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
       };
 
       // Preparar lista de customizaciones para el carrito
-      const customizations = Object.entries(selectedOptions).map(([optionId, valueId]) => {
+      const customizations: CartItemCustomization[] = Object.entries(selectedOptions).map(([optionId, valueId]) => {
         const option = product.options?.find(o => o.id === optionId);
         const value = option?.values.find(v => v.id === valueId);
         
-        let displayValue = value?.name;
+        let displayValue = value?.name || '';
         // Si la opción tiene input personalizado (como "Otro color"), agregarlo al valor
         if (value?.hasInput && customInputs[optionId]) {
           displayValue = `${value.name}: ${customInputs[optionId]}`;
@@ -176,13 +180,13 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
 
         return {
           id: optionId,
-          name: option?.name,
+          name: option?.name || '',
           value: displayValue,
           priceModifier: value?.priceModifier
         };
       });
 
-      await addToCart(productWithOptions, 1, customizations);
+      await addToCart(productWithOptions as Product, 1, customizations);
       showSuccess('Producto agregado', `${product.name} se añadió al carrito correctamente.`);
     } catch (error) {
       showError('Error', 'No se pudo agregar el producto al carrito.');
@@ -193,7 +197,7 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
   };
 
   const handleAction = () => {
-    if (product.price > 0) {
+    if (product.kind === 'product' && product.price > 0) {
       handleAddToCart();
     } else {
       router.push('/contact');
@@ -225,31 +229,31 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
     }
   };
 
-  const handleNextImage = (e?: React.MouseEvent) => {
+  const handleNextImage = useCallback((e?: React.MouseEvent) => {
     e?.stopPropagation();
     const currentIndex = product.images.findIndex(img => img.id === selectedImageId);
     const nextIndex = (currentIndex + 1) % product.images.length;
     setSelectedImageId(product.images[nextIndex].id);
-  };
+  }, [product.images, selectedImageId]);
 
-  const handlePrevImage = (e?: React.MouseEvent) => {
+  const handlePrevImage = useCallback((e?: React.MouseEvent) => {
     e?.stopPropagation();
     const currentIndex = product.images.findIndex(img => img.id === selectedImageId);
     const prevIndex = (currentIndex - 1 + product.images.length) % product.images.length;
     setSelectedImageId(product.images[prevIndex].id);
-  };
+  }, [product.images, selectedImageId]);
 
-  const handleKeyDown = (e: KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (!isModalOpen) return;
     if (e.key === 'Escape') setIsModalOpen(false);
     if (e.key === 'ArrowRight') handleNextImage();
     if (e.key === 'ArrowLeft') handlePrevImage();
-  };
+  }, [isModalOpen, handleNextImage, handlePrevImage]);
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isModalOpen, selectedImageId]);
+  }, [handleKeyDown]);
 
   return (
     <div className="container mx-auto px-4 pt-24 pb-12 lg:pt-32 lg:pb-20 max-w-7xl font-sans text-gray-900 dark:text-gray-100 min-h-screen">
@@ -283,11 +287,6 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
               className={getImageClassName(selectedImage?.id)}
               priority
             />
-            {product.isFeatured && (
-              <Badge className="absolute top-4 right-4 bg-primary/90 hover:bg-primary text-primary-foreground z-10 backdrop-blur-sm shadow-md">
-                Destacado
-              </Badge>
-            )}
             
             {/* Zoom Indicator - Bottom Right Corner */}
             <div className="absolute bottom-4 right-4 z-20 transition-all duration-300 transform group-hover:scale-110">
@@ -355,21 +354,55 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
                 {product.shortDescription}
               </h2>
             )}
-            <p className="text-gray-500 dark:text-gray-400 text-base lg:text-lg flex items-center gap-2">
-              Vendido por <span className="font-semibold text-primary underline decoration-primary/30 underline-offset-4">{product.sellerName}</span>
-            </p>
+            {product.kind === 'product' && product.sellerName && (
+              <p className="text-gray-500 dark:text-gray-400 text-base lg:text-lg flex items-center gap-2">
+                Vendido por <span className="font-semibold text-primary underline decoration-primary/30 underline-offset-4">{product.sellerName}</span>
+              </p>
+            )}
+
+            <div className="flex flex-wrap gap-4 mt-3">
+              {/* SKU - Ocultar para servicios */}
+              {product.kind === 'product' && product.sku && (
+                <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                  <span className="font-medium mr-2">SKU:</span>
+                  {product.sku}
+                </div>
+              )}
+
+              {/* Stock Status - Ocultar para servicios */}
+              {product.kind !== 'service' && (
+                <div className="flex items-center text-sm">
+                  <div className={`w-2 h-2 rounded-full mr-2 ${
+                    product.stock > 0 ? 'bg-green-500' : 'bg-red-500'
+                  }`} />
+                  <span className={product.stock > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}>
+                    {product.stock > 0 ? 'En Stock' : 'Agotado'}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Se oculta la sección de precio si el precio es 0 (para servicios) */}
-          {product.price > 0 && (
+          {/* Se oculta la sección de precio si el precio es 0 y no hay texto personalizado (para servicios) */}
+          {((product.price > 0 && product.kind !== 'service') || product.customPriceDisplay) && (
             <div className="flex items-center justify-between py-6 border-y border-gray-100 dark:border-gray-800">
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1.5 font-medium uppercase tracking-wide">Precio Total</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1.5 font-medium uppercase tracking-wide">
+                  {product.price > 0 && product.kind !== 'service' ? 'Precio Total' : 'Precio'}
+                </p>
                 <div className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white flex items-baseline gap-1">
-                  <span className="text-lg text-gray-500 font-normal self-start mt-1">S/</span>
-                  {product.price.toFixed(2)}
+                  {product.price > 0 && product.kind !== 'service' ? (
+                    <>
+                      <span className="text-lg text-gray-500 font-normal self-start mt-1">S/</span>
+                      {product.price.toFixed(2)}
+                    </>
+                  ) : (
+                    <span className="text-2xl lg:text-3xl">{product.customPriceDisplay || 'Cotización'}</span>
+                  )}
                 </div>
-                <p className="text-xs text-gray-400 mt-2 font-medium bg-gray-100 dark:bg-gray-800 inline-block px-2 py-0.5 rounded">IGV incluido</p>
+                {product.price > 0 && product.kind !== 'service' && (
+                  <p className="text-xs text-gray-400 mt-2 font-medium bg-gray-100 dark:bg-gray-800 inline-block px-2 py-0.5 rounded">IGV incluido</p>
+                )}
               </div>
             </div>
           )}
@@ -386,7 +419,7 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
           )}
 
           {/* Opciones del Producto */}
-          {product.options && product.options.length > 0 && (
+          {product.kind === 'product' && product.options && product.options.length > 0 && (
             <div className={cn(
               "space-y-4 rounded-xl p-5 border border-gray-100 dark:border-gray-800",
               colors.backgrounds.neutral
@@ -570,7 +603,7 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
                 </span>
               ) : (
                 <>
-                  {product.price > 0 ? (
+                  {product.kind !== 'service' && product.price > 0 ? (
                     <>
                       <ShoppingCart className="w-5 h-5 mr-2.5" />
                       Añadir al Carrito
@@ -584,7 +617,7 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
                 </>
               )}
             </Button>
-            {product.price > 0 && (
+            {product.kind !== 'service' && product.price > 0 && (
               <div className="flex items-center justify-center gap-2 text-sm text-gray-500 dark:text-gray-400 bg-green-50 dark:bg-green-900/10 py-2 rounded-lg">
                 <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
                 <span className="font-medium">Compra 100% segura garantizada por Ddreams 3D</span>
