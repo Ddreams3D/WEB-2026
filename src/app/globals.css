@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  scroll-behavior: smooth;
+}
+
 /* Variables CSS personalizadas - Optimizadas para reducir fatiga visual */
 :root {
   /* Shadcn/Tailwind Variables (HSL) */

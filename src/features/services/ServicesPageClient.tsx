@@ -19,7 +19,7 @@ export default function ServicesPageClient() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
         
         {/* Contenido: Servicios Generales y B2B */}
-        <div className="space-y-6">
+        <div id="servicios-generales" className="space-y-6 scroll-mt-24">
           <BusinessServicesView />
         </div>
 
