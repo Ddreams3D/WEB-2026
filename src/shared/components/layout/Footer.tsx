@@ -336,6 +336,7 @@ const Footer = () => {
                     <div>
                       <Input
                         type="password"
+                        autoComplete="current-password"
                         placeholder="Contraseña del sistema"
                         value={secretPassword}
                         onChange={(e) => setSecretPassword(e.target.value)}

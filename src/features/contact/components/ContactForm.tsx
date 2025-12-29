@@ -207,6 +207,7 @@ export default function ContactForm() {
             <input
               type="text"
               name="name"
+              autoComplete="name"
               placeholder="Nombre completo"
               value={formData.name}
               onChange={handleChange}
@@ -259,6 +260,7 @@ export default function ContactForm() {
               <input
                 type="tel"
                 name="phone"
+                autoComplete="tel"
                 placeholder="Teléfono"
                 value={formData.phone}
                 onChange={handleChange}
