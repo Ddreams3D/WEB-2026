@@ -9,9 +9,9 @@ export default function PublicLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-[100dvh] w-full flex flex-col">
+    <div className="flex min-h-screen flex-col w-full bg-background overflow-x-hidden">
       <Navbar />
-      <main className="flex-grow flex flex-col w-full relative">
+      <main className="flex-1 flex flex-col w-full relative">
         <PageTransition>{children}</PageTransition>
       </main>
       <Footer />
