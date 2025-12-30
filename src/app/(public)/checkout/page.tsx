@@ -258,8 +258,9 @@ export default function CheckoutPage() {
                 </div>
               </CardContent>
               <CardFooter className="p-6 pt-0">
-                <Button 
-                  className="w-full h-12 text-base gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white"
+                <Button
+                  className="w-full h-12 text-base gap-2"
+                  variant="success"
                   onClick={handleWhatsAppOrder}
                   disabled={!formData.name || !formData.city}
                 >

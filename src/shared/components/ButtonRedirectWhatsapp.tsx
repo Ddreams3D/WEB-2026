@@ -7,17 +7,19 @@ interface PropsButtonRedirectWhatsapp {
   msgRedirect?: string;
   className?: string;
   text?: string;
+  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link' | 'gradient' | 'glass' | 'success';
 }
 
 export default function ButtonRedirectWhatsapp({
   msgRedirect,
   className,
   text,
+  variant = 'success',
 }: PropsButtonRedirectWhatsapp) {
   return (
     <Button
       asChild
-      variant="success"
+      variant={variant}
       size="lg"
       className={`shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 gap-2 ${className || ''}`}
     >

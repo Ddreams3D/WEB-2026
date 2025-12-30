@@ -111,14 +111,14 @@ export default function OrdersPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-white flex items-center gap-2">
-            <PackageIcon className="w-8 h-8 text-primary-600 dark:text-primary-400" />
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2 tracking-tight">
+            <PackageIcon className="w-8 h-8 text-primary" />
             Gestión de Pedidos
           </h1>
-          <p className="text-neutral-600 dark:text-neutral-400 mt-1">
+          <p className="text-muted-foreground mt-1">
             Administra y realiza seguimiento de los pedidos de la tienda
           </p>
         </div>
@@ -130,23 +130,23 @@ export default function OrdersPage() {
       </div>
 
       {/* Filtros y Búsqueda */}
-      <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 flex flex-col md:flex-row gap-4">
+      <div className="bg-card p-4 rounded-xl shadow-sm border border-border flex flex-col md:flex-row gap-4">
         <div className="relative flex-1">
-          <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
+          <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
           <input
             type="text"
             placeholder="Buscar por ID, cliente o email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-neutral-700 dark:text-white"
+            className="w-full pl-10 pr-4 py-2 border border-input rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background text-foreground transition-all duration-200 outline-none"
           />
         </div>
         <div className="flex items-center gap-2">
-          <FilterIcon className="w-5 h-5 text-neutral-500" />
+          <FilterIcon className="w-5 h-5 text-muted-foreground" />
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as OrderStatus | 'all')}
-            className="px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-neutral-700 dark:text-white"
+            className="px-4 py-2 border border-input rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background text-foreground transition-all duration-200 outline-none cursor-pointer"
           >
             <option value="all">Todos los estados</option>
             <option value="pending">Pendientes</option>
@@ -159,47 +159,47 @@ export default function OrdersPage() {
       </div>
 
       {/* Lista de Pedidos */}
-      <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+      <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="bg-neutral-50 dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-700">
-                <th className="px-6 py-4 text-sm font-semibold text-neutral-900 dark:text-white">ID Pedido</th>
-                <th className="px-6 py-4 text-sm font-semibold text-neutral-900 dark:text-white">Cliente</th>
-                <th className="px-6 py-4 text-sm font-semibold text-neutral-900 dark:text-white">Fecha</th>
-                <th className="px-6 py-4 text-sm font-semibold text-neutral-900 dark:text-white">Estado</th>
-                <th className="px-6 py-4 text-sm font-semibold text-neutral-900 dark:text-white">Total</th>
-                <th className="px-6 py-4 text-sm font-semibold text-neutral-900 dark:text-white">Acciones</th>
+              <tr className="bg-muted/30 border-b border-border">
+                <th className="px-6 py-4 text-sm font-semibold text-foreground">ID Pedido</th>
+                <th className="px-6 py-4 text-sm font-semibold text-foreground">Cliente</th>
+                <th className="px-6 py-4 text-sm font-semibold text-foreground">Fecha</th>
+                <th className="px-6 py-4 text-sm font-semibold text-foreground">Estado</th>
+                <th className="px-6 py-4 text-sm font-semibold text-foreground">Total</th>
+                <th className="px-6 py-4 text-sm font-semibold text-foreground">Acciones</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-200 dark:divide-neutral-700">
+            <tbody className="divide-y divide-border">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-neutral-500">
+                  <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">
                     Cargando pedidos...
                   </td>
                 </tr>
               ) : filteredOrders.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-neutral-500">
+                  <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">
                     No se encontraron pedidos
                   </td>
                 </tr>
               ) : (
                 filteredOrders.map((order) => (
-                  <tr key={order.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors cursor-pointer" onClick={() => handleViewOrder(order)}>
+                  <tr key={order.id} className="hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => handleViewOrder(order)}>
                     <td className="px-6 py-4">
-                      <span className="font-medium text-primary-600 dark:text-primary-400">
+                      <span className="font-medium text-primary">
                         {order.id}
                       </span>
                     </td>
                     <td className="px-6 py-4">
                       <div>
-                        <p className="font-medium text-neutral-900 dark:text-white">{order.customer.name}</p>
-                        <p className="text-sm text-neutral-500 dark:text-neutral-400">{order.customer.email}</p>
+                        <p className="font-medium text-foreground">{order.customer.name}</p>
+                        <p className="text-sm text-muted-foreground">{order.customer.email}</p>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-neutral-600 dark:text-neutral-400">
+                    <td className="px-6 py-4 text-muted-foreground">
                       {formatDate(order.date)}
                     </td>
                     <td className="px-6 py-4">
@@ -212,14 +212,14 @@ export default function OrdersPage() {
                         {getStatusLabel(order.status)}
                       </span>
                     </td>
-                    <td className="px-6 py-4 font-medium text-neutral-900 dark:text-white">
+                    <td className="px-6 py-4 font-medium text-foreground">
                       S/ {order.total.toFixed(2)}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <button 
                           onClick={(e) => { e.stopPropagation(); handleViewOrder(order); }}
-                          className="p-2 text-neutral-500 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition-colors" 
+                          className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors" 
                           title="Ver detalles"
                         >
                           <EyeIcon className="w-5 h-5" />

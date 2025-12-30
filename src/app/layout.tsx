@@ -102,6 +102,12 @@ export default function RootLayout({
                 if (darkMode && JSON.parse(darkMode)) {
                   document.documentElement.classList.add('dark');
                 }
+                
+                // Cargar tema inmediatamente para evitar parpadeo
+                var theme = localStorage.getItem('theme');
+                if (theme) {
+                  document.documentElement.setAttribute('data-theme', theme);
+                }
               } catch (e) {}
             })()
           `}

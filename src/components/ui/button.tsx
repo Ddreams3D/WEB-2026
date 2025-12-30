@@ -37,6 +37,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       baseClasses,
       variants[variant],
       sizes[size],
+      `btn-${variant}`,
       className
     );
 

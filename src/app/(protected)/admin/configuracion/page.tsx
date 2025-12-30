@@ -24,8 +24,6 @@ import {
   Eye as EyeIcon,
   Check
 } from '@/lib/icons';
-import AdminLayout from '@/shared/components/layout/AdminLayout';
-import AdminProtection from '@/components/admin/AdminProtection';
 import { AnalyticsExclusion } from '@/components/admin/AnalyticsExclusion';
 import { useTheme, THEMES } from '@/contexts/ThemeContext';
 import { THEME_CONFIG } from '@/config/themes';
@@ -73,23 +71,27 @@ function SettingSection({ title, icon: Icon, description, children }: {
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex items-start space-x-4 mb-6 pb-6 border-b border-neutral-100 dark:border-neutral-700">
-        <div className="p-3 bg-primary-50 dark:bg-primary-900/20 rounded-xl text-primary-600 dark:text-primary-400">
-          <Icon className="w-6 h-6" />
-        </div>
-        <div>
-          <h3 className="text-lg font-bold text-neutral-900 dark:text-white">
-            {title}
-          </h3>
-          {description && (
-            <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
-              {description}
-            </p>
-          )}
+    <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="p-6 border-b border-border bg-muted/30">
+        <div className="flex items-start space-x-4">
+          <div className="p-2.5 bg-primary/10 rounded-xl text-primary flex-shrink-0">
+            <Icon className="w-6 h-6" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-foreground tracking-tight">
+              {title}
+            </h3>
+            {description && (
+              <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
+                {description}
+              </p>
+            )}
+          </div>
         </div>
       </div>
-      {children}
+      <div className="p-6 md:p-8">
+        {children}
+      </div>
     </div>
   );
 }
@@ -105,12 +107,12 @@ function InputField({ label, type = 'text', value, onChange, placeholder, descri
 }) {
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+      <label className="block text-sm font-semibold text-foreground">
         {label}
       </label>
-      <div className="relative">
+      <div className="relative group">
         {Icon && (
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400">
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors">
             <Icon className="w-4 h-4" />
           </div>
         )}
@@ -120,13 +122,13 @@ function InputField({ label, type = 'text', value, onChange, placeholder, descri
           onChange={(e) => onChange(type === 'number' ? Number(e.target.value) : e.target.value)}
           placeholder={placeholder}
           className={cn(
-            "w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-neutral-700 dark:text-white transition-shadow",
+            "w-full px-3 py-2.5 bg-background border border-input rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 outline-none placeholder:text-muted-foreground/50",
             Icon && "pl-10"
           )}
         />
       </div>
       {description && (
-        <p className="text-xs text-neutral-500 dark:text-neutral-400">
+        <p className="text-xs text-muted-foreground">
           {description}
         </p>
       )}
@@ -143,13 +145,13 @@ function SelectField({ label, value, onChange, options, description }: {
 }) {
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+      <label className="block text-sm font-semibold text-foreground">
         {label}
       </label>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-neutral-700 dark:text-white cursor-pointer"
+        className="w-full px-3 py-2.5 bg-background border border-input rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 outline-none cursor-pointer"
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>
@@ -158,7 +160,7 @@ function SelectField({ label, value, onChange, options, description }: {
         ))}
       </select>
       {description && (
-        <p className="text-xs text-neutral-500 dark:text-neutral-400">
+        <p className="text-xs text-muted-foreground">
           {description}
         </p>
       )}
@@ -173,13 +175,18 @@ function ToggleField({ label, value, onChange, description }: {
   description?: string;
 }) {
   return (
-    <div className="flex items-start justify-between p-3 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors">
+    <div className={cn(
+      "flex items-start justify-between p-4 rounded-xl border transition-all duration-200",
+      value 
+        ? "bg-primary/5 border-primary/20" 
+        : "bg-background border-border hover:border-muted-foreground/20"
+    )}>
       <div className="flex-1 mr-4">
-        <label className="block text-sm font-medium text-neutral-900 dark:text-white cursor-pointer" onClick={() => onChange(!value)}>
+        <label className="block text-sm font-semibold text-foreground cursor-pointer" onClick={() => onChange(!value)}>
           {label}
         </label>
         {description && (
-          <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+          <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
             {description}
           </p>
         )}
@@ -269,7 +276,7 @@ export default function Settings() {
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Sidebar de navegación */}
         <div className="w-full lg:w-72 flex-shrink-0">
-          <nav className="space-y-2 sticky top-8">
+          <nav className="space-y-1 sticky top-8 bg-card p-2 rounded-xl border border-border shadow-sm">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               return (
@@ -277,17 +284,20 @@ export default function Settings() {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={cn(
-                    "w-full flex items-center px-4 py-4 text-sm font-medium rounded-xl transition-all duration-200",
+                    "w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 group relative",
                     activeTab === tab.id
-                      ? "bg-primary-600 text-white shadow-md transform scale-[1.02]"
-                      : "text-neutral-600 dark:text-neutral-400 hover:bg-white dark:hover:bg-neutral-800 hover:shadow-sm"
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   )}
                 >
                   <Icon className={cn(
-                    "mr-3 h-5 w-5",
-                    activeTab === tab.id ? "text-white" : "text-neutral-400 dark:text-neutral-500"
+                    "mr-3 h-5 w-5 transition-colors",
+                    activeTab === tab.id ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground"
                   )} />
                   {tab.label}
+                  {activeTab === tab.id && (
+                    <span className="ml-auto bg-primary-foreground/20 w-1.5 h-1.5 rounded-full" />
+                  )}
                 </button>
               );
             })}
@@ -388,67 +398,94 @@ export default function Settings() {
               description="Personaliza la identidad visual de tu tienda."
             >
               <div className="space-y-8">
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {THEMES.map((themeKey) => {
                     const config = THEME_CONFIG[themeKey];
                     const isActive = currentTheme === themeKey;
                     const Icon = config.icon;
+                    // Extract the primary color class, handling hex codes if present in future or using bg- classes
+                    const primaryColorClass = config.previewColors[0] || 'bg-primary-500';
 
                     return (
                       <button 
                         key={themeKey}
                         onClick={() => setTheme(themeKey)}
                         className={cn(
-                          "relative group rounded-xl border-2 transition-all duration-300 overflow-hidden bg-white dark:bg-neutral-800 text-left w-full",
+                          "relative group rounded-xl border-2 transition-all duration-300 overflow-hidden bg-white dark:bg-neutral-800 text-left w-full flex flex-col h-full",
                           isActive 
-                            ? "border-primary-500 shadow-xl scale-[1.02]" 
-                            : "border-transparent hover:border-neutral-200 dark:hover:border-neutral-700 shadow-md hover:shadow-lg"
+                            ? "border-primary-500 shadow-xl ring-2 ring-primary-500/20 scale-[1.02]" 
+                            : "border-neutral-200 dark:border-neutral-700 hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-lg"
                         )}
                       >
-                        {/* Preview Header */}
-                        <div className="h-32 relative overflow-hidden bg-neutral-100 dark:bg-neutral-900">
-                          <div className={cn("absolute inset-0 opacity-20", config.previewColors[0])} />
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <Icon className={cn("w-16 h-16 transition-transform duration-500 group-hover:scale-110", config.colorClass || "text-neutral-900 dark:text-white")} />
+                        {/* Mini UI Preview */}
+                        <div className="h-40 relative bg-neutral-50 dark:bg-neutral-900/50 overflow-hidden border-b border-neutral-100 dark:border-neutral-700">
+                          {/* Simulated Navbar */}
+                          <div className={cn("h-6 w-full flex items-center justify-between px-3 shadow-sm z-10 relative", primaryColorClass)}>
+                             <div className="flex items-center space-x-1.5">
+                               <div className="w-2 h-2 rounded-full bg-white/40" />
+                               <div className="w-8 h-1.5 rounded-full bg-white/30" />
+                             </div>
+                             <div className="flex space-x-1">
+                               <div className="w-4 h-1.5 rounded-full bg-white/20" />
+                               <div className="w-4 h-1.5 rounded-full bg-white/20" />
+                             </div>
                           </div>
-                          {/* Color Swatches */}
-                          <div className="absolute bottom-4 right-4 flex -space-x-2">
+
+                          {/* Simulated Hero Section */}
+                          <div className="absolute inset-0 top-6 flex flex-col items-center justify-center p-4 space-y-3">
+                             <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center text-white shadow-md transform group-hover:scale-110 transition-transform duration-500", primaryColorClass)}>
+                                <Icon className="w-6 h-6 text-white drop-shadow-sm" />
+                             </div>
+                             
+                             <div className="space-y-1.5 flex flex-col items-center w-full">
+                               <div className="w-2/3 h-2 rounded-full bg-neutral-200 dark:bg-neutral-700" />
+                               <div className="w-1/2 h-2 rounded-full bg-neutral-100 dark:bg-neutral-800" />
+                             </div>
+                             
+                             {/* Simulated CTA Button */}
+                             <div className={cn("mt-1 px-4 py-1.5 rounded-md text-[10px] text-white font-medium shadow-sm opacity-90", primaryColorClass)}>
+                               Ver catálogo
+                             </div>
+                          </div>
+                          
+                          {/* Active Badge overlay */}
+                          {isActive && (
+                            <div className="absolute top-2 right-2 z-20 bg-white dark:bg-neutral-800 text-primary-600 dark:text-primary-400 p-1.5 rounded-full shadow-md border border-primary-100 dark:border-primary-900/30">
+                              <CheckIcon className="w-4 h-4" />
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Content */}
+                        <div className="p-5 flex-1 flex flex-col">
+                          <div className="mb-2">
+                            <h3 className="text-lg font-bold text-neutral-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                              {config.label}
+                            </h3>
+                          </div>
+                          
+                          <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-4 line-clamp-2 flex-1">
+                            {config.description}
+                          </p>
+
+                          {/* Color Palette Indicators */}
+                          <div className="flex items-center space-x-1.5 pt-4 border-t border-neutral-100 dark:border-neutral-700/50 mt-auto">
+                            <span className="text-xs text-neutral-400 mr-1">Paleta:</span>
                             {config.previewColors.map((color, i) => (
                               <div 
                                 key={i} 
-                                className={cn("w-8 h-8 rounded-full border-2 border-white dark:border-neutral-800 shadow-sm", color)}
+                                className={cn("w-4 h-4 rounded-full ring-1 ring-inset ring-black/5 dark:ring-white/10", color)}
+                                title={`Color ${i + 1}`}
                               />
                             ))}
                           </div>
                         </div>
-
-                        {/* Content */}
-                        <div className="p-6">
-                          <div className="flex justify-between items-start mb-4">
-                            <h3 className="text-xl font-bold text-neutral-900 dark:text-white">
-                              {config.label}
-                            </h3>
-                            {isActive && (
-                              <span className="bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1">
-                                <CheckIcon className="w-3 h-3" />
-                                Activo
-                              </span>
-                            )}
-                          </div>
-                          
-                          <p className="text-neutral-600 dark:text-neutral-400 text-sm mb-6 h-12 line-clamp-2">
-                            {config.description}
-                          </p>
-
-                          <div className={cn(
-                            "w-full py-2 text-center rounded-lg text-sm font-medium transition-colors",
-                            isActive 
-                              ? "bg-primary-600 text-white"
-                              : "bg-neutral-100 dark:bg-neutral-900 text-neutral-600 dark:text-neutral-400 group-hover:bg-primary-50 dark:group-hover:bg-primary-900/20 group-hover:text-primary-600 dark:group-hover:text-primary-400"
-                          )}>
-                            {isActive ? 'Tema Actual' : 'Activar Tema'}
-                          </div>
-                        </div>
+                        
+                        {/* Selection Indicator Bar */}
+                        <div className={cn(
+                          "h-1 w-full transition-all duration-300",
+                          isActive ? "bg-primary-500" : "bg-transparent group-hover:bg-primary-200 dark:group-hover:bg-primary-800"
+                        )} />
                       </button>
                     );
                   })}

@@ -209,52 +209,52 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
           <input
             type="text"
             placeholder={`Buscar ${mode === 'service' ? 'servicios' : mode === 'product' ? 'productos' : 'items'}...`}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-neutral-800 dark:text-white"
+            className="w-full pl-10 pr-4 py-2 border border-input rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background text-foreground transition-all duration-200 outline-none"
           />
         </div>
-        <Button onClick={handleAddProduct} className="gap-2">
+        <Button onClick={handleAddProduct} variant="gradient" className="gap-2">
           <Plus className="w-5 h-5" />
           {mode === 'service' ? 'Nuevo Servicio' : mode === 'product' ? 'Nuevo Producto' : 'Nuevo Item'}
         </Button>
       </div>
 
-      <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+      <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="bg-neutral-50 dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-700">
-                <th className="px-6 py-4 text-sm font-semibold text-neutral-900 dark:text-white">Imagen</th>
-                <th className="px-6 py-4 text-sm font-semibold text-neutral-900 dark:text-white">Nombre</th>
-                <th className="px-6 py-4 text-sm font-semibold text-neutral-900 dark:text-white">Categoría</th>
-                <th className="px-6 py-4 text-sm font-semibold text-neutral-900 dark:text-white">Precio</th>
-                {mode !== 'service' && <th className="px-6 py-4 text-sm font-semibold text-neutral-900 dark:text-white">Stock</th>}
-                <th className="px-6 py-4 text-sm font-semibold text-neutral-900 dark:text-white">Tipo</th>
-                <th className="px-6 py-4 text-sm font-semibold text-neutral-900 dark:text-white">Acciones</th>
+              <tr className="bg-muted/30 border-b border-border">
+                <th className="px-6 py-4 text-sm font-semibold text-foreground">Imagen</th>
+                <th className="px-6 py-4 text-sm font-semibold text-foreground">Nombre</th>
+                <th className="px-6 py-4 text-sm font-semibold text-foreground">Categoría</th>
+                <th className="px-6 py-4 text-sm font-semibold text-foreground">Precio</th>
+                {mode !== 'service' && <th className="px-6 py-4 text-sm font-semibold text-foreground">Stock</th>}
+                <th className="px-6 py-4 text-sm font-semibold text-foreground">Tipo</th>
+                <th className="px-6 py-4 text-sm font-semibold text-foreground">Acciones</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-200 dark:divide-neutral-700">
+            <tbody className="divide-y divide-border">
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-8 text-center text-neutral-500">Cargando datos...</td>
+                  <td colSpan={7} className="px-6 py-8 text-center text-muted-foreground">Cargando datos...</td>
                 </tr>
               ) : filteredProducts.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-8 text-center text-neutral-500">No se encontraron elementos</td>
+                  <td colSpan={7} className="px-6 py-8 text-center text-muted-foreground">No se encontraron elementos</td>
                 </tr>
               ) : (
                 filteredProducts.map((product) => (
-                  <tr key={product.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors">
+                  <tr key={product.id} className="hover:bg-muted/50 transition-colors">
                     <td className="px-6 py-4">
-                      <div className="w-12 h-12 rounded-lg bg-neutral-100 dark:bg-neutral-700 overflow-hidden">
+                      <div className="w-12 h-12 rounded-lg bg-muted overflow-hidden border border-border">
                         {product.images?.[0] ? (
                           <ProductImage
                             src={product.images[0].url}
@@ -264,36 +264,36 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-neutral-400">
+                          <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                             <Package className="w-6 h-6" />
                           </div>
                         )}
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="font-medium text-neutral-900 dark:text-white">{product.name}</div>
-                      <div className="text-sm text-neutral-500 dark:text-neutral-400 truncate max-w-xs">
+                      <div className="font-medium text-foreground">{product.name}</div>
+                      <div className="text-sm text-muted-foreground truncate max-w-xs">
                         {product.description}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-neutral-600 dark:text-neutral-400">
+                    <td className="px-6 py-4 text-muted-foreground">
                       {product.categoryName}
                     </td>
-                    <td className="px-6 py-4 font-medium text-neutral-900 dark:text-white">
+                    <td className="px-6 py-4 font-medium text-foreground">
                       {product.kind === 'service' 
                         ? (product.customPriceDisplay || 'Cotización') 
                         : `S/ ${product.price.toFixed(2)}`}
                     </td>
                     {mode !== 'service' && (
-                      <td className="px-6 py-4 text-neutral-600 dark:text-neutral-400">
+                      <td className="px-6 py-4 text-muted-foreground">
                         {product.kind === 'product' ? product.stock : '-'}
                       </td>
                     )}
                     <td className="px-6 py-4">
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                         product.kind === 'service'
-                          ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
-                          : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
+                          ? 'bg-blue-500/10 text-blue-500'
+                          : 'bg-green-500/10 text-green-500'
                       }`}>
                         {product.kind === 'service' ? 'Servicio' : 'Producto'}
                       </span>
@@ -302,13 +302,15 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => handleEditProduct(product)}
-                          className="p-2 text-neutral-500 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition-colors"
+                          className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                          title="Editar"
                         >
                           <Edit className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => handleDeleteProduct(product.id)}
-                          className="p-2 text-neutral-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                          className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
+                          title="Eliminar"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>

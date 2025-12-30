@@ -30,7 +30,7 @@ export default function CallToAction({
         <div
           className={cn(
             "bg-gradient-to-r from-primary-600 via-secondary-500 to-primary-600 bg-[length:200%_auto] transition-all duration-500 ease-in-out bg-left hover:bg-right",
-            "rounded-xl shadow-2xl p-6 sm:p-8 text-center text-white relative overflow-hidden"
+            "rounded-xl shadow-2xl p-6 sm:p-8 text-center text-white data-[theme='festive-warm']:text-[#422006] relative overflow-hidden"
           )}
         >
           <div
@@ -40,17 +40,17 @@ export default function CallToAction({
           <div className="relative z-10">
             <h2
               id="cta-heading"
-              className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-6 drop-shadow-lg"
+              className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary-foreground mb-6 drop-shadow-lg"
             >
               {title}
             </h2>
-            <p className="text-sm sm:text-base text-white/90 mb-10 max-w-3xl mx-auto leading-relaxed opacity-95">
+            <p className="text-sm sm:text-base text-primary-foreground/90 mb-10 max-w-3xl mx-auto leading-relaxed opacity-95">
               {description}
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <Button
                 asChild
-                variant="default"
+                variant="gradient"
                 size="lg"
                 className="gap-2 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
               >

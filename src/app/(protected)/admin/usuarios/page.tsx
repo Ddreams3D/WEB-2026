@@ -3,8 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Search as MagnifyingGlassIcon, Plus as PlusIcon, Edit as PencilIcon, Trash2 as TrashIcon, UserCircle as UserCircleIcon } from '@/lib/icons';
-import AdminLayout from '@/shared/components/layout/AdminLayout';
-import AdminProtection from '@/components/admin/AdminProtection';
 import { cn } from '@/lib/utils';
 
 interface User {
@@ -262,28 +260,26 @@ export default function UsersManagement() {
   };
 
   return (
-    <AdminProtection>
-      <AdminLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">
-              Gestión de Usuarios
-            </h1>
-            <p className="text-muted-foreground mt-1">
-              Administra los usuarios de la plataforma
-            </p>
-          </div>
-          <Button
-            onClick={() => openModal()}
-            variant="gradient"
-            className="flex items-center space-x-2"
-          >
-            <PlusIcon className="w-5 h-5" />
-            <span>Nuevo Usuario</span>
-          </Button>
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">
+            Gestión de Usuarios
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Administra los usuarios de la plataforma
+          </p>
         </div>
+        <Button
+          onClick={() => openModal()}
+          variant="gradient"
+          className="flex items-center space-x-2"
+        >
+          <PlusIcon className="w-5 h-5" />
+          <span>Nuevo Usuario</span>
+        </Button>
+      </div>
 
         {/* Filters and Search */}
         <div className="bg-card rounded-xl shadow-sm border border-border p-6">
@@ -422,7 +418,6 @@ export default function UsersManagement() {
         <div className="text-sm text-muted-foreground">
           Mostrando {filteredUsers.length} de {users.length} usuarios
         </div>
-      </div>
 
       {/* Modal */}
       <UserModal
@@ -431,7 +426,6 @@ export default function UsersManagement() {
         onClose={() => setIsModalOpen(false)}
         onSave={handleSaveUser}
       />
-    </AdminLayout>
-  </AdminProtection>
+    </div>
   );
 }
