@@ -228,23 +228,7 @@ export function ProductCard({
                 <span>{customAction.label}</span>
               </Link>
             </Button>
-          ) : (isService || product.price === 0) ? (
-            <Button
-              asChild
-              variant="outline"
-              className="w-full group/btn border-border hover:bg-muted"
-            >
-              <Link
-                href="/contact"
-                className="flex items-center justify-center space-x-2"
-                aria-label="Solicitar cotización"
-                onClick={handleScrollSave}
-              >
-                <FileText className="w-4 h-4 group-hover/btn:scale-110 transition-transform duration-300" aria-hidden="true" />
-                <span>Cotizar</span>
-              </Link>
-            </Button>
-          ) : showAddToCart && (
+          ) : (showAddToCart && !isService && product.price > 0) && (
             <Button
               onClick={handleAddToCart}
               variant="gradient"

@@ -142,7 +142,8 @@ export interface ProductTab {
   idealFor: string[];
   conditions: string[];
   ctaText: string;
-  ctaAction?: 'quote' | 'cart';
+  ctaAction?: 'quote' | 'cart' | 'whatsapp';
+  whatsappMessage?: string;
 }
 
 export interface ProductImage {

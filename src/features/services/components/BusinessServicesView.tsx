@@ -1,16 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { FileText } from 'lucide-react';
 import { ServiceCard } from '@/components/services/ServiceCard';
 import { ServiceService } from '@/services/service.service';
 import { Service } from '@/shared/types/domain';
-
-const CUSTOM_ACTION = {
-  label: "Cotizar Servicio",
-  href: "/contact",
-  icon: <FileText className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
-};
 
 const BusinessServicesView = () => {
   const [services, setServices] = useState<Service[]>([]);
@@ -80,7 +73,6 @@ const BusinessServicesView = () => {
               <ServiceCard 
                 key={service.id} 
                 service={service} 
-                customAction={CUSTOM_ACTION}
               />
             ))}
           </div>

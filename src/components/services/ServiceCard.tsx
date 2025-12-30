@@ -170,7 +170,7 @@ export function ServiceCard({
         )}
 
         
-        {customAction ? (
+        {customAction && (
           <Button
             asChild
             variant="gradient"
@@ -182,24 +182,6 @@ export function ServiceCard({
             >
               {customAction.icon}
               <span>{customAction.label}</span>
-            </Link>
-          </Button>
-        ) : (
-           <Button
-            asChild
-            variant="gradient"
-            className="w-full group/btn"
-          >
-            <Link
-              href="/contact"
-              className="flex items-center justify-center space-x-2"
-              onClick={() => trackEvent(AnalyticsEvents.QUOTE_SERVICE_CLICK, {
-                location: AnalyticsLocations.SERVICE_CARD,
-                name: service.name
-              })}
-            >
-              <FileText className="w-4 h-4 group-hover/btn:scale-110 transition-transform duration-300" />
-              <span>Cotizar Servicio</span>
             </Link>
           </Button>
         )}

@@ -9,6 +9,7 @@ import { Service } from '@/shared/types/domain';
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/components/ui/ToastManager';
 import { ProductImage } from '@/shared/components/ui/DefaultImage';
+import { PHONE_BUSINESS, WHATSAPP_REDIRECT } from '@/shared/constants/contactInfo';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -228,6 +229,21 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
     if (product.kind === 'product' && product.price > 0) {
       handleAddToCart();
     } else {
+      const currentTab = product.tabs?.find(t => t.id === activeTab);
+      
+      // Handle WhatsApp Redirect
+      if (currentTab?.ctaAction === 'whatsapp' && currentTab.whatsappMessage) {
+         trackEvent(AnalyticsEvents.WHATSAPP_CLICK, {
+          location: product.kind === 'service' ? AnalyticsLocations.SERVICE_PAGE : AnalyticsLocations.PRODUCT_PAGE,
+          name: product.name,
+          tab: currentTab.label
+        });
+        
+        const message = encodeURIComponent(currentTab.whatsappMessage);
+        window.open(`${WHATSAPP_REDIRECT}?text=${message}`, '_blank');
+        return;
+      }
+
       if (product.kind === 'service') {
         trackEvent(AnalyticsEvents.QUOTE_SERVICE_CLICK, {
           location: AnalyticsLocations.SERVICE_PAGE,

@@ -53,8 +53,9 @@ export const services: Service[] = [
         description: 'Servicio de modelado 3D orgánico orientado a proyectos creativos y personales. Creamos modelos únicos a partir de ideas, bocetos, imágenes de referencia o conceptos generados con IA, enfocándonos en formas orgánicas, estética y personalidad del diseño.\nIdeal para figuras, personajes, regalos personalizados y piezas visuales listas para impresión 3D o exhibición, sin necesidad de conocimientos técnicos previos.',
         idealFor: ['Figuras y personajes personalizados', 'Regalos únicos y piezas decorativas', 'Modelos para impresión 3D artística', 'Modificación de archivos STL existentes'],
         conditions: ['Cotización según complejidad del modelo', 'Entregables digitales (STL / OBJ)', 'Revisiones incluidas según acuerdo'],
-        ctaText: 'Solicitar cotización',
-        ctaAction: 'quote'
+        ctaText: 'Empezar mi diseño',
+        ctaAction: 'whatsapp',
+        whatsappMessage: 'Hola, quiero desarrollar un diseño 3D personalizado para un proyecto personal.\n\nQué deseas modelar (personaje, figura, objeto, etc.)\nReferencias o bocetos (si tienes)\nTamaño aproximado\nNivel de detalle esperado'
       },
       {
         id: 'b2b',
@@ -62,8 +63,9 @@ export const services: Service[] = [
         description: 'Servicio profesional de modelado 3D orgánico y visual enfocado en marcas, estudios creativos y proyectos comerciales que requieren modelos con alto impacto visual.\nDesarrollamos personajes, objetos y piezas orgánicas para marketing, exhibición, branding, impresión 3D artística o contenido visual, apoyándonos en flujos híbridos que incluyen IA + escultura digital.',
         idealFor: ['Personajes de marca y mascots', 'Piezas visuales para campañas o eventos', 'Modelos orgánicos para impresión 3D artística', 'Contenido visual y presentaciones de producto'],
         conditions: ['Cotización según alcance creativo', 'Archivos optimizados para impresión o visualización', 'Acuerdos de confidencialidad (NDA) disponibles'],
-        ctaText: 'Cotizar proyecto B2B',
-        ctaAction: 'quote'
+        ctaText: 'Solicitar diseño 3D',
+        ctaAction: 'whatsapp',
+        whatsappMessage: 'Hola, quiero solicitar un servicio de diseño 3D para un proyecto profesional.\n\nEmpresa o marca\nTipo de modelo requerido\nCantidad de modelos\nFecha estimada de entrega'
       }
     ],
     isActive: true,
@@ -125,8 +127,9 @@ export const services: Service[] = [
         description: 'Servicio de diseño CAD funcional orientado a estudiantes, proyectos universitarios y necesidades técnicas personales.\nDesarrollamos piezas y soluciones prácticas para prototipos académicos, iteración de piezas personalizadas, maquetas técnicas y validación básica de ideas, asegurando que el diseño funcione correctamente y pueda fabricarse mediante impresión 3D.\n\nEl enfoque es práctico y funcional, ideal para probar, ajustar y mejorar una pieza sin recurrir a procesos industriales complejos.',
         idealFor: ['Proyectos universitarios y académicos', 'Iteración y mejora de piezas personalizadas', 'Maquetas técnicas o industriales a pequeña escala', 'Repuestos y adaptadores personalizados', 'Optimización de archivos STL existentes'],
         conditions: ['Cotización según complejidad del diseño', 'Archivos listos para impresión 3D', 'Asesoría en selección de material y ajustes funcionales'],
-        ctaText: 'Solicitar cotización',
-        ctaAction: 'quote'
+        ctaText: 'Desarrollar prototipo',
+        ctaAction: 'whatsapp',
+        whatsappMessage: 'Hola, quiero desarrollar un prototipo técnico para un proyecto personal.\n\nFunción que debe cumplir la pieza\nDimensiones aproximadas\nMaterial deseado\nSi es prueba o uso final'
       },
       {
         id: 'b2b',
@@ -134,8 +137,9 @@ export const services: Service[] = [
         description: 'Servicio de diseño CAD y prototipado funcional orientado a empresas y emprendimientos que requieren iterar, validar y producir piezas técnicas en serie.\nTrabajamos desde el desarrollo del diseño hasta la producción seriada mediante impresión 3D, ideal para lotes pequeños y medianos, validación de mercado o reemplazo de componentes.\n\nLa producción se enfoca en repetibilidad, funcionalidad y control de calidad, utilizando impresión 3D como solución flexible y escalable.\n\nProducción seriada disponible tras validación del diseño.\n\nPara proyectos que requieran tolerancias industriales estrictas, normativas específicas o procesos de manufactura complejos, el alcance se evalúa y puede escalarse mediante colaboración técnica especializada.',
         idealFor: ['Producción seriada de piezas técnicas', 'Iteración y mejora continua de componentes', 'Maquetas industriales y prototipos funcionales', 'Reemplazo de piezas personalizadas', 'Validación de productos antes de escalar a manufactura tradicional'],
         conditions: ['Cotización según volumen y alcance del proyecto', 'Producción por lotes (series pequeñas y medianas)', 'Entregables CAD funcionales (STL / STEP)', 'Evaluación técnica previa al inicio de producción'],
-        ctaText: 'Cotizar proyecto B2B',
-        ctaAction: 'quote'
+        ctaText: 'Solicitar prototipo técnico',
+        ctaAction: 'whatsapp',
+        whatsappMessage: 'Hola, quiero solicitar un prototipo técnico para un proyecto empresarial.\n\nEmpresa\nFunción del prototipo\nCantidad estimada\nMateriales requeridos\nFecha objetivo'
       }
     ],
     isActive: true,
@@ -219,8 +223,9 @@ export const services: Service[] = [
         description: 'Servicio de impresión 3D orientado a clientes particulares y proyectos personales, ideal para fabricar piezas personalizadas con buen acabado y resistencia.\nTe acompañamos durante todo el proceso, desde la elección del material hasta la impresión final, para que obtengas un resultado funcional y bien terminado, incluso si no tienes experiencia previa en impresión 3D.',
         idealFor: ['Repuestos personalizados', 'Proyectos personales o creativos', 'Trabajos universitarios y académicos', 'Piezas únicas con acabado profesional'],
         conditions: ['Cotización según tamaño y material', 'Fabricación bajo pedido', 'Asesoría incluida durante el proceso'],
-        ctaText: 'Solicitar cotización',
-        ctaAction: 'quote'
+        ctaText: 'Imprimir mi pieza',
+        ctaAction: 'whatsapp',
+        whatsappMessage: 'Hola, quiero imprimir una pieza en 3D por encargo.\n\nSi ya cuentas con el archivo 3D\nTamaño aproximado\nMaterial preferido\nColor o acabado deseado'
       },
       {
         id: 'b2b',
@@ -228,8 +233,9 @@ export const services: Service[] = [
         description: 'Servicio profesional de impresión 3D enfocado en empresas, ingenieros y proyectos técnicos, ideal para la fabricación de piezas funcionales, prototipos y series cortas.\nAnalizamos cada proyecto según su uso final, tolerancias, material y volumen de producción, asegurando resultados consistentes y listos para validación o implementación.',
         idealFor: ['Prototipos funcionales', 'Validación de diseño', 'Producción piloto y series cortas', 'Piezas técnicas y repuestos'],
         conditions: ['Cotización técnica según requerimientos', 'Posibilidad de fabricación por volumen', 'Coordinación y seguimiento del proyecto'],
-        ctaText: 'Cotizar proyecto B2B',
-        ctaAction: 'quote'
+        ctaText: 'Solicitar producción 3D',
+        ctaAction: 'whatsapp',
+        whatsappMessage: 'Hola, quiero solicitar impresiones 3D para un proyecto profesional.\n\nEmpresa\nSi cuentan con archivo 3D\nCantidad de piezas\nMaterial requerido\nFecha de entrega'
       }
     ],
     isActive: true,
@@ -312,8 +318,9 @@ export const services: Service[] = [
         description: 'Servicio de diseño y fabricación de merchandising personalizado, ideal para regalos, productos únicos y piezas promocionales desarrolladas desde cero.\nCreamos objetos personalizados a partir de una idea, referencia o concepto, con diseño exclusivo y fabricación mediante impresión 3D, permitiendo alto nivel de personalización y producción bajo pedido.',
         idealFor: ['Regalos personalizados', 'Productos únicos desarrollados desde cero', 'Piezas promocionales de pequeña escala'],
         conditions: ['Cotización según diseño y tamaño', 'Fabricación bajo pedido', 'Personalización de forma, texto y detalles'],
-        ctaText: 'Cotizar servicio',
-        ctaAction: 'quote'
+        ctaText: 'Crear merchandising',
+        ctaAction: 'whatsapp',
+        whatsappMessage: 'Hola, quiero crear merchandising 3D personalizado.\n\nTipo de producto\nCantidad aproximada\nEstilo o colores\nFecha aproximada'
       },
       {
         id: 'b2b',
@@ -321,8 +328,9 @@ export const services: Service[] = [
         description: 'Servicio profesional de merchandising personalizado para empresas, enfocado en el diseño, modelado y fabricación de productos corporativos mediante impresión 3D.\nDesarrollamos llaveros, productos promocionales, piezas de marca y objetos personalizados desde cero, alineados a la identidad visual y objetivos de cada empresa.\n\nLa impresión 3D permite producir series pequeñas y medianas, optimizar costos y adaptar cada diseño a campañas, eventos o activaciones de marca.\n\nProducción seriada disponible tras validación del diseño.',
         idealFor: ['Merchandising corporativo personalizado', 'Llaveros y productos promocionales', 'Regalos empresariales y activaciones de marca', 'Eventos, ferias y campañas comerciales'],
         conditions: ['Cotización según diseño, cantidad y acabados', 'Producción por lotes', 'Diseño exclusivo por proyecto'],
-        ctaText: 'Cotizar proyecto B2B',
-        ctaAction: 'quote'
+        ctaText: 'Solicitar productos promocionales',
+        ctaAction: 'whatsapp',
+        whatsappMessage: 'Hola, quiero solicitar productos promocionales personalizados.\n\nEmpresa o marca\nTipo de producto\nCantidad\nSi incluye logo o branding\nFecha del evento o entrega'
       }
     ],
     isActive: true,
@@ -388,9 +396,10 @@ export const services: Service[] = [
         label: 'General / Personas (B2C)',
         description: 'Servicio de diseño y fabricación de trofeos 3D personalizados, ideales para reconocimientos, eventos especiales, competencias y celebraciones personales.\nCreamos trofeos temáticos y piezas únicas, adaptadas al concepto del evento, con acabados personalizados y fabricación mediante impresión 3D.\n\nEl enfoque es visual y decorativo, priorizando diseño, estética y personalización según el evento o reconocimiento.',
         idealFor: ['Eventos deportivos o culturales', 'Reconocimientos personales', 'Trofeos temáticos personalizados', 'Premios únicos y conmemorativos'],
-        conditions: ['Cotización según diseño y tamaño', 'Fabricación bajo pedido', 'Personalización de textos, logos y formas'],
-        ctaText: 'Cotizar servicio',
-        ctaAction: 'quote'
+        conditions: ['Cotización según diseño y tamaño', 'Fabricación bajo pedido', 'Personalización de forma, texto y detalles'],
+        ctaText: 'Crear trofeo personalizado',
+        ctaAction: 'whatsapp',
+        whatsappMessage: 'Hola, quiero crear un trofeo o medalla personalizada.\n\nTipo de evento\nTamaño aproximado\nEstilo o acabado\nFecha del evento'
       },
       {
         id: 'b2b',
@@ -398,8 +407,9 @@ export const services: Service[] = [
         description: 'Servicio profesional de fabricación de trofeos y medallas 3D personalizados para empresas, instituciones y eventos corporativos.\nDesarrollamos trofeos y medallas en series pequeñas y medianas, manteniendo coherencia visual, calidad de acabado y personalización según identidad de marca o evento.\n\nProducción seriada disponible según cantidad y diseño.',
         idealFor: ['Eventos empresariales y corporativos', 'Premiaciones institucionales', 'Competencias deportivas', 'Reconocimientos internos de empresa'],
         conditions: ['Cotización según cantidad, diseño y acabados', 'Producción por lotes', 'Fabricación bajo pedido'],
-        ctaText: 'Cotizar proyecto B2B',
-        ctaAction: 'quote'
+        ctaText: 'Solicitar premios institucionales',
+        ctaAction: 'whatsapp',
+        whatsappMessage: 'Hola, quiero solicitar premios institucionales personalizados.\n\nEmpresa o institución\nTipo de evento\nCantidad\nSi incluye logo o texto\nFecha del evento'
       }
     ],
     isActive: true,
@@ -471,8 +481,9 @@ export const services: Service[] = [
         description: 'Servicio de prototipado técnico orientado a estudiantes, proyectos universitarios y necesidades funcionales personales. Diseñamos y fabricamos piezas técnicas personalizadas para validar ideas, reemplazar componentes o desarrollar soluciones prácticas mediante impresión 3D.\n\nEste servicio está enfocado en iteración, ajuste y mejora de piezas, priorizando funcionalidad, resistencia y compatibilidad con el uso real. Ideal para proyectos académicos, maquetas técnicas, prototipos simples y soluciones a medida sin procesos industriales complejos.',
         idealFor: ['Proyectos universitarios y académicos', 'Prototipos funcionales a pequeña escala', 'Iteración y mejora de piezas personalizadas', 'Repuestos técnicos y adaptadores a medida'],
         conditions: ['Cotización según complejidad y tamaño', 'Fabricación bajo pedido', 'Asesoría básica en funcionalidad y material'],
-        ctaText: 'Cotizar servicio',
-        ctaAction: 'quote'
+        ctaText: 'Desarrollar pieza técnica',
+        ctaAction: 'whatsapp',
+        whatsappMessage: 'Hola, quiero desarrollar una pieza técnica para un proyecto personal.\n\nFunción de la pieza\nDimensiones aproximadas\nMaterial requerido\nUso final'
       },
       {
         id: 'b2b',
@@ -480,8 +491,9 @@ export const services: Service[] = [
         description: 'Servicio profesional de prototipado de ingeniería y fabricación de piezas técnicas para empresas, emprendimientos y proyectos industriales. Desarrollamos prototipos funcionales y componentes técnicos destinados a validación de diseño, pruebas funcionales y producción seriada mediante impresión 3D.\n\nEste servicio permite iterar diseños, optimizar geometrías y fabricar piezas técnicas en series pequeñas o medianas, reduciendo tiempos y costos frente a procesos industriales tradicionales. Está orientado a producción funcional, no a piezas altamente complejas ni procesos industriales de alta tolerancia.\n\nProducción seriada disponible tras validación del diseño.',
         idealFor: ['Producción seriada de piezas técnicas', 'Validación funcional de componentes', 'Iteración y mejora continua de productos', 'Reemplazo de piezas personalizadas', 'Maquetas técnicas e industriales'],
         conditions: ['Cotización según volumen y alcance del proyecto', 'Producción por lotes disponible', 'Entregables CAD funcionales (STL / STEP)', 'Evaluación técnica previa al inicio de producción'],
-        ctaText: 'Cotizar proyecto B2B',
-        ctaAction: 'quote'
+        ctaText: 'Solicitar piezas técnicas',
+        ctaAction: 'whatsapp',
+        whatsappMessage: 'Hola, quiero solicitar piezas técnicas para un proyecto de ingeniería.\n\nEmpresa\nAplicación de la pieza\nCantidad\nMateriales\nFecha estimada'
       }
     ],
     isActive: true,
@@ -575,8 +587,9 @@ export const services: Service[] = [
         description: 'Servicio de diseño y fabricación de cascos, máscaras, props y piezas de cosplay personalizadas, orientado a personas, cosplayers, coleccionistas, artistas y creadores de contenido.\nDesarrollamos piezas desde cero o a partir de referencias visuales, adaptadas al tamaño del usuario, estilo deseado y nivel de detalle requerido. Las piezas se fabrican mediante impresión 3D y pueden entregarse listas para uso o como base para pintado y acabado final.\nTambién hemos desarrollado máscaras personalizadas para DJs y artistas, diseñadas para presentaciones en vivo y contenido visual, adaptadas a identidad estética y comodidad de uso.\n\nIdeal para quienes buscan piezas únicas, resistentes y personalizadas, sin recurrir a productos genéricos o de producción en masa.',
         idealFor: ['Cascos y máscaras personalizadas', 'Props para cosplay y exhibición', 'Accesorios temáticos y réplicas', 'Piezas únicas para coleccionistas', 'Cosplay para eventos, sesiones o contenido digital'],
         conditions: ['Cotización según diseño, tamaño y nivel de detalle', 'Fabricación bajo pedido', 'Ajuste de escala según medidas del usuario', 'No incluye licencias oficiales de marcas registradas'],
-        ctaText: 'Solicitar cotización',
-        ctaAction: 'quote'
+        ctaText: 'Crear mi pieza',
+        ctaAction: 'whatsapp',
+        whatsappMessage: 'Hola, quiero crear una pieza personalizada como casco, máscara o prop.\n\nTipo de pieza\nReferencias disponibles\nTamaño aproximado\nNivel de detalle o acabado'
       },
       {
         id: 'b2b',
@@ -584,8 +597,9 @@ export const services: Service[] = [
         description: 'Servicio profesional de diseño y fabricación de cascos, máscaras y props personalizados para empresas, productoras, agencias creativas y eventos.\nDesarrollamos piezas exclusivas para campañas publicitarias, activaciones de marca, exhibiciones, escenografía y contenido audiovisual. Incluye experiencia en la fabricación de máscaras personalizadas para DJs y artistas, utilizadas en eventos, presentaciones en vivo y producciones visuales.\nEl servicio permite producir piezas únicas o series pequeñas y medianas, manteniendo coherencia visual, calidad estructural y personalización según identidad de marca o requerimientos del proyecto.\n\nLa impresión 3D permite optimizar tiempos de desarrollo, costos y adaptar cada diseño a necesidades específicas.',
         idealFor: ['Producciones audiovisuales y escenografía', 'Activaciones de marca y eventos temáticos', 'Exhibiciones, stands y vitrinas', 'Props personalizados para campañas', 'Producción por series pequeñas'],
         conditions: ['Cotización según alcance, diseño y volumen', 'Producción por lotes disponible', 'Diseño exclusivo por proyecto', 'Uso comercial bajo solicitud del cliente'],
-        ctaText: 'Cotizar proyecto B2B',
-        ctaAction: 'quote'
+        ctaText: 'Solicitar props personalizados',
+        ctaAction: 'whatsapp',
+        whatsappMessage: 'Hola, quiero solicitar props o piezas personalizadas para un proyecto profesional.\n\nEmpresa o productora\nTipo de pieza\nCantidad\nUso previsto\nFecha objetivo'
       }
     ],
     isActive: true,
@@ -635,8 +649,9 @@ export const services: Service[] = [
         description: 'Servicio de diseño y fabricación de material didáctico y modelos educativos orientado a estudiantes, padres de familia y docentes. Creamos maquetas educativas físicas para apoyar tareas escolares, exposiciones y proyectos académicos, facilitando la comprensión de conceptos mediante objetos visuales y manipulables.\n\nDesarrollamos modelos educativos como células, sistemas solares, estructuras científicas, mapas, figuras geométricas y otros elementos solicitados en colegios y centros educativos. Los diseños se adaptan al nivel del estudiante y al contenido requerido, priorizando claridad, escala adecuada y resistencia para uso escolar.\n\nIdeal para complementar el aprendizaje tradicional con recursos prácticos y visuales.',
         idealFor: ['Tareas y proyectos escolares', 'Exposiciones educativas', 'Maquetas didácticas para colegio', 'Apoyo visual para estudio en casa'],
         conditions: ['Cotización según tamaño y complejidad', 'Fabricación bajo pedido', 'Personalización según nivel educativo'],
-        ctaText: 'Cotizar servicio',
-        ctaAction: 'quote'
+        ctaText: 'Crear maqueta',
+        ctaAction: 'whatsapp',
+        whatsappMessage: 'Hola, quiero crear una maqueta didáctica o educativa.\n\nTema o materia\nEscala aproximada\nUso previsto\nFecha requerida'
       },
       {
         id: 'b2b',
@@ -644,8 +659,9 @@ export const services: Service[] = [
         description: 'Servicio profesional de diseño y fabricación de material didáctico y modelos educativos para instituciones educativas, colegios, academias y universidades. Desarrollamos maquetas educativas y kits didácticos personalizados alineados al currículo educativo y objetivos pedagógicos.\n\nLos modelos se fabrican mediante impresión 3D, permitiendo producción en series pequeñas o medianas, estandarización de piezas y adaptación a programas educativos específicos. Este servicio está orientado a mejorar la experiencia de aprendizaje en aulas, laboratorios y espacios educativos.\n\nIdeal para instituciones que buscan recursos educativos físicos, durables y reutilizables.',
         idealFor: ['Colegios e instituciones educativas', 'Academias y centros de formación', 'Material didáctico institucional', 'Kits educativos para aula'],
         conditions: ['Cotización según volumen y diseño', 'Producción por lotes disponible', 'Diseño a medida según currículo'],
-        ctaText: 'Cotizar proyecto B2B',
-        ctaAction: 'quote'
+        ctaText: 'Solicitar maquetas educativas',
+        ctaAction: 'whatsapp',
+        whatsappMessage: 'Hola, quiero solicitar maquetas educativas para una institución.\n\nInstitución\nTema o área\nCantidad\nEscala\nFecha de entrega'
       }
     ],
     isActive: true,
@@ -696,8 +712,9 @@ export const services: Service[] = [
         description: 'Servicio de desarrollo y fabricación de modelos anatómicos 3D orientado a estudiantes, docentes y profesionales de la salud. Creamos modelos anatómicos personalizados para estudio, aprendizaje y apoyo visual, ideales para comprender estructuras complejas de forma clara y tangible.\n\nTrabajamos a partir de referencias anatómicas, modelos digitales existentes o requerimientos educativos específicos. Los modelos se diseñan priorizando claridad visual, escala adecuada y utilidad didáctica, y se fabrican mediante impresión 3D según el nivel académico o necesidad de estudio.\n\nIdeal para reforzar el aprendizaje práctico y complementar el material teórico en anatomía.',
         idealFor: ['Estudiantes de medicina y ciencias de la salud', 'Material de estudio anatómico personalizado', 'Apoyo visual para clases y exposiciones', 'Modelos anatómicos a escala para aprendizaje'],
         conditions: ['Cotización según complejidad y tamaño del modelo', 'Fabricación bajo pedido', 'Personalización según requerimiento educativo'],
-        ctaText: 'Cotizar servicio',
-        ctaAction: 'quote'
+        ctaText: 'Desarrollar modelo anatómico',
+        ctaAction: 'whatsapp',
+        whatsappMessage: 'Hola, quiero desarrollar un modelo anatómico 3D personalizado.\n\nParte del cuerpo o sistema\nTamaño o escala\nUso previsto\nFecha estimada'
       },
       {
         id: 'b2b',
@@ -705,8 +722,9 @@ export const services: Service[] = [
         description: 'Servicio profesional de desarrollo, modelado y fabricación de modelos anatómicos 3D personalizados para instituciones educativas, centros de formación, clínicas y proyectos académicos. Creamos modelos anatómicos físicos destinados a docencia, demostración, entrenamiento y apoyo visual especializado.\n\nLos modelos se desarrollan a partir de referencias anatómicas, modelos digitales base o requerimientos técnicos definidos por la institución. Se optimizan para impresión 3D, asegurando coherencia anatómica, resistencia física y calidad visual.\n\nLa producción puede realizarse en series pequeñas o medianas, según el alcance del proyecto.\n\nEste servicio está orientado a proyectos institucionales y educativos que requieran material anatómico físico como soporte técnico o formativo, sin intervención clínica directa.',
         idealFor: ['Universidades y centros de formación', 'Instituciones educativas y academias', 'Clínicas para entrenamiento y demostración', 'Material anatómico institucional'],
         conditions: ['Cotización según alcance, nivel de detalle y volumen', 'Producción por lotes disponible', 'Posibilidad de acuerdos de confidencialidad (NDA)'],
-        ctaText: 'Cotizar proyecto B2B',
-        ctaAction: 'quote'
+        ctaText: 'Solicitar modelos anatómicos',
+        ctaAction: 'whatsapp',
+        whatsappMessage: 'Hola, quiero solicitar modelos anatómicos 3D para un proyecto profesional.\n\nInstitución o empresa\nTipo de modelo\nCantidad\nUso educativo o demostrativo\nFecha objetivo'
       }
     ],
     isActive: true,
