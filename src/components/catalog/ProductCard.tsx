@@ -47,9 +47,12 @@ export function ProductCard({
 
   const isService = product.kind === 'service';
   
+  const categorySegment = product.categoryId || 'general';
+  const slugSegment = product.slug || product.id;
+
   const productUrl = isService 
-    ? `/services/${product.slug || product.id}${source ? `?from=${source}` : ''}`
-    : `/catalogo-impresion-3d/${product.categoryId || 'general'}/${product.slug || product.id || ''}${source ? `?from=${source}` : ''}`;
+    ? `/services/${slugSegment}${source ? `?from=${source}` : ''}`
+    : `/catalogo-impresion-3d/${categorySegment}/${slugSegment}${source ? `?from=${source}` : ''}`;
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -150,7 +153,7 @@ export function ProductCard({
             ) : (
               <>
                 <span className="text-lg font-bold text-foreground tracking-tight">
-                  S/ {product.price.toFixed(2)}
+                  S/ {(product.price || 0).toFixed(2)}
                 </span>
                 <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider opacity-80">
                   Precio final

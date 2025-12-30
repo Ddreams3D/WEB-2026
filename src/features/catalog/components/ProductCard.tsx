@@ -47,9 +47,12 @@ export function ProductCard({
 
   const isService = product.kind === 'service';
   
+  const categorySegment = product.categoryId || 'general';
+  const slugSegment = product.slug || product.id;
+
   const productUrl = isService 
-    ? `/services/${product.slug || product.id}${source ? `?from=${source}` : ''}`
-    : `/catalogo-impresion-3d/${product.categoryId || 'general'}/${product.slug || product.id || ''}${source ? `?from=${source}` : ''}`;
+    ? `/services/${slugSegment}${source ? `?from=${source}` : ''}`
+    : `/catalogo-impresion-3d/${categorySegment}/${slugSegment}${source ? `?from=${source}` : ''}`;
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();

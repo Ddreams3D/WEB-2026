@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  const primaryImage = product.images.find(img => img.isPrimary) || product.images[0];
+  const primaryImage = product.images?.find(img => img.isPrimary) || (product.images || [])[0];
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://ddreams3d.com';
   const categorySlug = product.category?.slug || product.categoryId || category;
 
@@ -56,12 +56,10 @@ export default async function ProductPage({ params }: Props) {
   }
 
   // Ensure correct category in URL
-  const correctCategorySlug = product.category?.slug || product.categoryId;
+  const correctCategorySlug = product.category?.slug || product.categoryId || 'general';
+  
   if (category !== correctCategorySlug) {
-    // Redirect to correct category URL if mismatch
-    // But be careful if categoryId is different from slug used in URL
-    // Here we assume categoryId IS the slug or maps to it directly
-     redirect(`/catalogo-impresion-3d/${correctCategorySlug}/${product.slug || product.id}`);
+    redirect(`/catalogo-impresion-3d/${correctCategorySlug}/${product.slug || product.id}`);
   }
 
   // Redirect to slug URL if accessing by ID or different slug
@@ -81,7 +79,7 @@ export default async function ProductPage({ params }: Props) {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.name,
-    image: product.images.map(img => img.url),
+    image: (product.images || []).map(img => img.url),
     description: product.description,
     sku: product.sku,
     brand: {

@@ -37,7 +37,9 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
       trackEvent(AnalyticsEvents.VIEW_PRODUCT_DETAIL, { 
         id: initialProduct.id, 
         name: initialProduct.name, 
-        category: typeof initialProduct.category === 'string' ? initialProduct.category : initialProduct.category.id,
+        category: typeof initialProduct.category === 'string' 
+          ? initialProduct.category 
+          : (initialProduct.category?.id || initialProduct.categoryId),
         location: AnalyticsLocations.PRODUCT_PAGE,
         page_type: 'product'
       });
@@ -56,26 +58,28 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
       if (storedProducts) {
         try {
           const parsed = JSON.parse(storedProducts);
-          const found = parsed.find((p: Product | Service) => p.id === initialProduct.id);
-          if (found) {
-             const foundUpdatedAt = new Date(found.updatedAt);
-             // Solo usar datos de localStorage si son más recientes que los datos iniciales (del servidor/mock)
-             if (!initialProduct.updatedAt || foundUpdatedAt > initialProduct.updatedAt) {
-               // Hydrate dates
-               const hydrated = {
-                 ...found,
-                 createdAt: new Date(found.createdAt),
-                 updatedAt: foundUpdatedAt,
-                 images: found.images?.map((img: any) => ({
-                   ...img,
-                   createdAt: img.createdAt ? new Date(img.createdAt) : undefined,
-                   updatedAt: img.updatedAt ? new Date(img.updatedAt) : undefined
-                 })),
-                 // Ensure new fields like tabs are preserved if missing in storage
-                 tabs: found.tabs || initialProduct.tabs,
-                 tabsTitle: found.tabsTitle || initialProduct.tabsTitle
-               };
-               setProduct(hydrated);
+          if (Array.isArray(parsed)) {
+             const found = parsed.find((p: Product | Service) => p.id === initialProduct.id);
+             if (found) {
+                const foundUpdatedAt = new Date(found.updatedAt);
+                // Solo usar datos de localStorage si son más recientes que los datos iniciales (del servidor/mock)
+                if (!initialProduct.updatedAt || foundUpdatedAt > initialProduct.updatedAt) {
+                  // Hydrate dates
+                  const hydrated = {
+                    ...found,
+                    createdAt: new Date(found.createdAt),
+                    updatedAt: foundUpdatedAt,
+                    images: (found.images || []).map((img: any) => ({
+                      ...img,
+                      createdAt: img.createdAt ? new Date(img.createdAt) : undefined,
+                      updatedAt: img.updatedAt ? new Date(img.updatedAt) : undefined
+                    })),
+                    // Ensure new fields like tabs are preserved if missing in storage
+                    tabs: found.tabs || initialProduct.tabs,
+                    tabsTitle: found.tabsTitle || initialProduct.tabsTitle
+                  };
+                  setProduct(hydrated);
+                }
              }
           }
         } catch (e) {
@@ -87,9 +91,11 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
 
   const { addToCart } = useCart();
   const { showSuccess, showError } = useToast();
-  const [selectedImageId, setSelectedImageId] = useState<string>(
-    product.images.find(img => img.isPrimary)?.id || product.images[0]?.id
-  );
+  const [selectedImageId, setSelectedImageId] = useState<string>(() => {
+    const images = initialProduct.images || [];
+    if (images.length === 0) return '';
+    return images.find(img => img.isPrimary)?.id || images[0].id || '';
+  });
   
   // Estado para las Tabs (usa la primera tab disponible o 'b2c' por defecto)
   const [activeTab, setActiveTab] = useState<string>(() => {
@@ -101,7 +107,10 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
   
   // Update selectedImageId if product changes (e.g. from storage sync)
   useEffect(() => {
-     setSelectedImageId(product.images.find(img => img.isPrimary)?.id || product.images[0]?.id);
+     const images = product.images || [];
+     if (images.length > 0) {
+       setSelectedImageId(images.find(img => img.isPrimary)?.id || images[0].id || '');
+     }
   }, [product]);
 
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(() => {
@@ -109,7 +118,7 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
     const defaults: Record<string, string> = {};
     if (initialProduct.kind === 'product' && initialProduct.options) {
       initialProduct.options.forEach(option => {
-        const defaultVal = option.values.find(v => v.isDefault);
+        const defaultVal = option.values?.find(v => v.isDefault);
         if (defaultVal) {
           defaults[option.id] = defaultVal.id;
         }
@@ -121,7 +130,7 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
   const [isAdding, setIsAdding] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const selectedImage = product.images.find(img => img.id === selectedImageId) || product.images[0];
+  const selectedImage = (product.images || []).find(img => img.id === selectedImageId) || (product.images || [])[0];
 
   // Helper para ajustar el encuadre de imágenes específicas
   const getImageClassName = (imageId: string | undefined, isThumbnail: boolean = false) => {
@@ -261,16 +270,20 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
 
   const handleNextImage = useCallback((e?: React.MouseEvent) => {
     e?.stopPropagation();
-    const currentIndex = product.images.findIndex(img => img.id === selectedImageId);
-    const nextIndex = (currentIndex + 1) % product.images.length;
-    setSelectedImageId(product.images[nextIndex].id);
+    const images = product.images || [];
+    if (images.length === 0) return;
+    const currentIndex = images.findIndex(img => img.id === selectedImageId);
+    const nextIndex = (currentIndex + 1) % images.length;
+    setSelectedImageId(images[nextIndex].id);
   }, [product.images, selectedImageId]);
 
   const handlePrevImage = useCallback((e?: React.MouseEvent) => {
     e?.stopPropagation();
-    const currentIndex = product.images.findIndex(img => img.id === selectedImageId);
-    const prevIndex = (currentIndex - 1 + product.images.length) % product.images.length;
-    setSelectedImageId(product.images[prevIndex].id);
+    const images = product.images || [];
+    if (images.length === 0) return;
+    const currentIndex = images.findIndex(img => img.id === selectedImageId);
+    const prevIndex = (currentIndex - 1 + images.length) % images.length;
+    setSelectedImageId(images[prevIndex].id);
   }, [product.images, selectedImageId]);
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -325,7 +338,7 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
               </div>
             </div>
           </div>
-          {product.images.length > 1 && (
+          {product.images && product.images.length > 1 && (
             <div className="grid grid-cols-4 gap-3">
               {product.images.map((image) => (
                 <div 
@@ -716,7 +729,7 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
              <div className="relative w-full h-full max-w-[95vw] max-h-[90vh] flex items-center justify-center pointer-events-auto group/stage">
                
                {/* Navigation - Large hit areas, subtle feedback */}
-               {product.images.length > 1 && (
+               {product.images && product.images.length > 1 && (
                  <>
                    <div className="absolute inset-y-0 left-0 w-[15%] flex items-center justify-start z-50 hover:bg-gradient-to-r hover:from-black/20 hover:to-transparent transition-all duration-500 group/nav-left cursor-pointer" onClick={handlePrevImage}>
                      <Button
@@ -760,7 +773,7 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
                   <div className="absolute bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover/stage:opacity-100 transition-opacity duration-500 delay-150 flex items-center gap-3 text-xs font-medium px-4 py-2 bg-black/60 rounded-full backdrop-blur-xl border border-white/10 shadow-2xl whitespace-nowrap max-w-[80%] overflow-hidden pointer-events-none z-20">
                       <span className="truncate max-w-[300px] text-white/90 tracking-wide">{selectedImage?.alt || product.name}</span>
                       <span className="w-px h-3 bg-white/20 shrink-0"></span>
-                      <span className="shrink-0 text-white/50">{product.images.findIndex(img => img.id === selectedImageId) + 1} <span className="text-white/30 text-[10px] mx-0.5">/</span> {product.images.length}</span>
+                      <span className="shrink-0 text-white/50">{(product.images || []).findIndex(img => img.id === selectedImageId) + 1} <span className="text-white/30 text-[10px] mx-0.5">/</span> {(product.images || []).length}</span>
                   </div>
                </div>
              </div>
