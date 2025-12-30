@@ -68,11 +68,9 @@ El archivo `netlify.toml` incluye:
 
 ### Error: "Module not found"
 - Verifica que todas las rutas de importación sean correctas
-- Asegúrate de que `output: 'export'` esté en `next.config.js`
 
 ### Error: "Image optimization"
-- Las imágenes de Next.js requieren configuración especial para static export
-- Usa `unoptimized: true` en next.config.js si es necesario
+- Las imágenes de Next.js funcionan correctamente en Netlify con el plugin instalado (@netlify/plugin-nextjs)
 
 ### Error de Build
 - Verifica que todas las dependencias estén en `dependencies` (no en `devDependencies`)

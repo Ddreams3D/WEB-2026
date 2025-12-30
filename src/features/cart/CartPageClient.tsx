@@ -10,6 +10,7 @@ import Image from 'next/image';
 import { PHONE_BUSINESS } from '@/shared/constants/contactInfo';
 import { Button } from '@/components/ui';
 import { ProductImage } from '@/shared/components/ui/DefaultImage';
+import { trackEvent } from '@/lib/analytics';
 
 export default function CartPageClient() {
   const {
@@ -25,6 +26,7 @@ export default function CartPageClient() {
   const router = useRouter();
 
   const handleWhatsAppQuote = () => {
+    trackEvent('whatsapp_click', { location: 'cart_page', type: 'quote' });
     const message = "Hola Ddreams3D, estoy interesado en cotizar un diseño único y personalizado. ¿Podrían brindarme más información?";
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/${PHONE_BUSINESS}?text=${encodedMessage}`, '_blank');
@@ -39,6 +41,7 @@ export default function CartPageClient() {
   };
 
   const handleWhatsAppCheckout = () => {
+    trackEvent('whatsapp_click', { location: 'cart_page', type: 'checkout', value: total });
     let message = "Hola Ddreams3D, me gustaría realizar el siguiente pedido:\n\n";
     items.forEach(item => {
       message += `* ${item.product.name} (x${item.quantity}) - S/ ${(item.product.price * item.quantity).toFixed(2)}\n`;

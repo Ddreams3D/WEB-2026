@@ -1,8 +1,9 @@
 'use client';
  
- import React from 'react';
- import Hero from '@/shared/components/Hero';
+ import React, { useEffect } from 'react';
+import Hero from '@/shared/components/Hero';
 import BenefitsSection from '@/shared/components/BenefitsSection';
+import { trackEvent, AnalyticsEvents, AnalyticsLocations } from '@/lib/analytics';
 import {
   LazyStats,
   LazyProjectGallery,
@@ -15,6 +16,13 @@ import CallToAction from '@/shared/components/CallToAction';
 import { ctaData } from '@/shared/data/ctaData';
 
 export default function HomePageClient() {
+  useEffect(() => {
+    trackEvent(AnalyticsEvents.VIEW_HOME, {
+      location: AnalyticsLocations.HERO,
+      page_type: 'home'
+    });
+  }, []);
+
   return (
     <main className="min-h-screen bg-background">
       <Hero />

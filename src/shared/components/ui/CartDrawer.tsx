@@ -17,6 +17,7 @@ import { ProductImage } from './DefaultImage';
 import { PHONE_BUSINESS } from '@/shared/constants/contactInfo';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { trackEvent } from '@/lib/analytics';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -134,7 +135,10 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                 </p>
                 <div className="flex flex-col w-full gap-3">
                   <Button
-                    onClick={onClose}
+                    onClick={() => {
+                        onClose();
+                        trackEvent('view_catalog_click', { location: 'cart_drawer' });
+                    }}
                     asChild
                     variant="gradient"
                     className="w-full px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transform hover:scale-105"

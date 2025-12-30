@@ -41,47 +41,8 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'LocalBusiness',
-    name: 'Ddreams 3D',
-    image: 'https://ddreams3d.com/logo-ddreams-3d.jpg',
-    description: 'Servicios de impresión 3D, modelado y prototipado en Arequipa. Envíos a todo el Perú.',
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: ADDRESS_BUSINESS,
-      addressLocality: 'Arequipa',
-      addressRegion: 'Arequipa',
-      addressCountry: 'PE',
-      postalCode: '04001',
-    },
-    url: 'https://ddreams3d.com',
-    telephone: PHONE_DISPLAY,
-    priceRange: '$$',
-    openingHoursSpecification: [
-      {
-        '@type': 'OpeningHoursSpecification',
-        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-        opens: '09:00',
-        closes: '18:00',
-      },
-      {
-        '@type': 'OpeningHoursSpecification',
-        dayOfWeek: ['Saturday'],
-        opens: '09:00',
-        closes: '14:00',
-      }
-    ],
-    geo: {
-      '@type': 'GeoCoordinates',
-      latitude: -16.3956,
-      longitude: -71.5247,
-    },
-  };
-
   return (
     <>
-      <JsonLd data={jsonLd} />
       <HomePageClient />
     </>
   );

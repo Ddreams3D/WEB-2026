@@ -2,6 +2,7 @@ import React from 'react';
 import { WHATSAPP_REDIRECT } from '@/shared/constants/contactInfo';
 import { Button } from '@/components/ui/button';
 import { MessageCircle } from 'lucide-react';
+import { trackEvent, AnalyticsEvents, AnalyticsLocations } from '@/lib/analytics';
 
 interface PropsButtonRedirectWhatsapp {
   msgRedirect?: string;
@@ -32,6 +33,7 @@ export default function ButtonRedirectWhatsapp({
         target="_blank"
         rel="noopener noreferrer"
         className="flex items-center gap-2"
+        onClick={() => trackEvent(AnalyticsEvents.WHATSAPP_CLICK, { location: AnalyticsLocations.CALL_TO_ACTION, label: text || 'default' })}
       >
         <span className="hidden sm:inline">{text || 'Chatear por WhatsApp'}</span>
         <span className="sm:hidden">{text || 'WhatsApp'}</span>

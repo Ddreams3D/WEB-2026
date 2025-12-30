@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { WHATSAPP_REDIRECT } from '@/shared/constants/contactInfo';
+import { trackEvent, AnalyticsEvents, AnalyticsLocations } from '@/lib/analytics';
 
 export default function WhatsAppFloatingButton() {
   const defaultMessage = "Hola, vengo de su página web y me gustaría cotizar un proyecto.";
@@ -14,6 +15,7 @@ export default function WhatsAppFloatingButton() {
       rel="noopener noreferrer"
       className="fixed bottom-24 right-6 z-50 bg-success hover:bg-success/90 text-success-foreground p-3 rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.25)] transition-all duration-300 flex items-center justify-center group animate-fade-in"
       aria-label="Contactar por WhatsApp"
+      onClick={() => trackEvent(AnalyticsEvents.WHATSAPP_CLICK, { location: AnalyticsLocations.FLOATING_BUTTON })}
     >
       <svg 
         viewBox="0 0 24 24" 

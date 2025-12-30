@@ -7,6 +7,7 @@ import { Providers } from '@/contexts/Providers';
 import { getAppUrl } from '@/lib/url-utils';
 import { CookieBanner } from '@/components/ui';
 import { LocalBusinessJsonLd } from '@/components/seo/LocalBusinessJsonLd';
+import { AnalyticsTracker } from '@/components/analytics/AnalyticsTracker';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -118,6 +119,7 @@ export default function RootLayout({
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />
         )}
         <LocalBusinessJsonLd />
+        <AnalyticsTracker />
         <Providers>
           {children}
           <CookieBanner />

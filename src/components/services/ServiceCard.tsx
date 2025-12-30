@@ -9,6 +9,7 @@ import { usePathname } from 'next/navigation';
 import { ScrollManager } from '@/hooks/useScrollRestoration';
 import { Service } from '@/shared/types/domain';
 import { ProductImage } from '@/shared/components/ui/DefaultImage';
+import { trackEvent, AnalyticsEvents, AnalyticsLocations } from '@/lib/analytics';
 
 interface ServiceCardProps {
   service: Service;
@@ -192,6 +193,10 @@ export function ServiceCard({
             <Link
               href="/contact"
               className="flex items-center justify-center space-x-2"
+              onClick={() => trackEvent(AnalyticsEvents.QUOTE_SERVICE_CLICK, {
+                location: AnalyticsLocations.SERVICE_CARD,
+                name: service.name
+              })}
             >
               <FileText className="w-4 h-4 group-hover/btn:scale-110 transition-transform duration-300" />
               <span>Cotizar Servicio</span>

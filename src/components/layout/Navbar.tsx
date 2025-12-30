@@ -29,6 +29,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ScrollManager } from '@/hooks/useScrollRestoration';
+import { trackEvent, AnalyticsEvents, AnalyticsLocations } from '@/lib/analytics';
 
 const NAV_LINKS = [
   { href: '/', label: 'Inicio', ariaLabel: 'Página de inicio' },
@@ -218,6 +219,11 @@ const Navbar: React.FC = () => {
                   href={link.href}
                   aria-label={link.ariaLabel}
                   onClick={() => {
+                    // Track navigation events
+                    if (link.href === '/catalogo-impresion-3d') {
+                      trackEvent(AnalyticsEvents.VIEW_CATALOG_CLICK, { location: AnalyticsLocations.NAVBAR });
+                    }
+                    
                     // Clear scroll position for the target path to ensure fresh start
                     if (typeof window !== 'undefined') {
                       ScrollManager.clear(link.href);
@@ -284,6 +290,7 @@ const Navbar: React.FC = () => {
                 href="/contact"
                 className="flex items-center gap-2"
                 aria-label="Solicitar cotización"
+                onClick={() => trackEvent(AnalyticsEvents.REQUEST_QUOTE_CLICK, { location: AnalyticsLocations.NAVBAR })}
               >
                 <MessageSquare className="w-5 h-5" />
                 <span>Solicitar Cotización</span>

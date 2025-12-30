@@ -4,12 +4,12 @@ Un proyecto moderno de mapas conceptuales desarrollado con Next.js 15, utilizand
 
 ## Tecnologías Utilizadas
 
-- **Next.js 15** - Framework de React con App Router
+- **Next.js 16** - Framework de React con App Router
 - **React 19** - Biblioteca de interfaz de usuario
 - **TypeScript** - Tipado estático
 - **Tailwind CSS** - Framework de CSS utilitario
 - **Framer Motion** - Animaciones fluidas
-- **Supabase** - Base de datos y autenticación
+- **Firebase** - Base de datos y autenticación
 - **Lucide React** - Iconos modernos
 
 ## Instalación y Desarrollo
@@ -62,7 +62,7 @@ src/
 
 ## Despliegue
 
-El proyecto está configurado para desplegarse en Netlify con exportación estática.
+El proyecto está configurado para desplegarse en Netlify.
 
 ```bash
 npm run build

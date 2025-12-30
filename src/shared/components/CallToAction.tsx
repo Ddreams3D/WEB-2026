@@ -4,6 +4,7 @@ import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ButtonRedirectWhatsapp from '@/shared/components/ButtonRedirectWhatsapp';
 import { cn } from '@/lib/utils';
+import { trackEvent, AnalyticsEvents, AnalyticsLocations } from '@/lib/analytics';
 
 interface CallToActionProps {
   title: string;
@@ -58,6 +59,13 @@ export default function CallToAction({
                   href={primaryButtonLink}
                   aria-label={primaryButtonText}
                   className="flex items-center gap-2"
+                  onClick={() => {
+                    if (primaryButtonLink.includes('catalogo')) {
+                      trackEvent('view_catalog_click', { location: 'call_to_action', section: title });
+                    } else {
+                      trackEvent('request_quote_click', { location: 'call_to_action', section: title, link: primaryButtonLink });
+                    }
+                  }}
                 >
                   <span className="sm:hidden">{primaryButtonText}</span>
                   <span className="hidden sm:inline">{primaryButtonText}</span>

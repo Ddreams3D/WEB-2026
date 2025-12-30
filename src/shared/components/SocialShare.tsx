@@ -3,7 +3,7 @@
 import React, { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Facebook, Twitter, Instagram, Send } from '@/lib/icons';
-import { analytics } from '../utils/analytics';
+import { trackEvent, AnalyticsEvents, AnalyticsCategories } from '@/lib/analytics';
 
 interface SocialShareProps {
   url: string;
@@ -22,7 +22,13 @@ export default function SocialShare({
   const handleShare = useCallback(
     (platform: string) => {
       setIsSharing(platform);
-      analytics.social(platform, 'share', url);
+      
+      trackEvent(AnalyticsEvents.SHARE_CLICK, {
+        category: AnalyticsCategories.ENGAGEMENT,
+        label: platform,
+        method: platform,
+        item_id: url
+      });
 
       const shareUrls = {
         facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
@@ -54,7 +60,11 @@ export default function SocialShare({
   );
 
   const handleFollow = useCallback((platform: string) => {
-    analytics.social(platform, 'follow', platform);
+    trackEvent(AnalyticsEvents.FOLLOW_CLICK, {
+      category: AnalyticsCategories.ENGAGEMENT,
+      label: platform,
+      method: platform
+    });
 
     const followUrls = {
       facebook: 'https://www.facebook.com/DesignsandDreamings',

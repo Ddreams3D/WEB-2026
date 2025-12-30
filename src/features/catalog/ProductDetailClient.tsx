@@ -16,6 +16,7 @@ import { ArrowLeft, ShoppingCart, Star, Share2, Heart, Check, MessageSquare, Max
 import { cn } from '@/lib/utils';
 import { ProductCard } from '@/components/catalog/ProductCard';
 import { ProductTabs } from './ProductTabs';
+import { trackEvent, AnalyticsEvents, AnalyticsLocations } from '@/lib/analytics';
 
 interface Props {
   product: Product | Service;
@@ -31,6 +32,25 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
 
   // Sync with localStorage for Admin Panel updates
   useEffect(() => {
+    // Track view event
+    if (initialProduct.kind === 'product') {
+      trackEvent(AnalyticsEvents.VIEW_PRODUCT_DETAIL, { 
+        id: initialProduct.id, 
+        name: initialProduct.name, 
+        category: typeof initialProduct.category === 'string' ? initialProduct.category : initialProduct.category.id,
+        location: AnalyticsLocations.PRODUCT_PAGE,
+        page_type: 'product'
+      });
+    } else if (initialProduct.kind === 'service') {
+      trackEvent(AnalyticsEvents.VIEW_SERVICE_DETAIL, { 
+        id: initialProduct.id, 
+        name: initialProduct.name, 
+        category: initialProduct.categoryName,
+        location: AnalyticsLocations.SERVICE_PAGE,
+        page_type: 'service'
+      });
+    }
+
     if (typeof window !== 'undefined') {
       const storedProducts = localStorage.getItem('catalog_products');
       if (storedProducts) {
@@ -199,6 +219,17 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
     if (product.kind === 'product' && product.price > 0) {
       handleAddToCart();
     } else {
+      if (product.kind === 'service') {
+        trackEvent(AnalyticsEvents.QUOTE_SERVICE_CLICK, {
+          location: AnalyticsLocations.SERVICE_PAGE,
+          name: product.name
+        });
+      } else {
+        trackEvent(AnalyticsEvents.REQUEST_QUOTE_CLICK, {
+          location: AnalyticsLocations.PRODUCT_PAGE,
+          name: product.name
+        });
+      }
       router.push('/contact');
     }
   };
