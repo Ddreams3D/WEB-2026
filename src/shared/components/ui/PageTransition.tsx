@@ -30,7 +30,7 @@ export function PageTransition({ children }: PageTransitionProps) {
   const pathname = usePathname();
 
   return (
-    <AnimatePresence mode="popLayout" initial={false} onExitComplete={() => window.scrollTo(0, 0)}>
+    <AnimatePresence mode="wait" initial={false} onExitComplete={() => window.scrollTo(0, 0)}>
       <motion.div
         key={pathname}
         initial="initial"

@@ -7,7 +7,7 @@ import ProcessCallAction from './components/ProcessCallAction';
 
 export default function ProcessClient() {
   return (
-    <main className="bg-background">
+    <div className="bg-background">
       <ProcessHero />
 
       {/* Proceso paso a paso */}
@@ -18,6 +18,6 @@ export default function ProcessClient() {
       
       {/* Call to Action */}
       <ProcessCallAction />
-    </main>
+    </div>
   );
 }
