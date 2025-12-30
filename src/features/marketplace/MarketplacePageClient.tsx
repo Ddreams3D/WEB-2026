@@ -35,33 +35,6 @@ export default function MarketplacePageClient() {
   // Initialize Scroll Restoration System
   useScrollRestoration(true, !isLoading && products.length > 0);
 
-  // If not mounted, render a minimal placeholder to match server HTML structure
-  // This prevents hydration errors where client renders nothing but server rendered content
-  if (!mounted) {
-    return (
-      <div className="bg-background min-h-screen">
-         <PageHeader
-          title="Catálogo de Productos"
-          description="Descubre nuestra colección de productos de impresión 3D listos para ti"
-          image="/images/placeholder-innovation.svg"
-        />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-           <ProductGridSkeleton count={6} />
-        </div>
-      </div>
-    );
-  }
-
-  // Handler for filter changes from UI
-  // This just updates the context state, the context will handle URL sync
-  const handleFiltersChange = (newFilters: ProductFiltersType) => {
-    applyFilters(newFilters);
-  };
-
-  const getDisplayProducts = () => {
-    return products;
-  };
-
   // Calculate base products for filter counts
   const baseProducts = React.useMemo(() => {
     // Base products should be all products, or maybe filtered by search?
@@ -81,8 +54,35 @@ export default function MarketplacePageClient() {
     return filtered;
   }, [searchQuery, allProducts]);
 
+  const getDisplayProducts = () => {
+    return products;
+  };
+
   const displayProducts = getDisplayProducts();
   const productCount = displayProducts.length;
+
+  // Handler for filter changes from UI
+  // This just updates the context state, the context will handle URL sync
+  const handleFiltersChange = (newFilters: ProductFiltersType) => {
+    applyFilters(newFilters);
+  };
+
+  // If not mounted, render a minimal placeholder to match server HTML structure
+  // This prevents hydration errors where client renders nothing but server rendered content
+  if (!mounted) {
+    return (
+      <div className="bg-background min-h-screen">
+         <PageHeader
+          title="Catálogo de Productos"
+          description="Descubre nuestra colección de productos de impresión 3D listos para ti"
+          image="/images/placeholder-innovation.svg"
+        />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+           <ProductGridSkeleton count={6} />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-background">
