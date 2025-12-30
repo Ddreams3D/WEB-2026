@@ -25,8 +25,32 @@ export default function MarketplacePageClient() {
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [showFilters, setShowFilters] = useState(false);
 
+  // Ensure component is mounted to prevent hydration mismatches
+  const [mounted, setMounted] = useState(false);
+  
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Initialize Scroll Restoration System
   useScrollRestoration(true, !isLoading && products.length > 0);
+
+  // If not mounted, render a minimal placeholder to match server HTML structure
+  // This prevents hydration errors where client renders nothing but server rendered content
+  if (!mounted) {
+    return (
+      <div className="bg-background min-h-screen">
+         <PageHeader
+          title="Catálogo de Productos"
+          description="Descubre nuestra colección de productos de impresión 3D listos para ti"
+          image="/images/placeholder-innovation.svg"
+        />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+           <ProductGridSkeleton count={6} />
+        </div>
+      </div>
+    );
+  }
 
   // Handler for filter changes from UI
   // This just updates the context state, the context will handle URL sync
