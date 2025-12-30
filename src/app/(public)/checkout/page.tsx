@@ -189,7 +189,7 @@ export default function CheckoutPage() {
               <MessageSquare className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
               <div className="text-sm text-blue-800 dark:text-blue-200">
                 <p className="font-semibold mb-1">¿Cómo funciona?</p>
-                <p>Al hacer clic en "Enviar Pedido", se abrirá WhatsApp con un resumen de tu compra. Allí coordinaremos el pago (Yape, Plin o Transferencia) y los detalles del envío.</p>
+                <p>Al hacer clic en &quot;Enviar Pedido&quot;, se abrirá WhatsApp con un resumen de tu compra. Allí coordinaremos el pago (Yape, Plin o Transferencia) y los detalles del envío.</p>
               </div>
             </div>
           </div>

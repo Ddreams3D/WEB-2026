@@ -49,7 +49,7 @@ export default function NotFound() {
             ¡Ups! Impresión fallida
           </h1>
           <p className="text-lg text-muted-foreground max-w-lg mx-auto leading-relaxed">
-            Parece que el extrusor se atascó y creamos un monstruo de espagueti. La página que buscas no se pudo "imprimir" correctamente.
+            Parece que el extrusor se atascó y creamos un monstruo de espagueti. La página que buscas no se pudo &quot;imprimir&quot; correctamente.
           </p>
         </div>
 

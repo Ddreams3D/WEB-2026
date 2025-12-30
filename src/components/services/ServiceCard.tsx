@@ -40,6 +40,11 @@ export function ServiceCard({
   const primaryImage = images.find((img) => img.isPrimary) || images[0];
   const imagePosition = primaryImage?.imagePosition || 'object-center';
 
+  const imageStyle = React.useMemo(() => ({ 
+    objectFit: 'cover' as const, 
+    objectPosition: imagePosition.replace('object-', '').replace('[', '').replace(']', '').replace('_', ' ') 
+  }), [imagePosition]);
+
   const renderContent = () => (
     <>
       {/* Service Image */}
@@ -52,10 +57,7 @@ export function ServiceCard({
             "w-full h-full group-hover:scale-105 transition-transform duration-1000 ease-out z-10 relative",
             imagePosition
           )}
-          style={React.useMemo(() => ({ 
-            objectFit: 'cover', 
-            objectPosition: imagePosition.replace('object-', '').replace('[', '').replace(']', '').replace('_', ' ') 
-          }), [imagePosition])}
+          style={imageStyle}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
         {/* Soft Overlay on Hover */}
