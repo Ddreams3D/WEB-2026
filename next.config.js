@@ -5,7 +5,7 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Configuración para despliegue en Netlify
-  // output: 'export', // Deshabilitado para permitir rutas dinámicas y autenticación // Habilitado para exportación estática
+  // output: 'export', // Deshabilitado para permitir rutas dinámicas y autenticación
   trailingSlash: true,
   skipTrailingSlashRedirect: true,
   images: {
@@ -59,23 +59,6 @@ const nextConfig = {
   // Optimizaciones de navegación
   reactStrictMode: true,
   
-  // Configuración de ESLint para build
-  // eslint: {
-  //   ignoreDuringBuilds: true,
-  // },
-  
-  // Configuraciones adicionales para reducir advertencias
-  // modularizeImports deshabilitado para evitar conflictos con alias
-  // modularizeImports: {
-  //   'lucide-react': {
-  //     transform: 'lucide-react/dist/esm/icons/{{kebabCase member}}',
-  //     preventFullImport: true,
-  //   },
-  // },
-  
-  // Nota: rewrites() y headers() no funcionan con output: 'export'
-  // Estas configuraciones se aplicarán en el servidor de despliegue (Netlify)
-  
   // Webpack optimizations
   webpack: (config, { dev, isServer }) => {
     if (!dev && !isServer) {
@@ -103,22 +86,58 @@ const nextConfig = {
             chunks: 'all',
             priority: 5,
             reuseExistingChunk: true,
+            enforce: true,
           },
         },
       };
-      
-      // Optimizaciones adicionales
-      config.optimization.usedExports = true;
-      config.optimization.sideEffects = false;
     }
-    
-    // Alias para optimizar importaciones
-    // config.resolve.alias = {
-    //   ...config.resolve.alias,
-    //   '@/lib/icons': require('path').resolve(__dirname, 'src/lib/icons.ts'),
-    // };
-    
     return config;
+  },
+  
+  // Headers de seguridad y caché
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
+          },
+        ],
+      },
+      // Prevenir caché en rutas de la aplicación para asegurar que los usuarios vean la última versión
+      // Esto soluciona el problema de "errores antiguos" al recargar
+      {
+        source: '/((?!_next|static|favicon.ico|images|logo|api).*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+          },
+          {
+            key: 'Pragma',
+            value: 'no-cache',
+          },
+          {
+            key: 'Expires',
+            value: '0',
+          },
+        ],
+      },
+    ];
   },
 };
 
