@@ -142,12 +142,15 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     <Link href="/marketplace">Explorar Productos</Link>
                   </Button>
                   <Button
-                    onClick={onClose}
-                    asChild
+                    onClick={() => {
+                      onClose();
+                      handleWhatsAppQuote();
+                    }}
                     variant="outline"
                     className="w-full px-6 py-3 rounded-xl font-medium"
                   >
-                    <Link href="/contact">Cotizar Diseño Único</Link>
+                    <MessageSquare className="w-5 h-5 mr-2" />
+                    Cotizar Diseño Único
                   </Button>
                 </div>
               </div>
