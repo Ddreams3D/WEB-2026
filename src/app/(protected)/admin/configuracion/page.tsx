@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui';
 import { Switch } from '@/components/ui/switch';
 import { 
@@ -192,8 +193,9 @@ function ToggleField({ label, value, onChange, description }: {
 }
 
 export default function Settings() {
+  const searchParams = useSearchParams();
   const [settings, setSettings] = useState(defaultSettings);
-  const [activeTab, setActiveTab] = useState('general');
+  const [activeTab, setActiveTab] = useState(searchParams?.get('tab') || 'general');
   const [saved, setSaved] = useState(false);
   const { theme: currentTheme, setTheme } = useTheme();
 

@@ -59,7 +59,7 @@ const Footer = () => {
         localStorage.setItem('theme_secret_access', 'granted');
         
         // Recargar para aplicar cambios de sesión
-        window.location.href = '/admin/temas';
+        window.location.href = '/admin/configuracion?tab=appearance';
       } else {
         setSecretError('Contraseña incorrecta');
       }
