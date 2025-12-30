@@ -59,6 +59,12 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     window.open(`https://wa.me/${PHONE_BUSINESS}?text=${encodedMessage}`, '_blank');
   };
 
+  const handleWhatsAppQuote = () => {
+    const message = "Hola Ddreams3D, estoy interesado en cotizar un diseño único y personalizado. ¿Podrían brindarme más información?";
+    const encodedMessage = encodeURIComponent(message);
+    window.open(`https://wa.me/${PHONE_BUSINESS}?text=${encodedMessage}`, '_blank');
+  };
+
   if (!isOpen) return null;
 
   return (

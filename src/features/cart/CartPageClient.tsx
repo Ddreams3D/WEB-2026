@@ -24,6 +24,12 @@ export default function CartPageClient() {
   const { isAuthenticated } = useAuth();
   const router = useRouter();
 
+  const handleWhatsAppQuote = () => {
+    const message = "Hola Ddreams3D, estoy interesado en cotizar un diseño único y personalizado. ¿Podrían brindarme más información?";
+    const encodedMessage = encodeURIComponent(message);
+    window.open(`https://wa.me/${PHONE_BUSINESS}?text=${encodedMessage}`, '_blank');
+  };
+
   const handleQuantityChange = (productId: string, newQuantity: number) => {
     if (newQuantity < 1) {
       removeFromCart(productId);
@@ -114,13 +120,13 @@ export default function CartPageClient() {
               >
                 Explorar Productos
               </Link>
-              <Link
-                href="/contact"
+              <button
+                onClick={handleWhatsAppQuote}
                 className="inline-flex items-center px-6 py-3 bg-white dark:bg-neutral-800 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900 font-medium rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors shadow-sm"
               >
                 <MessageSquare className="w-5 h-5 mr-2" />
-                Cotizar Personalizado
-              </Link>
+                Cotizar Diseño Único
+              </button>
             </div>
           </div>
         ) : (
