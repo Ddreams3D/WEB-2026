@@ -8,7 +8,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Rutas estáticas
   const routes = [
     '',
-    '/marketplace',
+    '/catalogo-impresion-3d',
     '/services',
     '/about',
     '/contact',
@@ -24,7 +24,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Rutas dinámicas de productos
   const productsData = await ProductService.getAllProducts();
   const products = productsData.map((product) => ({
-    url: `${baseUrl}/marketplace/product/${product.slug || product.id}`,
+    url: `${baseUrl}/catalogo-impresion-3d/product/${product.slug || product.id}`,
     lastModified: product.updatedAt || new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.7,

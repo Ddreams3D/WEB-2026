@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { PackageOpen } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CatalogItem, isService } from '@/shared/types/catalog';
-import { ProductCard, ProductCardSkeleton } from '@/components/marketplace/ProductCard';
+import { ProductCard, ProductCardSkeleton } from '@/components/catalog/ProductCard';
 import { ServiceCard } from '@/components/services/ServiceCard';
 import { Product } from '@/shared/types';
 

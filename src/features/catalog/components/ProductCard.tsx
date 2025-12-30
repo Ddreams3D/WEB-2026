@@ -6,11 +6,11 @@ import { cn, formatImagePosition } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Star, ShoppingCart, Heart, FileText } from 'lucide-react';
-import { Product } from '@/shared/types';
+import { Product, type ProductImage as ProductImageType } from '@/shared/types';
 import { Service } from '@/shared/types/domain';
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/components/ui/ToastManager';
-import { ProductImage } from '@/shared/components/ui/DefaultImage';
+import ProductImage from '@/shared/components/ui/DefaultImage';
 import { ScrollManager } from '@/hooks/useScrollRestoration';
 import { usePathname } from 'next/navigation';
 
@@ -49,7 +49,7 @@ export function ProductCard({
   
   const productUrl = isService 
     ? `/services/${product.slug || product.id}${source ? `?from=${source}` : ''}`
-    : `/marketplace/${product.categoryId || 'general'}/${product.slug || product.id || ''}${source ? `?from=${source}` : ''}`;
+    : `/catalogo-impresion-3d/${product.categoryId || 'general'}/${product.slug || product.id || ''}${source ? `?from=${source}` : ''}`;
 
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -66,7 +66,7 @@ export function ProductCard({
   };
 
   const images = product.images || [];
-  const primaryImage = images.find((img) => img.isPrimary) || images[0];
+  const primaryImage = images.find((img: ProductImageType) => img.isPrimary) || images[0];
   const hasDiscount = product.kind === 'product' && product.originalPrice && product.originalPrice > product.price;
   const discountPercentage = hasDiscount && product.kind === 'product' && product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)

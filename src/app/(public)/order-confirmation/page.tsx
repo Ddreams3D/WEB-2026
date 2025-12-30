@@ -49,11 +49,11 @@ export default function OrderConfirmationPage() {
         setOrderData(order);
       } catch (error) {
         console.error('Error parsing order data:', error);
-        router.push('/marketplace');
+        router.push('/catalogo-impresion-3d');
       }
     } else {
-      // Si no hay pedido, redirigir al marketplace
-      router.push('/marketplace');
+      // Si no hay pedido, redirigir al catálogo
+      router.push('/catalogo-impresion-3d');
     }
   }, [router]);
 
@@ -319,7 +319,7 @@ DDreams 3D - Impresión 3D Personalizada
             className="flex items-center justify-center px-4 py-3 h-auto"
           >
             <Link
-              href="/marketplace"
+              href="/catalogo-impresion-3d"
             >
               Seguir Comprando
             </Link>
@@ -344,9 +344,9 @@ DDreams 3D - Impresión 3D Personalizada
             variant="link"
             className="text-primary-600 hover:text-primary-800 dark:text-primary-400 dark:hover:text-primary-300 font-medium"
           >
-            <Link href="/marketplace">
+            <Link href="/catalogo-impresion-3d">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Volver al Marketplace
+              Volver al Catálogo
             </Link>
           </Button>
         </div>

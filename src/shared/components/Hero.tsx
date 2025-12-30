@@ -111,11 +111,11 @@ export default function Hero() {
                 className="w-full sm:w-auto sm:min-w-[200px] justify-center group"
               >
                 <Link 
-                  href="/marketplace"
+                  href="/catalogo-impresion-3d"
                   className="flex items-center gap-2"
-                  aria-label="Explorar productos disponibles en el marketplace"
+                  aria-label="Explorar productos disponibles en el catálogo"
                 >
-                  Ver Productos
+                  Ver Catálogo
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
                 </Link>
               </Button>

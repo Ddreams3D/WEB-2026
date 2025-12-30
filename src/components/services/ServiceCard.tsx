@@ -31,8 +31,7 @@ export function ServiceCard({
 
   // Services use 'general-service' logic by default for URL construction in this context
   // or we can use the dedicated service detail page if it exists.
-  // Currently, the app seems to use /marketplace/product/[slug] for everything, 
-  // but for services we might want /services/[slug] in the future.
+  // We use /services/[slug] for services.
   // For now, we'll stick to the existing URL pattern but add ?from=services
   const serviceUrl = `/services/${service.slug || service.id}`;
 

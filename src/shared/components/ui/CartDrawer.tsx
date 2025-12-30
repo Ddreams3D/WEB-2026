@@ -139,7 +139,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                     variant="gradient"
                     className="w-full px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
                   >
-                    <Link href="/marketplace">Explorar Productos</Link>
+                    <Link href="/catalogo-impresion-3d">Explorar Catálogo</Link>
                   </Button>
                   <Button
                     onClick={() => {

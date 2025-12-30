@@ -351,7 +351,7 @@ export const services: Service[] = [
       {
         id: '8-a',
         productId: '8',
-        url: '/images/marketplace/trofeos-medallas-personalizadas-3d-b2b-principal.jpg',
+        url: '/images/catalogo/trofeos-medallas-personalizadas-3d-b2b-principal.jpg',
         alt: 'Trofeos y Medallas 3D Personalizados - Vista Principal',
         isPrimary: true,
         width: 800,
@@ -362,7 +362,7 @@ export const services: Service[] = [
       {
         id: '8-b',
         productId: '8',
-        url: '/images/marketplace/trofeos-medallas-personalizadas-3d-b2b-detalle.jpg',
+        url: '/images/catalogo/trofeos-medallas-personalizadas-3d-b2b-detalle.jpg',
         alt: 'Trofeos y Medallas 3D Personalizados - Vista Detalle',
         isPrimary: false,
         width: 800,
@@ -674,7 +674,7 @@ export const services: Service[] = [
       {
         id: 'b2b-1-a',
         productId: '16',
-        url: '/images/marketplace/modelo-pelvis-anatomica-escala-real-3d-vista-frontal.png',
+        url: '/images/catalogo/modelo-pelvis-anatomica-escala-real-3d-vista-frontal.png',
         alt: 'Proyectos Anatómicos 3D Personalizados',
         isPrimary: true,
         width: 800,

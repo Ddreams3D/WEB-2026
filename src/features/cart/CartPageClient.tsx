@@ -75,16 +75,16 @@ export default function CartPageClient() {
 
   return (
     <div className="min-h-screen bg-background dark:bg-neutral-900 pt-20 lg:pt-24">
-      {/* Header consistente con Marketplace */}
+      {/* Header consistente con Catálogo */}
       <div className="bg-surface dark:bg-neutral-800 border-b border-soft dark:border-neutral-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="py-6">
             <Link
-              href="/marketplace"
+              href="/catalogo-impresion-3d"
               className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 mb-4 transition-colors"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Volver al Marketplace
+              Volver al Catálogo
             </Link>
             <div className="flex items-center justify-between">
               <div>
@@ -115,7 +115,7 @@ export default function CartPageClient() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                href="/marketplace"
+                href="/catalogo-impresion-3d"
                 className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
               >
                 Explorar Productos
@@ -294,7 +294,7 @@ export default function CartPageClient() {
                     className="w-full mt-3 font-medium"
                   >
                     <Link
-                      href="/marketplace"
+                      href="/catalogo-impresion-3d"
                     >
                       Continuar Comprando
                     </Link>

@@ -88,7 +88,7 @@ export interface Category {
   updatedAt: Date;
 }
 
-// Productos del marketplace
+// Productos del catálogo
 export interface Product {
   id: string;
   kind: 'product';

@@ -33,7 +33,7 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     if (!isLoading && items.length === 0) {
-      router.replace('/marketplace');
+      router.replace('/catalogo-impresion-3d');
     }
   }, [items, isLoading, router]);
 

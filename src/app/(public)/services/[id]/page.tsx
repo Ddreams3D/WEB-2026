@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { ServiceService } from '@/services/service.service';
-import ProductDetailClient from '@/features/marketplace/ProductDetailClient';
+import ProductDetailClient from '@/features/catalog/ProductDetailClient';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { Product } from '@/shared/types';
 import { Service } from '@/shared/types/domain';

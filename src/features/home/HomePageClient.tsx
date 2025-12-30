@@ -57,10 +57,10 @@ export default function HomePageClient() {
               className="text-base sm:text-lg px-8"
             >
               <Link
-                href="/marketplace"
+                href="/catalogo-impresion-3d"
                 className="flex items-center gap-2"
               >
-                Explorar más proyectos y trabajos
+                Explorar más proyectos y trabajos en el catálogo
                 <ArrowRight className="h-5 w-5" />
               </Link>
             </Button>

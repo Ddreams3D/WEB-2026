@@ -63,7 +63,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       <CardHeader>
         <CardTitle>Iniciar Sesión</CardTitle>
         <CardDescription>
-          Ingresa tus credenciales para acceder al marketplace
+          Ingresa tus credenciales para acceder al catálogo
         </CardDescription>
       </CardHeader>
       <CardContent>

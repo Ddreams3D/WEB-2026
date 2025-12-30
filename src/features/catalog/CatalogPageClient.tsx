@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react';
 import { Filter, Grid, List } from '@/lib/icons';
-import { ProductGrid, ProductGridSkeleton } from '@/features/marketplace/components/ProductGrid';
-import { ProductFilters as ProductFiltersComponent } from '@/features/marketplace/components/ProductFilters';
-import { useMarketplace } from '@/contexts/MarketplaceContext';
+import { ProductGrid, ProductGridSkeleton } from '@/features/catalog/components/ProductGrid';
+import { ProductFilters as ProductFiltersComponent } from '@/features/catalog/components/ProductFilters';
+import { useCatalog } from '@/contexts/CatalogContext';
 import { ProductFilters as ProductFiltersType } from '@/shared/types';
 import PageHeader from '@/shared/components/PageHeader';
 import { Button } from '@/components/ui';
@@ -13,14 +13,14 @@ import { cn } from '@/lib/utils';
 
 type ViewMode = 'grid' | 'list';
 
-export default function MarketplacePageClient() {
+export default function CatalogPageClient() {
   const {
     products,
     allProducts,
     searchQuery,
     isLoading,
     applyFilters
-  } = useMarketplace();
+  } = useCatalog();
   
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [showFilters, setShowFilters] = useState(false);
@@ -73,8 +73,14 @@ export default function MarketplacePageClient() {
     return (
       <div className="bg-background min-h-screen">
          <PageHeader
-          title="Catálogo de Productos"
-          description="Descubre nuestra colección de productos de impresión 3D listos para ti"
+          title="Catálogo de productos bajo pedido"
+          className="pt-16 sm:pt-20"
+          description={
+            <div className="flex flex-col gap-4">
+              <p>Elige un diseño base y lo fabricamos a medida en Arequipa.</p>
+              <p>Todos los productos de nuestro catálogo de impresión 3D se fabrican bajo pedido y pueden personalizarse según tus requerimientos técnicos, estéticos o funcionales.</p>
+            </div>
+          }
           image="/images/placeholder-innovation.svg"
         />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -87,8 +93,14 @@ export default function MarketplacePageClient() {
   return (
     <div className="bg-background">
       <PageHeader
-        title="Catálogo de Productos"
-        description="Descubre nuestra colección de productos de impresión 3D listos para ti"
+        title="Catálogo de productos bajo pedido"
+        className="pt-16 sm:pt-20"
+        description={
+          <div className="flex flex-col gap-4">
+            <p>Elige un diseño base y lo fabricamos a medida en Arequipa.</p>
+            <p>Todos los productos de nuestro catálogo de impresión 3D se fabrican bajo pedido y pueden personalizarse según tus requerimientos técnicos, estéticos o funcionales.</p>
+          </div>
+        }
         image="/images/placeholder-innovation.svg"
       />
 

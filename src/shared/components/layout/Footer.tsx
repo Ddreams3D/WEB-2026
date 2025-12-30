@@ -228,10 +228,10 @@ const Footer = () => {
               •
             </span>
             <Link
-              href="/marketplace"
+              href="/catalogo-impresion-3d"
               className="text-white/60 hover:text-primary transition-colors duration-200 font-medium"
             >
-              Marketplace
+              Catálogo
             </Link>
             <span className="text-white/40 hidden sm:inline">
               •

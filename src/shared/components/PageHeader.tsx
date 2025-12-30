@@ -7,11 +7,12 @@ import { useIntersectionAnimation } from '@/shared/hooks/useIntersectionAnimatio
 
 interface PageHeaderProps {
   title: string;
-  description: string;
+  description: string | React.ReactNode;
   image: string;
+  className?: string;
 }
 
-export default function PageHeader({ title, description, image }: PageHeaderProps) {
+export default function PageHeader({ title, description, image, className }: PageHeaderProps) {
   const { ref, isVisible } = useIntersectionAnimation({
     threshold: 0,
     triggerOnce: true
@@ -46,19 +47,19 @@ export default function PageHeader({ title, description, image }: PageHeaderProp
         priority
       />
       <div className="absolute inset-0 flex items-center justify-center z-20">
-        <div className="text-center text-white max-w-4xl px-4">
+        <div className={cn("text-center text-white max-w-4xl px-4", className)}>
           <h1 
             className={cn("text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 tracking-tight drop-shadow-lg leading-tight text-white", getAnimClass(0))}
             style={getDelayStyle(0)}
           >
             {title}
           </h1>
-          <p 
+          <div 
             className={cn("text-lg sm:text-xl md:text-2xl text-white/90 font-light leading-relaxed drop-shadow-md", getAnimClass(200))}
             style={getDelayStyle(200)}
           >
             {description}
-          </p>
+          </div>
         </div>
       </div>
     </div>

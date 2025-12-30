@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp, X, Filter, Search, Check as CheckIcon } from '@/lib/icons';
 import { ProductFilters as ProductFiltersType, Category, ProductSortOption } from '@/shared/types';
 import { CatalogItem } from '@/shared/types/catalog';
-import { useMarketplace } from '@/contexts/MarketplaceContext';
+import { useCatalog } from '@/contexts/CatalogContext';
 import { cn } from '@/lib/utils';
 
 interface ProductFiltersProps {
@@ -23,7 +23,7 @@ export function ProductFilters({
   isCollapsible = true,
   availableProducts
 }: ProductFiltersProps) {
-  const { categories, filters, applyFilters, clearFilters, searchQuery, setSearchQuery, toggleCategory } = useMarketplace();
+  const { categories, filters, applyFilters, clearFilters, searchQuery, setSearchQuery, toggleCategory } = useCatalog();
   const [isExpanded, setIsExpanded] = useState(true);
   const [localSearchTerm, setLocalSearchTerm] = useState(searchQuery);
 

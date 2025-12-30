@@ -95,6 +95,21 @@ const nextConfig = {
   },
   
   // Headers de seguridad y caché
+  async redirects() {
+    return [
+      {
+        source: '/marketplace',
+        destination: '/catalogo-impresion-3d',
+        permanent: true,
+      },
+      {
+        source: '/marketplace/:slug*',
+        destination: '/catalogo-impresion-3d/:slug*',
+        permanent: true,
+      },
+    ];
+  },
+
   async headers() {
     return [
       {

@@ -17,7 +17,7 @@ export const products: StoreProduct[] = [
       {
         id: '1',
         productId: '1',
-        url: '/images/marketplace/modelo-pelvis-anatomica-escala-real-3d-vista-frontal.png',
+        url: '/images/catalogo/modelo-pelvis-anatomica-escala-real-3d-vista-frontal.png',
         alt: 'Modelo de Pelvis Anatómica en Escala Real - Impresión 3D - Vista Frontal',
         isPrimary: true,
         imagePosition: 'object-center',
@@ -29,7 +29,7 @@ export const products: StoreProduct[] = [
       {
         id: '1-b',
         productId: '1',
-        url: '/images/marketplace/modelo-pelvis-anatomica-escala-real-3d-vista-lateral.png',
+        url: '/images/catalogo/modelo-pelvis-anatomica-escala-real-3d-vista-lateral.png',
         alt: 'Modelo de Pelvis Anatómica en Escala Real - Impresión 3D - Vista Lateral',
         isPrimary: false,
         width: 800,
@@ -40,7 +40,7 @@ export const products: StoreProduct[] = [
       {
         id: '1-c',
         productId: '1',
-        url: '/images/marketplace/modelo-pelvis-anatomica-escala-real-3d-detalle.jpg',
+        url: '/images/catalogo/modelo-pelvis-anatomica-escala-real-3d-detalle.jpg',
         alt: 'Modelo de Pelvis Anatómica en Escala Real - Impresión 3D - Detalle Estructural',
         isPrimary: false,
         width: 800,
@@ -51,7 +51,7 @@ export const products: StoreProduct[] = [
       {
         id: '1-d',
         productId: '1',
-        url: '/images/marketplace/modelo-pelvis-anatomica-escala-real-3d-perspectiva.jpg',
+        url: '/images/catalogo/modelo-pelvis-anatomica-escala-real-3d-perspectiva.jpg',
         alt: 'Modelo de Pelvis Anatómica en Escala Real - Impresión 3D - Perspectiva',
         isPrimary: false,
         width: 800,
@@ -62,7 +62,7 @@ export const products: StoreProduct[] = [
       {
         id: '1-e',
         productId: '1',
-        url: '/images/marketplace/modelo-pelvis-anatomica-escala-real-3d-uso-educativo.jpg',
+        url: '/images/catalogo/modelo-pelvis-anatomica-escala-real-3d-uso-educativo.jpg',
         alt: 'Modelo de Pelvis Anatómica en Escala Real - Impresión 3D - Uso Educativo',
         isPrimary: false,
         width: 800,
@@ -185,7 +185,7 @@ export const products: StoreProduct[] = [
       {
         id: '2',
         productId: '2',
-        url: '/images/marketplace/copa-piston-20cm-regalo-personalizado-autos-3d-frontal.png',
+        url: '/images/catalogo/copa-piston-20cm-regalo-personalizado-autos-3d-frontal.png',
         alt: 'Copa Pistón 20cm - Regalo Personalizado para Fanáticos de Autos - Impresión 3D - Vista Frontal',
         isPrimary: true,
         width: 800,
@@ -196,7 +196,7 @@ export const products: StoreProduct[] = [
       {
         id: '2-b',
         productId: '2',
-        url: '/images/marketplace/copa-piston-20cm-regalo-personalizado-autos-3d-detalle.png',
+        url: '/images/catalogo/copa-piston-20cm-regalo-personalizado-autos-3d-detalle.png',
         alt: 'Copa Pistón 20cm - Regalo Personalizado para Fanáticos de Autos - Impresión 3D - Vista Detalle',
         isPrimary: false,
         width: 800,
@@ -292,7 +292,7 @@ export const products: StoreProduct[] = [
       {
         id: '3',
         productId: '3',
-        url: '/images/marketplace/copa-piston-grande-30cm-regalo-personalizado-autos-3d-frontal.png',
+        url: '/images/catalogo/copa-piston-grande-30cm-regalo-personalizado-autos-3d-frontal.png',
         alt: 'Copa Pistón Grande 30cm - Regalo Personalizado para Fanáticos de Autos - Impresión 3D - Vista Frontal',
         isPrimary: true,
         width: 800,
@@ -303,7 +303,7 @@ export const products: StoreProduct[] = [
       {
         id: '3-b',
         productId: '3',
-        url: '/images/marketplace/copa-piston-grande-30cm-regalo-personalizado-autos-3d-detalle.png',
+        url: '/images/catalogo/copa-piston-grande-30cm-regalo-personalizado-autos-3d-detalle.png',
         alt: 'Copa Pistón Grande 30cm - Regalo Personalizado para Fanáticos de Autos - Impresión 3D - Vista Detalle',
         isPrimary: false,
         width: 800,
@@ -384,4 +384,3 @@ export const products: StoreProduct[] = [
     updatedAt: new Date('2024-01-08')
   }
 ];
-

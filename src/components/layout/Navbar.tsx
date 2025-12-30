@@ -34,9 +34,9 @@ const NAV_LINKS = [
   { href: '/', label: 'Inicio', ariaLabel: 'Página de inicio' },
   { href: '/services', label: 'Servicios', ariaLabel: 'Nuestros servicios' },
   {
-    href: '/marketplace',
-    label: 'Marketplace',
-    ariaLabel: 'Página de productos',
+    href: '/catalogo-impresion-3d',
+    label: 'Catálogo',
+    ariaLabel: 'Catálogo de productos bajo pedido',
   },
   {
     href: '/process',
@@ -556,8 +556,8 @@ const Navbar: React.FC = () => {
                 )}
                   onClick={() => {
                     setIsOpen(false);
-                    if (link.href === '/marketplace' && typeof window !== 'undefined') {
-                      sessionStorage.removeItem('marketplace_scroll_pos');
+                    if (typeof window !== 'undefined') {
+                      ScrollManager.clear(link.href);
                     }
                   }}
                 >

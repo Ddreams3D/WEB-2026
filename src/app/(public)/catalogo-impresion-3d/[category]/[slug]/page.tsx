@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { ProductService } from '@/services/product.service';
-import ProductDetailClient from '@/features/marketplace/ProductDetailClient';
+import ProductDetailClient from '@/features/catalog/ProductDetailClient';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd';
 
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: description,
     keywords: [...product.tags, ...(product.seoKeywords || [])],
     alternates: {
-      canonical: `${baseUrl}/marketplace/${categorySlug}/${product.slug || product.id}`,
+      canonical: `${baseUrl}/catalogo-impresion-3d/${categorySlug}/${product.slug || product.id}`,
     },
     openGraph: {
       title: `Comprar ${product.name} en Arequipa | Ddreams 3D`,
@@ -61,12 +61,12 @@ export default async function ProductPage({ params }: Props) {
     // Redirect to correct category URL if mismatch
     // But be careful if categoryId is different from slug used in URL
     // Here we assume categoryId IS the slug or maps to it directly
-     redirect(`/marketplace/${correctCategorySlug}/${product.slug || product.id}`);
+     redirect(`/catalogo-impresion-3d/${correctCategorySlug}/${product.slug || product.id}`);
   }
 
   // Redirect to slug URL if accessing by ID or different slug
   if (product.slug && slug !== product.slug) {
-    redirect(`/marketplace/${correctCategorySlug}/${product.slug}`);
+    redirect(`/catalogo-impresion-3d/${correctCategorySlug}/${product.slug}`);
   }
 
   // Fetch related products
@@ -90,7 +90,7 @@ export default async function ProductPage({ params }: Props) {
     },
     offers: {
       '@type': 'Offer',
-      url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ddreams3d.com'}/marketplace/${correctCategorySlug}/${product.slug || product.id}`,
+      url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ddreams3d.com'}/catalogo-impresion-3d/${correctCategorySlug}/${product.slug || product.id}`,
       priceCurrency: product.currency,
       price: product.price,
       availability: 'https://schema.org/InStock',
@@ -107,9 +107,9 @@ export default async function ProductPage({ params }: Props) {
 
   const breadcrumbItems = [
     { name: 'Inicio', item: process.env.NEXT_PUBLIC_APP_URL || 'https://ddreams3d.com' },
-    { name: 'Marketplace', item: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ddreams3d.com'}/marketplace` },
-    { name: categoryName, item: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ddreams3d.com'}/marketplace/${correctCategorySlug}` },
-    { name: product.name, item: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ddreams3d.com'}/marketplace/${correctCategorySlug}/${product.slug || product.id}` },
+    { name: 'Catálogo', item: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ddreams3d.com'}/catalogo-impresion-3d` },
+    { name: categoryName, item: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ddreams3d.com'}/catalogo-impresion-3d/${correctCategorySlug}` },
+    { name: product.name, item: `${process.env.NEXT_PUBLIC_APP_URL || 'https://ddreams3d.com'}/catalogo-impresion-3d/${correctCategorySlug}/${product.slug || product.id}` },
   ];
 
   return (

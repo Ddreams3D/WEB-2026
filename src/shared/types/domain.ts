@@ -52,7 +52,7 @@ export interface Service {
 }
 
 // ==========================================
-// 2. STORE PRODUCTS (Marketplace)
+// 2. STORE PRODUCTS (Catalog)
 // ==========================================
 // Productos físicos o digitales que se pueden comprar
 export interface StoreProduct {

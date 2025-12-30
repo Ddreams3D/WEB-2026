@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { ProductService } from '@/services/product.service';
-import ProductDetailClient from '@/features/marketplace/ProductDetailClient';
+import ProductDetailClient from '@/features/catalog/ProductDetailClient';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd';
 
@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: description,
     keywords: [...product.tags, ...(product.seoKeywords || [])],
     alternates: {
-      canonical: `${baseUrl}/marketplace/product/${product.slug || product.id}`,
+      canonical: `${baseUrl}/catalogo-impresion-3d/product/${product.slug || product.id}`,
     },
     openGraph: {
       title: `${product.name} | Ddreams 3D Arequipa`,
@@ -54,7 +54,7 @@ export default async function ProductPage({ params }: Props) {
     notFound();
   }
 
-  // Redirect to new silo structure: /marketplace/[category]/[slug]
+  // Redirect to new silo structure: /catalogo-impresion-3d/[category]/[slug]
   const categorySlug = product.category?.slug || product.categoryId || 'general';
-  redirect(`/marketplace/${categorySlug}/${product.slug || product.id}`);
+  redirect(`/catalogo-impresion-3d/${categorySlug}/${product.slug || product.id}`);
 }

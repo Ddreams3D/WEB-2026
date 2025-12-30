@@ -14,7 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowLeft, ShoppingCart, Star, Share2, Heart, Check, MessageSquare, Maximize2, ChevronDown, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { ProductCard } from '@/components/marketplace/ProductCard';
+import { ProductCard } from '@/components/catalog/ProductCard';
 import { ProductTabs } from './ProductTabs';
 
 interface Props {
@@ -32,7 +32,7 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
   // Sync with localStorage for Admin Panel updates
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const storedProducts = localStorage.getItem('marketplace_products');
+      const storedProducts = localStorage.getItem('catalog_products');
       if (storedProducts) {
         try {
           const parsed = JSON.parse(storedProducts);
@@ -262,10 +262,10 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
         className="rounded-full mb-8 h-auto py-2 px-4 backdrop-blur-sm hover:border-primary hover:text-primary hover:bg-primary/5"
       >
         <Link 
-          href={fromSource === 'services' ? '/services' : '/marketplace'} 
+          href={fromSource === 'services' ? '/services' : '/catalogo-impresion-3d'} 
         >
           <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
-          {fromSource === 'services' ? 'Volver a Servicios' : 'Volver al Marketplace'}
+          {fromSource === 'services' ? 'Volver a Servicios' : 'Volver al Catálogo'}
         </Link>
       </Button>
 

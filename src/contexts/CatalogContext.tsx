@@ -5,7 +5,7 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { Category, ProductFilters, SearchResultItem } from '@/shared/types';
 import { CatalogItem, getCatalogSortDate } from '@/shared/types/catalog';
 
-interface MarketplaceContextType {
+interface CatalogContextType {
   // Data
   products: CatalogItem[];
   allProducts: CatalogItem[];
@@ -28,9 +28,9 @@ interface MarketplaceContextType {
   searchProductsAction: (query: string) => void; 
 }
 
-const MarketplaceContext = createContext<MarketplaceContextType | undefined>(undefined);
+const CatalogContext = createContext<CatalogContextType | undefined>(undefined);
 
-interface MarketplaceProviderProps {
+interface CatalogProviderProps {
   children: ReactNode;
   initialItems?: CatalogItem[];
   initialCategories?: Category[];
@@ -47,11 +47,11 @@ const initialFiltersState: ProductFilters = {
   isActive: true
 };
 
-export function MarketplaceProvider({ 
+export function CatalogProvider({ 
   children, 
   initialItems = [], 
   initialCategories = [] 
-}: MarketplaceProviderProps) {
+}: CatalogProviderProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -172,7 +172,7 @@ export function MarketplaceProvider({
     if (currentString === newString) return;
 
     const newPath = newString ? `${pathname}?${newString}` : pathname;
-    router.replace(newPath || '/marketplace', { scroll: false });
+    router.replace(newPath || '/catalogo-impresion-3d', { scroll: false });
   }, [pathname, router, searchParams]);
 
   const applyFilters = useCallback((newFilters: Partial<ProductFilters>) => {
@@ -265,7 +265,7 @@ export function MarketplaceProvider({
         type: item.kind,
         url: item.kind === 'service' 
           ? `/services/${item.slug || item.id}`
-          : `/marketplace/product/${item.slug || item.id}`,
+          : `/catalogo-impresion-3d/product/${item.slug || item.id}`,
         imageUrl: item.images[0]?.url,
         price: item.price,
         currency: item.currency,
@@ -293,16 +293,16 @@ export function MarketplaceProvider({
   };
 
   return (
-    <MarketplaceContext.Provider value={value}>
+    <CatalogContext.Provider value={value}>
       {children}
-    </MarketplaceContext.Provider>
+    </CatalogContext.Provider>
   );
 }
 
-export const useMarketplace = () => {
-  const context = useContext(MarketplaceContext);
+export const useCatalog = () => {
+  const context = useContext(CatalogContext);
   if (context === undefined) {
-    throw new Error('useMarketplace must be used within a MarketplaceProvider');
+    throw new Error('useCatalog must be used within a CatalogProvider');
   }
   return context;
 };
