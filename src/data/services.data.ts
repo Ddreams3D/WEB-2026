@@ -1,4 +1,5 @@
 import { Service } from '@/shared/types/domain';
+import { WHATSAPP_TEMPLATES } from './whatsapp-templates';
 
 export const services: Service[] = [
   {
@@ -55,7 +56,7 @@ export const services: Service[] = [
         conditions: ['Cotización según complejidad del modelo', 'Entregables digitales (STL / OBJ)', 'Revisiones incluidas según acuerdo'],
         ctaText: 'Empezar mi diseño',
         ctaAction: 'whatsapp',
-        whatsappMessage: 'Hola, quiero desarrollar un diseño 3D personalizado para un proyecto personal.\n\nQué deseas modelar (personaje, figura, objeto, etc.)\nReferencias o bocetos (si tienes)\nTamaño aproximado\nNivel de detalle esperado'
+        whatsappMessage: WHATSAPP_TEMPLATES['17'].b2c
       },
       {
         id: 'b2b',
@@ -65,7 +66,7 @@ export const services: Service[] = [
         conditions: ['Cotización según alcance creativo', 'Archivos optimizados para impresión o visualización', 'Acuerdos de confidencialidad (NDA) disponibles'],
         ctaText: 'Solicitar diseño 3D',
         ctaAction: 'whatsapp',
-        whatsappMessage: 'Hola, quiero solicitar un servicio de diseño 3D para un proyecto profesional.\n\nEmpresa o marca\nTipo de modelo requerido\nCantidad de modelos\nFecha estimada de entrega'
+        whatsappMessage: WHATSAPP_TEMPLATES['17'].b2b
       }
     ],
     isActive: true,
@@ -129,7 +130,7 @@ export const services: Service[] = [
         conditions: ['Cotización según complejidad del diseño', 'Archivos listos para impresión 3D', 'Asesoría en selección de material y ajustes funcionales'],
         ctaText: 'Desarrollar prototipo',
         ctaAction: 'whatsapp',
-        whatsappMessage: 'Hola, quiero desarrollar un prototipo técnico para un proyecto personal.\n\nFunción que debe cumplir la pieza\nDimensiones aproximadas\nMaterial deseado\nSi es prueba o uso final'
+        whatsappMessage: WHATSAPP_TEMPLATES['21'].b2c
       },
       {
         id: 'b2b',
@@ -139,7 +140,7 @@ export const services: Service[] = [
         conditions: ['Cotización según volumen y alcance del proyecto', 'Producción por lotes (series pequeñas y medianas)', 'Entregables CAD funcionales (STL / STEP)', 'Evaluación técnica previa al inicio de producción'],
         ctaText: 'Solicitar prototipo técnico',
         ctaAction: 'whatsapp',
-        whatsappMessage: 'Hola, quiero solicitar un prototipo técnico para un proyecto empresarial.\n\nEmpresa\nFunción del prototipo\nCantidad estimada\nMateriales requeridos\nFecha objetivo'
+        whatsappMessage: WHATSAPP_TEMPLATES['21'].b2b
       }
     ],
     isActive: true,
@@ -225,7 +226,7 @@ export const services: Service[] = [
         conditions: ['Cotización según tamaño y material', 'Fabricación bajo pedido', 'Asesoría incluida durante el proceso'],
         ctaText: 'Imprimir mi pieza',
         ctaAction: 'whatsapp',
-        whatsappMessage: 'Hola, quiero imprimir una pieza en 3D por encargo.\n\nSi ya cuentas con el archivo 3D\nTamaño aproximado\nMaterial preferido\nColor o acabado deseado'
+        whatsappMessage: WHATSAPP_TEMPLATES['18'].b2c
       },
       {
         id: 'b2b',
@@ -235,7 +236,7 @@ export const services: Service[] = [
         conditions: ['Cotización técnica según requerimientos', 'Posibilidad de fabricación por volumen', 'Coordinación y seguimiento del proyecto'],
         ctaText: 'Solicitar producción 3D',
         ctaAction: 'whatsapp',
-        whatsappMessage: 'Hola, quiero solicitar impresiones 3D para un proyecto profesional.\n\nEmpresa\nSi cuentan con archivo 3D\nCantidad de piezas\nMaterial requerido\nFecha de entrega'
+        whatsappMessage: WHATSAPP_TEMPLATES['18'].b2b
       }
     ],
     isActive: true,
@@ -320,7 +321,7 @@ export const services: Service[] = [
         conditions: ['Cotización según diseño y tamaño', 'Fabricación bajo pedido', 'Personalización de forma, texto y detalles'],
         ctaText: 'Crear merchandising',
         ctaAction: 'whatsapp',
-        whatsappMessage: 'Hola, quiero crear merchandising 3D personalizado.\n\nTipo de producto\nCantidad aproximada\nEstilo o colores\nFecha aproximada'
+        whatsappMessage: WHATSAPP_TEMPLATES['13'].b2c
       },
       {
         id: 'b2b',
@@ -330,7 +331,7 @@ export const services: Service[] = [
         conditions: ['Cotización según diseño, cantidad y acabados', 'Producción por lotes', 'Diseño exclusivo por proyecto'],
         ctaText: 'Solicitar productos promocionales',
         ctaAction: 'whatsapp',
-        whatsappMessage: 'Hola, quiero solicitar productos promocionales personalizados.\n\nEmpresa o marca\nTipo de producto\nCantidad\nSi incluye logo o branding\nFecha del evento o entrega'
+        whatsappMessage: WHATSAPP_TEMPLATES['13'].b2b
       }
     ],
     isActive: true,
@@ -399,7 +400,7 @@ export const services: Service[] = [
         conditions: ['Cotización según diseño y tamaño', 'Fabricación bajo pedido', 'Personalización de forma, texto y detalles'],
         ctaText: 'Crear trofeo personalizado',
         ctaAction: 'whatsapp',
-        whatsappMessage: 'Hola, quiero crear un trofeo o medalla personalizada.\n\nTipo de evento\nTamaño aproximado\nEstilo o acabado\nFecha del evento'
+        whatsappMessage: WHATSAPP_TEMPLATES['8'].b2c
       },
       {
         id: 'b2b',
@@ -409,7 +410,7 @@ export const services: Service[] = [
         conditions: ['Cotización según cantidad, diseño y acabados', 'Producción por lotes', 'Fabricación bajo pedido'],
         ctaText: 'Solicitar premios institucionales',
         ctaAction: 'whatsapp',
-        whatsappMessage: 'Hola, quiero solicitar premios institucionales personalizados.\n\nEmpresa o institución\nTipo de evento\nCantidad\nSi incluye logo o texto\nFecha del evento'
+        whatsappMessage: WHATSAPP_TEMPLATES['8'].b2b
       }
     ],
     isActive: true,
@@ -483,7 +484,7 @@ export const services: Service[] = [
         conditions: ['Cotización según complejidad y tamaño', 'Fabricación bajo pedido', 'Asesoría básica en funcionalidad y material'],
         ctaText: 'Desarrollar pieza técnica',
         ctaAction: 'whatsapp',
-        whatsappMessage: 'Hola, quiero desarrollar una pieza técnica para un proyecto personal.\n\nFunción de la pieza\nDimensiones aproximadas\nMaterial requerido\nUso final'
+        whatsappMessage: WHATSAPP_TEMPLATES['14'].b2c
       },
       {
         id: 'b2b',
@@ -493,7 +494,7 @@ export const services: Service[] = [
         conditions: ['Cotización según volumen y alcance del proyecto', 'Producción por lotes disponible', 'Entregables CAD funcionales (STL / STEP)', 'Evaluación técnica previa al inicio de producción'],
         ctaText: 'Solicitar piezas técnicas',
         ctaAction: 'whatsapp',
-        whatsappMessage: 'Hola, quiero solicitar piezas técnicas para un proyecto de ingeniería.\n\nEmpresa\nAplicación de la pieza\nCantidad\nMateriales\nFecha estimada'
+        whatsappMessage: WHATSAPP_TEMPLATES['14'].b2b
       }
     ],
     isActive: true,
@@ -589,7 +590,7 @@ export const services: Service[] = [
         conditions: ['Cotización según diseño, tamaño y nivel de detalle', 'Fabricación bajo pedido', 'Ajuste de escala según medidas del usuario', 'No incluye licencias oficiales de marcas registradas'],
         ctaText: 'Crear mi pieza',
         ctaAction: 'whatsapp',
-        whatsappMessage: 'Hola, quiero crear una pieza personalizada como casco, máscara o prop.\n\nTipo de pieza\nReferencias disponibles\nTamaño aproximado\nNivel de detalle o acabado'
+        whatsappMessage: WHATSAPP_TEMPLATES['19'].b2c
       },
       {
         id: 'b2b',
@@ -599,7 +600,7 @@ export const services: Service[] = [
         conditions: ['Cotización según alcance, diseño y volumen', 'Producción por lotes disponible', 'Diseño exclusivo por proyecto', 'Uso comercial bajo solicitud del cliente'],
         ctaText: 'Solicitar props personalizados',
         ctaAction: 'whatsapp',
-        whatsappMessage: 'Hola, quiero solicitar props o piezas personalizadas para un proyecto profesional.\n\nEmpresa o productora\nTipo de pieza\nCantidad\nUso previsto\nFecha objetivo'
+        whatsappMessage: WHATSAPP_TEMPLATES['19'].b2b
       }
     ],
     isActive: true,
@@ -651,7 +652,7 @@ export const services: Service[] = [
         conditions: ['Cotización según tamaño y complejidad', 'Fabricación bajo pedido', 'Personalización según nivel educativo'],
         ctaText: 'Crear maqueta',
         ctaAction: 'whatsapp',
-        whatsappMessage: 'Hola, quiero crear una maqueta didáctica o educativa.\n\nTema o materia\nEscala aproximada\nUso previsto\nFecha requerida'
+        whatsappMessage: WHATSAPP_TEMPLATES['15'].b2c
       },
       {
         id: 'b2b',
@@ -661,7 +662,7 @@ export const services: Service[] = [
         conditions: ['Cotización según volumen y diseño', 'Producción por lotes disponible', 'Diseño a medida según currículo'],
         ctaText: 'Solicitar maquetas educativas',
         ctaAction: 'whatsapp',
-        whatsappMessage: 'Hola, quiero solicitar maquetas educativas para una institución.\n\nInstitución\nTema o área\nCantidad\nEscala\nFecha de entrega'
+        whatsappMessage: WHATSAPP_TEMPLATES['15'].b2b
       }
     ],
     isActive: true,
@@ -714,7 +715,7 @@ export const services: Service[] = [
         conditions: ['Cotización según complejidad y tamaño del modelo', 'Fabricación bajo pedido', 'Personalización según requerimiento educativo'],
         ctaText: 'Desarrollar modelo anatómico',
         ctaAction: 'whatsapp',
-        whatsappMessage: 'Hola, quiero desarrollar un modelo anatómico 3D personalizado.\n\nParte del cuerpo o sistema\nTamaño o escala\nUso previsto\nFecha estimada'
+        whatsappMessage: WHATSAPP_TEMPLATES['16'].b2c
       },
       {
         id: 'b2b',
@@ -724,7 +725,7 @@ export const services: Service[] = [
         conditions: ['Cotización según alcance, nivel de detalle y volumen', 'Producción por lotes disponible', 'Posibilidad de acuerdos de confidencialidad (NDA)'],
         ctaText: 'Solicitar modelos anatómicos',
         ctaAction: 'whatsapp',
-        whatsappMessage: 'Hola, quiero solicitar modelos anatómicos 3D para un proyecto profesional.\n\nInstitución o empresa\nTipo de modelo\nCantidad\nUso educativo o demostrativo\nFecha objetivo'
+        whatsappMessage: WHATSAPP_TEMPLATES['16'].b2b
       }
     ],
     isActive: true,
