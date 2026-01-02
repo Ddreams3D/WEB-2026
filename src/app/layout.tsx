@@ -114,7 +114,10 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <body className="antialiased text-foreground dark:text-white">
+      <body 
+        className="antialiased text-foreground dark:text-white"
+        suppressHydrationWarning
+      >
         {process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID && (
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />
         )}

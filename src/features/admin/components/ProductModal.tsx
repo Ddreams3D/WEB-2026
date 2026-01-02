@@ -320,135 +320,166 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
 
               {/* TAB: INFO BÁSICA */}
               <TabsContent value="info" className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Nombre</label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name || ''}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2 border rounded-lg dark:bg-neutral-700"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Categoría</label>
-                    <select
-                      name="categoryName"
-                      value={formData.categoryName}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2 border rounded-lg dark:bg-neutral-700"
-                    >
-                      <option value="">Seleccionar...</option>
-                      {categories.map(cat => (
-                        <option key={cat} value={cat}>{cat}</option>
-                      ))}
-                    </select>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Precio</label>
-                    <input
-                      type="number"
-                      name="price"
-                      value={formData.price ?? 0}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2 border rounded-lg dark:bg-neutral-700"
-                      min="0"
-                      step="0.01"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Orden de Visualización</label>
-                    <input
-                      type="number"
-                      name="displayOrder"
-                      value={formData.displayOrder || 0}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2 border rounded-lg dark:bg-neutral-700"
-                    />
-                  </div>
-
-                  {formData.kind === 'product' && (
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">Stock</label>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  {/* Left Column: Main Info */}
+                  <div className="lg:col-span-2 space-y-6">
+                    <div className="p-4 bg-white dark:bg-neutral-900/50 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm space-y-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Nombre del Producto</label>
                         <input
-                        type="number"
-                        name="stock"
-                        value={formData.stock}
-                        onChange={handleChange}
-                        className="w-full px-4 py-2 border rounded-lg dark:bg-neutral-700"
-                        min="0"
+                          type="text"
+                          name="name"
+                          value={formData.name || ''}
+                          onChange={handleChange}
+                          placeholder="Ej. Figura de Acción 3D"
+                          className="w-full px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                         />
-                    </div>
-                  )}
+                      </div>
 
-                  {formData.kind === 'product' && (
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">Material Principal</label>
-                        <select
-                        name="selectedMaterial"
-                        value={selectedMaterial}
-                        onChange={handleChange}
-                        className="w-full px-4 py-2 border rounded-lg dark:bg-neutral-700"
-                        >
-                        <option value="">Seleccionar...</option>
-                        {materials.map(mat => (
-                            <option key={mat} value={mat}>{mat}</option>
-                        ))}
-                        </select>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Descripción Corta</label>
+                        <textarea
+                          name="shortDescription"
+                          value={formData.shortDescription || ''}
+                          onChange={handleChange}
+                          rows={3}
+                          className="w-full px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all resize-none"
+                          placeholder="Breve resumen para listados..."
+                        />
+                      </div>
                     </div>
-                   )}
-                   
-                   {formData.kind === 'service' && (
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">Texto de Precio</label>
+
+                    {formData.kind === 'product' && (
+                       <div className="p-4 bg-white dark:bg-neutral-900/50 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm space-y-4">
+                          <h3 className="font-medium text-sm text-neutral-900 dark:text-neutral-100 border-b pb-2 dark:border-neutral-700">Detalles del Producto</h3>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                             <div className="space-y-2">
+                                <label className="text-sm font-medium">Material Principal</label>
+                                <select
+                                  name="selectedMaterial"
+                                  value={selectedMaterial}
+                                  onChange={handleChange}
+                                  className="w-full px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg"
+                                >
+                                  <option value="">Seleccionar...</option>
+                                  {materials.map(mat => (
+                                    <option key={mat} value={mat}>{mat}</option>
+                                  ))}
+                                </select>
+                             </div>
+                          </div>
+                       </div>
+                    )}
+                  </div>
+
+                  {/* Right Column: Status & Metadata */}
+                  <div className="space-y-6">
+                    {/* Status Card */}
+                    <div className="p-4 bg-white dark:bg-neutral-900/50 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm space-y-4">
+                      <h3 className="font-medium text-sm text-neutral-900 dark:text-neutral-100 border-b pb-2 dark:border-neutral-700">Visibilidad</h3>
+                      
+                      <label className="flex items-center justify-between p-2 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors cursor-pointer">
+                        <span className="text-sm font-medium">Publicado</span>
                         <input
-                        type="text"
-                        name="customPriceDisplay"
-                        value={formData.customPriceDisplay}
-                        onChange={handleChange}
-                        placeholder="Ej. Cotización personalizada"
-                        className="w-full px-4 py-2 border rounded-lg dark:bg-neutral-700"
+                          type="checkbox"
+                          name="isActive"
+                          checked={formData.isActive}
+                          onChange={handleCheckboxChange}
+                          className="w-5 h-5 accent-primary"
                         />
+                      </label>
+                      
+                      <label className="flex items-center justify-between p-2 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors cursor-pointer">
+                        <span className="text-sm font-medium">Destacado</span>
+                        <input
+                          type="checkbox"
+                          name="isFeatured"
+                          checked={formData.isFeatured}
+                          onChange={handleCheckboxChange}
+                          className="w-5 h-5 accent-primary"
+                        />
+                      </label>
+
+                      <div className="space-y-2 pt-2">
+                        <label className="text-xs font-medium uppercase text-neutral-500">Orden</label>
+                        <input
+                          type="number"
+                          name="displayOrder"
+                          value={formData.displayOrder || 0}
+                          onChange={handleChange}
+                          className="w-full px-3 py-1.5 text-sm bg-white dark:bg-neutral-800 border rounded-lg"
+                        />
+                      </div>
                     </div>
-                   )}
-                </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Descripción Corta (Subtítulo)</label>
-                  <input
-                    type="text"
-                    name="shortDescription"
-                    value={formData.shortDescription || ''}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border rounded-lg dark:bg-neutral-700"
-                    placeholder="Breve resumen para listados"
-                  />
-                </div>
+                    {/* Pricing & Stock Card */}
+                    <div className="p-4 bg-white dark:bg-neutral-900/50 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm space-y-4">
+                        <h3 className="font-medium text-sm text-neutral-900 dark:text-neutral-100 border-b pb-2 dark:border-neutral-700">Precio e Inventario</h3>
+                        
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Precio (S/)</label>
+                            <div className="relative">
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500">S/</span>
+                                <input
+                                type="number"
+                                name="price"
+                                value={formData.price ?? 0}
+                                onChange={handleChange}
+                                className="w-full pl-8 pr-4 py-2 bg-white dark:bg-neutral-800 border rounded-lg font-mono"
+                                min="0"
+                                step="0.01"
+                                />
+                            </div>
+                        </div>
 
-                <div className="flex gap-6 p-4 bg-neutral-50 dark:bg-neutral-700/30 rounded-lg border">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      name="isActive"
-                      checked={formData.isActive}
-                      onChange={handleCheckboxChange}
-                      className="w-5 h-5 accent-primary"
-                    />
-                    <span className="font-medium">Activo (Visible)</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      name="isFeatured"
-                      checked={formData.isFeatured}
-                      onChange={handleCheckboxChange}
-                      className="w-5 h-5 accent-primary"
-                    />
-                    <span className="font-medium">Destacado (Home)</span>
-                  </label>
+                        {formData.kind === 'product' && (
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium">Stock Disponible</label>
+                                <input
+                                type="number"
+                                name="stock"
+                                value={formData.stock}
+                                onChange={handleChange}
+                                className="w-full px-4 py-2 bg-white dark:bg-neutral-800 border rounded-lg"
+                                min="0"
+                                />
+                            </div>
+                        )}
+
+                        {formData.kind === 'service' && (
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium">Texto Precio</label>
+                                <input
+                                type="text"
+                                name="customPriceDisplay"
+                                value={formData.customPriceDisplay}
+                                onChange={handleChange}
+                                placeholder="Ej. Cotización"
+                                className="w-full px-4 py-2 bg-white dark:bg-neutral-800 border rounded-lg text-sm"
+                                />
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Organization Card */}
+                    <div className="p-4 bg-white dark:bg-neutral-900/50 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm space-y-4">
+                        <h3 className="font-medium text-sm text-neutral-900 dark:text-neutral-100 border-b pb-2 dark:border-neutral-700">Organización</h3>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Categoría</label>
+                            <select
+                                name="categoryName"
+                                value={formData.categoryName}
+                                onChange={handleChange}
+                                className="w-full px-4 py-2 bg-white dark:bg-neutral-800 border rounded-lg"
+                            >
+                                <option value="">Seleccionar...</option>
+                                {categories.map(cat => (
+                                <option key={cat} value={cat}>{cat}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                  </div>
                 </div>
               </TabsContent>
 
