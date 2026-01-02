@@ -66,8 +66,10 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
   });
 
   const [activeTabId, setActiveTabId] = useState<string | null>(null);
+  const [activeMainTab, setActiveMainTab] = useState('info');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedMaterial, setSelectedMaterial] = useState<string>('');
+  const { showError } = useToast();
 
   useEffect(() => {
     if (product) {
@@ -118,6 +120,20 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validación manual
+    if (!formData.name?.trim()) {
+        showError('Error', 'El nombre es obligatorio');
+        setActiveMainTab('info');
+        return;
+    }
+
+    if (!formData.categoryName) {
+        showError('Error', 'La categoría es obligatoria');
+        setActiveMainTab('info');
+        return;
+    }
+
     setIsSubmitting(true);
     try {
       const baseData = {
@@ -270,7 +286,7 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6">
           <form id="product-form" onSubmit={handleSubmit} className="space-y-6">
-            <Tabs defaultValue="info" className="w-full">
+            <Tabs value={activeMainTab} onValueChange={setActiveMainTab} className="w-full">
               <TabsList className="grid w-full grid-cols-5 mb-6">
                 <TabsTrigger value="info">Info Básica</TabsTrigger>
                 <TabsTrigger value="details">Detalles</TabsTrigger>
@@ -290,7 +306,6 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
                       value={formData.name}
                       onChange={handleChange}
                       className="w-full px-4 py-2 border rounded-lg dark:bg-neutral-700"
-                      required
                     />
                   </div>
                   <div className="space-y-2">
@@ -300,7 +315,6 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
                       value={formData.categoryName}
                       onChange={handleChange}
                       className="w-full px-4 py-2 border rounded-lg dark:bg-neutral-700"
-                      required
                     >
                       <option value="">Seleccionar...</option>
                       {categories.map(cat => (
@@ -508,7 +522,7 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
                       <div className="aspect-square relative">
                          <img src={img.url} alt={img.alt} className="w-full h-full object-cover" />
                       </div>
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                      <div className="absolute inset-0 bg-black/40 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                         <button
                           type="button"
                           onClick={() => setPrimaryImage(idx)}
