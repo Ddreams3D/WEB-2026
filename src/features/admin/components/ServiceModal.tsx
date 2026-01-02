@@ -228,7 +228,7 @@ export default function ServiceModal({ isOpen, onClose, onSave, service }: Servi
                     <input
                       type="text"
                       name="name"
-                      value={formData.name}
+                      value={formData.name || ''}
                       onChange={handleChange}
                       className="w-full px-4 py-2 border rounded-lg dark:bg-neutral-700"
                       required
@@ -252,7 +252,7 @@ export default function ServiceModal({ isOpen, onClose, onSave, service }: Servi
                     <input
                       type="text"
                       name="customPriceDisplay"
-                      value={formData.customPriceDisplay}
+                      value={formData.customPriceDisplay || ''}
                       onChange={handleChange}
                       placeholder="Ej. Cotización personalizada"
                       className="w-full px-4 py-2 border rounded-lg dark:bg-neutral-700"
@@ -263,7 +263,7 @@ export default function ServiceModal({ isOpen, onClose, onSave, service }: Servi
                     <input
                       type="number"
                       name="displayOrder"
-                      value={formData.displayOrder}
+                      value={formData.displayOrder ?? 0}
                       onChange={handleChange}
                       className="w-full px-4 py-2 border rounded-lg dark:bg-neutral-700"
                     />
@@ -275,7 +275,7 @@ export default function ServiceModal({ isOpen, onClose, onSave, service }: Servi
                   <input
                     type="text"
                     name="shortDescription"
-                    value={formData.shortDescription}
+                    value={formData.shortDescription || ''}
                     onChange={handleChange}
                     className="w-full px-4 py-2 border rounded-lg dark:bg-neutral-700"
                   />
@@ -314,7 +314,7 @@ export default function ServiceModal({ isOpen, onClose, onSave, service }: Servi
                   </p>
                   <textarea
                     name="description"
-                    value={formData.description}
+                    value={formData.description || ''}
                     onChange={handleChange}
                     rows={6}
                     className="w-full px-4 py-2 border rounded-lg dark:bg-neutral-700 font-mono text-sm"

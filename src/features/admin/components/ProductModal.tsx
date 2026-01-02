@@ -326,7 +326,7 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
                     <input
                       type="text"
                       name="name"
-                      value={formData.name}
+                      value={formData.name || ''}
                       onChange={handleChange}
                       className="w-full px-4 py-2 border rounded-lg dark:bg-neutral-700"
                     />
@@ -351,7 +351,7 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
                     <input
                       type="number"
                       name="price"
-                      value={formData.price}
+                      value={formData.price ?? 0}
                       onChange={handleChange}
                       className="w-full px-4 py-2 border rounded-lg dark:bg-neutral-700"
                       min="0"
@@ -458,7 +458,7 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
                   <label className="text-sm font-medium">Descripción Completa</label>
                   <textarea
                     name="description"
-                    value={formData.description}
+                    value={formData.description || ''}
                     onChange={handleChange}
                     rows={8}
                     className="w-full px-4 py-2 border rounded-lg dark:bg-neutral-700 font-mono text-sm"
