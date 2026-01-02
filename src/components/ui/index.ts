@@ -11,4 +11,5 @@ export { Badge } from './badge';
 export { Progress } from './progress';
 export { Tabs, TabsList, TabsTrigger, TabsContent } from './tabs';
 export { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
+export { Checkbox } from './checkbox';
 export { CookieBanner } from './CookieBanner';

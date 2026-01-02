@@ -33,3 +33,12 @@ export function formatImagePosition(position: string | undefined): string {
     .replace(']', '')
     .replace('_', ' ');
 }
+
+export function formatDate(date: Date | string | number): string {
+  const d = new Date(date);
+  return d.toLocaleDateString('es-ES', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  });
+}

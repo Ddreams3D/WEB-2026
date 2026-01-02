@@ -1,13 +1,15 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Plus, Edit, Trash2, Search, Package, Eye, Filter } from '@/lib/icons';
+import { Plus, Edit, Trash2, Search, Filter, Package } from '@/lib/icons';
+import { Loader2, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/ToastManager';
 import { ProductImage } from '@/shared/components/ui/DefaultImage';
 import ProductModal from './ProductModal';
-import ConfirmationModal from './ConfirmationModal';
+import { ViewToggle } from './ViewToggle';
 import ConnectionStatus from './ConnectionStatus';
+import ConfirmationModal from './ConfirmationModal';
 import { Product } from '@/shared/types';
 import { Service, StoreProduct } from '@/shared/types/domain';
 import { ProductService } from '@/services/product.service';
@@ -27,7 +29,16 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProduct, setSelectedProduct] = useState<Product | Service | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
+  const [isSeeding, setIsSeeding] = useState(false);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [confirmation, setConfirmation] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: async () => {},
+    variant: 'warning' as 'warning' | 'danger' | 'info',
+    isLoading: false
+  });
   const { showSuccess, showError } = useToast();
 
   const loadProducts = useCallback(async () => {
@@ -71,30 +82,44 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
     setIsModalOpen(true);
   };
 
-  const handleDeleteProduct = async (id: string) => {
-    if (!confirm('¿Estás seguro de eliminar este elemento?')) return;
+  const closeConfirmation = () => {
+    setConfirmation(prev => ({ ...prev, isOpen: false }));
+  };
 
-    try {
-      const productToDelete = products.find(p => p.id === id);
-      if (!productToDelete) return;
+  const handleDeleteProduct = (id: string) => {
+    setConfirmation({
+      isOpen: true,
+      title: 'Eliminar Elemento',
+      message: '¿Estás seguro de eliminar este elemento?',
+      variant: 'danger',
+      isLoading: false,
+      onConfirm: async () => {
+        try {
+          setConfirmation(prev => ({ ...prev, isLoading: true }));
+          const productToDelete = products.find(p => p.id === id);
+          if (!productToDelete) return;
 
-      if (productToDelete.kind === 'service') {
-        await ServiceService.deleteService(id);
-      } else {
-        await ProductService.deleteProduct(id);
+          if (productToDelete.kind === 'service') {
+            await ServiceService.deleteService(id);
+          } else {
+            await ProductService.deleteProduct(id);
+          }
+          
+          const newProducts = products.filter(product => product.id !== id);
+          setProducts(newProducts);
+          
+          // Revalidate cache for public site
+          await revalidateCatalog();
+          
+          showSuccess('Eliminado', 'Elemento eliminado correctamente');
+          closeConfirmation();
+        } catch (error) {
+          console.error('Error deleting item:', error);
+          showError('Error', 'Error al eliminar el elemento');
+          setConfirmation(prev => ({ ...prev, isLoading: false }));
+        }
       }
-      
-      const newProducts = products.filter(product => product.id !== id);
-      setProducts(newProducts);
-      
-      // Revalidate cache for public site
-      await revalidateCatalog();
-      
-      showSuccess('Eliminado', 'Elemento eliminado correctamente');
-    } catch (error) {
-      console.error('Error deleting item:', error);
-      showError('Error', 'Error al eliminar el elemento');
-    }
+    });
   };
 
   const handleSaveProduct = async (formData: Partial<Product | Service>) => {
@@ -175,35 +200,47 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
     }
   };
 
-  const handleSyncCatalogClick = () => {
-    setIsSyncModalOpen(true);
-  };
+  const handleSeed = (force = false) => {
+    const message = force 
+      ? '¿Estás seguro de recargar los datos estáticos? Esto sobrescribirá los productos existentes con los datos originales.' 
+      : '¿Importar productos desde el archivo estático? Esto creará documentos en Firestore.';
+      
+    setConfirmation({
+      isOpen: true,
+      title: force ? 'Reiniciar Catálogo' : 'Importar Catálogo',
+      message,
+      variant: force ? 'danger' : 'warning',
+      isLoading: false,
+      onConfirm: async () => {
+        try {
+          setConfirmation(prev => ({ ...prev, isLoading: true }));
+          setIsSeeding(true);
 
-  const executeSyncCatalog = async () => {
-    try {
-        setLoading(true);
-        
-        // 1. Limpiar caché local
-        LocalStorageService.clearAll();
+          // 1. Forzar siembra en DB
+          if (mode === 'all' || mode === 'product') {
+            await ProductService.seedProducts(force);
+          }
+          if (mode === 'all' || mode === 'service') {
+            await ServiceService.seedServices(force);
+          }
+          
+          // 2. Revalidar caché de Next.js
+          await revalidateCatalog();
 
-        // 2. Forzar siembra en DB (Sobrescribe Firestore con JSON maestro)
-        await ProductService.seedProducts(true);
-        await ServiceService.seedServices(true);
-        
-        // 3. Revalidar caché de Next.js
-        await revalidateCatalog();
-
-        // 4. Recargar datos frescos
-        await loadProducts();
-        
-        showSuccess('Sincronización Completa', 'El catálogo se ha alineado correctamente con el sistema base.');
-        setIsSyncModalOpen(false);
-    } catch (error) {
-        console.error('Error syncing catalog:', error);
-        showError('Error', 'Falló la sincronización. Revisa la consola.');
-    } finally {
-        setLoading(false);
-    }
+          // 3. Recargar datos frescos
+          await loadProducts();
+          
+          showSuccess('Sincronización Completa', 'El catálogo se ha alineado correctamente con el sistema base.');
+          closeConfirmation();
+        } catch (error) {
+          console.error('Error syncing catalog:', error);
+          showError('Error', 'Falló la sincronización. Revisa la consola.');
+          setConfirmation(prev => ({ ...prev, isLoading: false }));
+        } finally {
+          setIsSeeding(false);
+        }
+      }
+    });
   };
 
   const filteredProducts = products.filter(product =>
@@ -213,6 +250,15 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
 
   return (
     <div className="space-y-6">
+      <ConfirmationModal
+        isOpen={confirmation.isOpen}
+        onClose={closeConfirmation}
+        onConfirm={confirmation.onConfirm}
+        title={confirmation.title}
+        message={confirmation.message}
+        variant={confirmation.variant}
+        isLoading={confirmation.isLoading}
+      />
       <div className="flex flex-col gap-4">
         <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">Gestión de Catálogo</h1>
@@ -231,9 +277,10 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
           />
         </div>
         <div className="flex gap-2">
-           <Button onClick={handleSyncCatalogClick} variant="outline" className="gap-2 text-amber-600 border-amber-200 hover:bg-amber-50">
-            <Package className="w-4 h-4" />
-            Sincronizar Catálogo
+           <ViewToggle view={viewMode} onViewChange={setViewMode} />
+           <Button variant="outline" onClick={() => handleSeed(true)} disabled={isSeeding}>
+            {isSeeding ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <RefreshCw className="w-4 h-4 mr-2" />}
+            Sincronizar Datos Estáticos
           </Button>
           <Button variant="outline" className="gap-2">
             <Filter className="w-4 h-4" />
@@ -247,6 +294,129 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
       </div>
       </div>
 
+      {viewMode === 'list' ? (
+        <div className="bg-white dark:bg-neutral-900 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="bg-neutral-50 dark:bg-neutral-800/50 border-b border-neutral-200 dark:border-neutral-700">
+                  <th className="px-6 py-4 text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Producto</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Categoría</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Precio</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Tipo</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Estado</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-neutral-200 dark:divide-neutral-700">
+                {loading ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-12 text-center text-neutral-500">
+                        <div className="flex justify-center items-center gap-2">
+                            <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                            Cargando catálogo...
+                        </div>
+                    </td>
+                  </tr>
+                ) : filteredProducts.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-12 text-center text-neutral-500">
+                        <div className="flex flex-col items-center gap-2">
+                            <Package className="w-8 h-8 text-neutral-300" />
+                            <p>No se encontraron productos</p>
+                        </div>
+                    </td>
+                  </tr>
+                ) : (
+                  filteredProducts.map((product) => (
+                    <tr key={product.id} className="group hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-lg bg-neutral-100 dark:bg-neutral-800 overflow-hidden border border-neutral-200 dark:border-neutral-700 flex-shrink-0">
+                              {product.images?.[0] ? (
+                                <ProductImage
+                                  src={product.images.find(i => i.isPrimary)?.url || product.images[0].url}
+                                  alt={product.name}
+                                  width={48}
+                                  height={48}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-neutral-400">
+                                  <Package className="w-5 h-5" />
+                                </div>
+                              )}
+                            </div>
+                            <div className="min-w-0">
+                                <div className="font-medium text-neutral-900 dark:text-neutral-100 truncate max-w-[200px]" title={product.name}>
+                                    {product.name}
+                                </div>
+                                <div className="text-xs text-neutral-500 truncate max-w-[200px]">
+                                    {product.description}
+                                </div>
+                            </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-neutral-600 dark:text-neutral-300">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200">
+                            {product.categoryName || 'Sin categoría'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                        {product.kind === 'service' && (product as Service).customPriceDisplay 
+                            ? (product as Service).customPriceDisplay
+                            : `S/ ${product.price.toFixed(2)}`
+                        }
+                      </td>
+                      <td className="px-6 py-4">
+                         <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium border ${
+                          product.kind === 'service' 
+                            ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800'
+                            : 'bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800'
+                        }`}>
+                          {product.kind === 'service' ? 'Servicio' : 'Producto'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            product.isActive 
+                                ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300' 
+                                : 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300'
+                        }`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${product.isActive ? 'bg-green-500' : 'bg-amber-500'}`} />
+                            {product.isActive ? 'Activo' : 'Inactivo'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-8 w-8 p-0 text-neutral-500 hover:text-primary hover:bg-primary/10"
+                            onClick={() => handleEditProduct(product)}
+                            title="Editar"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-8 w-8 p-0 text-neutral-500 hover:text-destructive hover:bg-destructive/10"
+                            onClick={() => handleDeleteProduct(product.id)}
+                            title="Eliminar"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ) : (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {filteredProducts.map((product) => (
           <div
@@ -330,6 +500,7 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
           </div>
         ))}
       </div>
+      )}
       
       <ProductModal
         isOpen={isModalOpen}
@@ -337,17 +508,6 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
         onSave={handleSaveProduct}
         product={selectedProduct}
         forcedType={mode === 'service' ? 'service' : mode === 'product' ? 'product' : undefined}
-      />
-
-      <ConfirmationModal
-        isOpen={isSyncModalOpen}
-        onClose={() => setIsSyncModalOpen(false)}
-        onConfirm={executeSyncCatalog}
-        title="¿Sincronizar Catálogo Completo?"
-        message={`Esta acción es destructiva y necesaria para corregir errores de base de datos.\n\n1. Borrará cualquier cambio local no guardado.\n2. Sobrescribirá la Base de Datos con los productos originales.\n3. Corregirá IDs e inconsistencias.\n\n¿Estás seguro de continuar?`}
-        confirmText="Sí, Sincronizar Todo"
-        variant="danger"
-        isLoading={loading}
       />
     </div>
   );

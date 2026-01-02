@@ -220,7 +220,8 @@ export default function ImageUpload({ value, onChange, onRemove, onUploadStatusC
       });
       
       if (storage) {
-          const storageRef = ref(storage, `products/${Date.now()}_${fileName}.jpg`);
+          // FIX: Upload to 'images/catalogo' instead of root 'products'
+          const storageRef = ref(storage, `images/catalogo/${Date.now()}_${fileName}.jpg`);
           
           // 2. Upload with Progress Tracking
           const uploadTask = uploadBytesResumable(storageRef, fileToUpload);

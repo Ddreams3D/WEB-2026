@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../components/ui/ToastManager';
 import { Button } from '@/components/ui';
@@ -8,17 +9,30 @@ import { cn } from '@/lib/utils';
 
 interface GoogleLoginButtonProps {
   className?: string;
+  onSuccess?: () => void;
 }
 
-export const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({ className = '' }) => {
+export const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({ className = '', onSuccess }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { loginWithGoogle } = useAuth();
   const { showError } = useToast();
+  const router = useRouter();
 
   const handleGoogleLogin = async () => {
     try {
       setIsLoading(true);
-      await loginWithGoogle();
+      const result = await loginWithGoogle();
+      
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        // Default redirection logic
+        if (result.isNewUser) {
+          router.push('/profile');
+        } else {
+          router.push('/');
+        }
+      }
     } catch (error) {
       console.error('Google login error:', error);
       showError('Error', 'No se pudo iniciar sesión con Google. Inténtalo de nuevo.');

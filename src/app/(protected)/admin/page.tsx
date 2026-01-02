@@ -86,14 +86,15 @@ const recentProducts = [...products]
     title: p.name,
     subtitle: `Categoría: ${p.categoryName}`,
     time: 'Disponible',
-    icon: <ShoppingBag className="w-4 h-4" />
+    icon: <ShoppingBag className="w-4 h-4" />,
+    image: p.images?.[0]?.url
   }));
 
 const quickAccess = [
   { name: 'Gestionar Productos', href: '/admin/productos', icon: ShoppingBag, desc: 'Administrar inventario' },
-  { name: 'Gestionar Categorías', href: '/admin/categorias', icon: Package, desc: 'Ver categorías' }, // Assuming this route might exist or user can create it
+  { name: 'Gestionar Servicios', href: '/admin/servicios', icon: Settings, desc: 'Catálogo de servicios' },
+  { name: 'Archivos Cloud', href: '/admin/storage', icon: Cloud, desc: 'Limpieza y gestión de imágenes' },
   { name: 'Ver Pedidos', href: '/admin/pedidos', icon: CreditCard, desc: 'Gestionar ventas' },
-  { name: 'Configuración', href: '/admin/configuracion', icon: Settings, desc: 'Ajustes del sistema' },
 ];
 
 export default function AdminDashboard() {
@@ -169,8 +170,12 @@ export default function AdminDashboard() {
           <div className="space-y-6">
             {recentProducts.length > 0 ? recentProducts.map((item) => (
               <div key={item.id} className="flex items-start gap-4 group">
-                <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-sm font-bold text-muted-foreground border border-border group-hover:border-primary/50 group-hover:text-primary transition-colors">
-                  {item.icon}
+                <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-sm font-bold text-muted-foreground border border-border group-hover:border-primary/50 group-hover:text-primary transition-colors overflow-hidden">
+                  {item.image ? (
+                    <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                  ) : (
+                    item.icon
+                  )}
                 </div>
                 <div className="flex-1 min-w-0 pt-1">
                   <p className="text-sm font-medium text-foreground">

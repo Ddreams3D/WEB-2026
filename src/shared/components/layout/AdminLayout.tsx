@@ -14,7 +14,8 @@ import {
   X,
   Bell,
   Search,
-  Calendar
+  Calendar,
+  Briefcase
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -28,6 +29,7 @@ const navigation = [
   { name: 'Dashboard', href: '/admin', icon: Home },
   { name: 'Productos', href: '/admin/productos', icon: ShoppingBag },
   { name: 'Servicios', href: '/admin/servicios', icon: Package },
+  { name: 'Proyectos', href: '/admin/projects', icon: Briefcase },
   { name: 'Pedidos', href: '/admin/pedidos', icon: Package },
   { name: 'Usuarios', href: '/admin/usuarios', icon: Users },
   { name: 'Configuración', href: '/admin/configuracion', icon: Settings },

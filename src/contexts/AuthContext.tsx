@@ -5,10 +5,12 @@ import { useRouter } from 'next/navigation';
 import { 
   GoogleAuthProvider, 
   signInWithPopup, 
+  signInWithEmailAndPassword,
   signOut, 
   onAuthStateChanged, 
   User as FirebaseUser,
-  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  getAdditionalUserInfo,
   setPersistence,
   browserLocalPersistence
 } from 'firebase/auth';
@@ -50,7 +52,8 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (username: string, password: string) => Promise<boolean>;
-  loginWithGoogle: () => Promise<void>;
+  register: (email: string, password: string) => Promise<boolean>;
+  loginWithGoogle: () => Promise<{ success: boolean; isNewUser: boolean }>;
   logout: () => void;
   checkAuth: () => boolean;
   updateUser: (data: Partial<User>) => Promise<boolean>;
@@ -326,22 +329,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const loginWithGoogle = async (): Promise<void> => {
+  const register = async (email: string, password: string): Promise<boolean> => {
+    try {
+      setIsLoading(true);
+      if (auth) {
+        await createUserWithEmailAndPassword(auth, email, password);
+        return true;
+      }
+      return false;
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      showError('Error de registro', error.message || 'No se pudo crear la cuenta');
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const loginWithGoogle = async (): Promise<{ success: boolean; isNewUser: boolean }> => {
     try {
       if (!auth) {
         showError('Error', 'Firebase no está configurado. No se puede iniciar sesión con Google.');
-        return;
+        return { success: false, isNewUser: false };
       }
       setIsLoading(true);
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      
+      const additionalUserInfo = getAdditionalUserInfo(result);
+      const isNewUser = additionalUserInfo?.isNewUser || false;
+
       // onAuthStateChanged manejará el resto
       showSuccess('Bienvenido', 'Has iniciado sesión con Google correctamente');
+      return { success: true, isNewUser };
     } catch (error: any) {
       console.error('Google login failed:', error);
       showError('Error de inicio de sesión', error.message || 'No se pudo iniciar sesión con Google');
       setIsLoading(false);
-      throw error;
+      return { success: false, isNewUser: false };
     }
   };
 
@@ -410,6 +435,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isAuthenticated,
     isLoading,
     login,
+    register,
     loginWithGoogle,
     logout,
     checkAuth,
