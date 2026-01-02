@@ -14,11 +14,15 @@ import {
   Eye, 
   XCircle,
   Calendar,
-  User as UserIcon
+  User as UserIcon,
+  Phone,
+  Mail
 } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import { OrderService } from '@/services/order.service';
 import { Order, OrderStatus } from '@/shared/types/domain';
+import { useOrderTrackingHook } from '@/hooks/useOrderTracking';
+import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui/badge';
 
 // --- Components ---
@@ -72,31 +76,86 @@ function OrderStatusBadge({ status }: { status: OrderStatus }) {
   );
 }
 
-function OrderDetailsModal({ order, isOpen, onClose, onUpdateStatus }: {
+function OrderDetailsModal({ 
+  order, 
+  isOpen, 
+  onClose, 
+  onUpdateStatus,
+  onEstimateDelivery,
+  onSendNotification
+}: {
   order: Order | null;
   isOpen: boolean;
   onClose: () => void;
   onUpdateStatus: (id: string, status: OrderStatus) => Promise<void>;
+  onEstimateDelivery: (id: string) => Promise<Date>;
+  onSendNotification: (id: string, message: string) => Promise<void>;
 }) {
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isEstimating, setIsEstimating] = useState(false);
+  const [isNotifying, setIsNotifying] = useState(false);
   const [newStatus, setNewStatus] = useState<OrderStatus | ''>('');
+  const [notificationMessage, setNotificationMessage] = useState('');
 
   useEffect(() => {
-    if (order) setNewStatus(order.status);
+    if (order) {
+      setNewStatus(order.status);
+      setNotificationMessage(`Hola ${order.userName}, tu pedido #${order.id.slice(0, 8)} está ahora: ${getStatusLabel(order.status)}.`);
+    }
   }, [order]);
 
   if (!isOpen || !order) return null;
+
+  const getStatusLabel = (s: string) => {
+    const labels: Record<string, string> = {
+      quote_requested: 'en cotización',
+      pending_payment: 'pendiente de pago',
+      paid: 'pagado',
+      processing: 'en proceso',
+      ready: 'listo',
+      shipped: 'enviado',
+      completed: 'completado',
+      cancelled: 'cancelado',
+      refunded: 'reembolsado'
+    };
+    return labels[s] || s;
+  };
 
   const handleStatusChange = async () => {
     if (!newStatus || newStatus === order.status) return;
     setIsUpdating(true);
     try {
       await onUpdateStatus(order.id, newStatus);
-      onClose();
+      // Update notification message suggestion
+      setNotificationMessage(`Hola ${order.userName}, tu pedido #${order.id.slice(0, 8)} ha sido actualizado a: ${getStatusLabel(newStatus)}.`);
     } catch (error) {
       alert('Error al actualizar estado');
     } finally {
       setIsUpdating(false);
+    }
+  };
+
+  const handleEstimateDelivery = async () => {
+    setIsEstimating(true);
+    try {
+      await onEstimateDelivery(order.id);
+    } catch (error) {
+      alert('Error al estimar fecha');
+    } finally {
+      setIsEstimating(false);
+    }
+  };
+
+  const handleSendNotification = async () => {
+    if (!notificationMessage) return;
+    setIsNotifying(true);
+    try {
+      await onSendNotification(order.id, notificationMessage);
+      alert('Notificación enviada correctamente');
+    } catch (error) {
+      alert('Error al enviar notificación');
+    } finally {
+      setIsNotifying(false);
     }
   };
 
@@ -141,6 +200,7 @@ function OrderDetailsModal({ order, isOpen, onClose, onUpdateStatus }: {
               </h4>
               <p className="text-sm">{order.userName}</p>
               <p className="text-sm text-muted-foreground">{order.userEmail}</p>
+              {order.customerPhone && <p className="text-sm text-muted-foreground flex items-center mt-1"><Phone className="w-3 h-3 mr-1"/> {order.customerPhone}</p>}
             </div>
             <div>
               <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center">
@@ -155,13 +215,35 @@ function OrderDetailsModal({ order, isOpen, onClose, onUpdateStatus }: {
               ) : (
                 <p className="text-sm text-muted-foreground">Recojo en tienda</p>
               )}
+              
+              <div className="mt-3 pt-3 border-t border-border/50">
+                 <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-muted-foreground">Entrega Estimada:</span>
+                    {order.estimatedDeliveryDate ? (
+                        <span className="text-sm font-medium">
+                            {new Date(order.estimatedDeliveryDate).toLocaleDateString()}
+                        </span>
+                    ) : (
+                        <span className="text-sm text-yellow-600">Pendiente</span>
+                    )}
+                 </div>
+                 <Button 
+                    variant="link" 
+                    size="sm" 
+                    className="h-auto p-0 text-xs mt-1" 
+                    onClick={handleEstimateDelivery}
+                    disabled={isEstimating}
+                 >
+                    {isEstimating ? 'Calculando...' : (order.estimatedDeliveryDate ? 'Recalcular fecha' : 'Calcular fecha')}
+                 </Button>
+              </div>
             </div>
           </div>
 
           {/* Items */}
           <div className="mb-6">
             <h4 className="text-sm font-semibold text-foreground mb-3">Productos</h4>
-            <div className="border rounded-lg divide-y divide-border">
+            <div className="border rounded-lg divide-y divide-border max-h-40 overflow-y-auto">
               {order.items.map((item, idx) => (
                 <div key={idx} className="p-3 flex items-center justify-between">
                   <div className="flex items-center">
@@ -171,18 +253,12 @@ function OrderDetailsModal({ order, isOpen, onClose, onUpdateStatus }: {
                     <div>
                       <p className="text-sm font-medium">{item.name}</p>
                       <p className="text-xs text-muted-foreground">
-                        {item.type === 'service' ? 'Servicio Personalizado' : 'Producto'}
-                        {item.customizations && (
-                          <span className="ml-1 px-1 bg-primary/10 text-primary rounded text-[10px]">
-                            Personalizado
-                          </span>
-                        )}
+                        {item.type === 'service' ? 'Servicio' : 'Producto'} x{item.quantity}
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-medium">{formatCurrency(item.total)}</p>
-                    <p className="text-xs text-muted-foreground">{item.quantity} x {formatCurrency(item.price)}</p>
                   </div>
                 </div>
               ))}
@@ -192,37 +268,63 @@ function OrderDetailsModal({ order, isOpen, onClose, onUpdateStatus }: {
             </div>
           </div>
 
-          {/* Actions */}
-          <div className="flex items-center justify-between pt-4 border-t border-border">
-             <div className="flex-1 mr-4">
-                <label className="block text-xs font-medium text-muted-foreground mb-1">
-                  Cambiar Estado
+          {/* Actions Section */}
+          <div className="space-y-4">
+            
+            {/* Status Change */}
+            <div className="p-4 bg-muted/20 rounded-lg border border-border">
+                <label className="block text-xs font-medium text-muted-foreground mb-2">
+                  Actualizar Estado
                 </label>
-                <select 
-                  value={newStatus} 
-                  onChange={(e) => setNewStatus(e.target.value as OrderStatus)}
-                  className="w-full px-3 py-2 border border-input rounded-lg text-sm bg-background"
-                >
-                  <option value="quote_requested">Cotización Solicitada</option>
-                  <option value="pending_payment">Pendiente de Pago</option>
-                  <option value="paid">Pagado</option>
-                  <option value="processing">En Proceso</option>
-                  <option value="ready">Listo</option>
-                  <option value="shipped">Enviado</option>
-                  <option value="completed">Completado</option>
-                  <option value="cancelled">Cancelado</option>
-                  <option value="refunded">Reembolsado</option>
-                </select>
-             </div>
-             <div className="flex items-end">
-                <Button 
-                  onClick={handleStatusChange} 
-                  disabled={isUpdating || newStatus === order.status}
-                  variant="gradient"
-                >
-                  {isUpdating ? 'Actualizando...' : 'Actualizar Estado'}
-                </Button>
-             </div>
+                <div className="flex gap-2">
+                    <select 
+                      value={newStatus} 
+                      onChange={(e) => setNewStatus(e.target.value as OrderStatus)}
+                      className="flex-1 px-3 py-2 border border-input rounded-lg text-sm bg-background"
+                    >
+                      <option value="quote_requested">Cotización Solicitada</option>
+                      <option value="pending_payment">Pendiente de Pago</option>
+                      <option value="paid">Pagado</option>
+                      <option value="processing">En Proceso</option>
+                      <option value="ready">Listo</option>
+                      <option value="shipped">Enviado</option>
+                      <option value="completed">Completado</option>
+                      <option value="cancelled">Cancelado</option>
+                      <option value="refunded">Reembolsado</option>
+                    </select>
+                    <Button 
+                      onClick={handleStatusChange} 
+                      disabled={isUpdating || newStatus === order.status}
+                      size="sm"
+                    >
+                      {isUpdating ? '...' : 'Actualizar'}
+                    </Button>
+                </div>
+            </div>
+
+            {/* Notifications */}
+            <div className="p-4 bg-muted/20 rounded-lg border border-border">
+                <label className="block text-xs font-medium text-muted-foreground mb-2">
+                  Notificar al Cliente
+                </label>
+                <div className="flex gap-2">
+                    <input 
+                        type="text" 
+                        value={notificationMessage}
+                        onChange={(e) => setNotificationMessage(e.target.value)}
+                        className="flex-1 px-3 py-2 border border-input rounded-lg text-sm bg-background"
+                        placeholder="Mensaje para el cliente..."
+                    />
+                    <Button 
+                      onClick={handleSendNotification} 
+                      disabled={isNotifying || !notificationMessage}
+                      variant="outline"
+                      size="sm"
+                    >
+                      {isNotifying ? <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-primary" /> : <Mail className="w-4 h-4" />}
+                    </Button>
+                </div>
+            </div>
           </div>
 
         </div>
@@ -234,18 +336,42 @@ function OrderDetailsModal({ order, isOpen, onClose, onUpdateStatus }: {
 // --- Main Page ---
 
 export default function OrdersPage() {
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [fetchedOrders, setFetchedOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<OrderStatus | 'all'>('all');
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const { user } = useAuth();
+
+  const { 
+    orders,
+    filteredOrders, 
+    stats, 
+    setFilters, 
+    configureRealTime,
+    estimateDelivery,
+    sendStatusUpdate
+  } = useOrderTrackingHook(fetchedOrders);
+
+  // Disable hook's auto-refresh on mount
+  useEffect(() => {
+    configureRealTime({ autoRefresh: false, enabled: false });
+  }, []);
+
+  // Update hook filters when local state changes
+  useEffect(() => {
+    setFilters({
+      searchTerm: searchTerm,
+      status: statusFilter === 'all' ? undefined : [statusFilter]
+    });
+  }, [searchTerm, statusFilter, setFilters]);
 
   const fetchOrders = async () => {
     setIsLoading(true);
     try {
       await OrderService.seedInitialOrders(); // Ensure seed data exists
       const data = await OrderService.getAllOrders(true);
-      setOrders(data);
+      setFetchedOrders(data);
     } catch (error) {
       console.error('Error loading orders:', error);
     } finally {
@@ -258,20 +384,12 @@ export default function OrdersPage() {
   }, []);
 
   const handleUpdateStatus = async (id: string, status: OrderStatus) => {
-    await OrderService.updateOrderStatus(id, status, undefined, 'admin'); // TODO: Use real admin ID
+    const adminId = user?.id || user?.email || 'admin';
+    await OrderService.updateOrderStatus(id, status, undefined, adminId);
     await fetchOrders();
   };
 
-  const filteredOrders = orders.filter(order => {
-    const matchesSearch = 
-      order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.userEmail.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
-
-    return matchesSearch && matchesStatus;
-  });
+  const selectedOrder = orders.find(o => o.id === selectedOrderId) || null;
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('es-PE', {
@@ -302,25 +420,25 @@ export default function OrdersPage() {
         <div className="bg-card p-4 rounded-xl border border-border shadow-sm">
           <p className="text-xs text-muted-foreground uppercase font-bold">Total Ventas</p>
           <p className="text-2xl font-bold mt-1 text-primary">
-            {formatCurrency(orders.reduce((acc, o) => o.status !== 'cancelled' ? acc + o.total : acc, 0))}
+            {formatCurrency(stats.totalValue || 0)}
           </p>
         </div>
         <div className="bg-card p-4 rounded-xl border border-border shadow-sm">
            <p className="text-xs text-muted-foreground uppercase font-bold">Pendientes</p>
            <p className="text-2xl font-bold mt-1 text-yellow-600">
-             {orders.filter(o => o.status === 'pending_payment').length}
+             {fetchedOrders.filter(o => o.status === 'pending_payment').length}
            </p>
         </div>
         <div className="bg-card p-4 rounded-xl border border-border shadow-sm">
            <p className="text-xs text-muted-foreground uppercase font-bold">En Proceso</p>
            <p className="text-2xl font-bold mt-1 text-purple-600">
-             {orders.filter(o => o.status === 'processing').length}
+             {stats.inProduction || fetchedOrders.filter(o => o.status === 'processing').length}
            </p>
         </div>
         <div className="bg-card p-4 rounded-xl border border-border shadow-sm">
            <p className="text-xs text-muted-foreground uppercase font-bold">Completados</p>
            <p className="text-2xl font-bold mt-1 text-green-600">
-             {orders.filter(o => o.status === 'completed').length}
+             {stats.completed || fetchedOrders.filter(o => o.status === 'completed').length}
            </p>
         </div>
       </div>
@@ -404,7 +522,7 @@ export default function OrdersPage() {
                       <Button 
                         variant="ghost" 
                         size="sm" 
-                        onClick={() => setSelectedOrder(order)}
+                        onClick={() => setSelectedOrderId(order.id)}
                         className="h-8 w-8 p-0"
                       >
                         <Eye className="w-4 h-4 text-primary" />
@@ -421,8 +539,10 @@ export default function OrdersPage() {
       <OrderDetailsModal 
         order={selectedOrder} 
         isOpen={!!selectedOrder} 
-        onClose={() => setSelectedOrder(null)} 
+        onClose={() => setSelectedOrderId(null)} 
         onUpdateStatus={handleUpdateStatus}
+        onEstimateDelivery={estimateDelivery}
+        onSendNotification={sendStatusUpdate}
       />
     </div>
   );

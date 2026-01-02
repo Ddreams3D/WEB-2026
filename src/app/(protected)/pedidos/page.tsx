@@ -9,23 +9,13 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Progress } from '@/components/ui/progress';
-import { Package, Search, Filter, Eye, Download, Bell, Clock, CheckCircle, AlertCircle, XCircle, Truck, Factory, Calendar, MapPin, User, Phone, Mail, Printer, Wrench, PackageCheck, ArrowRight, RefreshCw, BarChart3, TrendingUp, Activity } from '@/lib/icons';
+import { Package, Search, Filter, Eye, Download, Bell, Clock, CheckCircle, AlertCircle, XCircle, Truck, Factory, Calendar, MapPin, User, Phone, Mail, Printer, Wrench, PackageCheck, ArrowRight, RefreshCw, BarChart3, TrendingUp, Activity, FileText } from '@/lib/icons';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import Link from 'next/link';
+import { Order, OrderStatus } from '@/shared/types/domain';
 
-type OrderStatus = 'pending' | 'confirmed' | 'in-production' | 'quality-check' | 'packaging' | 'shipped' | 'delivered' | 'cancelled';
 type FilterStatus = OrderStatus | 'all';
-
-interface OrderTimeline {
-  id: string;
-  status: string;
-  title: string;
-  description: string;
-  timestamp: string;
-  user?: string;
-  location?: string;
-}
 
 export default function PedidosPage() {
   const { orders, notifications, loadOrders, markNotificationAsRead } = useOrderTracking();
@@ -33,7 +23,7 @@ export default function PedidosPage() {
   const [activeTab, setActiveTab] = useState('active');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<FilterStatus>('all');
-  const [filteredOrders, setFilteredOrders] = useState(orders);
+  const [filteredOrders, setFilteredOrders] = useState<Order[]>(orders);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -46,19 +36,19 @@ export default function PedidosPage() {
     // Filtrar por tab activo
     if (activeTab === 'active') {
       filtered = filtered.filter(order => 
-        !['delivered', 'cancelled'].includes(order.status)
+        !['completed', 'cancelled', 'refunded'].includes(order.status)
       );
     } else if (activeTab === 'completed') {
       filtered = filtered.filter(order => 
-        ['delivered', 'cancelled'].includes(order.status)
+        ['completed', 'cancelled', 'refunded'].includes(order.status)
       );
     }
     
     // Filtrar por búsqueda
     if (searchTerm) {
       filtered = filtered.filter(order => 
-        order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.title.toLowerCase().includes(searchTerm.toLowerCase())
+        order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        order.items.some(item => item.name.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
     
@@ -70,50 +60,54 @@ export default function PedidosPage() {
     setFilteredOrders(filtered);
   }, [orders, activeTab, searchTerm, statusFilter]);
 
-  const getStatusIcon = (status: string) => {
+  const getStatusIcon = (status: OrderStatus) => {
     switch (status) {
-      case 'pending':
+      case 'quote_requested':
+        return <FileText className="h-4 w-4 text-gray-500" />;
+      case 'pending_payment':
         return <Clock className="h-4 w-4 text-yellow-500" />;
-      case 'confirmed':
+      case 'paid':
         return <CheckCircle className="h-4 w-4 text-blue-500" />;
-      case 'in-production':
+      case 'processing':
         return <Factory className="h-4 w-4 text-purple-500" />;
-      case 'quality-check':
-        return <Wrench className="h-4 w-4 text-orange-500" />;
-      case 'packaging':
+      case 'ready':
         return <PackageCheck className="h-4 w-4 text-indigo-500" />;
       case 'shipped':
         return <Truck className="h-4 w-4 text-blue-600" />;
-      case 'delivered':
+      case 'completed':
         return <CheckCircle className="h-4 w-4 text-green-500" />;
       case 'cancelled':
         return <XCircle className="h-4 w-4 text-red-500" />;
+      case 'refunded':
+        return <RefreshCw className="h-4 w-4 text-gray-500" />;
       default:
         return <Package className="h-4 w-4 text-gray-500" />;
     }
   };
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status: OrderStatus) => {
     const variants: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
-      'pending': 'outline',
-      'confirmed': 'secondary',
-      'in-production': 'secondary',
-      'quality-check': 'secondary',
-      'packaging': 'secondary',
+      'quote_requested': 'outline',
+      'pending_payment': 'outline',
+      'paid': 'secondary',
+      'processing': 'secondary',
+      'ready': 'secondary',
       'shipped': 'default',
-      'delivered': 'default',
-      'cancelled': 'destructive'
+      'completed': 'default',
+      'cancelled': 'destructive',
+      'refunded': 'outline'
     };
     
     const labels: Record<string, string> = {
-      'pending': 'Pendiente',
-      'confirmed': 'Confirmado',
-      'in-production': 'En Producción',
-      'quality-check': 'Control de Calidad',
-      'packaging': 'Empaquetado',
+      'quote_requested': 'Cotización',
+      'pending_payment': 'Pendiente de Pago',
+      'paid': 'Pagado',
+      'processing': 'En Proceso',
+      'ready': 'Listo',
       'shipped': 'Enviado',
-      'delivered': 'Entregado',
-      'cancelled': 'Cancelado'
+      'completed': 'Completado',
+      'cancelled': 'Cancelado',
+      'refunded': 'Reembolsado'
     };
     
     return (
@@ -123,23 +117,26 @@ export default function PedidosPage() {
     );
   };
 
-  const getProgressPercentage = (status: string) => {
+  const getProgressPercentage = (status: OrderStatus) => {
     const statusProgress: Record<string, number> = {
-      'pending': 10,
-      'confirmed': 20,
-      'in-production': 50,
-      'quality-check': 75,
-      'packaging': 85,
-      'shipped': 95,
-      'delivered': 100,
-      'cancelled': 0
+      'quote_requested': 5,
+      'pending_payment': 10,
+      'paid': 25,
+      'processing': 50,
+      'ready': 75,
+      'shipped': 90,
+      'completed': 100,
+      'cancelled': 0,
+      'refunded': 0
     };
     
     return statusProgress[status] || 0;
   };
 
-  const formatDate = (dateString: string) => {
-    return format(new Date(dateString), 'dd/MM/yyyy HH:mm', { locale: es });
+  const formatDate = (date: Date | string) => {
+    if (!date) return '';
+    const d = typeof date === 'string' ? new Date(date) : date;
+    return format(d, 'dd/MM/yyyy HH:mm', { locale: es });
   };
 
   const formatCurrency = (amount: number) => {
@@ -155,36 +152,16 @@ export default function PedidosPage() {
     setLoading(false);
   };
 
-  const getEstimatedDelivery = (order: any) => {
-    // Calcular fecha estimada basada en el estado actual
-    const baseDate = new Date(order.createdAt);
-    let daysToAdd = 7; // Por defecto 7 días
-    
-    switch (order.status) {
-      case 'pending':
-      case 'confirmed':
-        daysToAdd = 7;
-        break;
-      case 'in-production':
-        daysToAdd = 5;
-        break;
-      case 'quality-check':
-      case 'packaging':
-        daysToAdd = 2;
-        break;
-      case 'shipped':
-        daysToAdd = 1;
-        break;
-      default:
-        daysToAdd = 7;
-    }
-    
-    const estimatedDate = new Date(baseDate);
-    estimatedDate.setDate(estimatedDate.getDate() + daysToAdd);
-    return estimatedDate;
+  const getOrderTitle = (order: Order) => {
+    if (order.items.length === 0) return 'Pedido sin items';
+    const firstItem = order.items[0];
+    const otherItemsCount = order.items.length - 1;
+    return otherItemsCount > 0 
+      ? `${firstItem.name} + ${otherItemsCount} más`
+      : firstItem.name;
   };
 
-  if (loading) {
+  if (loading && orders.length === 0) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-center py-12">
@@ -218,7 +195,7 @@ export default function PedidosPage() {
         </div>
       </div>
 
-      {/* Notificaciones */}
+      {/* Notificaciones (Simplified/Hidden if empty) */}
       {notifications.filter(n => !n.read).length > 0 && (
         <Card className="mb-6 border-blue-200 bg-blue-50 dark:bg-blue-950 dark:border-blue-800">
           <CardHeader>
@@ -269,7 +246,7 @@ export default function PedidosPage() {
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">Total Activos</p>
                     <p className="text-2xl font-bold">
-                      {orders.filter(o => !['delivered', 'cancelled'].includes(o.status)).length}
+                      {orders.filter(o => !['completed', 'cancelled', 'refunded'].includes(o.status)).length}
                     </p>
                   </div>
                   <Package className="h-8 w-8 text-muted-foreground" />
@@ -281,9 +258,9 @@ export default function PedidosPage() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">En Producción</p>
+                    <p className="text-sm font-medium text-muted-foreground">En Proceso</p>
                     <p className="text-2xl font-bold">
-                      {orders.filter(o => o.status === 'in-production').length}
+                      {orders.filter(o => o.status === 'processing').length}
                     </p>
                   </div>
                   <Factory className="h-8 w-8 text-muted-foreground" />
@@ -313,8 +290,8 @@ export default function PedidosPage() {
                     <p className="text-2xl font-bold">
                       {formatCurrency(
                         orders
-                          .filter(o => !['delivered', 'cancelled'].includes(o.status))
-                          .reduce((sum, order) => sum + order.totalAmount, 0)
+                          .filter(o => !['completed', 'cancelled', 'refunded'].includes(o.status))
+                          .reduce((sum, order) => sum + order.total, 0)
                       )}
                     </p>
                   </div>
@@ -337,7 +314,7 @@ export default function PedidosPage() {
                 <div className="relative">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Buscar por número de orden o título..."
+                    placeholder="Buscar por ID de orden o producto..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -350,12 +327,15 @@ export default function PedidosPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todos los estados</SelectItem>
-                    <SelectItem value="pending">Pendiente</SelectItem>
-                    <SelectItem value="confirmed">Confirmado</SelectItem>
-                    <SelectItem value="in-production">En Producción</SelectItem>
-                    <SelectItem value="quality-check">Control de Calidad</SelectItem>
-                    <SelectItem value="packaging">Empaquetado</SelectItem>
+                    <SelectItem value="quote_requested">Cotización</SelectItem>
+                    <SelectItem value="pending_payment">Pendiente de Pago</SelectItem>
+                    <SelectItem value="paid">Pagado</SelectItem>
+                    <SelectItem value="processing">En Proceso</SelectItem>
+                    <SelectItem value="ready">Listo</SelectItem>
                     <SelectItem value="shipped">Enviado</SelectItem>
+                    <SelectItem value="completed">Completado</SelectItem>
+                    <SelectItem value="cancelled">Cancelado</SelectItem>
+                    <SelectItem value="refunded">Reembolsado</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -386,22 +366,24 @@ export default function PedidosPage() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center space-x-3 mb-2">
                             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                              {order.orderNumber}
+                              #{order.id.substring(0, 8).toUpperCase()}
                             </h3>
                             {getStatusBadge(order.status)}
                           </div>
-                          <p className="text-muted-foreground mb-2">{order.title}</p>
+                          <p className="text-muted-foreground mb-2">{getOrderTitle(order)}</p>
                           <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                             <span className="flex items-center">
                               <Calendar className="h-3 w-3 mr-1" />
                               Creado: {formatDate(order.createdAt)}
                             </span>
-                            <span className="flex items-center">
-                              <Clock className="h-3 w-3 mr-1" />
-                              Entrega estimada: {formatDate(getEstimatedDelivery(order).toISOString())}
-                            </span>
+                            {order.estimatedDeliveryDate && (
+                              <span className="flex items-center">
+                                <Clock className="h-3 w-3 mr-1" />
+                                Entrega estimada: {formatDate(order.estimatedDeliveryDate)}
+                              </span>
+                            )}
                             <span className="font-medium text-primary">
-                              {formatCurrency(order.totalAmount)}
+                              {formatCurrency(order.total)}
                             </span>
                           </div>
                         </div>
@@ -413,9 +395,6 @@ export default function PedidosPage() {
                             Ver Detalles
                           </Button>
                         </Link>
-                        <Button variant="ghost" size="sm">
-                          <Download className="h-4 w-4" />
-                        </Button>
                       </div>
                     </div>
                     
@@ -429,16 +408,16 @@ export default function PedidosPage() {
                     </div>
                     
                     {/* Timeline resumido */}
-                    {order.timeline && order.timeline.length > 0 && (
+                    {order.history && order.history.length > 0 && (
                       <div className="mt-4 pt-4 border-t">
                         <div className="flex items-center space-x-2 text-sm">
                           <Activity className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-muted-foreground">Última actualización:</span>
+                          <span className="text-muted-foreground">Último movimiento:</span>
                           <span className="font-medium">
-                            {order.timeline[order.timeline.length - 1]?.name}
+                            {order.history[order.history.length - 1]?.note || 'Actualización de estado'}
                           </span>
                           <span className="text-muted-foreground">
-                            • {formatDate(order.timeline[order.timeline.length - 1]?.timestamp)}
+                            • {formatDate(order.history[order.history.length - 1]?.timestamp)}
                           </span>
                         </div>
                       </div>
@@ -461,13 +440,13 @@ export default function PedidosPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {orders.filter(o => ['delivered', 'cancelled'].includes(o.status)).map((order) => (
+                {orders.filter(o => ['completed', 'cancelled', 'refunded'].includes(o.status)).map((order) => (
                   <div key={order.id} className="flex items-center justify-between p-4 border rounded-lg">
                     <div className="flex items-center space-x-4">
                       {getStatusIcon(order.status)}
                       <div>
-                        <h3 className="font-semibold">{order.orderNumber}</h3>
-                        <p className="text-sm text-muted-foreground">{order.title}</p>
+                        <h3 className="font-semibold">#{order.id.substring(0, 8).toUpperCase()}</h3>
+                        <p className="text-sm text-muted-foreground">{getOrderTitle(order)}</p>
                         <p className="text-xs text-muted-foreground">
                           {formatDate(order.createdAt)}
                         </p>
@@ -475,7 +454,7 @@ export default function PedidosPage() {
                     </div>
                     <div className="flex items-center space-x-4">
                       {getStatusBadge(order.status)}
-                      <span className="font-medium">{formatCurrency(order.totalAmount)}</span>
+                      <span className="font-medium">{formatCurrency(order.total)}</span>
                       <Link href={`/pedidos/${order.id}`}>
                         <Button variant="outline" size="sm">
                           <Eye className="h-4 w-4" />
@@ -505,13 +484,13 @@ export default function PedidosPage() {
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Entregados:</span>
                     <span className="font-medium text-green-600">
-                      {orders.filter(o => o.status === 'delivered').length}
+                      {orders.filter(o => o.status === 'completed').length}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">En proceso:</span>
                     <span className="font-medium text-blue-600">
-                      {orders.filter(o => !['delivered', 'cancelled'].includes(o.status)).length}
+                      {orders.filter(o => !['completed', 'cancelled', 'refunded'].includes(o.status)).length}
                     </span>
                   </div>
                   <div className="flex justify-between">

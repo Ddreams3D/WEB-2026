@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { X, Plus } from 'lucide-react';
 import { useToast } from '@/components/ui/ToastManager';
 import ImageUpload from './ImageUpload';
-import { Product, ProductTab, ProductSpecification, ProductImage } from '@/shared/types';
+import { Product, ProductTab, ProductSpecification, ProductImage, ProductImageViewType } from '@/shared/types';
 import { Service } from '@/shared/types/domain';
 import { generateSlug } from '@/lib/utils';
 import { TabEditor, SpecificationsEditor, StringListEditor, OptionsEditor } from './AdminEditors';
@@ -68,8 +68,9 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
   const [activeTabId, setActiveTabId] = useState<string | null>(null);
   const [activeMainTab, setActiveMainTab] = useState('info');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isImageUploading, setIsImageUploading] = useState(false);
   const [selectedMaterial, setSelectedMaterial] = useState<string>('');
-  const { showError } = useToast();
+  const { showError, showSuccess } = useToast();
 
   useEffect(() => {
     if (product) {
@@ -134,6 +135,9 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
         return;
     }
 
+    console.log('[ProductModal] Submitting form data...');
+    console.log('[ProductModal] Current images state:', formData.images);
+
     setIsSubmitting(true);
     try {
       const baseData = {
@@ -146,7 +150,9 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
         ? { ...baseData, materials: selectedMaterial ? [selectedMaterial] : (formData as any).materials }
         : baseData;
 
+      console.log('[ProductModal] Calling onSave with:', dataToSave);
       await onSave(dataToSave);
+      console.log('[ProductModal] onSave completed successfully');
       onClose();
     } catch (error: any) {
       console.error('Error saving product:', error);
@@ -184,6 +190,14 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
 
   // Image Handlers
   const handleImageUploaded = (url: string) => {
+    console.log('ProductModal received uploaded image:', url.substring(0, 50) + '...');
+    
+    if (!url) {
+        console.error('Error: Received empty URL in handleImageUploaded');
+        alert('Error: La imagen subida no tiene una URL válida.');
+        return;
+    }
+
     const newImage: ProductImage = {
         id: `img-${Date.now()}`,
         productId: product?.id || 'temp',
@@ -196,10 +210,18 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
         updatedAt: new Date()
     };
 
-    setFormData(prev => ({
-        ...prev,
-        images: [...(prev.images || []), newImage]
-    }));
+    setFormData(prev => {
+        const updatedImages = [...(prev.images || []), newImage];
+        console.log('Updating formData with new images count:', updatedImages.length);
+        return {
+            ...prev,
+            images: updatedImages
+        };
+    });
+    
+    // Feedback visual opcional
+    // toast.success('Imagen agregada correctamente');
+    showSuccess('Imagen Agregada', 'La imagen se ha subido y agregado correctamente.');
   };
 
   const removeImage = (index: number) => {
@@ -514,6 +536,9 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
                     value=""
                     onChange={handleImageUploaded}
                     onRemove={() => {}}
+                    onUploadStatusChange={setIsImageUploading}
+                    defaultName={formData.name}
+                    existingImages={formData.images || []}
                   />
                 </div>
 
@@ -523,7 +548,22 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
                       <div className="aspect-square relative">
                          <img src={img.url} alt={img.alt} className="w-full h-full object-cover" />
                       </div>
-                      <div className="absolute inset-0 bg-black/40 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                      
+                      {/* File Info Overlay - Always visible at bottom */}
+                      <div className="px-2 py-1 bg-neutral-100 dark:bg-neutral-900 border-t dark:border-neutral-700 text-[10px] leading-tight">
+                        <div className="font-semibold text-neutral-700 dark:text-neutral-300">
+                            {img.viewType ? img.viewType.toUpperCase() : 'SIN TIPO'}
+                        </div>
+                        <div className="text-neutral-500 truncate" title={decodeURIComponent(img.url.split('/').pop()?.split('?')[0] || '')}>
+                            {(() => {
+                                const full = decodeURIComponent(img.url.split('/').pop()?.split('?')[0] || '');
+                                const underscoreIndex = full.indexOf('_');
+                                return underscoreIndex !== -1 ? full.substring(underscoreIndex + 1) : full;
+                            })()}
+                        </div>
+                      </div>
+
+                      <div className="absolute inset-0 bg-black/40 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 top-0 bottom-[36px]">
                         <button
                           type="button"
                           onClick={() => setPrimaryImage(idx)}
@@ -580,8 +620,8 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
               <Button type="button" variant="outline" onClick={onClose}>
                 Cancelar
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Guardando...' : 'Guardar Cambios'}
+              <Button type="submit" disabled={isSubmitting || isImageUploading}>
+                {isSubmitting ? 'Guardando...' : isImageUploading ? 'Subiendo imagen...' : 'Guardar Cambios'}
               </Button>
             </div>
           </form>

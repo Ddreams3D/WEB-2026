@@ -21,7 +21,7 @@ export default function LoginPage() {
   // Redirigir si ya está autenticado
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
-      router.push('/protegido');
+      router.push('/');
     }
   }, [isAuthenticated, isLoading, router]);
 

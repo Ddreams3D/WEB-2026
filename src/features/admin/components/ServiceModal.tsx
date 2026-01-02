@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { X, Plus } from 'lucide-react';
+import { useToast } from '@/components/ui/ToastManager';
 import ImageUpload from './ImageUpload';
 import { Service } from '@/shared/types/domain';
-import { ProductTab, ProductSpecification } from '@/shared/types';
+import { ProductTab, ProductSpecification, ProductImageViewType } from '@/shared/types';
 import { generateSlug } from '@/lib/utils';
 import { TabEditor, SpecificationsEditor, StringListEditor } from './AdminEditors';
 
@@ -24,6 +25,7 @@ const categories = [
 ];
 
 export default function ServiceModal({ isOpen, onClose, onSave, service }: ServiceModalProps) {
+  const { showError, showSuccess } = useToast();
   const [formData, setFormData] = useState<Partial<Service>>({
     name: '',
     description: '',
@@ -44,6 +46,7 @@ export default function ServiceModal({ isOpen, onClose, onSave, service }: Servi
 
   const [activeTabId, setActiveTabId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isImageUploading, setIsImageUploading] = useState(false);
 
   useEffect(() => {
     if (service) {
@@ -133,6 +136,8 @@ export default function ServiceModal({ isOpen, onClose, onSave, service }: Servi
         ...prev,
         images: [...(prev.images || []), newImage]
     }));
+
+    showError('Imagen Agregada', 'La imagen se ha subido y agregado correctamente.');
   };
 
   const removeImage = (index: number) => {
@@ -375,6 +380,9 @@ export default function ServiceModal({ isOpen, onClose, onSave, service }: Servi
                     value=""
                     onChange={handleImageUploaded}
                     onRemove={() => {}}
+                    onUploadStatusChange={setIsImageUploading}
+                    defaultName={formData.name}
+                    existingImages={formData.images || []}
                   />
                 </div>
 
@@ -384,7 +392,22 @@ export default function ServiceModal({ isOpen, onClose, onSave, service }: Servi
                       <div className="aspect-square relative">
                          <img src={img.url} alt={img.alt} className="w-full h-full object-cover" />
                       </div>
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+
+                      {/* File Info Overlay - Always visible at bottom */}
+                      <div className="px-2 py-1 bg-neutral-100 dark:bg-neutral-900 border-t dark:border-neutral-700 text-[10px] leading-tight">
+                        <div className="font-semibold text-neutral-700 dark:text-neutral-300">
+                            {img.viewType ? img.viewType.toUpperCase() : 'SIN TIPO'}
+                        </div>
+                        <div className="text-neutral-500 truncate" title={decodeURIComponent(img.url.split('/').pop()?.split('?')[0] || '')}>
+                            {(() => {
+                                 const full = decodeURIComponent(img.url.split('/').pop()?.split('?')[0] || '');
+                                 const underscoreIndex = full.indexOf('_');
+                                 return underscoreIndex !== -1 ? full.substring(underscoreIndex + 1) : full;
+                            })()}
+                        </div>
+                      </div>
+
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 top-0 bottom-[36px]">
                         <button
                           type="button"
                           onClick={() => removeImage(idx)}
@@ -450,10 +473,10 @@ export default function ServiceModal({ isOpen, onClose, onSave, service }: Servi
           <Button
             type="submit"
             form="service-form"
-            disabled={isSubmitting}
+            disabled={isSubmitting || isImageUploading}
             className="min-w-[120px]"
           >
-            {isSubmitting ? 'Guardando...' : 'Guardar Cambios'}
+            {isSubmitting ? 'Guardando...' : isImageUploading ? 'Subiendo imagen...' : 'Guardar Cambios'}
           </Button>
         </div>
       </div>

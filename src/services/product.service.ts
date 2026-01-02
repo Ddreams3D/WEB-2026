@@ -14,10 +14,12 @@ import { StoreProduct, Category } from '@/shared/types/domain';
 import { products as productsFallbackData } from '@/data/products.data';
 import { categories } from '@/data/categories.data';
 
+import { LocalStorageService } from './local-storage.service';
+
 const COLLECTION_NAME = 'products';
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-const FIRESTORE_TIMEOUT = 2000; // 2s timeout
-const ENABLE_FIRESTORE_FOR_PUBLIC = false; // Disable for public/build
+const FIRESTORE_TIMEOUT = 5000; // 5s timeout
+const ENABLE_FIRESTORE_FOR_PUBLIC = true; // Enable for public/build if DB is configured
 
 // In-memory cache
 let productsCache: { data: StoreProduct[], timestamp: number } | null = null;
@@ -37,27 +39,46 @@ const mapToProduct = (data: any): StoreProduct => {
   };
 };
 
+const mapToFirestore = (data: StoreProduct): any => {
+  return {
+    ...data,
+    createdAt: data.createdAt instanceof Date ? Timestamp.fromDate(data.createdAt) : Timestamp.fromDate(new Date()),
+    updatedAt: Timestamp.fromDate(new Date()),
+    images: data.images?.map(img => ({
+      ...img,
+      createdAt: img.createdAt instanceof Date ? Timestamp.fromDate(img.createdAt) : Timestamp.fromDate(new Date()),
+      updatedAt: img.updatedAt instanceof Date ? Timestamp.fromDate(img.updatedAt) : Timestamp.fromDate(new Date()),
+    })) || []
+  };
+};
+
 export const ProductService = {
   // Get all products
   async getAllProducts(forceRefresh = false): Promise<StoreProduct[]> {
-    // Check cache
+    console.log(`[ProductService] getAllProducts called. forceRefresh=${forceRefresh}`);
+    // Check cache (memory)
     if (!forceRefresh && productsCache && (Date.now() - productsCache.timestamp < CACHE_DURATION)) {
+      console.log('[ProductService] Returning cached data');
       return productsCache.data;
     }
 
     let products: StoreProduct[] = [];
 
-    // Only try Firestore if explicitly enabled or forced (e.g. admin)
-    const shouldFetch = db && (forceRefresh || ENABLE_FIRESTORE_FOR_PUBLIC);
+    // 1. Try Firestore if configured
+    const shouldFetch = !!db;
+    let fetchFailed = false;
 
     if (shouldFetch) {
       try {
+        console.log('[ProductService] Fetching from Firestore...');
         // Create a timeout promise
         const timeoutPromise = new Promise((_, reject) => 
           setTimeout(() => reject(new Error('Firestore timeout')), FIRESTORE_TIMEOUT)
         );
 
-        const q = query(collection(db, COLLECTION_NAME), orderBy('displayOrder'));
+        // REMOVED orderBy('displayOrder') to prevent hiding products without this field
+        // We will sort in memory and auto-repair missing orders
+        const q = query(collection(db, COLLECTION_NAME));
         
         // Race between fetch and timeout
         const snapshot = await Promise.race([
@@ -66,28 +87,62 @@ export const ProductService = {
         ]) as any;
 
         if (!snapshot.empty) {
+          console.log(`[ProductService] Found ${snapshot.docs.length} products in Firestore`);
           products = snapshot.docs.map((doc: any) => mapToProduct(doc.data()));
+          
+          // AUTO-REPAIR: Check for missing displayOrder and fix in background
+          const productsMissingOrder = products.filter(p => typeof p.displayOrder !== 'number');
+          if (productsMissingOrder.length > 0) {
+              console.warn(`[ProductService] Found ${productsMissingOrder.length} products without displayOrder. Triggering auto-repair...`);
+              // Non-blocking repair
+              this.normalizeDisplayOrders(products).catch(err => console.error('Auto-repair failed:', err));
+          }
         } else {
-           console.log('No products found in Firestore. Using fallback.');
+           console.log('No products found in Firestore. Auto-seeding default data...');
+           await this.seedProducts();
+           products = productsFallbackData.map(mapToProduct);
+           console.log(`[ProductService] Auto-seeded ${products.length} products`);
         }
       } catch (error) {
         console.error('Error fetching products from Firestore:', error);
+        fetchFailed = true;
+        // If Firestore fails, we fall through to LocalStorage/Fallback
       }
     }
 
-    // Fallback to local data if Firestore failed or returned nothing
+    // 2. If no products from DB (or DB disabled/failed), try LocalStorage (Persistence for Dev/Mock)
+    // Only fallback if we didn't check DB, or if DB check failed. 
+    // If DB check succeeded and returned 0, we trust it (unless we auto-seeded above).
+    if (products.length === 0 && (!shouldFetch || fetchFailed)) {
+      console.log('[ProductService] Falling back to LocalStorage...');
+      const localProducts = LocalStorageService.getProducts();
+      if (localProducts && localProducts.length > 0) {
+        console.log('Loaded products from LocalStorage');
+        products = localProducts;
+      }
+    }
+
+    // 3. Fallback to static JSON if everything else failed
     if (products.length === 0) {
+      console.log('Using static fallback data');
       products = productsFallbackData.map(mapToProduct);
+      // Initialize LocalStorage with fallback if it was empty
+      LocalStorageService.saveProducts(products);
     }
     
     // Sort by displayOrder
     products.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
 
-    // Update cache
+    // Update memory cache
     productsCache = {
       data: products,
       timestamp: Date.now()
     };
+    
+    // Sync DB result to LocalStorage for offline/backup (only if we got data from DB)
+    if (shouldFetch && products.length > 0) {
+        LocalStorageService.saveProducts(products);
+    }
     
     return products;
   },
@@ -135,17 +190,28 @@ export const ProductService = {
   async saveProduct(product: StoreProduct): Promise<void> {
     if (!db) throw new Error('Firestore is not configured.');
 
+    console.log('[ProductService] Saving product to Firestore:', product.id);
+    
     try {
-      const docRef = doc(db, COLLECTION_NAME, product.id);
-      await setDoc(docRef, {
-        ...product,
-        updatedAt: Timestamp.fromDate(new Date())
+      // 1. Prepare data (sanitize and convert Dates to Timestamps)
+      const firestoreData = mapToFirestore(product);
+      
+      console.log('[ProductService] Payload prepared for Firestore:', {
+          id: product.id,
+          imagesCount: firestoreData.images?.length,
+          updatedAt: firestoreData.updatedAt
       });
 
-      // Invalidate cache
+      // 2. Perform write
+      const docRef = doc(db, COLLECTION_NAME, product.id);
+      await setDoc(docRef, firestoreData);
+
+      console.log('[ProductService] Product saved successfully');
+      
+      // 3. Invalidate cache
       productsCache = null;
     } catch (error) {
-      console.error('Error saving product:', error);
+      console.error('[ProductService] Error saving product:', error);
       throw error;
     }
   },
@@ -154,9 +220,10 @@ export const ProductService = {
   async deleteProduct(id: string): Promise<boolean> {
     if (!db) {
        // Mock behavior if no DB
-       if (productsCache) {
-          productsCache.data = productsCache.data.filter(p => p.id !== id);
-       }
+       const currentProducts = await this.getAllProducts();
+       const newProducts = currentProducts.filter(p => p.id !== id);
+       LocalStorageService.saveProducts(newProducts);
+       productsCache = { data: newProducts, timestamp: Date.now() };
        return true;
     }
 
@@ -199,9 +266,11 @@ export const ProductService = {
     if (db) {
         await this.saveProduct(newProduct);
     } else {
-        // Mock
-         if (!productsCache) await this.getAllProducts();
-         if (productsCache) productsCache.data.push(newProduct);
+        // Mock with Persistence
+        const currentProducts = await this.getAllProducts();
+        currentProducts.push(newProduct);
+        LocalStorageService.saveProducts(currentProducts);
+        productsCache = { data: currentProducts, timestamp: Date.now() };
     }
     
     return newProduct;
@@ -209,8 +278,24 @@ export const ProductService = {
 
   // Update product
   async updateProduct(id: string, updates: Partial<StoreProduct>): Promise<StoreProduct | null> {
-    const product = await this.getProductById(id);
-    if (!product) return null;
+    console.log(`[ProductService] updateProduct called for ID: ${id}`);
+    let product = await this.getProductById(id);
+
+    // Recovery Logic: If not found in active list (DB), check fallback data
+    // This handles the case where DB is partially populated (so no auto-seed) but missing legacy products
+    if (!product) {
+        console.warn(`[ProductService] Product ${id} not found in active DB list. Checking fallback data for recovery...`);
+        const fallback = productsFallbackData.find(p => p.id === id);
+        if (fallback) {
+             product = mapToProduct(fallback);
+             console.log(`[ProductService] Recovered product ${id} from fallback data. Will persist to DB.`);
+        }
+    }
+
+    if (!product) {
+        console.error(`[ProductService] Product ${id} not found anywhere (DB or Fallback). Update failed.`);
+        return null;
+    }
 
     const updatedProduct = {
       ...product,
@@ -221,28 +306,67 @@ export const ProductService = {
     if (db) {
         await this.saveProduct(updatedProduct);
     } else {
-        // Mock
-         if (productsCache) {
-            const index = productsCache.data.findIndex(p => p.id === id);
-            if (index !== -1) productsCache.data[index] = updatedProduct;
+        // Mock with Persistence
+         const currentProducts = await this.getAllProducts();
+         const index = currentProducts.findIndex(p => p.id === id);
+         if (index !== -1) {
+             currentProducts[index] = updatedProduct;
+             LocalStorageService.saveProducts(currentProducts);
+             productsCache = { data: currentProducts, timestamp: Date.now() };
          }
     }
 
     return updatedProduct;
   },
 
+  // Auto-repair missing displayOrder fields
+  async normalizeDisplayOrders(products: StoreProduct[]): Promise<void> {
+    if (!db) return;
+    
+    try {
+        const batch = writeBatch(db);
+        let maxOrder = 0;
+        
+        // Find current max order
+        products.forEach(p => {
+            if (typeof p.displayOrder === 'number' && p.displayOrder > maxOrder) {
+                maxOrder = p.displayOrder;
+            }
+        });
+        
+        let updatesCount = 0;
+        products.forEach(p => {
+            if (typeof p.displayOrder !== 'number') {
+                maxOrder++;
+                const docRef = doc(db, COLLECTION_NAME, p.id);
+                // Update only the displayOrder field to minimize impact
+                batch.update(docRef, { displayOrder: maxOrder });
+                updatesCount++;
+            }
+        });
+        
+        if (updatesCount > 0) {
+            console.log(`[ProductService] Auto-repairing ${updatesCount} products with missing displayOrder...`);
+            await batch.commit();
+            console.log('[ProductService] Auto-repair complete.');
+        }
+    } catch (error) {
+        console.error('[ProductService] Error during auto-repair:', error);
+    }
+  },
+
   // Seed Firestore with initial data from fallback
-  async seedProducts(): Promise<void> {
+  async seedProducts(force = false): Promise<void> {
     if (!db) return;
 
     try {
       const snapshot = await getDocs(collection(db, COLLECTION_NAME));
-      if (!snapshot.empty) {
+      if (!snapshot.empty && !force) {
         console.log('Products collection already exists. Skipping seed.');
         return;
       }
 
-      console.log('Seeding products to Firestore...');
+      console.log('Seeding products to Firestore (Force: ' + force + ')...');
       const batch = writeBatch(db);
       
       const fallbackProducts = productsFallbackData.map(mapToProduct);

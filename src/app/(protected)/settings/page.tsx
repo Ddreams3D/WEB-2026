@@ -1,21 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { cn } from '@/lib/utils';
-import { 
-  Settings, 
-  Bell, 
-  Shield, 
-  Globe, 
-  Moon, 
-  Phone, 
-  Mail,
-  ChevronRight
-} from '@/lib/icons';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useToast } from '@/components/ui/ToastManager';
-import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
 import {
   Select,
   SelectContent,
@@ -23,6 +12,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
+import { 
+  Settings, 
+  Bell, 
+  Shield, 
+  Globe, 
+  Moon, 
+  Sun,
+  Laptop,
+  Mail,
+  Smartphone,
+  ChevronRight,
+  LogOut
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export default function SettingsPage() {
   const { darkMode, toggleDarkMode } = useTheme();
@@ -39,44 +45,105 @@ export default function SettingsPage() {
   const handleNotificationChange = (key: keyof typeof notifications) => {
     setNotifications(prev => {
       const newState = { ...prev, [key]: !prev[key] };
-      showSuccess('Configuración actualizada');
+      showSuccess('Configuración actualizada', 'Tus preferencias de notificación han sido guardadas.');
       return newState;
     });
   };
 
   const handleLanguageChange = (value: string) => {
     setLanguage(value);
-    showSuccess('Idioma actualizado');
+    showSuccess('Idioma actualizado', 'El idioma de la interfaz ha cambiado.');
+  };
+
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   return (
-    <div className="min-h-screen bg-muted/30 py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
-            <Settings className="h-8 w-8 text-primary" />
-            Configuración
-          </h1>
-          <p className="mt-2 text-muted-foreground">
-            Gestiona tus preferencias y configuración de la cuenta
-          </p>
+    <div className="container max-w-6xl py-10 space-y-8">
+      <div className="flex flex-col md:flex-row gap-8">
+        {/* Sidebar / Navigation Card */}
+        <div className="w-full md:w-1/3 space-y-6">
+          <Card className="border-border/50 shadow-md sticky top-24">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Settings className="h-5 w-5" />
+                Configuración
+              </CardTitle>
+              <CardDescription>
+                Gestiona tus preferencias generales.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-1">
+              <Button 
+                variant="ghost" 
+                className="w-full justify-start font-medium hover:bg-secondary/50"
+                onClick={() => scrollToSection('appearance')}
+              >
+                <Moon className="mr-2 h-4 w-4" />
+                Apariencia
+              </Button>
+              <Button 
+                variant="ghost" 
+                className="w-full justify-start font-medium hover:bg-secondary/50"
+                onClick={() => scrollToSection('notifications')}
+              >
+                <Bell className="mr-2 h-4 w-4" />
+                Notificaciones
+              </Button>
+              <Button 
+                variant="ghost" 
+                className="w-full justify-start font-medium hover:bg-secondary/50"
+                onClick={() => scrollToSection('language')}
+              >
+                <Globe className="mr-2 h-4 w-4" />
+                Idioma
+              </Button>
+              <Button 
+                variant="ghost" 
+                className="w-full justify-start font-medium hover:bg-secondary/50"
+                onClick={() => scrollToSection('privacy')}
+              >
+                <Shield className="mr-2 h-4 w-4" />
+                Privacidad
+              </Button>
+              <Button 
+                variant="ghost" 
+                className="w-full justify-start font-medium hover:bg-secondary/50"
+                onClick={() => scrollToSection('security')}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Seguridad
+              </Button>
+            </CardContent>
+          </Card>
         </div>
 
-        <div className="space-y-6">
-          {/* Apariencia */}
-          <div className={cn("rounded-lg shadow-sm overflow-hidden bg-card border border-border")}>
-            <div className="p-6 border-b border-border">
-              <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
-                <Moon className="h-5 w-5 text-muted-foreground" />
-                Apariencia
-              </h2>
-            </div>
-            <div className="p-6">
-              <div className="flex items-center justify-between">
+        {/* Main Content */}
+        <div className="w-full md:w-2/3 space-y-6">
+          
+          {/* Appearance Section */}
+          <Card id="appearance" className="border-border/50 shadow-md scroll-mt-24">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-primary/10 rounded-full">
+                  {darkMode ? <Moon className="h-5 w-5 text-primary" /> : <Sun className="h-5 w-5 text-primary" />}
+                </div>
                 <div>
-                  <p className="font-medium text-foreground">Modo Oscuro</p>
+                  <CardTitle>Apariencia</CardTitle>
+                  <CardDescription>Personaliza cómo se ve Ddreams 3D en tu dispositivo.</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between p-4 rounded-lg border bg-card/50">
+                <div className="space-y-0.5">
+                  <Label className="text-base">Modo Oscuro</Label>
                   <p className="text-sm text-muted-foreground">
-                    Cambiar entre tema claro y oscuro
+                    Ajusta el tema para reducir la fatiga visual.
                   </p>
                 </div>
                 <Switch
@@ -84,25 +151,30 @@ export default function SettingsPage() {
                   onCheckedChange={toggleDarkMode}
                 />
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
-          {/* Notificaciones */}
-          <div className="bg-card rounded-lg shadow-sm overflow-hidden border border-border">
-            <div className="p-6 border-b border-border">
-              <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
-                <Bell className="h-5 w-5 text-muted-foreground" />
-                Notificaciones
-              </h2>
-            </div>
-            <div className="p-6 space-y-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Mail className="h-5 w-5 text-muted-foreground" />
-                  <div>
-                    <p className="font-medium text-foreground">Correos electrónicos</p>
+          {/* Notifications Section */}
+          <Card id="notifications" className="border-border/50 shadow-md scroll-mt-24">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-primary/10 rounded-full">
+                  <Bell className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <CardTitle>Notificaciones</CardTitle>
+                  <CardDescription>Elige cómo quieres que nos comuniquemos contigo.</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between p-4 rounded-lg border bg-card/50">
+                <div className="flex items-start gap-3">
+                  <Mail className="h-5 w-5 text-muted-foreground mt-0.5" />
+                  <div className="space-y-0.5">
+                    <Label className="text-base">Correos Electrónicos</Label>
                     <p className="text-sm text-muted-foreground">
-                      Recibir actualizaciones sobre tus pedidos
+                      Recibe actualizaciones sobre tus pedidos y cuenta.
                     </p>
                   </div>
                 </div>
@@ -112,13 +184,13 @@ export default function SettingsPage() {
                 />
               </div>
 
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Phone className="h-5 w-5 text-muted-foreground" />
-                  <div>
-                    <p className="font-medium text-foreground">Notificaciones Push</p>
+              <div className="flex items-center justify-between p-4 rounded-lg border bg-card/50">
+                <div className="flex items-start gap-3">
+                  <Smartphone className="h-5 w-5 text-muted-foreground mt-0.5" />
+                  <div className="space-y-0.5">
+                    <Label className="text-base">Notificaciones Push</Label>
                     <p className="text-sm text-muted-foreground">
-                      Recibir alertas en tu dispositivo
+                      Recibe alertas en tiempo real en tu navegador.
                     </p>
                   </div>
                 </div>
@@ -127,62 +199,102 @@ export default function SettingsPage() {
                   onCheckedChange={() => handleNotificationChange('push')}
                 />
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
-          {/* Idioma y Región */}
-          <div className="bg-card rounded-lg shadow-sm overflow-hidden border border-border">
-            <div className="p-6 border-b border-border">
-              <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
-                <Globe className="h-5 w-5 text-muted-foreground" />
-                Idioma y Región
-              </h2>
-            </div>
-            <div className="p-6">
-              <div className="flex items-center justify-between">
+          {/* Language Section */}
+          <Card id="language" className="border-border/50 shadow-md scroll-mt-24">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-primary/10 rounded-full">
+                  <Globe className="h-5 w-5 text-primary" />
+                </div>
                 <div>
-                  <p className="font-medium text-foreground">Idioma</p>
+                  <CardTitle>Idioma y Región</CardTitle>
+                  <CardDescription>Selecciona tu idioma preferido para la interfaz.</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between p-4 rounded-lg border bg-card/50">
+                <div className="space-y-0.5">
+                  <Label className="text-base">Idioma</Label>
                   <p className="text-sm text-muted-foreground">
-                    Selecciona tu idioma preferido
+                    Este será el idioma predeterminado.
                   </p>
                 </div>
                 <Select value={language} onValueChange={handleLanguageChange}>
-                  <SelectTrigger className="w-[180px] bg-background border-input text-foreground">
+                  <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Selecciona idioma" />
                   </SelectTrigger>
-                  <SelectContent className="bg-popover border-border">
-                    <SelectItem value="es" className="text-popover-foreground focus:bg-accent focus:text-accent-foreground">Español</SelectItem>
-                    <SelectItem value="en" className="text-popover-foreground focus:bg-accent focus:text-accent-foreground">English</SelectItem>
-                    <SelectItem value="pt" className="text-popover-foreground focus:bg-accent focus:text-accent-foreground">Português</SelectItem>
+                  <SelectContent>
+                    <SelectItem value="es">Español</SelectItem>
+                    <SelectItem value="en">English</SelectItem>
+                    <SelectItem value="pt">Português</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
-          {/* Seguridad */}
-          <div className={cn("rounded-lg shadow-sm overflow-hidden bg-card border border-border")}>
-            <div className="p-6 border-b border-border">
-              <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
-                <Shield className="h-5 w-5 text-muted-foreground" />
-                Seguridad
-              </h2>
-            </div>
-            <div className="p-6">
-              <Button
-                variant="secondary"
-                className="w-full h-auto flex items-center justify-between p-4 group"
-              >
-                <div className="text-left">
-                  <p className="font-medium text-foreground group-hover:text-primary">Cambiar contraseña</p>
-                  <p className="text-sm text-muted-foreground font-normal normal-case">
-                    Actualiza tu contraseña para mantener tu cuenta segura
+          {/* Privacy Section */}
+          <Card id="privacy" className="border-border/50 shadow-md scroll-mt-24">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-primary/10 rounded-full">
+                  <Shield className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <CardTitle>Privacidad</CardTitle>
+                  <CardDescription>Controla quién puede ver tu perfil y datos.</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between p-4 rounded-lg border bg-card/50">
+                <div className="space-y-0.5">
+                  <Label className="text-base">Perfil Público</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Permitir que otros usuarios vean tu información básica.
                   </p>
                 </div>
-                <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary" />
+                <Switch
+                  checked={true}
+                  onCheckedChange={(checked) => showSuccess('Privacidad actualizada', checked ? 'Tu perfil ahora es público.' : 'Tu perfil ahora es privado.')}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Security Section */}
+          <Card id="security" className="border-border/50 shadow-md scroll-mt-24">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-primary/10 rounded-full">
+                  <Shield className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <CardTitle>Seguridad</CardTitle>
+                  <CardDescription>Mantén tu cuenta segura.</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <Button
+                variant="outline"
+                className="w-full justify-between h-auto py-4 px-4 hover:bg-accent hover:text-accent-foreground group"
+                onClick={() => showSuccess('Redirigiendo', 'Te enviaremos un correo para restablecer tu contraseña.')}
+              >
+                <div className="flex flex-col items-start gap-1">
+                  <span className="font-medium">Cambiar Contraseña</span>
+                  <span className="text-xs text-muted-foreground font-normal">
+                    Se enviará un enlace a tu correo electrónico.
+                  </span>
+                </div>
+                <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
               </Button>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
         </div>
       </div>

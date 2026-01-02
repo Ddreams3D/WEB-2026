@@ -13,14 +13,16 @@ import { db } from '@/lib/firebase';
 import { Service } from '@/shared/types/domain';
 import servicesFallbackData from '@/shared/data/services-fallback.json';
 
+import { LocalStorageService } from './local-storage.service';
+
 const COLLECTION_NAME = 'services';
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-const FIRESTORE_TIMEOUT = 2000; // 2s timeout for Admin/Explicit fetches
+const FIRESTORE_TIMEOUT = 5000; // 5s timeout for Admin/Explicit fetches
 
 // Configuration
 // Set to 'true' only when Firestore is populated and ready to be the primary source for public users.
 // Currently set to 'false' to ensure fast loading from JSON fallback since Firestore is empty/slow.
-const ENABLE_FIRESTORE_FOR_PUBLIC = false;
+const ENABLE_FIRESTORE_FOR_PUBLIC = true;
 
 // In-memory cache
 let servicesCache: { data: Service[], timestamp: number } | null = null;
@@ -45,59 +47,99 @@ const mapToService = (data: any): Service => {
   };
 };
 
+const mapToFirestore = (data: Service): any => {
+  return {
+    ...data,
+    createdAt: data.createdAt instanceof Date ? Timestamp.fromDate(data.createdAt) : Timestamp.fromDate(new Date()),
+    updatedAt: Timestamp.fromDate(new Date()),
+    images: data.images?.map(img => ({
+      ...img,
+      createdAt: img.createdAt instanceof Date ? Timestamp.fromDate(img.createdAt) : Timestamp.fromDate(new Date()),
+      updatedAt: img.updatedAt instanceof Date ? Timestamp.fromDate(img.updatedAt) : Timestamp.fromDate(new Date()),
+    })) || []
+  };
+};
+
 export const ServiceService = {
-  /**
-   * Get all services from Firestore with JSON fallback.
-   * Uses in-memory caching.
-   */
+  // Get all services
   async getAllServices(forceRefresh = false): Promise<Service[]> {
-    // Return cached data if valid and not forced
+    console.log(`[ServiceService] getAllServices called. forceRefresh=${forceRefresh}`);
+    // Check cache
     if (!forceRefresh && servicesCache && (Date.now() - servicesCache.timestamp < CACHE_DURATION)) {
+      console.log('[ServiceService] Returning cached data');
       return servicesCache.data;
     }
 
     let services: Service[] = [];
+    const shouldFetch = !!db;
+    let fetchFailed = false;
 
-    // 1. Try Firestore (Only if configured for public, or forced for Admin)
-    const shouldFetchFirestore = db && (forceRefresh || ENABLE_FIRESTORE_FOR_PUBLIC);
-
-    if (shouldFetchFirestore) {
+    if (shouldFetch) {
       try {
-        const q = query(collection(db, COLLECTION_NAME), orderBy('displayOrder'));
-        
-        // Timeout to prevent hanging if Firestore is unreachable
+        console.log('[ServiceService] Fetching from Firestore...');
         const timeoutPromise = new Promise((_, reject) => 
           setTimeout(() => reject(new Error('Firestore timeout')), FIRESTORE_TIMEOUT)
         );
 
+        // REMOVED orderBy('displayOrder') to prevent hiding services without this field
+        const q = query(collection(db, COLLECTION_NAME));
         const snapshot = await Promise.race([
           getDocs(q),
           timeoutPromise
         ]) as any;
 
         if (!snapshot.empty) {
+          console.log(`[ServiceService] Found ${snapshot.docs.length} services in Firestore`);
           services = snapshot.docs.map((doc: any) => mapToService(doc.data()));
+
+          // AUTO-REPAIR: Check for missing displayOrder and fix in background
+          const servicesMissingOrder = services.filter(s => typeof s.displayOrder !== 'number');
+          if (servicesMissingOrder.length > 0) {
+              console.warn(`[ServiceService] Found ${servicesMissingOrder.length} services without displayOrder. Triggering auto-repair...`);
+              // Non-blocking repair
+              this.normalizeDisplayOrders(services).catch(err => console.error('Auto-repair failed:', err));
+          }
         } else {
-          console.log('No services found in Firestore. Using fallback.');
+           console.log('No services found in Firestore. Auto-seeding default data...');
+           await this.seedServices();
+           services = servicesFallbackData.map(mapToService);
+           console.log(`[ServiceService] Auto-seeded ${services.length} services`);
         }
       } catch (error) {
         console.error('Error fetching services from Firestore:', error);
+        fetchFailed = true;
       }
     }
 
-    // 2. Fallback to JSON if Firestore failed or empty
-    if (services.length === 0) {
-      services = servicesFallbackData.map(mapToService);
+    // Fallback to LocalStorage
+    if (services.length === 0 && (!shouldFetch || fetchFailed)) {
+      console.log('[ServiceService] Falling back to LocalStorage...');
+      const localServices = LocalStorageService.getServices();
+      if (localServices && localServices.length > 0) {
+        services = localServices;
+      }
     }
 
-    // Sort by displayOrder (redundant if Firestore sort worked, but safe)
-    services.sort((a, b) => a.displayOrder - b.displayOrder);
+    // Fallback to static data
+    if (services.length === 0) {
+      console.log('Using static fallback data for services');
+      services = servicesFallbackData.map(mapToService);
+      LocalStorageService.saveServices(services);
+    }
+    
+    // Sort
+    services.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
 
     // Update cache
     servicesCache = {
       data: services,
       timestamp: Date.now()
     };
+    
+    // Sync to LocalStorage
+    if (shouldFetch && services.length > 0) {
+        LocalStorageService.saveServices(services);
+    }
 
     return services;
   },
@@ -126,23 +168,22 @@ export const ServiceService = {
     return allServices.filter(s => s.isFeatured);
   },
 
-  /**
-   * Save (Create or Update) a service to Firestore.
-   */
+  // Save (Create or Update) a service
   async saveService(service: Service): Promise<void> {
     if (!db) throw new Error('Firestore is not configured.');
 
-    try {
-      const docRef = doc(db, COLLECTION_NAME, service.id);
-      await setDoc(docRef, {
-        ...service,
-        updatedAt: Timestamp.fromDate(new Date())
-      });
+    console.log('[ServiceService] Saving service to Firestore:', service.id);
 
-      // Invalidate cache
+    try {
+      const firestoreData = mapToFirestore(service);
+      
+      const docRef = doc(db, COLLECTION_NAME, service.id);
+      await setDoc(docRef, firestoreData);
+
+      console.log('[ServiceService] Service saved successfully');
       servicesCache = null;
     } catch (error) {
-      console.error('Error saving service:', error);
+      console.error('[ServiceService] Error saving service:', error);
       throw error;
     }
   },
@@ -151,7 +192,14 @@ export const ServiceService = {
    * Delete a service from Firestore.
    */
   async deleteService(id: string): Promise<void> {
-    if (!db) throw new Error('Firestore is not configured.');
+    if (!db) {
+        // Mock with Persistence
+        const currentServices = await this.getAllServices();
+        const newServices = currentServices.filter(s => s.id !== id);
+        LocalStorageService.saveServices(newServices);
+        servicesCache = { data: newServices, timestamp: Date.now() };
+        return;
+    }
 
     try {
       await deleteDoc(doc(db, COLLECTION_NAME, id));
@@ -168,17 +216,17 @@ export const ServiceService = {
    * Seed Firestore with initial data from JSON.
    * Only runs if Firestore collection is empty.
    */
-  async seedServices(): Promise<void> {
+  async seedServices(force = false): Promise<void> {
     if (!db) return;
 
     try {
       const snapshot = await getDocs(collection(db, COLLECTION_NAME));
-      if (!snapshot.empty) {
+      if (!snapshot.empty && !force) {
         console.log('Services collection already exists. Skipping seed.');
         return;
       }
 
-      console.log('Seeding services to Firestore...');
+      console.log('Seeding services to Firestore (Force: ' + force + ')...');
       const batch = writeBatch(db);
       
       const fallbackServices = servicesFallbackData.map(mapToService);
@@ -243,7 +291,15 @@ export const ServiceService = {
       updatedAt: new Date()
     } as Service;
 
-    await this.saveService(newService);
+    if (db) {
+        await this.saveService(newService);
+    } else {
+        // Mock with Persistence
+        const currentServices = await this.getAllServices();
+        currentServices.push(newService);
+        LocalStorageService.saveServices(currentServices);
+        servicesCache = { data: currentServices, timestamp: Date.now() };
+    }
     return newService;
   },
 
@@ -252,8 +308,23 @@ export const ServiceService = {
    * Internally calls saveService.
    */
   async updateService(id: string, updates: Partial<Service>): Promise<Service | null> {
-    const service = await this.getServiceById(id);
-    if (!service) return null;
+    console.log(`[ServiceService] updateService called for ID: ${id}`);
+    let service = await this.getServiceById(id);
+
+    // Recovery Logic for Services
+    if (!service) {
+        console.warn(`[ServiceService] Service ${id} not found in active DB list. Checking fallback data for recovery...`);
+        const fallback = servicesFallbackData.find(s => s.id === id);
+        if (fallback) {
+             service = mapToService(fallback);
+             console.log(`[ServiceService] Recovered service ${id} from fallback data. Will persist to DB.`);
+        }
+    }
+
+    if (!service) {
+        console.error(`[ServiceService] Service ${id} not found anywhere. Update failed.`);
+        return null;
+    }
 
     const updatedService = {
       ...service,
@@ -261,7 +332,18 @@ export const ServiceService = {
       updatedAt: new Date()
     };
 
-    await this.saveService(updatedService);
+    if (db) {
+        await this.saveService(updatedService);
+    } else {
+        // Mock with Persistence
+         const currentServices = await this.getAllServices();
+         const index = currentServices.findIndex(s => s.id === id);
+         if (index !== -1) {
+             currentServices[index] = updatedService;
+             LocalStorageService.saveServices(currentServices);
+             servicesCache = { data: currentServices, timestamp: Date.now() };
+         }
+    }
     return updatedService;
   }
 };

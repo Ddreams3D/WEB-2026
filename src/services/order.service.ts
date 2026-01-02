@@ -11,13 +11,16 @@ import {
   where,
   limit,
   startAfter,
-  getDoc
+  getDoc,
+  runTransaction
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Order, OrderStatus, OrderHistoryEntry } from '@/shared/types/domain';
 
 const COLLECTION_NAME = 'orders';
 const CACHE_DURATION = 2 * 60 * 1000; // 2 minutes for orders (more volatile)
+
+const VALID_STATUSES: OrderStatus[] = ['quote_requested', 'pending_payment', 'paid', 'processing', 'ready', 'shipped', 'completed', 'cancelled', 'refunded'];
 
 // In-memory cache
 let ordersCache: { data: Order[], timestamp: number } | null = null;
@@ -39,6 +42,11 @@ export const OrderService = {
   // Create a new order
   async createOrder(orderData: Omit<Order, 'id' | 'createdAt' | 'updatedAt' | 'history'>): Promise<string> {
     if (!db) throw new Error('Database not initialized');
+
+    // Validation
+    if (!orderData.userId) throw new Error('User ID is required');
+    if (!orderData.items || orderData.items.length === 0) throw new Error('Order must have at least one item');
+    if (typeof orderData.total !== 'number' || orderData.total < 0) throw new Error('Invalid total amount');
 
     try {
       const newOrderRef = doc(collection(db, COLLECTION_NAME));
@@ -148,41 +156,196 @@ export const OrderService = {
   async updateOrderStatus(id: string, newStatus: OrderStatus, note?: string, updatedBy: string = 'system'): Promise<void> {
     if (!db) return;
 
+    // Runtime Validation
+    if (!VALID_STATUSES.includes(newStatus)) {
+        throw new Error(`Invalid status: ${newStatus}`);
+    }
+
     try {
-      const order = await this.getOrderById(id);
-      if (!order) throw new Error('Order not found');
-
-      const now = new Date();
-      const newHistoryEntry: OrderHistoryEntry = {
-        status: newStatus,
-        timestamp: now,
-        note: note || `Estado actualizado a ${newStatus}`,
-        updatedBy
-      };
-
-      const updates: Partial<Order> = {
-        status: newStatus,
-        updatedAt: now,
-        history: [...order.history, newHistoryEntry]
-      };
-
-      // Auto-update payment status if needed
-      if (newStatus === 'paid' || newStatus === 'processing' || newStatus === 'shipped' || newStatus === 'completed') {
-        if (order.paymentStatus === 'pending') {
-            updates.paymentStatus = 'paid';
+      await runTransaction(db, async (transaction) => {
+        const orderRef = doc(db!, COLLECTION_NAME, id);
+        const orderDoc = await transaction.get(orderRef);
+        
+        if (!orderDoc.exists()) {
+            throw new Error('Order not found');
         }
-      }
-      
-      if (newStatus === 'refunded') {
-        updates.paymentStatus = 'refunded';
-      }
 
-      const orderRef = doc(db, COLLECTION_NAME, id);
-      await updateDoc(orderRef, updates);
+        const orderData = orderDoc.data();
+        const currentStatus = orderData.status as OrderStatus;
+
+        // Validation: Prevent invalid backward transitions
+        if (currentStatus !== newStatus) {
+            if ((currentStatus === 'completed' || currentStatus === 'refunded') && 
+                (newStatus === 'quote_requested' || newStatus === 'pending_payment')) {
+                throw new Error(`Cannot revert order from ${currentStatus} to ${newStatus}`);
+            }
+        }
+
+        const now = new Date();
+        const newHistoryEntry: OrderHistoryEntry = {
+            status: newStatus,
+            timestamp: now,
+            note: note || `Estado actualizado a ${newStatus}`,
+            updatedBy
+        };
+
+        const updates: any = {
+            status: newStatus,
+            updatedAt: now,
+            history: [...(orderData.history || []), newHistoryEntry]
+        };
+
+        // Auto-update payment status if needed
+        if (newStatus === 'paid' || newStatus === 'processing' || newStatus === 'shipped' || newStatus === 'completed') {
+            if (orderData.paymentStatus === 'pending') {
+                updates.paymentStatus = 'paid';
+            }
+        }
+        
+        if (newStatus === 'refunded') {
+            updates.paymentStatus = 'refunded';
+        }
+
+        transaction.update(orderRef, updates);
+      });
 
       ordersCache = null;
     } catch (error) {
       console.error('Error updating order status:', error);
+      throw error;
+    }
+  },
+
+  // Add Order Note (Admin or User)
+  async addOrderNote(id: string, note: string, updatedBy: string = 'system', isPrivate: boolean = false): Promise<void> {
+    if (!db) return;
+
+    if (note.length > 5000) {
+        throw new Error('Note is too long (max 5000 chars)');
+    }
+
+    try {
+      await runTransaction(db, async (transaction) => {
+        const orderRef = doc(db!, COLLECTION_NAME, id);
+        const orderDoc = await transaction.get(orderRef);
+        
+        if (!orderDoc.exists()) throw new Error('Order not found');
+        
+        const orderData = orderDoc.data();
+        const now = new Date();
+        const updates: any = { updatedAt: now };
+
+        if (isPrivate) {
+            updates.adminNotes = orderData.adminNotes 
+              ? `${orderData.adminNotes}\n[${now.toLocaleString()}] ${note}`
+              : `[${now.toLocaleString()}] ${note}`;
+        } else {
+            const newHistoryEntry: OrderHistoryEntry = {
+                status: orderData.status,
+                timestamp: now,
+                note: note,
+                updatedBy
+            };
+            updates.history = [...(orderData.history || []), newHistoryEntry];
+        }
+
+        transaction.update(orderRef, updates);
+      });
+
+      ordersCache = null;
+    } catch (error) {
+      console.error('Error adding order note:', error);
+      throw error;
+    }
+  },
+
+  // Send Order Notification (via API)
+  async sendOrderNotification(id: string, message: string, type: 'email' | 'sms' = 'email'): Promise<void> {
+    try {
+      const response = await fetch('/api/notifications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId: id, message, type }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send notification');
+      }
+
+      // Log the notification in order history/notes
+      await this.addOrderNote(id, `Notificación enviada (${type}): "${message}"`, 'system', false);
+    } catch (error) {
+      console.error('Error sending notification:', error);
+      // Fallback: log locally if API fails
+      await this.addOrderNote(id, `Error enviando notificación (${type}): "${message}"`, 'system', false);
+    }
+  },
+
+  // Calculate delivery date (via API)
+  async calculateDeliveryDate(order: Order): Promise<Date> {
+      try {
+        const response = await fetch('/api/orders/estimate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ order }),
+        });
+
+        if (!response.ok) {
+           throw new Error('Failed to calculate delivery date');
+        }
+
+        const data = await response.json();
+        return new Date(data.estimatedDeliveryDate);
+      } catch (error) {
+        console.error('Error calculating delivery date via API, falling back to local logic:', error);
+        return this.calculateDeliveryDateLocal(order);
+      }
+  },
+
+  // Local fallback logic
+  calculateDeliveryDateLocal(order: Order): Date {
+      let baseDays = 7;
+      
+      // Ajustar días según estado actual
+      switch (order.status) {
+        case 'quote_requested': baseDays = 10; break;
+        case 'pending_payment': baseDays = 7; break;
+        case 'processing': baseDays = 5; break;
+        case 'ready': baseDays = 1; break; // Listo para recoger/enviar
+        case 'shipped': baseDays = 2; break; // Tiempo de tránsito promedio
+        default: baseDays = 7;
+      }
+
+      // Ajustar si hay servicios personalizados (toman más tiempo)
+      const hasCustomServices = order.items.some(i => i.type === 'service'); 
+      if (hasCustomServices) {
+        baseDays += 5;
+      }
+
+      const estimatedDelivery = new Date();
+      estimatedDelivery.setDate(estimatedDelivery.getDate() + baseDays);
+
+      // Saltar fines de semana (simple)
+      const day = estimatedDelivery.getDay();
+      if (day === 0) estimatedDelivery.setDate(estimatedDelivery.getDate() + 1); // Domingo -> Lunes
+      if (day === 6) estimatedDelivery.setDate(estimatedDelivery.getDate() + 2); // Sábado -> Lunes
+
+      return estimatedDelivery;
+  },
+
+  // Calculate and Update Estimated Delivery Date
+  async updateEstimatedDeliveryDate(id: string, date: Date): Promise<void> {
+    if (!db) return;
+    
+    try {
+      const orderRef = doc(db, COLLECTION_NAME, id);
+      await updateDoc(orderRef, {
+        estimatedDeliveryDate: date,
+        updatedAt: new Date()
+      });
+      ordersCache = null;
+    } catch (error) {
+      console.error('Error updating estimated delivery date:', error);
       throw error;
     }
   },

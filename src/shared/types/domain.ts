@@ -258,6 +258,10 @@ export interface Order {
   createdAt: Date;
   updatedAt: Date;
   
+  // Contact
+  customerPhone?: string;
+  notes?: string; // User notes
+
   // Admin Notes
   adminNotes?: string;
 }

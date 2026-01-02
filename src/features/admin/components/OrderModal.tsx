@@ -3,28 +3,32 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { X, Check, Clock, Truck, Eye } from '@/lib/icons';
-import { Order, OrderStatus } from '@/shared/types/order';
+import { Order, OrderStatus } from '@/shared/types/domain';
 
 interface OrderModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (orderId: string, status: OrderStatus) => void;
+  onSave: (orderId: string, status: OrderStatus) => Promise<void> | void;
   order: Order | null;
 }
 
 const getStatusLabel = (status: OrderStatus) => {
   switch (status) {
-    case 'pending': return 'Pendiente';
-    case 'processing': return 'Procesando';
+    case 'quote_requested': return 'Cotización';
+    case 'pending_payment': return 'Pendiente de Pago';
+    case 'paid': return 'Pagado';
+    case 'processing': return 'En Proceso';
+    case 'ready': return 'Listo';
     case 'shipped': return 'Enviado';
-    case 'delivered': return 'Entregado';
+    case 'completed': return 'Completado';
     case 'cancelled': return 'Cancelado';
+    case 'refunded': return 'Reembolsado';
     default: return status;
   }
 };
 
 export default function OrderModal({ isOpen, onClose, onSave, order }: OrderModalProps) {
-  const [status, setStatus] = useState<OrderStatus>('pending');
+  const [status, setStatus] = useState<OrderStatus>('quote_requested');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -37,6 +41,8 @@ export default function OrderModal({ isOpen, onClose, onSave, order }: OrderModa
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (status === order.status) return;
+    
     setIsSubmitting(true);
     try {
       await onSave(order.id, status);
@@ -48,11 +54,17 @@ export default function OrderModal({ isOpen, onClose, onSave, order }: OrderModa
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString('es-PE', {
+  const formatDate = (date: Date | string) => {
+    const d = typeof date === 'string' ? new Date(date) : date;
+    return d.toLocaleString('es-PE', {
       dateStyle: 'medium',
       timeStyle: 'short'
     });
+  };
+
+  const formatAddress = (addr?: { street: string; city: string; state: string; zip: string; country: string; reference?: string }) => {
+    if (!addr) return 'No especificada';
+    return `${addr.street}, ${addr.city}, ${addr.state} ${addr.zip}, ${addr.country}${addr.reference ? ` (Ref: ${addr.reference})` : ''}`;
   };
 
   return (
@@ -65,10 +77,10 @@ export default function OrderModal({ isOpen, onClose, onSave, order }: OrderModa
         <div className="flex items-center justify-between p-6 border-b border-neutral-200 dark:border-neutral-700">
           <div>
             <h2 className="text-xl font-bold text-neutral-900 dark:text-white flex items-center gap-2">
-              Pedido #{order.id}
+              Pedido #{order.id.substring(0, 8).toUpperCase()}
             </h2>
             <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
-              Realizado el {formatDate(order.date)}
+              Realizado el {formatDate(order.createdAt)}
             </p>
           </div>
           <button 
@@ -91,11 +103,15 @@ export default function OrderModal({ isOpen, onClose, onSave, order }: OrderModa
                 onChange={(e) => setStatus(e.target.value as OrderStatus)}
                 className="flex-1 min-w-[200px] px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-neutral-800 dark:text-white"
               >
-                <option value="pending">Pendiente</option>
-                <option value="processing">Procesando</option>
+                <option value="quote_requested">Cotización</option>
+                <option value="pending_payment">Pendiente de Pago</option>
+                <option value="paid">Pagado</option>
+                <option value="processing">En Proceso</option>
+                <option value="ready">Listo</option>
                 <option value="shipped">Enviado</option>
-                <option value="delivered">Entregado</option>
+                <option value="completed">Completado</option>
                 <option value="cancelled">Cancelado</option>
+                <option value="refunded">Reembolsado</option>
               </select>
               <div className="text-sm text-neutral-500">
                 Cambiar el estado notificará al cliente (simulado)
@@ -110,24 +126,22 @@ export default function OrderModal({ isOpen, onClose, onSave, order }: OrderModa
               <div className="space-y-3 text-sm">
                 <div className="flex items-start gap-3">
                   <div className="w-24 text-neutral-500 dark:text-neutral-400">Nombre:</div>
-                  <div className="font-medium text-neutral-900 dark:text-white">{order.customer.name}</div>
+                  <div className="font-medium text-neutral-900 dark:text-white">{order.userName}</div>
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="w-24 text-neutral-500 dark:text-neutral-400">Email:</div>
-                  <div className="text-neutral-900 dark:text-white">{order.customer.email}</div>
+                  <div className="text-neutral-900 dark:text-white">{order.userEmail}</div>
                 </div>
-                {order.customer.phone && (
+                {order.customerPhone && (
                   <div className="flex items-start gap-3">
                     <div className="w-24 text-neutral-500 dark:text-neutral-400">Teléfono:</div>
-                    <div className="text-neutral-900 dark:text-white">{order.customer.phone}</div>
+                    <div className="text-neutral-900 dark:text-white">{order.customerPhone}</div>
                   </div>
                 )}
-                {order.customer.address && (
-                  <div className="flex items-start gap-3">
-                    <div className="w-24 text-neutral-500 dark:text-neutral-400">Dirección:</div>
-                    <div className="text-neutral-900 dark:text-white">{order.customer.address}</div>
-                  </div>
-                )}
+                <div className="flex items-start gap-3">
+                  <div className="w-24 text-neutral-500 dark:text-neutral-400">Dirección:</div>
+                  <div className="text-neutral-900 dark:text-white">{formatAddress(order.shippingAddress)}</div>
+                </div>
               </div>
             </section>
 
@@ -141,11 +155,16 @@ export default function OrderModal({ isOpen, onClose, onSave, order }: OrderModa
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="w-24 text-neutral-500 dark:text-neutral-400">Envío:</div>
-                  <div className="text-neutral-900 dark:text-white">Estándar</div>
+                  <div className="text-neutral-900 dark:text-white">{order.shippingMethod === 'pickup' ? 'Recojo en Tienda' : 'Envío a Domicilio'}</div>
                 </div>
                 {order.notes && (
                   <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200 rounded-lg text-xs">
                     <strong>Nota del cliente:</strong> {order.notes}
+                  </div>
+                )}
+                {order.adminNotes && (
+                  <div className="mt-2 p-3 bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 rounded-lg text-xs">
+                    <strong>Nota Admin:</strong> {order.adminNotes}
                   </div>
                 )}
               </div>
@@ -166,16 +185,16 @@ export default function OrderModal({ isOpen, onClose, onSave, order }: OrderModa
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-neutral-200 dark:divide-neutral-700">
-                  {order.items.map((item) => (
-                    <tr key={item.id} className="bg-white dark:bg-neutral-800">
+                  {order.items.map((item, idx) => (
+                    <tr key={item.id || idx} className="bg-white dark:bg-neutral-800">
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
                           {item.image && (
                             <div className="w-10 h-10 rounded bg-neutral-100 dark:bg-neutral-700 overflow-hidden flex-shrink-0">
-                              <img src={item.image} alt={item.productName} className="w-full h-full object-cover" />
+                              <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                             </div>
                           )}
-                          <span className="font-medium text-neutral-900 dark:text-white">{item.productName}</span>
+                          <span className="font-medium text-neutral-900 dark:text-white">{item.name}</span>
                         </div>
                       </td>
                       <td className="px-4 py-3 text-center text-neutral-600 dark:text-neutral-400">{item.quantity}</td>
@@ -195,7 +214,7 @@ export default function OrderModal({ isOpen, onClose, onSave, order }: OrderModa
                   </tr>
                   <tr>
                     <td colSpan={3} className="px-4 py-2 text-right text-neutral-600 dark:text-neutral-400">Envío:</td>
-                    <td className="px-4 py-2 text-right font-medium text-neutral-900 dark:text-white">S/ {order.shipping.toFixed(2)}</td>
+                    <td className="px-4 py-2 text-right font-medium text-neutral-900 dark:text-white">S/ {order.shippingCost.toFixed(2)}</td>
                   </tr>
                   <tr className="text-lg">
                     <td colSpan={3} className="px-4 py-3 text-right font-bold text-neutral-900 dark:text-white">Total:</td>

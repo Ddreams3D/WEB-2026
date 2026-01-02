@@ -146,11 +146,14 @@ export interface ProductTab {
   whatsappMessage?: string;
 }
 
+export type ProductImageViewType = 'frontal' | 'lateral' | 'posterior' | 'superior' | 'inferior' | 'detalle' | 'en_uso' | 'empaque' | 'otro';
+
 export interface ProductImage {
   id: string;
   productId: string;
   url: string;
   alt: string;
+  viewType?: ProductImageViewType;
   width?: number;
   height?: number;
   isPrimary: boolean;
@@ -227,70 +230,9 @@ export interface Cart {
   updatedAt: Date;
 }
 
-// Órdenes y pedidos
-export interface Order {
-  id: string;
-  orderNumber: string;
-  userId: string;
-  user?: User;
-  items: OrderItem[];
-  status: OrderStatus;
-  paymentStatus: PaymentStatus;
-  shippingAddress: Address;
-  billingAddress?: Address;
-  subtotal: number;
-  tax: number;
-  shipping: number;
-  discount: number;
-  total: number;
-  currency: string;
-  paymentMethod?: string;
-  trackingNumber?: string;
-  notes?: string;
-  estimatedDelivery?: Date;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface OrderItem {
-  id: string;
-  orderId: string;
-  productId: string;
-  product: Product;
-  quantity: number;
-  unitPrice: number;
-  totalPrice: number;
-  customizations?: CartItemCustomization[];
-  status: OrderItemStatus;
-  notes?: string;
-}
-
-export type OrderStatus = 
-  | 'pending'
-  | 'confirmed'
-  | 'processing'
-  | 'printing'
-  | 'post_processing'
-  | 'quality_check'
-  | 'packaging'
-  | 'shipped'
-  | 'delivered'
-  | 'cancelled'
-  | 'refunded';
-
-export type PaymentStatus = 
-  | 'pending'
-  | 'processing'
-  | 'completed'
-  | 'failed'
-  | 'cancelled'
-  | 'refunded';
-
-export type OrderItemStatus = 
-  | 'pending'
-  | 'printing'
-  | 'completed'
-  | 'cancelled';
+// Órdenes y pedidos - MOVED TO @/shared/types/domain.ts
+// The following legacy types have been removed to enforce domain consistency.
+// Please use Order, OrderItem, OrderStatus from '@/shared/types/domain'
 
 export interface Address {
   id?: string;

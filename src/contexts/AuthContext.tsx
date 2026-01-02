@@ -26,8 +26,23 @@ interface User {
   // Campos extendidos de perfil
   name?: string;
   phone?: string;
-  address?: string;
+  address?: string; // Dirección principal (legacy)
+  addresses?: Address[]; // Lista de direcciones
+  favorites?: string[]; // Lista de IDs de productos favoritos
   birthDate?: string;
+}
+
+export interface Address {
+  id: string;
+  label: string; // "Casa", "Trabajo", etc.
+  recipientName: string;
+  street: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+  phone: string;
+  isDefault: boolean;
 }
 
 interface AuthContextType {

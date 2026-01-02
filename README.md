@@ -32,7 +32,22 @@ npm run dev
 - `npm run build` - Construir para producción
 - `npm run start` - Servidor de producción
 - `npm run lint` - Linter de código
-- `npm run test` - Ejecutar pruebas
+- `npm run test` - Ejecutar pruebas unitarias (Jest)
+- `npm run test:e2e` - Ejecutar pruebas End-to-End (Playwright)
+
+## Testing y Calidad
+
+### Pruebas E2E (Playwright)
+Ejecuta las pruebas de flujos críticos de usuario (Navegación, Carrito, Contacto):
+```bash
+npm run test:e2e
+```
+
+### System Diagnostic Harness (Interno)
+Herramienta visual para diagnóstico rápido, health checks y pruebas de estrés.
+- **URL:** [/dev/harness](http://localhost:3000/dev/harness)
+- **Uso:** Verificar estado de rutas, simular flujos de carrito y probar lógica de órdenes bajo estrés.
+- **⚠️ Nota de Seguridad:** Esta ruta es **exclusiva para desarrollo**. Debe estar protegida o deshabilitada en entornos de producción para evitar exponer herramientas de diagnóstico públicas.
 
 ## Estructura del Proyecto
 

@@ -314,7 +314,7 @@ const Navbar: React.FC = () => {
                   }}
                   variant="ghost"
                   className={cn(
-                    "flex items-center space-x-2 px-3 py-2 rounded-lg h-auto hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
+                    "flex items-center space-x-2 px-3 py-2 rounded-lg h-auto hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 user-menu-button",
                     !isNavbarSolid
                       ? 'text-white hover:bg-white/20 focus:ring-offset-transparent'
                       : 'text-foreground hover:bg-muted focus:ring-offset-background'

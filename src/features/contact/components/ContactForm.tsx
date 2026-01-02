@@ -45,69 +45,42 @@ export default function ContactForm() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [touched, setTouched] = useState<TouchedFields>({});
 
-  const validateField = (name: keyof FormData, value: string) => {
-    const newErrors = { ...errors };
-    let isValid = true;
-
+  const getValidationError = (name: keyof FormData, value: string): string | undefined => {
     switch (name) {
       case 'name':
-        if (!value.trim()) {
-          newErrors.name = 'El nombre es requerido';
-          isValid = false;
-        } else if (value.trim().length < 2) {
-          newErrors.name = 'El nombre debe tener al menos 2 caracteres';
-          isValid = false;
-        } else {
-          delete newErrors.name;
-        }
+        if (!value.trim()) return 'El nombre es requerido';
+        if (value.trim().length < 2) return 'El nombre debe tener al menos 2 caracteres';
         break;
       case 'email':
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!value.trim()) {
-          newErrors.email = 'El email es requerido';
-          isValid = false;
-        } else if (!emailRegex.test(value)) {
-          newErrors.email = 'Ingresa un email válido';
-          isValid = false;
-        } else {
-          delete newErrors.email;
-        }
+        if (!value.trim()) return 'El email es requerido';
+        if (!emailRegex.test(value)) return 'Ingresa un email válido';
         break;
       case 'phone':
         const phoneRegex = /^[+]?[0-9\s\-()]{9,15}$/;
-        if (value && !phoneRegex.test(value)) {
-          newErrors.phone = 'Ingresa un teléfono válido';
-          isValid = false;
-        } else {
-          delete newErrors.phone;
-        }
+        if (value && !phoneRegex.test(value)) return 'Ingresa un teléfono válido';
         break;
       case 'subject':
-        if (!value) {
-          newErrors.subject = 'Selecciona un asunto';
-          isValid = false;
-        } else {
-          delete newErrors.subject;
-        }
+        if (!value) return 'Selecciona un asunto';
         break;
       case 'message':
-        if (!value.trim()) {
-          newErrors.message = 'El mensaje es requerido';
-          isValid = false;
-        } else if (value.trim().length < 10) {
-          newErrors.message = 'El mensaje debe tener al menos 10 caracteres';
-          isValid = false;
-        } else if (value.length > 500) {
-          newErrors.message = 'El mensaje no puede exceder 500 caracteres';
-          isValid = false;
-        } else {
-          delete newErrors.message;
-        }
+        if (!value.trim()) return 'El mensaje es requerido';
+        if (value.trim().length < 10) return 'El mensaje debe tener al menos 10 caracteres';
+        if (value.length > 500) return 'El mensaje no puede exceder 500 caracteres';
         break;
     }
+    return undefined;
+  };
 
-    setErrors(newErrors);
-    return isValid;
+  const validateField = (name: keyof FormData, value: string) => {
+    const error = getValidationError(name, value);
+    setErrors(prev => {
+        const next = { ...prev };
+        if (error) next[name] = error;
+        else delete next[name];
+        return next;
+    });
+    return !error;
   };
 
   const handleChange = (
@@ -134,7 +107,6 @@ export default function ContactForm() {
     setIsSubmitting(true);
     setSubmitMessage('');
 
-    // Validar todos los campos
     const fieldsToValidate: (keyof FormData)[] = [
       'name',
       'email',
@@ -142,13 +114,22 @@ export default function ContactForm() {
       'subject',
       'message',
     ];
+    
+    const nextErrors: FormErrors = {};
+    const nextTouched: TouchedFields = {};
     let isFormValid = true;
 
     fieldsToValidate.forEach((field) => {
-      const isValid = validateField(field, formData[field]);
-      if (!isValid) isFormValid = false;
-      setTouched((prev) => ({ ...prev, [field]: true }));
+      const error = getValidationError(field, formData[field]);
+      if (error) {
+          nextErrors[field] = error;
+          isFormValid = false;
+      }
+      nextTouched[field] = true;
     });
+
+    setErrors(nextErrors);
+    setTouched(prev => ({ ...prev, ...nextTouched }));
 
     if (!isFormValid) {
         setIsSubmitting(false);

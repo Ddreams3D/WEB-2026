@@ -6,12 +6,16 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/ToastManager';
 import { ProductImage } from '@/shared/components/ui/DefaultImage';
 import ProductModal from './ProductModal';
+import ConfirmationModal from './ConfirmationModal';
+import ConnectionStatus from './ConnectionStatus';
 import { Product } from '@/shared/types';
 import { Service, StoreProduct } from '@/shared/types/domain';
 import { ProductService } from '@/services/product.service';
 import { ServiceService } from '@/services/service.service';
+import { LocalStorageService } from '@/services/local-storage.service';
 import { isFirebaseConfigured } from '@/lib/firebase';
 import { generateSlug } from '@/lib/utils';
+import { revalidateCatalog } from '@/app/actions/revalidate';
 
 interface ProductManagerProps {
   mode?: 'product' | 'service' | 'all';
@@ -23,6 +27,7 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProduct, setSelectedProduct] = useState<Product | Service | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
   const { showSuccess, showError } = useToast();
 
   const loadProducts = useCallback(async () => {
@@ -32,12 +37,14 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
       let allItems: (Product | Service)[] = [];
 
       if (mode === 'all' || mode === 'product') {
-        const fetchedProducts = await ProductService.getAllProducts();
+        // Force refresh to ensure we get the latest data from Firestore
+        const fetchedProducts = await ProductService.getAllProducts(true);
         allItems = [...allItems, ...fetchedProducts];
       }
       
       if (mode === 'all' || mode === 'service') {
-        const fetchedServices = await ServiceService.getAllServices();
+        // Force refresh to ensure we get the latest data from Firestore
+        const fetchedServices = await ServiceService.getAllServices(true);
         allItems = [...allItems, ...fetchedServices];
       }
       
@@ -79,6 +86,10 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
       
       const newProducts = products.filter(product => product.id !== id);
       setProducts(newProducts);
+      
+      // Revalidate cache for public site
+      await revalidateCatalog();
+      
       showSuccess('Eliminado', 'Elemento eliminado correctamente');
     } catch (error) {
       console.error('Error deleting item:', error);
@@ -90,12 +101,43 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
     try {
       if (selectedProduct) {
         // UPDATE
+        let success = false;
         // @ts-ignore - kind check is safe here
         if (selectedProduct.kind === 'service' || formData.kind === 'service') {
-           await ServiceService.updateService(selectedProduct.id, formData as unknown as Partial<Service>);
+           const result = await ServiceService.updateService(selectedProduct.id, formData as unknown as Partial<Service>);
+           success = !!result;
         } else {
-           await ProductService.updateProduct(selectedProduct.id, formData as unknown as Partial<StoreProduct>);
+           const result = await ProductService.updateProduct(selectedProduct.id, formData as unknown as Partial<StoreProduct>);
+           success = !!result;
         }
+        
+        if (!success) {
+           throw new Error('Error al actualizar: Producto no encontrado o error en la base de datos.');
+        }
+
+        // VERIFICACIÓN INMEDIATA (Self-Correction)
+        console.log('[ProductManager] Verificando actualización...');
+        let verifiedProduct;
+        if (selectedProduct.kind === 'service') {
+            verifiedProduct = await ServiceService.getServiceById(selectedProduct.id);
+        } else {
+            verifiedProduct = await ProductService.getProductById(selectedProduct.id);
+        }
+        
+        // Comparar imágenes
+        const inputImages = formData.images || [];
+        const savedImages = verifiedProduct?.images || [];
+        
+        if (inputImages.length !== savedImages.length) {
+            console.error('[ProductManager] ¡ALERTA DE CONSISTENCIA! Las imágenes guardadas no coinciden con las enviadas.', {
+                enviadas: inputImages.length,
+                guardadas: savedImages.length
+            });
+            showError('Advertencia', 'El producto se guardó pero hay una discrepancia en las imágenes. Por favor verifica.');
+        } else {
+            console.log('[ProductManager] Verificación exitosa: Datos consistentes.');
+        }
+
         showSuccess('Actualizado', 'Elemento actualizado correctamente');
       } else {
         // CREATE
@@ -121,12 +163,46 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
         showSuccess('Creado', 'Elemento creado correctamente');
       }
       
+      // Revalidate cache for public site
+      await revalidateCatalog();
+      
       await loadProducts();
       setIsModalOpen(false);
       setSelectedProduct(null);
     } catch (error) {
       console.error('Error saving item:', error);
       showError('Error', 'Error al guardar el elemento');
+    }
+  };
+
+  const handleSyncCatalogClick = () => {
+    setIsSyncModalOpen(true);
+  };
+
+  const executeSyncCatalog = async () => {
+    try {
+        setLoading(true);
+        
+        // 1. Limpiar caché local
+        LocalStorageService.clearAll();
+
+        // 2. Forzar siembra en DB (Sobrescribe Firestore con JSON maestro)
+        await ProductService.seedProducts(true);
+        await ServiceService.seedServices(true);
+        
+        // 3. Revalidar caché de Next.js
+        await revalidateCatalog();
+
+        // 4. Recargar datos frescos
+        await loadProducts();
+        
+        showSuccess('Sincronización Completa', 'El catálogo se ha alineado correctamente con el sistema base.');
+        setIsSyncModalOpen(false);
+    } catch (error) {
+        console.error('Error syncing catalog:', error);
+        showError('Error', 'Falló la sincronización. Revisa la consola.');
+    } finally {
+        setLoading(false);
     }
   };
 
@@ -137,7 +213,13 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between gap-4">
+      <div className="flex flex-col gap-4">
+        <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">Gestión de Catálogo</h1>
+            <ConnectionStatus />
+        </div>
+        
+        <div className="flex flex-col sm:flex-row justify-between gap-4">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
           <input
@@ -149,6 +231,10 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
           />
         </div>
         <div className="flex gap-2">
+           <Button onClick={handleSyncCatalogClick} variant="outline" className="gap-2 text-amber-600 border-amber-200 hover:bg-amber-50">
+            <Package className="w-4 h-4" />
+            Sincronizar Catálogo
+          </Button>
           <Button variant="outline" className="gap-2">
             <Filter className="w-4 h-4" />
             Filtros
@@ -158,6 +244,7 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
             Nuevo {mode === 'service' ? 'Servicio' : mode === 'product' ? 'Producto' : 'Elemento'}
           </Button>
         </div>
+      </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -250,6 +337,17 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
         onSave={handleSaveProduct}
         product={selectedProduct}
         forcedType={mode === 'service' ? 'service' : mode === 'product' ? 'product' : undefined}
+      />
+
+      <ConfirmationModal
+        isOpen={isSyncModalOpen}
+        onClose={() => setIsSyncModalOpen(false)}
+        onConfirm={executeSyncCatalog}
+        title="¿Sincronizar Catálogo Completo?"
+        message={`Esta acción es destructiva y necesaria para corregir errores de base de datos.\n\n1. Borrará cualquier cambio local no guardado.\n2. Sobrescribirá la Base de Datos con los productos originales.\n3. Corregirá IDs e inconsistencias.\n\n¿Estás seguro de continuar?`}
+        confirmText="Sí, Sincronizar Todo"
+        variant="danger"
+        isLoading={loading}
       />
     </div>
   );

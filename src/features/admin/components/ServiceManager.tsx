@@ -8,6 +8,7 @@ import { ProductImage } from '@/shared/components/ui/DefaultImage';
 import ServiceModal from './ServiceModal';
 import { Service } from '@/shared/types/domain';
 import { ServiceService } from '@/services/service.service';
+import ConnectionStatus from './ConnectionStatus';
 
 export default function ServiceManager() {
   const [services, setServices] = useState<Service[]>([]);
@@ -101,6 +102,10 @@ export default function ServiceManager() {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+           <h2 className="text-xl font-bold">Servicios</h2>
+           <ConnectionStatus />
+        </div>
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
           <input
