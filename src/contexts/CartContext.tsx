@@ -100,11 +100,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(true);
       setError(null);
 
-      // Guard clause: Servicios no pueden ir al carrito
-      if ((product as any).kind === 'service') {
-        throw new Error('Los servicios requieren cotización y no se pueden agregar al carrito directamente.');
-      }
-
       // Buscar item existente considerando personalizaciones
       const existingItemIndex = items.findIndex(item => 
         item.productId === product.id && 

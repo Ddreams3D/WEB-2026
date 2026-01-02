@@ -11,9 +11,9 @@ import { FileText, ChevronDown } from 'lucide-react';
 
 const heroContent = {
   title: "Servicios de Modelado e Impresión 3D",
-  subtitle: "Fabricación precisa, pensada para tu proyecto.",
-  seoTitle: "Servicios de Impresión 3D y Prototipado Profesional | Ddreams 3D",
-  description: "Desde la conceptualización hasta la fabricación final. Aplicamos el mismo cuidado creativo del diseño en cada pieza, logrando precisión y acabados de alta calidad.",
+  subtitle: "Cotiza, ordena y sigue tus pedidos en línea.",
+  seoTitle: "Servicios de Impresión 3D y Gestión de Pedidos | Ddreams 3D",
+  description: "Desde la conceptualización hasta la fabricación final. Gestiona tus proyectos de impresión 3D desde nuestra nueva plataforma unificada de pedidos y seguimiento.",
   image: heroImages.services // Using the specific services hero image
 };
 

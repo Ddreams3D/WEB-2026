@@ -226,10 +226,9 @@ export default function CartPageClient() {
                           {/* Subtotal del producto */}
                           <div className="text-right flex-1 sm:flex-none">
                             <p className="text-lg font-semibold text-gray-900 dark:text-white">
-                              S/{' '}
-                              {item.product.price
-                                ? (item.product.price * item.quantity).toFixed(2)
-                                : '0.00'}
+                              {item.product.price > 0 
+                                ? `S/ ${(item.product.price * item.quantity).toFixed(2)}` 
+                                : 'A cotizar'}
                             </p>
                           </div>
 

@@ -97,7 +97,7 @@ export function ServiceCard({
         <div className="flex items-end justify-between">
           <div className="flex flex-col">
             <span className="text-sm font-bold text-foreground whitespace-pre-line">
-              {service.customPriceDisplay || 'Cotización personalizada'}
+              {service.customPriceDisplay || (service.price && service.price > 0 ? `Desde S/ ${service.price.toFixed(2)}` : 'Cotización personalizada')}
             </span>
           </div>
         </div>
@@ -179,6 +179,14 @@ export function ServiceCard({
             <Link
               href={customAction.href}
               className="flex items-center justify-center space-x-2"
+              onClick={() => {
+                trackEvent(AnalyticsEvents.QUOTE_SERVICE_CLICK, {
+                  location: AnalyticsLocations.SERVICE_CARD,
+                  label: customAction.label,
+                  href: customAction.href,
+                  serviceId: service.id
+                });
+              }}
             >
               {customAction.icon}
               <span>{customAction.label}</span>

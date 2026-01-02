@@ -21,7 +21,7 @@ interface DefaultImageProps {
   style?: React.CSSProperties;
 }
 
-const DEFAULT_FALLBACK = 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?auto=format&fit=crop&q=80&w=400';
+const DEFAULT_FALLBACK = 'https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fimpresion-3d-arequipa-ddreams-v2.png?alt=media&token=b80e2ba9-93a7-4986-8c3b-97735aba96ad';
 
 export default function DefaultImage({
   src,
@@ -112,7 +112,7 @@ export function ProductImage({
       src={src}
       alt={alt}
       className={className}
-      fallbackSrc="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?auto=format&fit=crop&q=80&w=400"
+      fallbackSrc="https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fimpresion-3d-arequipa-ddreams-v2.png?alt=media&token=b80e2ba9-93a7-4986-8c3b-97735aba96ad"
       placeholderText="Producto sin imagen"
       {...props}
     />
@@ -131,7 +131,7 @@ export function UserAvatar({
       src={src}
       alt={alt}
       className={`rounded-full ${className}`}
-      fallbackSrc="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400"
+      fallbackSrc="https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fplaceholder-user.png?alt=media&token=placeholder-token"
       placeholderText="Usuario"
       {...props}
     />

@@ -1,244 +1,428 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
 import { 
-  Package as PackageIcon, 
-  Search as SearchIcon, 
-  Filter as FilterIcon, 
-  MoreVertical as MoreVerticalIcon,
-  Eye as EyeIcon,
-  Check as CheckIcon,
-  X as XIcon,
-  Clock as ClockIcon,
-  Truck as TruckIcon
+  Search as MagnifyingGlassIcon, 
+  Filter, 
+  Package, 
+  Truck, 
+  CheckCircle, 
+  Clock, 
+  AlertCircle, 
+  DollarSign, 
+  Eye, 
+  XCircle,
+  Calendar,
+  User as UserIcon
 } from '@/lib/icons';
-import { Button } from '@/components/ui';
-import { Order, OrderStatus } from '@/shared/types/order';
+import { cn } from '@/lib/utils';
 import { OrderService } from '@/services/order.service';
-import OrderModal from '@/features/admin/components/OrderModal';
-import { useToast } from '@/components/ui/ToastManager';
+import { Order, OrderStatus } from '@/shared/types/domain';
+import { Badge } from '@/components/ui/badge';
 
-const getStatusColor = (status: OrderStatus) => {
-  switch (status) {
-    case 'pending':
-      return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
-    case 'processing':
-      return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
-    case 'shipped':
-      return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400';
-    case 'delivered':
-      return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
-    case 'cancelled':
-      return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
-    default:
-      return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400';
-  }
-};
+// --- Components ---
 
-const getStatusLabel = (status: OrderStatus) => {
-  switch (status) {
-    case 'pending': return 'Pendiente';
-    case 'processing': return 'Procesando';
-    case 'shipped': return 'Enviado';
-    case 'delivered': return 'Entregado';
-    case 'cancelled': return 'Cancelado';
-    default: return status;
-  }
-};
+function OrderStatusBadge({ status }: { status: OrderStatus }) {
+  const styles = {
+    quote_requested: 'bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-400 border-pink-200 dark:border-pink-800',
+    pending_payment: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400 border-yellow-200 dark:border-yellow-800',
+    paid: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 border-blue-200 dark:border-blue-800',
+    processing: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400 border-purple-200 dark:border-purple-800',
+    ready: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800',
+    shipped: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400 border-orange-200 dark:border-orange-800',
+    completed: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border-green-200 dark:border-green-800',
+    cancelled: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 border-red-200 dark:border-red-800',
+    refunded: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400 border-gray-200 dark:border-gray-800',
+  };
+
+  const labels = {
+    quote_requested: 'Cotización',
+    pending_payment: 'Pendiente de Pago',
+    paid: 'Pagado',
+    processing: 'En Proceso',
+    ready: 'Listo',
+    shipped: 'Enviado',
+    completed: 'Completado',
+    cancelled: 'Cancelado',
+    refunded: 'Reembolsado'
+  };
+
+  const icons = {
+    pending_payment: Clock,
+    paid: DollarSign,
+    processing: Package,
+    ready: CheckCircle,
+    shipped: Truck,
+    completed: CheckCircle,
+    cancelled: XCircle,
+    refunded: AlertCircle
+  };
+
+  const Icon = icons[status] || AlertCircle;
+
+  return (
+    <span className={cn(
+      "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border",
+      styles[status] || styles.pending_payment
+    )}>
+      <Icon className="w-3 h-3 mr-1" />
+      {labels[status]}
+    </span>
+  );
+}
+
+function OrderDetailsModal({ order, isOpen, onClose, onUpdateStatus }: {
+  order: Order | null;
+  isOpen: boolean;
+  onClose: () => void;
+  onUpdateStatus: (id: string, status: OrderStatus) => Promise<void>;
+}) {
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [newStatus, setNewStatus] = useState<OrderStatus | ''>('');
+
+  useEffect(() => {
+    if (order) setNewStatus(order.status);
+  }, [order]);
+
+  if (!isOpen || !order) return null;
+
+  const handleStatusChange = async () => {
+    if (!newStatus || newStatus === order.status) return;
+    setIsUpdating(true);
+    try {
+      await onUpdateStatus(order.id, newStatus);
+      onClose();
+    } catch (error) {
+      alert('Error al actualizar estado');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('es-PE', {
+      style: 'currency',
+      currency: 'PEN',
+    }).format(amount);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+        <div className="fixed inset-0 transition-opacity bg-background/80 backdrop-blur-sm" onClick={onClose} />
+        
+        <div className="inline-block w-full max-w-2xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-card shadow-xl rounded-2xl border border-border">
+          
+          {/* Header */}
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <h3 className="text-xl font-bold text-foreground">
+                Pedido #{order.id.slice(0, 8)}
+              </h3>
+              <p className="text-sm text-muted-foreground flex items-center mt-1">
+                <Calendar className="w-4 h-4 mr-1" />
+                {order.createdAt.toLocaleDateString('es-PE', { 
+                  year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' 
+                })}
+              </p>
+            </div>
+            <Button variant="ghost" size="icon" onClick={onClose}>
+              <XCircle className="w-6 h-6" />
+            </Button>
+          </div>
+
+          {/* Customer Info */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 p-4 bg-muted/30 rounded-xl border border-border/50">
+            <div>
+              <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center">
+                <UserIcon className="w-4 h-4 mr-2" />
+                Cliente
+              </h4>
+              <p className="text-sm">{order.userName}</p>
+              <p className="text-sm text-muted-foreground">{order.userEmail}</p>
+            </div>
+            <div>
+              <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center">
+                <Truck className="w-4 h-4 mr-2" />
+                Envío ({order.shippingMethod === 'pickup' ? 'Recojo' : 'Delivery'})
+              </h4>
+              {order.shippingAddress ? (
+                <div className="text-sm">
+                  <p>{order.shippingAddress.street}</p>
+                  <p>{order.shippingAddress.city}, {order.shippingAddress.state}</p>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">Recojo en tienda</p>
+              )}
+            </div>
+          </div>
+
+          {/* Items */}
+          <div className="mb-6">
+            <h4 className="text-sm font-semibold text-foreground mb-3">Productos</h4>
+            <div className="border rounded-lg divide-y divide-border">
+              {order.items.map((item, idx) => (
+                <div key={idx} className="p-3 flex items-center justify-between">
+                  <div className="flex items-center">
+                    {item.image && (
+                      <img src={item.image} alt={item.name} className="w-10 h-10 rounded-md object-cover mr-3" />
+                    )}
+                    <div>
+                      <p className="text-sm font-medium">{item.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {item.type === 'service' ? 'Servicio Personalizado' : 'Producto'}
+                        {item.customizations && (
+                          <span className="ml-1 px-1 bg-primary/10 text-primary rounded text-[10px]">
+                            Personalizado
+                          </span>
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-medium">{formatCurrency(item.total)}</p>
+                    <p className="text-xs text-muted-foreground">{item.quantity} x {formatCurrency(item.price)}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-end mt-3">
+               <p className="text-lg font-bold">Total: {formatCurrency(order.total)}</p>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center justify-between pt-4 border-t border-border">
+             <div className="flex-1 mr-4">
+                <label className="block text-xs font-medium text-muted-foreground mb-1">
+                  Cambiar Estado
+                </label>
+                <select 
+                  value={newStatus} 
+                  onChange={(e) => setNewStatus(e.target.value as OrderStatus)}
+                  className="w-full px-3 py-2 border border-input rounded-lg text-sm bg-background"
+                >
+                  <option value="quote_requested">Cotización Solicitada</option>
+                  <option value="pending_payment">Pendiente de Pago</option>
+                  <option value="paid">Pagado</option>
+                  <option value="processing">En Proceso</option>
+                  <option value="ready">Listo</option>
+                  <option value="shipped">Enviado</option>
+                  <option value="completed">Completado</option>
+                  <option value="cancelled">Cancelado</option>
+                  <option value="refunded">Reembolsado</option>
+                </select>
+             </div>
+             <div className="flex items-end">
+                <Button 
+                  onClick={handleStatusChange} 
+                  disabled={isUpdating || newStatus === order.status}
+                  variant="gradient"
+                >
+                  {isUpdating ? 'Actualizando...' : 'Actualizar Estado'}
+                </Button>
+             </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// --- Main Page ---
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<OrderStatus | 'all'>('all');
-  
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  
-  const { showSuccess, showError } = useToast();
 
-  const loadOrders = async () => {
-    setLoading(true);
+  const fetchOrders = async () => {
+    setIsLoading(true);
     try {
-      const data = await OrderService.getAllOrders();
+      await OrderService.seedInitialOrders(); // Ensure seed data exists
+      const data = await OrderService.getAllOrders(true);
       setOrders(data);
     } catch (error) {
       console.error('Error loading orders:', error);
-      showError('Error', 'No se pudieron cargar los pedidos');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    loadOrders();
+    fetchOrders();
   }, []);
 
-  const handleViewOrder = (order: Order) => {
-    setSelectedOrder(order);
-    setIsModalOpen(true);
-  };
-
-  const handleSaveStatus = async (orderId: string, status: OrderStatus) => {
-    try {
-      await OrderService.updateOrderStatus(orderId, status);
-      await loadOrders();
-      showSuccess('Pedido actualizado', `El estado del pedido #${orderId} se ha actualizado a ${getStatusLabel(status)}`);
-      setIsModalOpen(false);
-    } catch (error) {
-      console.error('Error updating order:', error);
-      showError('Error', 'No se pudo actualizar el estado del pedido');
-    }
+  const handleUpdateStatus = async (id: string, status: OrderStatus) => {
+    await OrderService.updateOrderStatus(id, status, undefined, 'admin'); // TODO: Use real admin ID
+    await fetchOrders();
   };
 
   const filteredOrders = orders.filter(order => {
     const matchesSearch = 
       order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.customer.email.toLowerCase().includes(searchTerm.toLowerCase());
+      order.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.userEmail.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
 
     return matchesSearch && matchesStatus;
   });
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-PE', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('es-PE', {
+      style: 'currency',
+      currency: 'PEN',
+    }).format(amount);
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      {/* Header */}
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2 tracking-tight">
-            <PackageIcon className="w-8 h-8 text-primary" />
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">
             Gestión de Pedidos
           </h1>
           <p className="text-muted-foreground mt-1">
-            Administra y realiza seguimiento de los pedidos de la tienda
+            Administra y monitorea el flujo de ventas y servicios
           </p>
         </div>
-        <div className="flex items-center gap-2">
-           <Button onClick={() => loadOrders()} variant="outline" className="gap-2">
-             <ClockIcon className="w-4 h-4" /> Actualizar
-           </Button>
+        <Button onClick={() => fetchOrders()} variant="outline" className="flex items-center gap-2">
+           <Clock className="w-4 h-4" /> Actualizar
+        </Button>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-card p-4 rounded-xl border border-border shadow-sm">
+          <p className="text-xs text-muted-foreground uppercase font-bold">Total Ventas</p>
+          <p className="text-2xl font-bold mt-1 text-primary">
+            {formatCurrency(orders.reduce((acc, o) => o.status !== 'cancelled' ? acc + o.total : acc, 0))}
+          </p>
+        </div>
+        <div className="bg-card p-4 rounded-xl border border-border shadow-sm">
+           <p className="text-xs text-muted-foreground uppercase font-bold">Pendientes</p>
+           <p className="text-2xl font-bold mt-1 text-yellow-600">
+             {orders.filter(o => o.status === 'pending_payment').length}
+           </p>
+        </div>
+        <div className="bg-card p-4 rounded-xl border border-border shadow-sm">
+           <p className="text-xs text-muted-foreground uppercase font-bold">En Proceso</p>
+           <p className="text-2xl font-bold mt-1 text-purple-600">
+             {orders.filter(o => o.status === 'processing').length}
+           </p>
+        </div>
+        <div className="bg-card p-4 rounded-xl border border-border shadow-sm">
+           <p className="text-xs text-muted-foreground uppercase font-bold">Completados</p>
+           <p className="text-2xl font-bold mt-1 text-green-600">
+             {orders.filter(o => o.status === 'completed').length}
+           </p>
         </div>
       </div>
 
-      {/* Filtros y Búsqueda */}
-      <div className="bg-card p-4 rounded-xl shadow-sm border border-border flex flex-col md:flex-row gap-4">
-        <div className="relative flex-1">
-          <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Buscar por ID, cliente o email..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-input rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background text-foreground transition-all duration-200 outline-none"
-          />
-        </div>
-        <div className="flex items-center gap-2">
-          <FilterIcon className="w-5 h-5 text-muted-foreground" />
-          <select
+      {/* Filters */}
+      <div className="bg-card rounded-xl shadow-sm border border-border p-4">
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex-1 relative">
+             <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+             <input 
+               type="text" 
+               placeholder="Buscar por ID, cliente o email..." 
+               value={searchTerm}
+               onChange={(e) => setSearchTerm(e.target.value)}
+               className="w-full pl-9 pr-4 py-2 border border-input rounded-lg text-sm bg-background"
+             />
+          </div>
+          <select 
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as OrderStatus | 'all')}
-            className="px-4 py-2 border border-input rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background text-foreground transition-all duration-200 outline-none cursor-pointer"
+            onChange={(e) => setStatusFilter(e.target.value as any)}
+            className="px-3 py-2 border border-input rounded-lg text-sm bg-background min-w-[150px]"
           >
             <option value="all">Todos los estados</option>
-            <option value="pending">Pendientes</option>
-            <option value="processing">Procesando</option>
+            <option value="quote_requested">Cotizaciones</option>
+            <option value="pending_payment">Pendiente de Pago</option>
+            <option value="paid">Pagado</option>
+            <option value="processing">En Proceso</option>
+            <option value="ready">Listo</option>
             <option value="shipped">Enviado</option>
-            <option value="delivered">Entregado</option>
+            <option value="completed">Completado</option>
             <option value="cancelled">Cancelado</option>
           </select>
         </div>
       </div>
 
-      {/* Lista de Pedidos */}
+      {/* Table */}
       <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="bg-muted/30 border-b border-border">
-                <th className="px-6 py-4 text-sm font-semibold text-foreground">ID Pedido</th>
-                <th className="px-6 py-4 text-sm font-semibold text-foreground">Cliente</th>
-                <th className="px-6 py-4 text-sm font-semibold text-foreground">Fecha</th>
-                <th className="px-6 py-4 text-sm font-semibold text-foreground">Estado</th>
-                <th className="px-6 py-4 text-sm font-semibold text-foreground">Total</th>
-                <th className="px-6 py-4 text-sm font-semibold text-foreground">Acciones</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {loading ? (
+        {isLoading ? (
+           <div className="p-12 text-center text-muted-foreground">Cargando pedidos...</div>
+        ) : filteredOrders.length === 0 ? (
+           <div className="p-12 text-center text-muted-foreground">No se encontraron pedidos.</div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-muted/50">
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">
-                    Cargando pedidos...
-                  </td>
+                  <th className="px-6 py-3 text-left font-medium text-muted-foreground uppercase">ID</th>
+                  <th className="px-6 py-3 text-left font-medium text-muted-foreground uppercase">Cliente</th>
+                  <th className="px-6 py-3 text-center font-medium text-muted-foreground uppercase">Items</th>
+                  <th className="px-6 py-3 text-right font-medium text-muted-foreground uppercase">Total</th>
+                  <th className="px-6 py-3 text-center font-medium text-muted-foreground uppercase">Estado</th>
+                  <th className="px-6 py-3 text-right font-medium text-muted-foreground uppercase">Fecha</th>
+                  <th className="px-6 py-3 text-center font-medium text-muted-foreground uppercase">Acción</th>
                 </tr>
-              ) : filteredOrders.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">
-                    No se encontraron pedidos
-                  </td>
-                </tr>
-              ) : (
-                filteredOrders.map((order) => (
-                  <tr key={order.id} className="hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => handleViewOrder(order)}>
-                    <td className="px-6 py-4">
-                      <span className="font-medium text-primary">
-                        {order.id}
-                      </span>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {filteredOrders.map((order) => (
+                  <tr key={order.id} className="hover:bg-muted/50 transition-colors">
+                    <td className="px-6 py-4 font-mono text-xs text-muted-foreground">
+                      #{order.id.slice(0, 6)}...
                     </td>
                     <td className="px-6 py-4">
-                      <div>
-                        <p className="font-medium text-foreground">{order.customer.name}</p>
-                        <p className="text-sm text-muted-foreground">{order.customer.email}</p>
-                      </div>
+                      <div className="font-medium text-foreground">{order.userName}</div>
+                      <div className="text-xs text-muted-foreground">{order.userEmail}</div>
                     </td>
-                    <td className="px-6 py-4 text-muted-foreground">
-                      {formatDate(order.date)}
+                    <td className="px-6 py-4 text-center">
+                      <Badge variant="outline" className="font-normal">
+                        {order.items.reduce((acc, i) => acc + i.quantity, 0)} items
+                      </Badge>
                     </td>
-                    <td className="px-6 py-4">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium flex items-center w-fit gap-1.5 ${getStatusColor(order.status)}`}>
-                        {order.status === 'pending' && <ClockIcon className="w-3 h-3" />}
-                        {order.status === 'processing' && <ClockIcon className="w-3 h-3" />}
-                        {order.status === 'shipped' && <TruckIcon className="w-3 h-3" />}
-                        {order.status === 'delivered' && <CheckIcon className="w-3 h-3" />}
-                        {order.status === 'cancelled' && <XIcon className="w-3 h-3" />}
-                        {getStatusLabel(order.status)}
-                      </span>
+                    <td className="px-6 py-4 text-right font-medium text-foreground">
+                      {formatCurrency(order.total)}
                     </td>
-                    <td className="px-6 py-4 font-medium text-foreground">
-                      S/ {order.total.toFixed(2)}
+                    <td className="px-6 py-4 text-center">
+                      <OrderStatusBadge status={order.status} />
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <button 
-                          onClick={(e) => { e.stopPropagation(); handleViewOrder(order); }}
-                          className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors" 
-                          title="Ver detalles"
-                        >
-                          <EyeIcon className="w-5 h-5" />
-                        </button>
-                      </div>
+                    <td className="px-6 py-4 text-right text-muted-foreground text-xs">
+                      {order.createdAt.toLocaleDateString('es-PE')}
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => setSelectedOrder(order)}
+                        className="h-8 w-8 p-0"
+                      >
+                        <Eye className="w-4 h-4 text-primary" />
+                      </Button>
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
-      <OrderModal 
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSave={handleSaveStatus}
-        order={selectedOrder}
+      <OrderDetailsModal 
+        order={selectedOrder} 
+        isOpen={!!selectedOrder} 
+        onClose={() => setSelectedOrder(null)} 
+        onUpdateStatus={handleUpdateStatus}
       />
     </div>
   );

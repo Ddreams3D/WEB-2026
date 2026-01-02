@@ -48,7 +48,7 @@ export default function PrivacyPolicy() {
       <PageHeader
         title="Política de Privacidad"
         description="Conoce cómo protegemos y manejamos tu información"
-        image="https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=1920"
+        image="https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fservicios-diseno-modelado-impresion-3d-ddreams-3d.png?alt=media&token=bd65bb84-b55b-42d7-a3ab-2fb622ce5d1f"
       />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">

@@ -30,7 +30,7 @@ export function LocalBusinessJsonLd() {
     url: appUrl,
     logo: `${appUrl}/logo/isotipo_DD_negro_V2.svg`,
     image: [
-      `${appUrl}/images/impresion-3d-arequipa-ddreams-v2.png`,
+      'https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fimpresion-3d-arequipa-ddreams-v2.png?alt=media&token=b80e2ba9-93a7-4986-8c3b-97735aba96ad',
       `${appUrl}/logo-ddreams-3d.jpg`
     ],
     description: 'Servicios profesionales de impresión 3D, modelado, prototipado y diseño en Arequipa. Fabricación digital personalizada.',

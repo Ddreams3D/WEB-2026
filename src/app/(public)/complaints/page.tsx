@@ -11,14 +11,14 @@ export default function Complaints() {
       <PageHeader
         title="Libro de Reclamaciones"
         description="Registra aquí tus quejas o reclamos"
-        image="https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=1920"
+        image="https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fservicios-diseno-modelado-impresion-3d-ddreams-3d.png?alt=media&token=bd65bb84-b55b-42d7-a3ab-2fb622ce5d1f"
       />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="bg-card rounded-lg shadow-soft p-8">
           <div className="text-center mb-8">
             <Image 
-              src="/images/logo-libro-reclamaciones.svg"
+              src="https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Flogo-libro-reclamaciones.svg?alt=media&token=783fb578-8069-4f28-9933-d2866929bfbf"
               alt="Libro de Reclamaciones"
               width={96}
               height={96}

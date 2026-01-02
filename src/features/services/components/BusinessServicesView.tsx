@@ -58,13 +58,13 @@ const BusinessServicesView = () => {
         <section>
           <div className="text-center max-w-3xl mx-auto mb-12">
             <span className="text-muted-foreground font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-4 block">
-              Catálogo Completo
+              Catálogo Unificado
             </span>
             <h2 className="text-3xl font-bold text-foreground mb-6">
               Nuestros Servicios
             </h2>
             <p className="text-lg text-muted-foreground">
-              Soluciones integrales de manufactura aditiva, diseño y prototipado para particulares y empresas.
+              Soluciones integrales de manufactura aditiva y diseño. Añade servicios a tu pedido y cotiza en línea al instante.
             </p>
           </div>
 

@@ -30,6 +30,7 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
   const fromSource = searchParams.get('from');
 
   const [product, setProduct] = useState<Product | Service>(initialProduct);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   // Sync with localStorage for Admin Panel updates
   useEffect(() => {
@@ -75,8 +76,8 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
                       createdAt: img.createdAt ? new Date(img.createdAt) : undefined,
                       updatedAt: img.updatedAt ? new Date(img.updatedAt) : undefined
                     })),
-                    // Ensure new fields like tabs are preserved if missing in storage
-                    tabs: found.tabs || initialProduct.tabs,
+                    // Ensure new fields like tabs are preserved if missing in storage or empty
+                    tabs: (found.tabs && found.tabs.length > 0) ? found.tabs : initialProduct.tabs,
                     tabsTitle: found.tabsTitle || initialProduct.tabsTitle
                   };
                   setProduct(hydrated);
@@ -156,8 +157,8 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
   // Calcular precio total incluyendo opciones
   const currentPrice = product.price + Object.entries(selectedOptions).reduce((total, [optionId, valueId]) => {
     if (product.kind !== 'product' || !product.options) return total;
-    const option = product.options.find(o => o.id === optionId);
-    const value = option?.values.find(v => v.id === valueId);
+    const option = (product as any).options.find((o: any) => o.id === optionId);
+    const value = option?.values.find((v: any) => v.id === valueId);
     return total + (value?.priceModifier || 0);
   }, 0);
 
@@ -174,17 +175,19 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
   };
 
   const handleAddToCart = async () => {
-    if (product.kind !== 'product') return;
+    if (product.kind !== 'product' && product.kind !== 'service') return;
 
     try {
-      // Validar inputs personalizados requeridos
-      for (const [optionId, valueId] of Object.entries(selectedOptions)) {
-        const option = product.options?.find(o => o.id === optionId);
-        const value = option?.values.find(v => v.id === valueId);
-        
-        if (value?.hasInput && (!customInputs[optionId] || customInputs[optionId].trim() === '')) {
-          showError('Faltan datos', `Por favor especifica tu ${option?.name.toLowerCase()}.`);
-          return;
+      // Validar inputs personalizados requeridos (solo para productos)
+      if (product.kind === 'product' && product.options) {
+        for (const [optionId, valueId] of Object.entries(selectedOptions)) {
+          const option = product.options.find(o => o.id === optionId);
+          const value = option?.values.find(v => v.id === valueId);
+          
+          if (value?.hasInput && (!customInputs[optionId] || customInputs[optionId].trim() === '')) {
+            showError('Faltan datos', `Por favor especifica tu ${option?.name.toLowerCase()}.`);
+            return;
+          }
         }
       }
 
@@ -197,23 +200,27 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
       };
 
       // Preparar lista de customizaciones para el carrito
-      const customizations: CartItemCustomization[] = Object.entries(selectedOptions).map(([optionId, valueId]) => {
-        const option = product.options?.find(o => o.id === optionId);
-        const value = option?.values.find(v => v.id === valueId);
-        
-        let displayValue = value?.name || '';
-        // Si la opción tiene input personalizado (como "Otro color"), agregarlo al valor
-        if (value?.hasInput && customInputs[optionId]) {
-          displayValue = `${value.name}: ${customInputs[optionId]}`;
-        }
+      const customizations: CartItemCustomization[] = [];
+      
+      if (product.kind === 'product' && product.options) {
+        Object.entries(selectedOptions).forEach(([optionId, valueId]) => {
+          const option = product.options?.find(o => o.id === optionId);
+          const value = option?.values.find(v => v.id === valueId);
+          
+          let displayValue = value?.name || '';
+          // Si la opción tiene input personalizado (como "Otro color"), agregarlo al valor
+          if (value?.hasInput && customInputs[optionId]) {
+            displayValue = `${value.name}: ${customInputs[optionId]}`;
+          }
 
-        return {
-          id: optionId,
-          name: option?.name || '',
-          value: displayValue,
-          priceModifier: value?.priceModifier
-        };
-      });
+          customizations.push({
+            id: optionId,
+            name: option?.name || '',
+            value: displayValue,
+            priceModifier: value?.priceModifier
+          });
+        });
+      }
 
       await addToCart(productWithOptions as Product, 1, customizations);
       showSuccess('Producto agregado', `${product.name} se añadió al carrito correctamente.`);
@@ -226,7 +233,8 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
   };
 
   const handleAction = () => {
-    if (product.kind === 'product' && product.price > 0) {
+    // Unificar lógica: Si es producto con precio o servicio, se añade al carrito/pedido
+    if ((product.kind === 'product' && product.price > 0)) {
       handleAddToCart();
     } else {
       const currentTab = product.tabs?.find(t => t.id === activeTab);
@@ -245,10 +253,14 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
       }
 
       if (product.kind === 'service') {
+        // Fallback for services without clear action (should be covered above)
         trackEvent(AnalyticsEvents.QUOTE_SERVICE_CLICK, {
           location: AnalyticsLocations.SERVICE_PAGE,
           name: product.name
         });
+        // Si por alguna razón no se capturó arriba, intentar añadir al carrito
+        handleAddToCart();
+        return;
       } else {
         trackEvent(AnalyticsEvents.REQUEST_QUOTE_CLICK, {
           location: AnalyticsLocations.PRODUCT_PAGE,
@@ -660,17 +672,33 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
                 </span>
               ) : (
                 <>
-                  {product.kind !== 'service' && product.price > 0 ? (
-                    <>
-                      <ShoppingCart className="w-5 h-5 mr-2.5" />
-                      Añadir al Carrito
-                    </>
-                  ) : (
-                    <>
-                      <MessageSquare className="w-5 h-5 mr-2.5" />
-                      {product.tabs ? (product.tabs.find(t => t.id === activeTab)?.ctaText || 'Solicitar Cotización') : 'Solicitar Cotización'}
-                    </>
-                  )}
+                  {(() => {
+                    const currentTab = product.tabs?.find(t => t.id === activeTab);
+                    if (currentTab?.ctaText) {
+                      return (
+                        <>
+                          <MessageSquare className="w-5 h-5 mr-2.5" />
+                          {currentTab.ctaText}
+                        </>
+                      );
+                    }
+                    
+                    if (product.kind === 'product' && product.price > 0) {
+                      return (
+                        <>
+                          <ShoppingCart className="w-5 h-5 mr-2.5" />
+                          Agregar al Carrito
+                        </>
+                      );
+                    }
+                    
+                    return (
+                      <>
+                        <MessageSquare className="w-5 h-5 mr-2.5" />
+                        Consultar
+                      </>
+                    );
+                  })()}
                 </>
               )}
             </Button>
@@ -703,7 +731,7 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
 
       {/* Related Products Section */}
       {relatedProducts.length > 0 && (
-        <div className="mt-20 pt-10 border-t border-border">
+        <div id="related-products" className="mt-20 pt-10 border-t border-border">
           <h2 className="text-2xl font-bold text-foreground mb-8">
             Productos Relacionados
           </h2>
@@ -717,6 +745,7 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
           </div>
         </div>
       )}
+
       {/* Image Modal - Vitrina Técnica */}
       {isModalOpen && (
         <div 

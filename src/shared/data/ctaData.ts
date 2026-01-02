@@ -14,9 +14,9 @@ export const ctaData = {
   },
   services: {
     title: '¿Listo para comenzar tu proyecto?',
-    description: 'Contáctanos hoy mismo y descubre cómo podemos hacer realidad tus ideas',
-    primaryButtonText: 'Solicitar Cotización',
-    primaryButtonLink: '/contact',
+    description: 'Cotiza tus servicios directamente en línea, gestiona tus pedidos y realiza seguimiento en tiempo real.',
+    primaryButtonText: 'Ver Catálogo de Servicios',
+    primaryButtonLink: '#servicios-generales',
   },
   about: {
     title: '¿Hablamos de tu proyecto?',
