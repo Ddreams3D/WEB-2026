@@ -1,6 +1,6 @@
 'use client';
 
-import ProductManager from '@/components/admin/ProductManager';
+import ServiceManager from '@/features/admin/components/ServiceManager';
 
 export default function ServicesPage() {
   return (
@@ -14,7 +14,7 @@ export default function ServicesPage() {
         </p>
       </div>
 
-      <ProductManager mode="service" />
+      <ServiceManager />
     </div>
   );
 }

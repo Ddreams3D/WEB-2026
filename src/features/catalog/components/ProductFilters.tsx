@@ -23,7 +23,7 @@ export function ProductFilters({
   isCollapsible = true,
   availableProducts
 }: ProductFiltersProps) {
-  const { categories, filters, applyFilters, clearFilters, searchQuery, setSearchQuery, toggleCategory } = useCatalog();
+  const { categories, filters, applyFilters, clearFilters, searchQuery, setSearchQuery, toggleCategory, defaultMaxPrice } = useCatalog();
   const [isExpanded, setIsExpanded] = useState(true);
   const [localSearchTerm, setLocalSearchTerm] = useState(searchQuery);
 
@@ -73,7 +73,7 @@ export function ProductFilters({
     onFiltersChange?.({
       categoryIds: [],
       minPrice: 0,
-      maxPrice: 1000,
+      maxPrice: defaultMaxPrice,
       tags: [],
       type: 'product',
       sortBy: 'createdAt',

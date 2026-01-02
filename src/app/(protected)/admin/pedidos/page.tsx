@@ -15,7 +15,7 @@ import {
 import { Button } from '@/components/ui';
 import { Order, OrderStatus } from '@/shared/types/order';
 import { OrderService } from '@/services/order.service';
-import OrderModal from '@/components/admin/OrderModal';
+import OrderModal from '@/features/admin/components/OrderModal';
 import { useToast } from '@/components/ui/ToastManager';
 
 const getStatusColor = (status: OrderStatus) => {

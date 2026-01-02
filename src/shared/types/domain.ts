@@ -84,7 +84,9 @@ export interface StoreProduct {
   // Media
   images: ProductImage[];
   
-  // Product Details
+  // Detail Content
+  tabsTitle?: string;
+  tabs?: ProductTab[];
   specifications?: ProductSpecification[];
   options?: ProductOption[];
   dimensions?: ProductDimensions;

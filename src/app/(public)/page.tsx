@@ -1,7 +1,12 @@
 import { Metadata } from 'next';
 import HomePageClient from '@/features/home/HomePageClient';
+import SeasonalBanner from '@/features/seasonal/components/SeasonalBanner';
+import { resolveActiveTheme } from '@/lib/seasonal-service';
 import { PHONE_BUSINESS, PHONE_DISPLAY, ADDRESS_BUSINESS, SCHEDULE_BUSINESS } from '@/shared/constants/contactInfo';
 import { JsonLd } from '@/components/seo/JsonLd';
+
+// Revalidate every hour to check for seasonal changes automatically
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: 'Ddreams 3D | Impresión 3D y Regalos Personalizados en Arequipa',
@@ -40,9 +45,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const activeTheme = await resolveActiveTheme();
+
   return (
     <>
+      {activeTheme && <SeasonalBanner config={activeTheme} />}
       <HomePageClient />
     </>
   );

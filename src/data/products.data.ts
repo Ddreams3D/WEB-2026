@@ -382,5 +382,226 @@ export const products: StoreProduct[] = [
     isFeatured: true,
     createdAt: new Date('2024-01-08'),
     updatedAt: new Date('2024-01-08')
-  }
+  },
+  {
+    id: '4',
+    kind: 'product',
+    slug: 'cooler-motor-3d-v6',
+    name: 'Cooler Motor 3D – V6',
+    description: 'Cooler funcional impreso en 3D con diseño inspirado en motores V6. Ideal para mantener bebidas frías en reuniones pequeñas, escritorios, espacios gamer o como regalo original para fanáticos de los autos y la mecánica.\n\nFabricado mediante impresión 3D en PLA Premium, combina diseño llamativo con funcionalidad real. Su formato compacto lo hace perfecto para cervezas, gaseosas o bebidas individuales, aportando un toque automotriz único al espacio.',
+    shortDescription: 'Cooler funcional impreso en 3D con diseño inspirado en motores V6',
+    price: 210.00,
+    currency: 'PEN',
+    categoryId: 'arte-diseno',
+    categoryName: 'Arte y Diseño',
+    sellerId: '1',
+    sellerName: 'Ddreams 3D',
+    images: [
+      {
+        id: '8',
+        productId: '4',
+        url: 'https://images.unsplash.com/photo-1593118247619-e2d6f056869e?auto=format&fit=crop&q=80&w=600',
+        alt: 'Cooler Motor 3D V6',
+        isPrimary: true,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-01-14'),
+        updatedAt: new Date('2024-01-14')
+      }
+    ],
+    options: [
+      {
+        id: 'opt-color',
+        name: 'Color',
+        type: 'radio',
+        required: true,
+        values: [
+          { id: 'color-gold', name: 'Oro', priceModifier: 0 },
+          { id: 'color-silver', name: 'Plata', priceModifier: 0 },
+          { id: 'color-bronze', name: 'Bronce', priceModifier: 0 },
+          { id: 'color-red', name: 'Rojo', priceModifier: 0 },
+          { id: 'color-blue', name: 'Azul', priceModifier: 0 },
+          { id: 'color-yellow', name: 'Amarillo', priceModifier: 0 },
+          { id: 'color-other', name: 'Otro', priceModifier: 0, hasInput: true, maxLength: 30, inputPlaceholder: 'Escribe tu color aquí (máx. 30 caracteres)...' }
+        ]
+      },
+      {
+        id: 'opt-customization',
+        name: '',
+        type: 'radio',
+        required: true,
+        values: [
+          {
+            id: 'cust-none',
+            name: 'Sin grabado personalizado',
+            priceModifier: 0,
+            isDefault: true
+          },
+          {
+            id: 'cust-engraving',
+            name: 'Grabado 3D personalizado (nombre o frase) – grabado permanente integrado en la pieza',
+            priceModifier: 20,
+            hasInput: true,
+            maxLength: 50,
+            inputPlaceholder: 'Escribe aquí el texto para el grabado (máx. 50 caracteres)...'
+          }
+        ]
+      }
+    ],
+    specifications: [
+      {
+        id: '14',
+        name: 'Tamaño',
+        value: 'V6 (6 espacios)'
+      },
+      {
+        id: '19',
+        name: 'Tiempo estimado de fabricación',
+        value: '3–5 días hábiles'
+      }
+    ],
+    format: 'Físico',
+    fileSize: 'N/A',
+    license: 'Standard',
+    tags: ['cooler3D', 'coolerMotor', 'regaloParaFanaticosDeAutos', 'regaloOriginal', 'impresion3D', 'cerveza', 'Arequipa'],
+    sku: 'COOLER-V6-001',
+    stock: 20,
+    minQuantity: 1,
+    materials: ['PLA'],
+    complexity: 'medium',
+    rating: 4.8,
+    reviewCount: 15,
+    downloadCount: 0,
+    isActive: true,
+    isFeatured: true,
+    createdAt: new Date('2024-01-14'),
+    updatedAt: new Date('2024-01-14')
+  },
+  {
+    id: '5',
+    kind: 'product',
+    slug: 'cooler-motor-3d-v8',
+    name: 'Cooler Motor 3D – V8',
+    description: 'Cooler funcional impreso en 3D con diseño robusto inspirado en motores V8. Pensado para quienes buscan mayor capacidad y presencia visual, ideal para reuniones, eventos pequeños, parrillas o como regalo premium para amantes del mundo automotor.\n\nFabricado en impresión 3D de alta calidad con PLA Premium, ofrece mayor espacio para bebidas y un diseño más imponente, manteniendo el estilo mecánico como protagonista.',
+    shortDescription: 'Cooler funcional impreso en 3D con diseño robusto inspirado en motores V8',
+    price: 260.00,
+    currency: 'PEN',
+    categoryId: 'arte-diseno',
+    categoryName: 'Arte y Diseño',
+    sellerId: '1',
+    sellerName: 'Ddreams 3D',
+    images: [
+      {
+        id: '10',
+        productId: '5',
+        url: '/images/catalogo/cooler-motor-v8-impresion-3d-regalo-autos-frontal.png',
+        alt: 'Cooler Motor 3D V8 - Vista Principal',
+        isPrimary: true,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-01-15'),
+        updatedAt: new Date('2024-01-15')
+      },
+      {
+        id: '10-b',
+        productId: '5',
+        url: '/images/catalogo/cooler-motor-v8-impresion-3d-regalo-autos-detalle.png',
+        alt: 'Cooler Motor 3D V8 - Detalle',
+        isPrimary: false,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-01-15'),
+        updatedAt: new Date('2024-01-15')
+      },
+      {
+        id: '10-c',
+        productId: '5',
+        url: '/images/catalogo/cooler-motor-v8-impresion-3d-regalo-autos-superior.png',
+        alt: 'Cooler Motor 3D V8 - Vista Superior',
+        isPrimary: false,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-01-15'),
+        updatedAt: new Date('2024-01-15')
+      },
+      {
+        id: '10-d',
+        productId: '5',
+        url: '/images/catalogo/cooler-motor-v8-impresion-3d-regalo-autos-uso.png',
+        alt: 'Cooler Motor 3D V8 - Uso',
+        isPrimary: false,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-01-15'),
+        updatedAt: new Date('2024-01-15')
+      }
+    ],
+    options: [
+      {
+        id: 'opt-color',
+        name: 'Color',
+        type: 'radio',
+        required: true,
+        values: [
+          { id: 'color-gold', name: 'Oro', priceModifier: 0 },
+          { id: 'color-silver', name: 'Plata', priceModifier: 0 },
+          { id: 'color-bronze', name: 'Bronce', priceModifier: 0 },
+          { id: 'color-red', name: 'Rojo', priceModifier: 0 },
+          { id: 'color-blue', name: 'Azul', priceModifier: 0 },
+          { id: 'color-yellow', name: 'Amarillo', priceModifier: 0 },
+          { id: 'color-other', name: 'Otro', priceModifier: 0, hasInput: true, maxLength: 30, inputPlaceholder: 'Escribe tu color aquí (máx. 30 caracteres)...' }
+        ]
+      },
+      {
+        id: 'opt-customization',
+        name: '',
+        type: 'radio',
+        required: true,
+        values: [
+          {
+            id: 'cust-none',
+            name: 'Sin grabado personalizado',
+            priceModifier: 0,
+            isDefault: true
+          },
+          {
+            id: 'cust-engraving',
+            name: 'Grabado 3D personalizado (nombre o frase) – grabado permanente integrado en la pieza',
+            priceModifier: 20,
+            hasInput: true,
+            maxLength: 50,
+            inputPlaceholder: 'Escribe aquí el texto para el grabado (máx. 50 caracteres)...'
+          }
+        ]
+      }
+    ],
+    specifications: [
+      {
+        id: '20',
+        name: 'Tamaño',
+        value: 'V8 (8 espacios)'
+      },
+      {
+        id: '25',
+        name: 'Tiempo estimado de fabricación',
+        value: '3–5 días hábiles'
+      }
+    ],
+    format: 'Físico',
+    fileSize: 'N/A',
+    license: 'Standard',
+    tags: ['cooler3D', 'coolerMotorV8', 'regaloParaFanaticosDeAutos', 'regaloPremium', 'impresion3D', 'cerveza', 'Arequipa'],
+    sku: 'COOLER-V8-001',
+    stock: 15,
+    minQuantity: 1,
+    materials: ['PLA'],
+    complexity: 'high',
+    rating: 4.9,
+    reviewCount: 20,
+    downloadCount: 0,
+    isActive: true,
+    isFeatured: true,
+    createdAt: new Date('2024-01-15'),
+    updatedAt: new Date('2024-01-15')
+  },
 ];

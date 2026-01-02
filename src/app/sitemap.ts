@@ -1,9 +1,10 @@
 import { MetadataRoute } from 'next';
 import { ProductService } from '@/services/product.service';
-import { getAppUrl } from '@/lib/url-utils';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = getAppUrl();
+  // Usar variable de entorno o fallback a producción para evitar hardcoding directo
+  // pero asegurar que se use la URL correcta en el sitemap final
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://ddreams3d.com';
 
   // Rutas estáticas
   const routes = [

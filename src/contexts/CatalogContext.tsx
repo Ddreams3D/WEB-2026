@@ -23,6 +23,9 @@ interface CatalogContextType {
   clearFilters: () => void;
   toggleCategory: (categoryId: string) => void;
   
+  // Helpers
+  defaultMaxPrice: number;
+
   // Legacy/Helper stubs (mantener compatibilidad si es necesario o eliminar)
   searchResults: SearchResultItem[];
   searchProductsAction: (query: string) => void; 
@@ -59,17 +62,24 @@ export function CatalogProvider({
   // 1. Static Data (Server Provided)
   const [allProducts] = useState<CatalogItem[]>(initialItems);
   const [categories] = useState<Category[]>(initialCategories);
+
+  // Calculate dynamic max price from products
+  const maxGlobalPrice = useMemo(() => {
+    if (allProducts.length === 0) return 1000;
+    const max = Math.max(...allProducts.map(p => p.price || 0));
+    return max > 0 ? max : 1000;
+  }, [allProducts]);
   
   // 2. Derived State from URL
   const filters = useMemo((): ProductFilters => {
-    if (!searchParams) return initialFiltersState;
+    if (!searchParams) return { ...initialFiltersState, maxPrice: maxGlobalPrice };
 
     const params = new URLSearchParams(searchParams.toString());
     const type = (params.get('type') as ProductFilters['type']) || 'product';
     const sortBy = (params.get('sort') as ProductFilters['sortBy']) || 'createdAt';
     const sortOrder = (params.get('order') as 'asc' | 'desc') || 'desc';
-    const minPrice = params.has('minPrice') ? Number(params.get('minPrice')) : undefined;
-    const maxPrice = params.has('maxPrice') ? Number(params.get('maxPrice')) : undefined;
+    const minPrice = params.has('minPrice') ? Number(params.get('minPrice')) : 0;
+    const maxPrice = params.has('maxPrice') ? Number(params.get('maxPrice')) : maxGlobalPrice;
     const categoryIds = params.getAll('category');
     
     return {
@@ -77,12 +87,12 @@ export function CatalogProvider({
       type,
       sortBy,
       sortOrder,
-      minPrice: minPrice ?? initialFiltersState.minPrice,
-      maxPrice: maxPrice ?? initialFiltersState.maxPrice,
+      minPrice,
+      maxPrice,
       categoryIds: categoryIds.length > 0 ? categoryIds : initialFiltersState.categoryIds,
       isActive: true
     };
-  }, [searchParams]);
+  }, [searchParams, maxGlobalPrice]);
 
   const searchQuery = searchParams?.get('q') || '';
 
@@ -94,8 +104,8 @@ export function CatalogProvider({
     if (searchQuery) {
       const term = searchQuery.toLowerCase();
       filteredItems = filteredItems.filter(p => 
-        p.name.toLowerCase().includes(term) || 
-        p.description.toLowerCase().includes(term)
+        (p.name || '').toLowerCase().includes(term) || 
+        (p.description || '').toLowerCase().includes(term)
       );
     }
 
@@ -116,7 +126,9 @@ export function CatalogProvider({
     if (!isServiceView && filters.minPrice !== undefined && filters.maxPrice !== undefined) {
       filteredItems = filteredItems.filter(item => {
         if (item.kind === 'service') return true;
-        return (item.price >= filters.minPrice! && item.price <= filters.maxPrice!);
+        // Safe check for price
+        const price = item.price || 0;
+        return (price >= filters.minPrice! && price <= filters.maxPrice!);
       });
     }
 
@@ -128,20 +140,20 @@ export function CatalogProvider({
 
         switch (filters.sortBy) {
           case 'price':
-            aValue = a.price;
-            bValue = b.price;
+            aValue = a.price || 0;
+            bValue = b.price || 0;
             break;
           case 'rating':
             aValue = a.rating || 0;
             bValue = b.rating || 0;
             break;
           case 'name':
-            aValue = a.name.toLowerCase();
-            bValue = b.name.toLowerCase();
+            aValue = (a.name || '').toLowerCase();
+            bValue = (b.name || '').toLowerCase();
             break;
           case 'downloadCount':
-             aValue = (a.kind === 'product' && a.downloadCount) || 0;
-             bValue = (b.kind === 'product' && b.downloadCount) || 0;
+             aValue = (a.kind === 'product' ? a.downloadCount : 0) || 0;
+             bValue = (b.kind === 'product' ? b.downloadCount : 0) || 0;
             break;
           default: // createdAt
             aValue = getCatalogSortDate(a);
@@ -208,7 +220,8 @@ export function CatalogProvider({
         else params.delete('minPrice');
     }
     if (newFilters.maxPrice !== undefined) {
-        if (newFilters.maxPrice !== 1000) params.set('maxPrice', newFilters.maxPrice.toString());
+        // Only set maxPrice param if it differs from the global max (default)
+        if (newFilters.maxPrice !== maxGlobalPrice) params.set('maxPrice', newFilters.maxPrice.toString());
         else params.delete('maxPrice');
     }
     
@@ -289,7 +302,8 @@ export function CatalogProvider({
     applyFilters,
     clearFilters,
     toggleCategory,
-    searchProductsAction
+    searchProductsAction,
+    defaultMaxPrice: maxGlobalPrice
   };
 
   return (

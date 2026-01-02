@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import AdminLayout from '@/shared/components/layout/AdminLayout';
-import AdminProtection from '@/components/admin/AdminProtection';
+import AdminProtection from '@/features/admin/components/AdminProtection';
 
 export const metadata: Metadata = {
   title: 'Panel de Administración',

@@ -19,8 +19,8 @@ const useTabsContext = () => {
 };
 
 interface TabsProps extends React.HTMLAttributes<HTMLDivElement> {
-  value: string;
-  onValueChange: (value: string) => void;
+  value?: string;
+  onValueChange?: (value: string) => void;
   defaultValue?: string;
 }
 

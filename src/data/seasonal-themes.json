@@ -1,0 +1,74 @@
+[
+  {
+    "id": "christmas",
+    "themeId": "festive-warm",
+    "name": "Navidad",
+    "dateRanges": [
+      { "start": { "month": 12, "day": 1 }, "end": { "month": 12, "day": 31 } }
+    ],
+    "landing": {
+      "heroTitle": "Regala Magia esta Navidad",
+      "heroSubtitle": "Edición Especial Navideña",
+      "heroDescription": "Descubre nuestra colección exclusiva de decoraciones y regalos personalizados impresos en 3D. Haz que esta navidad sea inolvidable.",
+      "heroImage": "/images/seasonal/christmas-hero.jpg",
+      "ctaText": "Ver Colección Navideña",
+      "ctaLink": "/catalogo-impresion-3d",
+      "featuredTag": "navidad",
+      "featuredTitle": "Favoritos de Santa"
+    }
+  },
+  {
+    "id": "halloween",
+    "themeId": "halloween",
+    "name": "Halloween",
+    "dateRanges": [
+      { "start": { "month": 10, "day": 1 }, "end": { "month": 10, "day": 31 } }
+    ],
+    "landing": {
+      "heroTitle": "Terroríficamente Increíble",
+      "heroSubtitle": "Colección Halloween",
+      "heroDescription": "Máscaras, accesorios y decoraciones espeluznantes para tu fiesta de Halloween. Impresión 3D de alta calidad.",
+      "heroImage": "/images/seasonal/halloween-hero.jpg",
+      "ctaText": "Explorar el Terror",
+      "ctaLink": "/catalogo-impresion-3d",
+      "featuredTag": "halloween",
+      "featuredTitle": "Lo más buscado este Halloween"
+    }
+  },
+  {
+    "id": "fiestas-patrias",
+    "themeId": "festive-strong",
+    "name": "Fiestas Patrias Perú",
+    "dateRanges": [
+      { "start": { "month": 7, "day": 15 }, "end": { "month": 7, "day": 30 } }
+    ],
+    "landing": {
+      "heroTitle": "Celebra al Perú",
+      "heroSubtitle": "Orgullo Peruano en 3D",
+      "heroDescription": "Símbolos patrios, mapas en relieve y souvenirs personalizados para celebrar nuestra independencia.",
+      "heroImage": "/images/seasonal/peru-hero.jpg",
+      "ctaText": "Ver Colección Patriota",
+      "ctaLink": "/catalogo-impresion-3d",
+      "featuredTag": "peru",
+      "featuredTitle": "Orgullo Nacional"
+    }
+  },
+  {
+    "id": "valentines",
+    "themeId": "festive-soft",
+    "name": "San Valentín",
+    "dateRanges": [
+      { "start": { "month": 2, "day": 1 }, "end": { "month": 2, "day": 14 } }
+    ],
+    "landing": {
+      "heroTitle": "Dilo con un Regalo Único",
+      "heroSubtitle": "San Valentín",
+      "heroDescription": "Regalos personalizados que expresan lo que sientes. Litofanías, corazones y detalles especiales.",
+      "heroImage": "/images/seasonal/valentines-hero.jpg",
+      "ctaText": "Encontrar el Regalo Perfecto",
+      "ctaLink": "/catalogo-impresion-3d",
+      "featuredTag": "amor",
+      "featuredTitle": "Para esa persona especial"
+    }
+  }
+]

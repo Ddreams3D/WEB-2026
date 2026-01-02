@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import ProductManager from '@/components/admin/ProductManager';
+import ProductManager from '@/features/admin/components/ProductManager';
 
 export default function ProductsPage() {
   return (

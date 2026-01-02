@@ -23,7 +23,7 @@ import {
   Shield,
 } from '@/lib/icons';
 import { useCart } from '@/contexts/CartContext';
-import { useAdminPermissions } from '@/components/admin/AdminProtection';
+import { useAdminPermissions } from '@/features/admin/components/AdminProtection';
 import Image from 'next/image';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Button } from '@/components/ui/button';

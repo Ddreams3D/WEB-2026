@@ -13,7 +13,8 @@ import {
   Menu,
   X,
   Bell,
-  Search
+  Search,
+  Calendar
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
