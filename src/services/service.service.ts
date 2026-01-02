@@ -15,7 +15,12 @@ import servicesFallbackData from '@/shared/data/services-fallback.json';
 
 const COLLECTION_NAME = 'services';
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-const FIRESTORE_TIMEOUT = 500; // 500ms timeout - Fail fast to use fallback data
+const FIRESTORE_TIMEOUT = 2000; // 2s timeout for Admin/Explicit fetches
+
+// Configuration
+// Set to 'true' only when Firestore is populated and ready to be the primary source for public users.
+// Currently set to 'false' to ensure fast loading from JSON fallback since Firestore is empty/slow.
+const ENABLE_FIRESTORE_FOR_PUBLIC = false;
 
 // In-memory cache
 let servicesCache: { data: Service[], timestamp: number } | null = null;
@@ -53,8 +58,10 @@ export const ServiceService = {
 
     let services: Service[] = [];
 
-    // 1. Try Firestore
-    if (db) {
+    // 1. Try Firestore (Only if configured for public, or forced for Admin)
+    const shouldFetchFirestore = db && (forceRefresh || ENABLE_FIRESTORE_FOR_PUBLIC);
+
+    if (shouldFetchFirestore) {
       try {
         const q = query(collection(db, COLLECTION_NAME), orderBy('displayOrder'));
         
