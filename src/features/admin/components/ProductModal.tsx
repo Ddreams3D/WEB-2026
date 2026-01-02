@@ -148,8 +148,9 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
 
       await onSave(dataToSave);
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving product:', error);
+      showError('Error al guardar', error.message || 'Ha ocurrido un error inesperado al guardar el producto.');
     } finally {
       setIsSubmitting(false);
     }

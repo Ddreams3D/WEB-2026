@@ -15,6 +15,7 @@ import servicesFallbackData from '@/shared/data/services-fallback.json';
 
 const COLLECTION_NAME = 'services';
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+const FIRESTORE_TIMEOUT = 500; // 500ms timeout - Fail fast to use fallback data
 
 // In-memory cache
 let servicesCache: { data: Service[], timestamp: number } | null = null;
@@ -59,7 +60,7 @@ export const ServiceService = {
         
         // Timeout to prevent hanging if Firestore is unreachable
         const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Firestore timeout')), 3000)
+          setTimeout(() => reject(new Error('Firestore timeout')), FIRESTORE_TIMEOUT)
         );
 
         const snapshot = await Promise.race([

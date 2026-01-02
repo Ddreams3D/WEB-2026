@@ -4,6 +4,8 @@ import React, { useState, useRef } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Upload, X, ImageIcon } from '@/lib/icons';
+import { storage } from '@/lib/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 interface ImageUploadProps {
   value?: string;
@@ -34,16 +36,22 @@ export default function ImageUpload({ value, onChange, onRemove }: ImageUploadPr
     try {
       setIsUploading(true);
       
-      // Simular subida de imagen creando una URL temporal
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        // En un entorno real, aquí subirías la imagen a un servicio como Cloudinary, AWS S3, etc.
-        // Por ahora, usamos la URL de datos local
-        onChange(result);
-        setIsUploading(false);
-      };
-      reader.readAsDataURL(file);
+      if (storage) {
+          const storageRef = ref(storage, `products/${Date.now()}_${file.name}`);
+          const snapshot = await uploadBytes(storageRef, file);
+          const url = await getDownloadURL(snapshot.ref);
+          onChange(url);
+          setIsUploading(false);
+      } else {
+        // Fallback to Base64 only if storage is not configured (e.g. mock mode)
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const result = e.target?.result as string;
+            onChange(result);
+            setIsUploading(false);
+        };
+        reader.readAsDataURL(file);
+      }
     } catch (error) {
       console.error('Error uploading image:', error);
       alert('Error al subir la imagen');
