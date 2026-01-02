@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/ToastManager';
 import { ProductImage } from '@/shared/components/ui/DefaultImage';
 import ServiceModal from './ServiceModal';
+import { ViewToggle } from './ViewToggle';
 import { Service } from '@/shared/types/domain';
 import { ServiceService } from '@/services/service.service';
 import ConnectionStatus from './ConnectionStatus';
@@ -133,6 +134,7 @@ export default function ServiceManager() {
         </div>
       </div>
 
+      {viewMode === 'list' ? (
       <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left">

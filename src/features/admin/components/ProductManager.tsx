@@ -330,8 +330,7 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
           </div>
         ))}
       </div>
-      )}
-
+      
       <ProductModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
