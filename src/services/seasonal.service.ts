@@ -13,6 +13,8 @@ import { SeasonalThemeConfig } from '@/shared/types/seasonal';
 import seasonalThemesData from '@/data/seasonal-themes.json';
 
 const COLLECTION_NAME = 'seasonal_themes';
+const FIRESTORE_TIMEOUT = 2000; // 2s timeout
+const ENABLE_FIRESTORE_FOR_PUBLIC = false; // Same strategy as ServiceService
 
 // Fallback data from JSON
 const FALLBACK_THEMES = seasonalThemesData as SeasonalThemeConfig[];
@@ -22,8 +24,15 @@ const FALLBACK_THEMES = seasonalThemesData as SeasonalThemeConfig[];
  * Falls back to local JSON if Firestore is empty or fails (and we are in a safe mode).
  */
 export async function fetchThemesFromFirestore(): Promise<SeasonalThemeConfig[]> {
-  if (!db) {
-    console.warn('Firestore is not initialized. Using local JSON fallback.');
+  // If we are public/build, skip Firestore to avoid permission errors
+  // But allow if explicitly enabled or if we are in admin context (not easily detected here without param)
+  // For now, let's use the same conservative approach: 
+  // ONLY fetch if we are sure db is ready AND we want to use it.
+  
+  const shouldFetch = db && ENABLE_FIRESTORE_FOR_PUBLIC;
+
+  if (!shouldFetch) {
+    // Return fallback silently without error logs
     return FALLBACK_THEMES;
   }
 

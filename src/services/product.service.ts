@@ -16,6 +16,8 @@ import { categories } from '@/data/categories.data';
 
 const COLLECTION_NAME = 'products';
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+const FIRESTORE_TIMEOUT = 2000; // 2s timeout
+const ENABLE_FIRESTORE_FOR_PUBLIC = false; // Disable for public/build
 
 // In-memory cache
 let productsCache: { data: StoreProduct[], timestamp: number } | null = null;
@@ -45,16 +47,19 @@ export const ProductService = {
 
     let products: StoreProduct[] = [];
 
-    // 1. Try Firestore
-    if (db) {
+    // Only try Firestore if explicitly enabled or forced (e.g. admin)
+    const shouldFetch = db && (forceRefresh || ENABLE_FIRESTORE_FOR_PUBLIC);
+
+    if (shouldFetch) {
       try {
-        const q = query(collection(db, COLLECTION_NAME), orderBy('createdAt', 'desc'));
-        
-        // Timeout to prevent hanging if Firestore is unreachable
+        // Create a timeout promise
         const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Firestore timeout')), 3000)
+          setTimeout(() => reject(new Error('Firestore timeout')), FIRESTORE_TIMEOUT)
         );
 
+        const q = query(collection(db, COLLECTION_NAME), orderBy('displayOrder'));
+        
+        // Race between fetch and timeout
         const snapshot = await Promise.race([
           getDocs(q),
           timeoutPromise
@@ -63,22 +68,20 @@ export const ProductService = {
         if (!snapshot.empty) {
           products = snapshot.docs.map((doc: any) => mapToProduct(doc.data()));
         } else {
-          console.log('No products found in Firestore. Using fallback.');
+           console.log('No products found in Firestore. Using fallback.');
         }
       } catch (error) {
         console.error('Error fetching products from Firestore:', error);
       }
     }
 
-    // 2. Fallback to local data if Firestore failed or empty
+    // Fallback to local data if Firestore failed or returned nothing
     if (products.length === 0) {
       products = productsFallbackData.map(mapToProduct);
     }
     
-    // Sort by createdAt (newest first)
-    products.sort((a, b) => 
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
+    // Sort by displayOrder
+    products.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
 
     // Update cache
     productsCache = {
