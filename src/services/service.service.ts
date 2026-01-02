@@ -56,10 +56,19 @@ export const ServiceService = {
     if (db) {
       try {
         const q = query(collection(db, COLLECTION_NAME), orderBy('displayOrder'));
-        const snapshot = await getDocs(q);
+        
+        // Timeout to prevent hanging if Firestore is unreachable
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Firestore timeout')), 3000)
+        );
+
+        const snapshot = await Promise.race([
+          getDocs(q),
+          timeoutPromise
+        ]) as any;
 
         if (!snapshot.empty) {
-          services = snapshot.docs.map(doc => mapToService(doc.data()));
+          services = snapshot.docs.map((doc: any) => mapToService(doc.data()));
         } else {
           console.log('No services found in Firestore. Using fallback.');
         }
