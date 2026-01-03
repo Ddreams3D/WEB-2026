@@ -1,0 +1,210 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ========================================================================
+    // HELPERS & VALIDATORS
+    // ========================================================================
+
+    // Authentication & Authorization
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Role-based Access Control
+    // Reads the user's document to check for 'admin' role.
+    function isAdmin() {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Data Validation Helpers
+    function isValidString(data, field, minLen, maxLen) {
+      return data.keys().hasAll([field]) 
+          && data[field] is string 
+          && data[field].size() >= minLen 
+          && data[field].size() <= maxLen;
+    }
+
+    function isValidNumber(data, field, min, max) {
+      return data.keys().hasAll([field]) 
+          && data[field] is number 
+          && data[field] >= min 
+          && data[field] <= max;
+    }
+
+    function isOptionalString(data, field) {
+      return !data.keys().hasAny([field]) || data[field] is string;
+    }
+    
+    function isOptionalNumber(data, field) {
+      return !data.keys().hasAny([field]) || data[field] is number;
+    }
+
+    // Check if field is NOT modified in an update
+    function notUpdating(field) {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny([field]);
+    }
+
+    // Common timestamp validation (createdAt should not change)
+    function isValidTimestamp(data, field) {
+      return data.keys().hasAll([field]) && data[field] is timestamp;
+    }
+
+    // ========================================================================
+    // 1. USERS (Usuarios)
+    // ========================================================================
+    match /users/{userId} {
+      // Read: Owner or Admin
+      allow read: if isOwner(userId) || isAdmin();
+      
+      // Create: Owner only (Registration)
+      // Must set basic fields, role must default to 'user' or not be present (handled by backend usually, but here we prevent setting 'admin')
+      allow create: if isOwner(userId) 
+                    && (!request.resource.data.keys().hasAny(['role']) || request.resource.data.role == 'user')
+                    && isValidTimestamp(request.resource.data, 'createdAt');
+
+      // Update: Owner (can edit profile but NOT role or stats) or Admin (can edit everything)
+      allow update: if (isOwner(userId) 
+                        && notUpdating('role') 
+                        && notUpdating('createdAt')
+                        && notUpdating('totalOrders') 
+                        && notUpdating('totalSpent')) // Financial stats managed by backend
+                    || isAdmin();
+      
+      // Delete: Admin only (Soft delete preferred usually, but keeping strict)
+      allow delete: if isAdmin();
+    }
+
+    // ========================================================================
+    // 2. PRODUCTS (Productos - Catalog)
+    // ========================================================================
+    match /products/{productId} {
+      allow read: if true;
+      
+      // Admin only for writes
+      // Enforce basic schema sanity for admins to prevent corrupt data
+      allow create: if isAdmin()
+                    && isValidString(request.resource.data, 'name', 3, 100)
+                    && isValidNumber(request.resource.data, 'price', 0, 100000);
+                    
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ========================================================================
+    // 3. SERVICES (Servicios)
+    // ========================================================================
+    match /services/{serviceId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ========================================================================
+    // 4. PROJECTS (Portafolio)
+    // ========================================================================
+    match /projects/{projectId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ========================================================================
+    // 5. CATEGORIES
+    // ========================================================================
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ========================================================================
+    // 6. ORDERS (Pedidos)
+    // ========================================================================
+    match /orders/{orderId} {
+      // Read: Owner or Admin
+      allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      
+      // Create: Authenticated users.
+      // 1. Must belong to the user (userId == auth.uid)
+      // 2. Initial status must be valid (e.g. 'pending_payment' or 'quote_requested')
+      // 3. Financials must be positive (basic sanity)
+      allow create: if isSignedIn() 
+                    && request.resource.data.userId == request.auth.uid
+                    && isValidNumber(request.resource.data, 'total', 0, 1000000)
+                    && isValidTimestamp(request.resource.data, 'createdAt')
+                    && (request.resource.data.status == 'pending_payment' || request.resource.data.status == 'quote_requested');
+      
+      // Update: 
+      // Admin: Can change everything (status, tracking, etc)
+      // User: Can ONLY cancel if status is 'pending_payment' or 'quote_requested'
+      allow update: if isAdmin() 
+                    || (isOwner(resource.data.userId) 
+                        && (resource.data.status == 'pending_payment' || resource.data.status == 'quote_requested')
+                        && request.resource.data.status == 'cancelled'
+                        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt']));
+                        
+      allow delete: if isAdmin();
+    }
+
+    // ========================================================================
+    // 7. REVIEWS (Reseñas)
+    // ========================================================================
+    match /reviews/{reviewId} {
+      allow read: if true;
+      
+      // Create: Authenticated user, one review per product/user combination is hard to enforce in rules alone without composite keys.
+      // But we can ensure they own the review.
+      allow create: if isSignedIn() 
+                    && request.resource.data.userId == request.auth.uid
+                    && isValidNumber(request.resource.data, 'rating', 1, 5)
+                    && isValidString(request.resource.data, 'comment', 1, 2000);
+                    
+      // Update/Delete: Owner or Admin
+      allow update: if (isOwner(resource.data.userId) && notUpdating('productId') && notUpdating('userId')) 
+                    || isAdmin();
+                    
+      allow delete: if isOwner(resource.data.userId) || isAdmin();
+    }
+
+    // ========================================================================
+    // 8. WISHLIST
+    // ========================================================================
+    match /wishlist/{itemId} {
+      allow read: if isOwner(resource.data.userId);
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow delete: if isOwner(resource.data.userId);
+    }
+
+    // ========================================================================
+    // 9. NOTIFICATIONS
+    // ========================================================================
+    match /notifications/{notifId} {
+      allow read: if isOwner(resource.data.userId);
+      // Writes usually by system/admin.
+      allow write: if isAdmin(); 
+    }
+
+    // ========================================================================
+    // 10. CONTACTS (Formulario de contacto)
+    // ========================================================================
+    match /contacts/{contactId} {
+      // Anyone can write (public form), nobody can read/edit except admin
+      allow create: if true 
+                    && isValidString(request.resource.data, 'email', 3, 200)
+                    && isValidString(request.resource.data, 'message', 1, 5000);
+      allow read, update, delete: if isAdmin();
+    }
+
+    // ========================================================================
+    // CATCH-ALL (Seguridad por defecto)
+    // ========================================================================
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
