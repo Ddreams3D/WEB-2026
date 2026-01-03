@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { PortfolioItem } from '@/shared/types/domain';
 import { ProjectService } from '@/services/project.service';
 
-interface ProjectsOptions {
+export interface ProjectsOptions {
   category?: string;
   isFeatured?: boolean;
   limit?: number;

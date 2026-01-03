@@ -55,7 +55,7 @@ export default function HomePageClient() {
               Explora algunos de nuestros trabajos más innovadores y creativos
             </p>
           </header>
-          <LazyProjectGallery />
+          <LazyProjectGallery isFeatured={true} limit={6} />
 
           <div className="text-center mt-12">
             <Button

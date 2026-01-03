@@ -8,13 +8,15 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStaggeredItemsAnimation } from '../hooks/useIntersectionAnimation';
-import { useProjects } from '@/hooks/useProjects';
+import { useProjects, ProjectsOptions } from '@/hooks/useProjects';
 import { PortfolioItem } from '@/shared/types/domain';
 
 import { GalleryCard } from '@/components/gallery/GalleryCard';
 
-export default function ProjectGallery() {
-  const { projects, isLoading } = useProjects();
+interface ProjectGalleryProps extends ProjectsOptions {}
+
+export default function ProjectGallery(props: ProjectGalleryProps) {
+  const { projects, isLoading } = useProjects(props);
   const [selectedProject, setSelectedProject] = useState<PortfolioItem | null>(null);
   const [activeImage, setActiveImage] = useState<string>('');
   const { ref, visibleItems } = useStaggeredItemsAnimation(projects.length, 150);
@@ -55,6 +57,14 @@ export default function ProjectGallery() {
     return (
       <div className="flex justify-center items-center py-20">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (projects.length === 0) {
+    return (
+      <div className="flex justify-center items-center py-20 text-muted-foreground">
+        <p>No hay proyectos para mostrar.</p>
       </div>
     );
   }

@@ -41,19 +41,17 @@ export const ProjectService = {
         return staticProjects as unknown as PortfolioItem[];
     }
     try {
-      const q = query(collection(dbInstance, COLLECTION), orderBy('projectDate', 'desc'));
+      const q = query(collection(dbInstance, COLLECTION));
       const snapshot = await getDocs(q);
       
       if (snapshot.empty) {
-        // If no projects in Firestore, return static data
-        // This ensures the site works before migration
-        // However, for Admin purposes, we might want to trigger migration.
-        // For now, return static data mapped to have IDs if they don't have one (though they do)
         console.warn('No projects in Firestore, returning static data.');
         return staticProjects as unknown as PortfolioItem[];
       }
 
-      return snapshot.docs.map(convertDoc);
+      const projects = snapshot.docs.map(convertDoc);
+      // Sort in memory to avoid index issues
+      return projects.sort((a, b) => b.projectDate.getTime() - a.projectDate.getTime());
     } catch (error) {
       console.error('Error fetching projects:', error);
       // Fallback to static data on error
