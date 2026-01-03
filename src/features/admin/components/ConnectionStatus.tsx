@@ -6,6 +6,20 @@ import { cn } from '@/lib/utils';
 export default function ConnectionStatus() {
   const isConnected = isFirebaseConfigured;
 
+  // Debug logging for production issues
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const isConfigured = isFirebaseConfigured;
+      console.log('[Firebase Status] Configured:', isConfigured);
+      if (!isConfigured) {
+        console.warn('[Firebase Status] Firebase keys are missing or invalid.');
+        console.log('API Key present:', !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY);
+        console.log('Project ID present:', !!process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID);
+        console.log('Auth Domain present:', !!process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN);
+      }
+    }
+  }, []);
+
   return (
     <div className={cn(
       "flex items-center gap-3 px-3 py-1.5 rounded-full border transition-all duration-300",
