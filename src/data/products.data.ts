@@ -398,11 +398,44 @@ export const products: StoreProduct[] = [
     sellerName: 'Ddreams 3D',
     images: [
       {
-        id: '8',
+        id: 'img-1767444829616',
         productId: '4',
-        url: 'https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fcatalogo%2Fcooler-motor-v8-impresion-3d-regalo-autos-frontal.png?alt=media&token=1e24c02c-eab9-4ed8-81f4-7454cdda126c',
-        alt: 'Cooler Motor 3D V6',
+        url: 'https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fcatalogo%2F1767444826620_cooler-motor-3d-v6-frontal.jpg?alt=media&token=c5446033-cb26-480e-b890-faa903ed8ae1',
+        alt: 'Cooler Motor 3D – V6',
         isPrimary: true,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-01-14'),
+        updatedAt: new Date('2024-01-14')
+      },
+      {
+        id: 'img-1767444889590',
+        productId: '4',
+        url: 'https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fcatalogo%2F1767444886808_cooler-motor-3d-v6-frontal-2.jpg?alt=media&token=7eaf0456-ccc3-4383-891b-45fd9170c9de',
+        alt: 'Cooler Motor 3D – V6 - Frontal 2',
+        isPrimary: false,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-01-14'),
+        updatedAt: new Date('2024-01-14')
+      },
+      {
+        id: 'img-1767444916119',
+        productId: '4',
+        url: 'https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fcatalogo%2F1767444913401_cooler-motor-3d-v6-lateral.jpg?alt=media&token=482993c5-b4e2-421f-9b3d-615b3921df31',
+        alt: 'Cooler Motor 3D – V6 - Lateral',
+        isPrimary: false,
+        width: 800,
+        height: 600,
+        createdAt: new Date('2024-01-14'),
+        updatedAt: new Date('2024-01-14')
+      },
+      {
+        id: 'img-1767444925468',
+        productId: '4',
+        url: 'https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fcatalogo%2F1767444923544_cooler-motor-3d-v6-posterior.jpg?alt=media&token=8dc918d0-a001-4124-b453-e0df72ca3ceb',
+        alt: 'Cooler Motor 3D – V6 - Posterior',
+        isPrimary: false,
         width: 800,
         height: 600,
         createdAt: new Date('2024-01-14'),
