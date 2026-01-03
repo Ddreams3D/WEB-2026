@@ -172,8 +172,10 @@ export default function UsersManagement() {
     setIsLoading(true);
     try {
       // First try to seed if empty (for demo purposes if DB is clean)
-      await UserService.seedInitialUsers();
+      // await UserService.seedInitialUsers();
+      console.log('Fetching users...');
       const data = await UserService.getAllUsers(true);
+      console.log('Users fetched:', data.length);
       setUsers(data);
     } catch (error) {
       console.error('Error loading users:', error);

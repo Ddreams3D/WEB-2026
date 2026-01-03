@@ -23,6 +23,7 @@ let usersCache: { data: User[], timestamp: number } | null = null;
 const mapToUser = (data: DocumentData): User => {
   return {
     ...data as User, // We assume data structure matches, but handle dates below
+    role: data.role || 'user', // Default role
     totalOrders: data.totalOrders || 0,
     totalSpent: data.totalSpent || 0,
     lastOrderDate: data.lastOrderDate instanceof Timestamp ? data.lastOrderDate.toDate() : (data.lastOrderDate ? new Date(data.lastOrderDate) : undefined),
@@ -44,15 +45,38 @@ export const UserService = {
 
     if (db) {
       try {
+        console.log('[UserService] Querying users collection...');
         const q = query(collection(db, COLLECTION_NAME), orderBy('createdAt', 'desc'));
         const snapshot = await getDocs(q);
+        console.log(`[UserService] Found ${snapshot.size} users`);
 
         if (!snapshot.empty) {
           users = snapshot.docs.map((doc) => mapToUser(doc.data()));
         }
       } catch (error) {
-        console.error('Error fetching users from Firestore:', error);
-        throw error;
+        console.error('[UserService] Error fetching users from Firestore:', error);
+        // Si falla el orderBy por falta de índice, intentamos sin ordenamiento
+        if ((error as any)?.code === 'failed-precondition') {
+             console.log('[UserService] Retrying without orderBy...');
+             try {
+                const q = query(collection(db, COLLECTION_NAME));
+                const snapshot = await getDocs(q);
+                if (!snapshot.empty) {
+                    users = snapshot.docs.map((doc) => mapToUser(doc.data()));
+                    // Ordenar en memoria
+                    users.sort((a, b) => {
+                        const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+                        const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+                        return dateB - dateA;
+                    });
+                }
+             } catch (retryError) {
+                 console.error('[UserService] Retry failed:', retryError);
+                 throw retryError;
+             }
+        } else {
+            throw error;
+        }
       }
     }
 
