@@ -11,20 +11,24 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import Image from 'next/image';
+import { ProductImage } from '@/shared/components/ui/DefaultImage';
 import { PHONE_BUSINESS } from '@/shared/constants/contactInfo';
+
+import { checkoutSchema, type CheckoutFormData } from '@/lib/validators/checkout.schema';
+import { ZodError } from 'zod';
 
 export default function CheckoutPage() {
   const router = useRouter();
   // Fixed: totalPrice -> total, removed formatPrice (implemented locally)
-  const { items, isLoading, total: totalPrice } = useCart();
+  const { items, isLoading, total: totalPrice, refreshPrices } = useCart();
   
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<CheckoutFormData>({
     name: '',
     city: '',
     address: '',
     notes: ''
   });
+  const [errors, setErrors] = useState<Partial<Record<keyof CheckoutFormData, string>>>({});
 
   // Utility to format price
   const formatPrice = (price: number) => {
@@ -37,9 +41,18 @@ export default function CheckoutPage() {
     }
   }, [items, isLoading, router]);
 
+  // Refresh prices on mount to ensure SSoT
+  useEffect(() => {
+    refreshPrices();
+  }, []); // Run once on mount
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    // Clear error when user types
+    if (errors[name as keyof CheckoutFormData]) {
+      setErrors(prev => ({ ...prev, [name]: undefined }));
+    }
   };
 
   const generateWhatsAppMessage = () => {
@@ -77,8 +90,16 @@ export default function CheckoutPage() {
   };
 
   const handleWhatsAppOrder = () => {
-    if (!formData.name || !formData.city) {
-      alert('Por favor completa tu nombre y ciudad para continuar.');
+    const result = checkoutSchema.safeParse(formData);
+
+    if (!result.success) {
+      const fieldErrors: Partial<Record<keyof CheckoutFormData, string>> = {};
+      result.error.issues.forEach((err) => {
+        if (err.path[0]) {
+          fieldErrors[err.path[0] as keyof CheckoutFormData] = err.message;
+        }
+      });
+      setErrors(fieldErrors);
       return;
     }
 
@@ -141,8 +162,9 @@ export default function CheckoutPage() {
                       placeholder="Ej: Juan Pérez" 
                       value={formData.name}
                       onChange={handleInputChange}
-                      className="bg-background"
+                      className={`bg-background ${errors.name ? 'border-red-500' : ''}`}
                     />
+                    {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
                   </div>
                   
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -154,8 +176,9 @@ export default function CheckoutPage() {
                         placeholder="Ej: Arequipa" 
                         value={formData.city}
                         onChange={handleInputChange}
-                        className="bg-background"
+                        className={`bg-background ${errors.city ? 'border-red-500' : ''}`}
                       />
+                      {errors.city && <p className="text-sm text-red-500">{errors.city}</p>}
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="address">Dirección (Opcional)</Label>
@@ -209,7 +232,7 @@ export default function CheckoutPage() {
                     <div key={item.id} className="flex gap-4">
                       <div className="relative h-16 w-16 rounded-md overflow-hidden bg-muted flex-shrink-0 border border-border">
                         {item.product.images && item.product.images.length > 0 ? (
-                          <Image
+                          <ProductImage
                             src={item.product.images[0].url}
                             alt={item.product.name}
                             fill

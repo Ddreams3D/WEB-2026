@@ -135,8 +135,8 @@ export function CatalogProvider({
     // Sort
     if (filters.sortBy) {
       filteredItems = [...filteredItems].sort((a, b) => {
-        let aValue: any;
-        let bValue: any;
+        let aValue: number | string | Date;
+        let bValue: number | string | Date;
 
         switch (filters.sortBy) {
           case 'price':

@@ -6,7 +6,6 @@ import { Home, ArrowLeft, MessageCircle } from 'lucide-react'; // Using Lucide i
 import { Button } from '@/components/ui/button';
 import ButtonRedirectWhatsapp from '@/shared/components/ButtonRedirectWhatsapp';
 import { cn } from '@/lib/utils';
-import Image from 'next/image';
 
 export default function NotFound() {
   return (

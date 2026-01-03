@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import ImageOptimizer from './ImageOptimizer';
+import DefaultImage from '@/shared/components/ui/DefaultImage';
 import { cn } from '@/lib/utils';
 import { useIntersectionAnimation } from '@/shared/hooks/useIntersectionAnimation';
 
@@ -36,7 +36,7 @@ export default function PageHeader({ title, description, image, className }: Pag
       {/* Bottom fade - Matching Hero style */}
       <div className={cn("absolute bottom-0 left-0 w-full h-24 z-20 pointer-events-none", "bg-gradient-to-t from-background to-transparent")} />
       
-      <ImageOptimizer
+      <DefaultImage
         src={image}
         alt={title}
         fill

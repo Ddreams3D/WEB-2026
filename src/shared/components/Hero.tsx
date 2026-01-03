@@ -3,11 +3,11 @@
 import React from 'react';
 import Link from 'next/link';
 import { heroImages } from '../../config/images';
-import Image from 'next/image';
 import { useIntersectionAnimation, getAnimationClasses } from '../hooks/useIntersectionAnimation';
 import { Button } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import { ArrowRight } from 'lucide-react';
+import DefaultImage from '@/shared/components/ui/DefaultImage';
 
 const heroContent = {
   title: "Tus ideas. Nuestro arte. En 3D.",
@@ -43,7 +43,7 @@ export default function Hero() {
         <div className={cn("absolute top-0 left-0 w-full h-40 z-20 pointer-events-none", "bg-gradient-to-b from-black/90 to-transparent")} />
         {/* Visual Separator - Gradient to blend with next section */}
         <div className={cn("absolute bottom-0 left-0 w-full h-24 z-20 pointer-events-none", "bg-gradient-to-t from-background to-transparent")} />
-        <Image
+        <DefaultImage
           src={heroContent.image}
           alt={heroContent.title}
           fill

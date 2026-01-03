@@ -89,9 +89,10 @@ export default function TestHarnessPage() {
     try {
       await testFn();
       addLog(`Test passed: ${name}`, 'success');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error);
-      addLog(`Test failed: ${name} - ${error.message}`, 'error');
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      addLog(`Test failed: ${name} - ${errorMessage}`, 'error');
     }
   };
 
@@ -118,8 +119,9 @@ export default function TestHarnessPage() {
                 addLog(`[${res.status}] ${route.path}`, 'warning');
              }
           }
-        } catch (e: any) {
-          addLog(`FAILED ${route.path}: ${e.message}`, 'error');
+        } catch (e: unknown) {
+          const errorMessage = e instanceof Error ? e.message : String(e);
+          addLog(`FAILED ${route.path}: ${errorMessage}`, 'error');
         }
       }
     });
@@ -139,14 +141,15 @@ export default function TestHarnessPage() {
 
       // 2. Add Item
       addLog('Adding test item...', 'info');
-      const testProduct: any = {
+      const testProduct = {
         id: 'harness-test-prod',
         name: 'Harness Test Widget',
         price: 50.00,
         kind: 'product',
         images: []
       };
-      await addToCart(testProduct, 2);
+      // We cast to unknown first to avoid partial type overlap issues in this harness
+      await addToCart(testProduct as unknown as import('@/shared/types').Product, 2);
       
       // Wait for state update (context might be async)
       await new Promise(r => setTimeout(r, 500)); 
@@ -159,7 +162,7 @@ export default function TestHarnessPage() {
       if (!storedCart) throw new Error('Cart not found in storage');
       
       const parsed = JSON.parse(storedCart);
-      const storedCount = parsed.items.reduce((acc: number, item: any) => acc + item.quantity, 0);
+      const storedCount = parsed.items.reduce((acc: number, item: { quantity: number }) => acc + item.quantity, 0);
       const storedTotal = parsed.subtotal;
 
       addLog(`Storage Items: ${storedCount} (Expected 2)`, 'info');
@@ -183,7 +186,7 @@ export default function TestHarnessPage() {
     try {
         // --- Copy of previous Order Logic Tests ---
         await runTestWrapper('Create Order (Happy Path)', async () => {
-            const orderData: any = { 
+            const orderData: Partial<Order> = { 
                 userId: user?.id || 'test-user-harness',
                 userEmail: user?.email || 'test@example.com',
                 userName: user?.username || 'Test User',
@@ -192,9 +195,10 @@ export default function TestHarnessPage() {
                 status: 'quote_requested',
                 paymentStatus: 'pending',
                 shippingMethod: 'pickup',
-                shippingAddress: { street: 'Test St', city: 'Test City', state: 'Test State', zipCode: '12345', country: 'Test Country' }
+                shippingAddress: { street: 'Test St', city: 'Test City', state: 'Test State', zip: '12345', country: 'Test Country' }
             };
-            createdOrderId = await OrderService.createOrder(orderData);
+            // Cast to required type for service call
+            createdOrderId = await OrderService.createOrder(orderData as Omit<Order, 'id' | 'createdAt' | 'updatedAt' | 'history'>);
             if (!createdOrderId) throw new Error('No order ID returned');
             addLog(`Order created: ${createdOrderId}`, 'info');
         });
@@ -225,7 +229,7 @@ export default function TestHarnessPage() {
                 try {
                     await OrderService.updateOrderStatus(createdOrderId!, 'invalid_status' as OrderStatus);
                     throw new Error('Should have failed with invalid status');
-                } catch (e: any) {
+                } catch (e: unknown) {
                     addLog('Caught invalid status update (Expected)', 'success');
                 }
 
@@ -234,7 +238,7 @@ export default function TestHarnessPage() {
                 try {
                     await OrderService.addOrderNote(createdOrderId!, longNote);
                     throw new Error('Should have failed with long note');
-                } catch (e: any) {
+                } catch (e: unknown) {
                      addLog('Caught long note (Expected)', 'success');
                 }
             });

@@ -11,7 +11,9 @@ import {
   where,
   Timestamp,
   setDoc,
-  writeBatch
+  writeBatch,
+  DocumentData,
+  QueryDocumentSnapshot
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { PortfolioItem } from '@/shared/types/domain';
@@ -20,10 +22,11 @@ import { projects as staticProjects } from '@/data/projects.data';
 const COLLECTION = 'projects';
 
 // Helper to convert Firestore data to PortfolioItem
-const convertDoc = (doc: any): PortfolioItem => {
-  const data = doc.data();
+const convertDoc = (doc: QueryDocumentSnapshot<DocumentData> | DocumentData): PortfolioItem => {
+  const data = typeof doc.data === 'function' ? doc.data() : doc;
+  const id = typeof doc.id === 'string' ? doc.id : data.id;
   return {
-    id: doc.id,
+    id,
     ...data,
     projectDate: data.projectDate instanceof Timestamp ? data.projectDate.toDate() : new Date(data.projectDate),
     createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate() : new Date(data.createdAt || Date.now()),
@@ -32,8 +35,13 @@ const convertDoc = (doc: any): PortfolioItem => {
 
 export const ProjectService = {
   async getAllProjects(): Promise<PortfolioItem[]> {
+    const dbInstance = db;
+    if (!dbInstance) {
+        console.warn('Firestore not configured, returning static projects.');
+        return staticProjects as unknown as PortfolioItem[];
+    }
     try {
-      const q = query(collection(db, COLLECTION), orderBy('projectDate', 'desc'));
+      const q = query(collection(dbInstance, COLLECTION), orderBy('projectDate', 'desc'));
       const snapshot = await getDocs(q);
       
       if (snapshot.empty) {
@@ -54,9 +62,13 @@ export const ProjectService = {
   },
 
   async getProjectById(idOrSlug: string): Promise<PortfolioItem | undefined> {
+    const dbInstance = db;
+    if (!dbInstance) {
+         return (staticProjects as unknown as PortfolioItem[]).find(p => p.id === idOrSlug || p.slug === idOrSlug);
+    }
     try {
       // Try fetching by ID first
-      const docRef = doc(db, COLLECTION, idOrSlug);
+      const docRef = doc(dbInstance, COLLECTION, idOrSlug);
       const docSnap = await getDoc(docRef);
       
       if (docSnap.exists()) {
@@ -67,9 +79,9 @@ export const ProjectService = {
       // Note: This requires scanning all or adding a query. 
       // Since we fetch all often, let's reuse getAllProjects for slug search to minimize indexes for now
       // or add a specific query.
-      const q = query(collection(db, COLLECTION), where('slug', '==', idOrSlug));
+      const q = query(collection(dbInstance, COLLECTION), where('slug', '==', idOrSlug));
       // 'where' needs import. 
-      const querySnapshot = await getDocs(query(collection(db, COLLECTION)));
+      const querySnapshot = await getDocs(q);
       const found = querySnapshot.docs.find(d => d.data().slug === idOrSlug);
       
       if (found) return convertDoc(found);
@@ -94,7 +106,9 @@ export const ProjectService = {
 
   // Admin Methods
   async createProject(project: Omit<PortfolioItem, 'id'>): Promise<string> {
-    const docRef = await addDoc(collection(db, COLLECTION), {
+    const dbInstance = db;
+    if (!dbInstance) throw new Error('Firestore is not configured.');
+    const docRef = await addDoc(collection(dbInstance, COLLECTION), {
       ...project,
       createdAt: Timestamp.now(),
       projectDate: Timestamp.fromDate(project.projectDate)
@@ -103,8 +117,10 @@ export const ProjectService = {
   },
 
   async updateProject(id: string, data: Partial<PortfolioItem>): Promise<void> {
-    const docRef = doc(db, COLLECTION, id);
-    const updateData: any = { ...data };
+    const dbInstance = db;
+    if (!dbInstance) throw new Error('Firestore is not configured.');
+    const docRef = doc(dbInstance, COLLECTION, id);
+    const updateData: Record<string, unknown> = { ...data };
     if (data.projectDate) {
       updateData.projectDate = Timestamp.fromDate(data.projectDate);
     }
@@ -115,23 +131,29 @@ export const ProjectService = {
   },
 
   async deleteProject(id: string): Promise<void> {
-    await deleteDoc(doc(db, COLLECTION, id));
+    const dbInstance = db;
+    if (!dbInstance) throw new Error('Firestore is not configured.');
+    await deleteDoc(doc(dbInstance, COLLECTION, id));
   },
 
   // Migration Tool
   async checkMigrationNeeded(): Promise<boolean> {
-    const snapshot = await getDocs(collection(db, COLLECTION));
+    const dbInstance = db;
+    if (!dbInstance) return false;
+    const snapshot = await getDocs(collection(dbInstance, COLLECTION));
     return snapshot.empty;
   },
 
   async seedProjectsFromStatic(force = false): Promise<void> {
-    const snapshot = await getDocs(collection(db, COLLECTION));
+    const dbInstance = db;
+    if (!dbInstance) return;
+    const snapshot = await getDocs(collection(dbInstance, COLLECTION));
     if (!snapshot.empty && !force) {
       console.log('Projects collection is not empty. Skipping seed.');
       return;
     }
 
-    const batch = writeBatch(db);
+    const batch = writeBatch(dbInstance);
     
     staticProjects.forEach((project) => {
       // Create a new doc reference. 
@@ -139,13 +161,12 @@ export const ProjectService = {
       // staticProjects items have 'id' (e.g. '1', '2'). Firestore IDs usually are strings.
       // Let's use the existing ID to preserve links if possible, or generate new ones.
       // Using setDoc with specific ID is better for consistency if IDs are good.
-      const docRef = doc(db, COLLECTION, project.id);
+      const docRef = doc(dbInstance, COLLECTION, project.id);
       
       // Adapt static data to PortfolioItem structure if needed
-      // staticProjects has 'images' (string[]), PortfolioItem has 'coverImage' + 'galleryImages'
-      const images = (project as any).images || [];
-      const coverImage = images.length > 0 ? images[0] : '';
-      const galleryImages = images.slice(1);
+      // staticProjects already has 'coverImage' and 'galleryImages'
+      const coverImage = project.coverImage || '';
+      const galleryImages = project.galleryImages || [];
 
       const data = {
         ...project,

@@ -301,10 +301,11 @@ export default function ServiceManager() {
             >
               <div className="aspect-[4/3] relative bg-neutral-100 dark:bg-neutral-900 overflow-hidden">
                 {service.images && service.images.length > 0 ? (
-                   <img 
+                   <ProductImage 
                       src={service.images.find(i => i.isPrimary)?.url || service.images[0].url} 
                       alt={service.name}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-110"
                    />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-neutral-400">

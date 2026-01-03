@@ -6,11 +6,15 @@ import { useAuth } from '../../contexts/AuthContext';
 import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft, MessageSquare } from '@/lib/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import { PHONE_BUSINESS } from '@/shared/constants/contactInfo';
 import { Button } from '@/components/ui';
 import { ProductImage } from '@/shared/components/ui/DefaultImage';
 import { trackEvent } from '@/lib/analytics';
+
+interface CartItemCustomization {
+  name: string;
+  value: string;
+}
 
 export default function CartPageClient() {
   const {
@@ -48,7 +52,7 @@ export default function CartPageClient() {
       
       // Incluir personalizaciones si existen
       if (item.customizations && item.customizations.length > 0) {
-        item.customizations.forEach((cust: any) => {
+        item.customizations.forEach((cust: CartItemCustomization) => {
           message += `  - ${cust.name}: ${cust.value}\n`;
         });
       }

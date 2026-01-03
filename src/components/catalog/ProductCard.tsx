@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn, formatImagePosition } from '@/lib/utils';
-import Image from 'next/image';
 import Link from 'next/link';
 import { Star, ShoppingCart, Heart, FileText } from 'lucide-react';
 import { Product } from '@/shared/types';

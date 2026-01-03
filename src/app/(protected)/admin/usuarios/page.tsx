@@ -7,6 +7,7 @@ import { Search as MagnifyingGlassIcon, Plus as PlusIcon, Edit as PencilIcon, Tr
 import { cn } from '@/lib/utils';
 import { UserService } from '@/services/user.service';
 import { User, UserRole, UserStatus } from '@/shared/types/domain';
+import { UserAvatar } from '@/shared/components/ui/DefaultImage';
 
 function UserModal({ user, isOpen, onClose, onSave, defaultRole = 'user' }: {
   user: User | null;
@@ -306,12 +307,13 @@ export default function UsersManagement() {
               <tr key={user.id} className="hover:bg-muted/50 transition-colors">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
-                    <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mr-3 overflow-hidden">
-                      {user.photoURL ? (
-                        <img src={user.photoURL} alt={user.username} className="w-full h-full object-cover" />
-                      ) : (
-                        <UserCircleIcon className="w-6 h-6 text-primary" />
-                      )}
+                    <div className="w-10 h-10 mr-3 relative shrink-0">
+                      <UserAvatar 
+                        src={user.photoURL || undefined} 
+                        alt={user.username} 
+                        fill
+                        className="object-cover"
+                      />
                     </div>
                     <div>
                       <div className="text-sm font-medium text-foreground">
@@ -449,7 +451,7 @@ export default function UsersManagement() {
             </div>
             <select
               value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value as any)}
+              onChange={(e) => setFilterStatus(e.target.value as 'all' | 'active' | 'inactive' | 'banned')}
               className="px-3 py-2 border border-input rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-background text-foreground"
             >
               <option value="all">Todos los estados</option>

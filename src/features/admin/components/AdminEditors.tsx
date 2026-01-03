@@ -27,7 +27,7 @@ export function OptionsEditor({ options = [], onChange }: OptionsEditorProps) {
     onChange(options.filter((_, i) => i !== index));
   };
 
-  const handleUpdateOption = (index: number, field: keyof ProductOption, value: any) => {
+  const handleUpdateOption = (index: number, field: keyof ProductOption, value: unknown) => {
     const newOptions = [...options];
     newOptions[index] = { ...newOptions[index], [field]: value };
     onChange(newOptions);
@@ -51,7 +51,7 @@ export function OptionsEditor({ options = [], onChange }: OptionsEditorProps) {
     onChange(newOptions);
   };
 
-  const handleUpdateValue = (optionIndex: number, valueIndex: number, field: keyof ProductOptionValue, value: any) => {
+  const handleUpdateValue = (optionIndex: number, valueIndex: number, field: keyof ProductOptionValue, value: unknown) => {
     const newOptions = [...options];
     newOptions[optionIndex].values[valueIndex] = {
       ...newOptions[optionIndex].values[valueIndex],
@@ -363,7 +363,7 @@ interface TabEditorProps {
 }
 
 export function TabEditor({ tab, onChange, onRemove, isOpen, onToggle }: TabEditorProps) {
-  const handleChange = (field: keyof ProductTab, value: any) => {
+  const handleChange = (field: keyof ProductTab, value: unknown) => {
     onChange({ ...tab, [field]: value });
   };
 

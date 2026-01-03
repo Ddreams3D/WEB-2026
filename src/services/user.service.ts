@@ -8,7 +8,8 @@ import {
   Timestamp,
   updateDoc,
   deleteDoc,
-  where
+  where,
+  DocumentData
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { User, UserRole, UserStatus } from '@/shared/types/domain';
@@ -19,9 +20,9 @@ const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 // In-memory cache
 let usersCache: { data: User[], timestamp: number } | null = null;
 
-const mapToUser = (data: any): User => {
+const mapToUser = (data: DocumentData): User => {
   return {
-    ...data,
+    ...data as User, // We assume data structure matches, but handle dates below
     totalOrders: data.totalOrders || 0,
     totalSpent: data.totalSpent || 0,
     lastOrderDate: data.lastOrderDate instanceof Timestamp ? data.lastOrderDate.toDate() : (data.lastOrderDate ? new Date(data.lastOrderDate) : undefined),
@@ -80,7 +81,7 @@ export const UserService = {
       // We use setDoc with merge: true to update existing fields or create if not exists
       const now = new Date();
       
-      const payload: any = {
+      const payload: Partial<User> & { updatedAt: Date; lastLogin: Date } = {
         ...userData,
         updatedAt: now,
         lastLogin: now,

@@ -101,7 +101,7 @@ export default function ProjectModal({ isOpen, onClose, onSave, project }: Proje
     }
   };
 
-  const handleChange = (field: keyof PortfolioItem, value: any) => {
+  const handleChange = (field: keyof PortfolioItem, value: unknown) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 

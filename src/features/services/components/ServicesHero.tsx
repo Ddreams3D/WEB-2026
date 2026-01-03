@@ -3,11 +3,11 @@
 import React from 'react';
 import Link from 'next/link';
 import { heroImages } from '@/config/images';
-import Image from 'next/image';
 import { useIntersectionAnimation, getAnimationClasses } from '@/shared/hooks/useIntersectionAnimation';
 import { Button } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import { FileText, ChevronDown } from 'lucide-react';
+import DefaultImage from '@/shared/components/ui/DefaultImage';
 
 const heroContent = {
   title: "Servicios de Modelado e Impresión 3D",
@@ -45,7 +45,7 @@ export default function ServicesHero() {
         {/* Visual Separator - Gradient to blend with next section */}
         <div className={cn("absolute bottom-0 left-0 w-full h-24 z-20 pointer-events-none", "bg-gradient-to-t from-background to-transparent")} />
         
-        <Image
+        <DefaultImage
           src={heroContent.image}
           alt={heroContent.title}
           fill

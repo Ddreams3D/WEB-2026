@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
+import { UserAvatar } from '@/shared/components/ui/DefaultImage';
 import { User, Settings, LogOut, Bell } from '@/lib/icons';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -36,7 +36,7 @@ export default function UserMenu() {
         className="rounded-full h-10 w-10 overflow-hidden"
       >
         {user.photoURL ? (
-          <Image 
+          <UserAvatar 
             src={user.photoURL} 
             alt={user.username || 'Avatar'} 
             width={40} 

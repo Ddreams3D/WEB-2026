@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { ProductImage } from '@/shared/components/ui/DefaultImage';
 import { Button } from '@/components/ui/button';
-import { X, Check, Clock, Truck, Eye } from '@/lib/icons';
+import { X, Check, Clock, Truck, Eye, Package } from '@/lib/icons';
 import { Order, OrderStatus } from '@/shared/types/domain';
 
 interface OrderModalProps {
@@ -189,9 +190,18 @@ export default function OrderModal({ isOpen, onClose, onSave, order }: OrderModa
                     <tr key={item.id || idx} className="bg-white dark:bg-neutral-800">
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
-                          {item.image && (
-                            <div className="w-10 h-10 rounded bg-neutral-100 dark:bg-neutral-700 overflow-hidden flex-shrink-0">
-                              <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                          {item.image ? (
+                            <div className="w-10 h-10 rounded bg-neutral-100 dark:bg-neutral-700 overflow-hidden flex-shrink-0 relative">
+                              <ProductImage 
+                                src={item.image} 
+                                alt={item.name} 
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                          ) : (
+                            <div className="w-10 h-10 rounded bg-neutral-100 dark:bg-neutral-700 flex items-center justify-center flex-shrink-0">
+                               <Package className="w-5 h-5 text-neutral-400" />
                             </div>
                           )}
                           <span className="font-medium text-neutral-900 dark:text-white">{item.name}</span>

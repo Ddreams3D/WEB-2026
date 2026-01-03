@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { ProductImage } from '@/shared/components/ui/DefaultImage';
 
 // Import Real Data
 import { products } from '@/data/products.data';
@@ -170,9 +171,9 @@ export default function AdminDashboard() {
           <div className="space-y-6">
             {recentProducts.length > 0 ? recentProducts.map((item) => (
               <div key={item.id} className="flex items-start gap-4 group">
-                <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-sm font-bold text-muted-foreground border border-border group-hover:border-primary/50 group-hover:text-primary transition-colors overflow-hidden">
+                <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-sm font-bold text-muted-foreground border border-border group-hover:border-primary/50 group-hover:text-primary transition-colors overflow-hidden relative">
                   {item.image ? (
-                    <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                    <ProductImage src={item.image} alt={item.title} fill className="object-cover" />
                   ) : (
                     item.icon
                   )}

@@ -4,10 +4,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { X, Plus } from 'lucide-react';
 import { useToast } from '@/components/ui/ToastManager';
 import ImageUpload from './ImageUpload';
+import { ProductImage } from '@/shared/components/ui/DefaultImage';
 import { Service } from '@/shared/types/domain';
 import { ProductTab, ProductSpecification, ProductImageViewType } from '@/shared/types';
 import { generateSlug } from '@/lib/utils';
 import { TabEditor, SpecificationsEditor, StringListEditor } from './AdminEditors';
+import { serviceSchema } from '@/lib/validators/catalog.schema';
 
 interface ServiceModalProps {
   isOpen: boolean;
@@ -85,6 +87,18 @@ export default function ServiceModal({ isOpen, onClose, onSave, service }: Servi
         ...formData,
         slug: formData.slug || generateSlug(formData.name || '')
       };
+
+      // Zod Validation
+      const result = serviceSchema.safeParse(dataToSave);
+      if (!result.success) {
+        console.warn('Validation failed:', result.error.issues);
+        const firstError = result.error.issues[0];
+        const errorMessage = `${firstError.path.join('.')}: ${firstError.message}`;
+        showError('Error de validación', errorMessage);
+        setIsSubmitting(false);
+        return;
+      }
+
       await onSave(dataToSave);
     } finally {
       setIsSubmitting(false);
@@ -125,7 +139,7 @@ export default function ServiceModal({ isOpen, onClose, onSave, service }: Servi
         productId: service?.id || 'temp',
         url: url,
         alt: formData.name || 'Service Image',
-        isPrimary: formData.images && formData.images.length === 0,
+        isPrimary: !!(formData.images && formData.images.length === 0),
         width: 800,
         height: 600,
         createdAt: new Date(),
@@ -416,7 +430,7 @@ export default function ServiceModal({ isOpen, onClose, onSave, service }: Servi
                   {formData.images?.map((img, idx) => (
                     <div key={idx} className="relative group border rounded-lg overflow-hidden bg-white dark:bg-neutral-800 shadow-sm">
                       <div className="aspect-square relative">
-                         <img src={img.url} alt={img.alt} className="w-full h-full object-cover" />
+                         <ProductImage src={img.url} alt={img.alt} fill className="object-cover" />
                       </div>
 
                       {/* File Info Overlay - Always visible at bottom */}

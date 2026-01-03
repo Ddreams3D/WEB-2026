@@ -29,7 +29,8 @@ export async function fetchThemesFromFirestore(): Promise<SeasonalThemeConfig[]>
   // For now, let's use the same conservative approach: 
   // ONLY fetch if we are sure db is ready AND we want to use it.
   
-  const shouldFetch = db && ENABLE_FIRESTORE_FOR_PUBLIC;
+  const dbInstance = db;
+  const shouldFetch = dbInstance && ENABLE_FIRESTORE_FOR_PUBLIC;
 
   if (!shouldFetch) {
     // Return fallback silently without error logs
@@ -37,7 +38,7 @@ export async function fetchThemesFromFirestore(): Promise<SeasonalThemeConfig[]>
   }
 
   try {
-    const q = query(collection(db, COLLECTION_NAME), orderBy('id'));
+    const q = query(collection(dbInstance, COLLECTION_NAME), orderBy('id'));
     const snapshot = await getDocs(q);
 
     if (snapshot.empty) {
@@ -65,12 +66,13 @@ export async function fetchThemesFromFirestore(): Promise<SeasonalThemeConfig[]>
  * Uses a batch operation to ensure atomicity for the list (overwrite strategy).
  */
 export async function saveThemesToFirestore(themes: SeasonalThemeConfig[]): Promise<void> {
-  if (!db) {
+  const dbInstance = db;
+  if (!dbInstance) {
     throw new Error('Firestore is not configured.');
   }
 
   try {
-    const batch = writeBatch(db);
+    const batch = writeBatch(dbInstance);
     
     // Strategy: We want to sync the provided list to Firestore.
     // Simplest way for a config list is to overwrite documents by ID.
@@ -79,7 +81,7 @@ export async function saveThemesToFirestore(themes: SeasonalThemeConfig[]): Prom
     // For safety/simplicity in this iteration, we'll upsert.
     
     themes.forEach((theme) => {
-      const docRef = doc(db, COLLECTION_NAME, theme.id);
+      const docRef = doc(dbInstance, COLLECTION_NAME, theme.id);
       batch.set(docRef, theme);
     });
 

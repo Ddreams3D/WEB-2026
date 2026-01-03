@@ -1,5 +1,5 @@
 import React from 'react';
-import Image from 'next/image';
+import DefaultImage from '@/shared/components/ui/DefaultImage';
 import { Eye } from '@/lib/icons';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -26,7 +26,7 @@ export function GalleryCard({ project, onClick, className, style }: GalleryCardP
     >
       {/* Project Image */}
       <div className="relative aspect-[4/3] overflow-hidden">
-        <Image
+        <DefaultImage
           src={project.coverImage}
           alt={project.title}
           fill

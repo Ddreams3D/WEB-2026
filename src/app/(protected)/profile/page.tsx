@@ -6,19 +6,19 @@ import { useOrderTracking } from '@/contexts/OrderTrackingContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
-  User, Mail, Phone, MapPin, Calendar, Camera, Save, Loader2, X, 
-  Package, Heart, Clock, CreditCard, ChevronRight, ShoppingBag,
-  Plus, Trash2, Edit2, Home, Briefcase, Check, Star
+  User, Mail, Phone, MapPin, Calendar, Camera, Loader2, X, 
+  Package, Heart, Clock, CreditCard, ShoppingBag,
+  Plus, Trash2, Edit2, Home, Briefcase, Star
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/components/ui/ToastManager';
 import Link from 'next/link';
+import { UserAvatar } from '@/shared/components/ui/DefaultImage';
 
 export default function ProfilePage() {
   const { user, isLoading, updateUser } = useAuth();
@@ -247,9 +247,14 @@ export default function ProfilePage() {
             <CardContent className="pt-0 relative">
               <div className="flex justify-center -mt-16 mb-4">
                 <div className="relative group">
-                  <div className="w-32 h-32 rounded-full border-4 border-background bg-muted flex items-center justify-center overflow-hidden shadow-lg">
+                  <div className="w-32 h-32 rounded-full border-4 border-background bg-muted flex items-center justify-center overflow-hidden shadow-lg relative">
                     {user.photoURL ? (
-                      <img src={user.photoURL} alt={user.name} className="w-full h-full object-cover" />
+                      <UserAvatar 
+                        src={user.photoURL} 
+                        alt={user.name || 'User Profile'} 
+                        fill
+                        className="object-cover" 
+                      />
                     ) : (
                       <User className="h-16 w-16 text-muted-foreground" />
                     )}

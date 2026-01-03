@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { X, FileText } from '@/lib/icons';
-import Image from 'next/image';
+import DefaultImage from '@/shared/components/ui/DefaultImage';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -106,7 +106,7 @@ export default function ProjectGallery() {
               </Button>
 
               <div className="relative h-64 sm:h-80 w-full group">
-                <Image
+                <DefaultImage
                   src={activeImage || selectedProject.coverImage}
                   alt={
                     selectedProject.galleryImages && selectedProject.galleryAlt && activeImage
@@ -143,7 +143,7 @@ export default function ProjectGallery() {
                               : "border-white/30 hover:border-white/80 hover:scale-105"
                           )}
                         >
-                          <Image 
+                          <DefaultImage 
                             src={img} 
                             alt={selectedProject.galleryAlt ? (selectedProject.galleryAlt[idx] || `Vista ${idx + 1}`) : `Vista ${idx + 1}`}
                             fill 

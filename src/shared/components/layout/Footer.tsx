@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 import {
   Facebook,
   Instagram,
@@ -26,6 +25,7 @@ import {
 } from '@/shared/constants/contactInfo';
 import { Button, Input } from '@/components/ui';
 import { cn } from '@/lib/utils';
+import DefaultImage from '@/shared/components/ui/DefaultImage';
 
 const Footer = () => {
   const router = useRouter();
@@ -111,7 +111,7 @@ const Footer = () => {
           {/* Logo y descripción - Centrado y elegante */}
           <div className="text-center">
             <div className="flex justify-center mb-4">
-              <Image
+              <DefaultImage
                 src="/logo/isotipo_DD_blanco_V2.svg"
                 alt="isotipo"
                 width={100}

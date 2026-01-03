@@ -109,7 +109,7 @@ export interface AnalyticsContext {
   location?: AnalyticsLocation | string; // Allow string for flexibility but prefer Enum
   section?: string;
   component?: string;
-  [key: string]: any;
+  [key: string]: unknown; // Changed from any to unknown for safety
 }
 
 export interface ItemContext {
@@ -161,7 +161,7 @@ const REQUIRED_PARAMS: Partial<Record<AnalyticsEventValue, string[]>> = {
 
 // --- 4. Helpers ---
 
-const cleanParam = (value: any): any => {
+const cleanParam = (value: unknown): unknown => {
   if (value === null || value === undefined) return undefined;
   
   if (typeof value === 'string') {
@@ -191,8 +191,8 @@ const cleanParam = (value: any): any => {
   return value;
 };
 
-const normalizeParams = (params: Record<string, any>): Record<string, any> => {
-  const cleaned: Record<string, any> = {};
+const normalizeParams = (params: Record<string, unknown>): Record<string, unknown> => {
+  const cleaned: Record<string, unknown> = {};
   Object.keys(params).forEach((key) => {
     const value = cleanParam(params[key]);
     if (value !== undefined) {
@@ -208,7 +208,7 @@ const inferSegment = (path: string, pageType?: string): AnalyticsSegment => {
   return AnalyticsSegments.CORPORATE;
 };
 
-const validateEvent = (eventName: string, params: Record<string, any>): boolean => {
+const validateEvent = (eventName: string, params: Record<string, unknown>): boolean => {
   const required = REQUIRED_PARAMS[eventName as AnalyticsEventValue];
   if (!required) return true;
 
@@ -304,12 +304,12 @@ export const trackEvent = (
   }
 };
 
-const mapToStandardEvents = (eventName: string, params: any) => {
+const mapToStandardEvents = (eventName: string, params: Record<string, unknown>) => {
     try {
         if (eventName === AnalyticsEvents.VIEW_PRODUCT_DETAIL || eventName === AnalyticsEvents.VIEW_SERVICE_DETAIL) {
           sendGAEvent('event', 'view_item', {
             currency: 'PEN',
-            value: params.price || 0,
+            value: (params.price as number) || 0,
             items: [{
               item_id: params.id,
               item_name: params.name,

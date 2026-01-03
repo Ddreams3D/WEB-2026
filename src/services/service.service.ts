@@ -7,7 +7,10 @@ import {
   orderBy, 
   Timestamp,
   deleteDoc,
-  writeBatch
+  DocumentData,
+  writeBatch,
+  QuerySnapshot,
+  QueryDocumentSnapshot
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Service } from '@/shared/types/domain';
@@ -19,11 +22,6 @@ const COLLECTION_NAME = 'services';
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 const FIRESTORE_TIMEOUT = 5000; // 5s timeout for Admin/Explicit fetches
 
-// Configuration
-// Set to 'true' only when Firestore is populated and ready to be the primary source for public users.
-// Currently set to 'false' to ensure fast loading from JSON fallback since Firestore is empty/slow.
-const ENABLE_FIRESTORE_FOR_PUBLIC = true;
-
 // In-memory cache
 let servicesCache: { data: Service[], timestamp: number } | null = null;
 
@@ -31,7 +29,7 @@ let servicesCache: { data: Service[], timestamp: number } | null = null;
  * Helper to convert Firestore data or JSON to Service object.
  * Handles Date/Timestamp conversion.
  */
-const mapToService = (data: any): Service => {
+const mapToService = (data: DocumentData): Service => {
   return {
     ...data,
     // Ensure kind is 'service'
@@ -39,15 +37,15 @@ const mapToService = (data: any): Service => {
     isService: true,
     createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate() : new Date(data.createdAt),
     updatedAt: data.updatedAt instanceof Timestamp ? data.updatedAt.toDate() : new Date(data.updatedAt),
-    images: data.images?.map((img: any) => ({
+    images: data.images?.map((img: DocumentData) => ({
       ...img,
       createdAt: img.createdAt instanceof Timestamp ? img.createdAt.toDate() : new Date(img.createdAt),
       updatedAt: img.updatedAt instanceof Timestamp ? img.updatedAt.toDate() : new Date(img.updatedAt),
     })) || []
-  };
+  } as Service;
 };
 
-const mapToFirestore = (data: Service): any => {
+const mapToFirestore = (data: Service): DocumentData => {
   return {
     ...data,
     createdAt: data.createdAt instanceof Date ? Timestamp.fromDate(data.createdAt) : Timestamp.fromDate(new Date()),
@@ -71,10 +69,11 @@ export const ServiceService = {
     }
 
     let services: Service[] = [];
-    const shouldFetch = !!db;
+    const dbInstance = db;
+    const shouldFetch = !!dbInstance;
     let fetchFailed = false;
 
-    if (shouldFetch) {
+    if (shouldFetch && dbInstance) {
       try {
         console.log('[ServiceService] Fetching from Firestore...');
         const timeoutPromise = new Promise((_, reject) => 
@@ -82,22 +81,22 @@ export const ServiceService = {
         );
 
         // REMOVED orderBy('displayOrder') to prevent hiding services without this field
-        const q = query(collection(db, COLLECTION_NAME));
+        const q = query(collection(dbInstance, COLLECTION_NAME));
         const snapshot = await Promise.race([
           getDocs(q),
           timeoutPromise
-        ]) as any;
+        ]) as QuerySnapshot<DocumentData>;
 
         if (!snapshot.empty) {
           console.log(`[ServiceService] Found ${snapshot.docs.length} services in Firestore`);
-          services = snapshot.docs.map((doc: any) => mapToService(doc.data()));
+          services = snapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => mapToService(doc.data()));
 
           // AUTO-REPAIR: Check for missing displayOrder and fix in background
           const servicesMissingOrder = services.filter(s => typeof s.displayOrder !== 'number');
           if (servicesMissingOrder.length > 0) {
               console.warn(`[ServiceService] Found ${servicesMissingOrder.length} services without displayOrder. Triggering auto-repair...`);
               // Non-blocking repair
-              this.normalizeDisplayOrders(services).catch(err => console.error('Auto-repair failed:', err));
+              this.normalizeDisplayOrders(services).catch((err: unknown) => console.error('Auto-repair failed:', err));
           }
         } else {
            console.log('No services found in Firestore. Auto-seeding default data...');
@@ -170,14 +169,15 @@ export const ServiceService = {
 
   // Save (Create or Update) a service
   async saveService(service: Service): Promise<void> {
-    if (!db) throw new Error('Firestore is not configured.');
+    const dbInstance = db;
+    if (!dbInstance) throw new Error('Firestore is not configured.');
 
     console.log('[ServiceService] Saving service to Firestore:', service.id);
 
     try {
       const firestoreData = mapToFirestore(service);
       
-      const docRef = doc(db, COLLECTION_NAME, service.id);
+      const docRef = doc(dbInstance, COLLECTION_NAME, service.id);
       await setDoc(docRef, firestoreData);
 
       console.log('[ServiceService] Service saved successfully');
@@ -192,7 +192,8 @@ export const ServiceService = {
    * Delete a service from Firestore.
    */
   async deleteService(id: string): Promise<void> {
-    if (!db) {
+    const dbInstance = db;
+    if (!dbInstance) {
         // Mock with Persistence
         const currentServices = await this.getAllServices();
         const newServices = currentServices.filter(s => s.id !== id);
@@ -202,7 +203,7 @@ export const ServiceService = {
     }
 
     try {
-      await deleteDoc(doc(db, COLLECTION_NAME, id));
+      await deleteDoc(doc(dbInstance, COLLECTION_NAME, id));
       
       // Invalidate cache
       servicesCache = null;
@@ -217,31 +218,32 @@ export const ServiceService = {
    * Only runs if Firestore collection is empty.
    */
   async seedServices(force = false): Promise<void> {
-    if (!db) return;
+    const dbInstance = db;
+    if (!dbInstance) return;
 
     try {
-      const snapshot = await getDocs(collection(db, COLLECTION_NAME));
+      const snapshot = await getDocs(collection(dbInstance, COLLECTION_NAME));
       if (!snapshot.empty && !force) {
         console.log('Services collection already exists. Skipping seed.');
         return;
       }
 
       console.log('Seeding services to Firestore (Force: ' + force + ')...');
-      const batch = writeBatch(db);
+      const batch = writeBatch(dbInstance);
       
       const fallbackServices = servicesFallbackData.map(mapToService);
       
       fallbackServices.forEach(service => {
-        const docRef = doc(db, COLLECTION_NAME, service.id);
+        const docRef = doc(dbInstance, COLLECTION_NAME, service.id);
         // Convert Dates to Timestamps for Firestore
         const firestoreData = {
           ...service,
-          createdAt: Timestamp.fromDate(service.createdAt),
-          updatedAt: Timestamp.fromDate(service.updatedAt),
+          createdAt: service.createdAt ? Timestamp.fromDate(service.createdAt) : Timestamp.now(),
+          updatedAt: service.updatedAt ? Timestamp.fromDate(service.updatedAt) : Timestamp.now(),
           images: service.images.map(img => ({
             ...img,
-            createdAt: Timestamp.fromDate(img.createdAt),
-            updatedAt: Timestamp.fromDate(img.updatedAt)
+            createdAt: img.createdAt ? Timestamp.fromDate(img.createdAt) : Timestamp.now(),
+            updatedAt: img.updatedAt ? Timestamp.fromDate(img.updatedAt) : Timestamp.now()
           }))
         };
         batch.set(docRef, firestoreData);
@@ -291,15 +293,16 @@ export const ServiceService = {
       updatedAt: new Date()
     } as Service;
 
-    if (db) {
+    const dbInstance = db;
+    if (dbInstance) {
         await this.saveService(newService);
-    } else {
-        // Mock with Persistence
-        const currentServices = await this.getAllServices();
-        currentServices.push(newService);
-        LocalStorageService.saveServices(currentServices);
-        servicesCache = { data: currentServices, timestamp: Date.now() };
     }
+    
+    // Also save to local storage
+    const currentServices = LocalStorageService.getServices() || [];
+    LocalStorageService.saveServices([...currentServices, newService]);
+    servicesCache = null; // Invalidate cache
+
     return newService;
   },
 
@@ -332,7 +335,8 @@ export const ServiceService = {
       updatedAt: new Date()
     };
 
-    if (db) {
+    const dbInstance = db;
+    if (dbInstance) {
         await this.saveService(updatedService);
     } else {
         // Mock with Persistence
@@ -345,5 +349,25 @@ export const ServiceService = {
          }
     }
     return updatedService;
+  },
+
+  async normalizeDisplayOrders(services: Service[]): Promise<void> {
+    const dbInstance = db;
+    if (!dbInstance) return;
+    const batch = writeBatch(dbInstance);
+    let updatedCount = 0;
+
+    services.forEach((service, index) => {
+        if (typeof service.displayOrder !== 'number') {
+            const ref = doc(dbInstance, COLLECTION_NAME, service.id);
+            batch.update(ref, { displayOrder: index });
+            updatedCount++;
+        }
+    });
+
+    if (updatedCount > 0) {
+        await batch.commit();
+        console.log(`[ServiceService] Normalized displayOrder for ${updatedCount} services.`);
+    }
   }
 };

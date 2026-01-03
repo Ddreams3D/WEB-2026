@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Plus, Edit, Trash2, Loader2, RefreshCw, AlertTriangle, Calendar } from 'lucide-react';
 import { useToast } from '@/components/ui/ToastManager';
 import ProjectModal from './ProjectModal';
-import Image from 'next/image';
+import DefaultImage from '@/shared/components/ui/DefaultImage';
 import { formatDate } from '@/lib/utils';
 import ConnectionStatus from './ConnectionStatus';
 import ConfirmationModal from './ConfirmationModal';
@@ -211,7 +211,7 @@ export default function ProjectManager() {
             >
               <div className="relative aspect-video bg-muted">
                 {project.coverImage ? (
-                  <Image 
+                  <DefaultImage 
                     src={project.coverImage} 
                     alt={project.title}
                     fill

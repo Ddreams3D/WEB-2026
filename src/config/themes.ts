@@ -1,10 +1,11 @@
 import { Palette, Gift, Ghost, Heart, ShoppingBag, Flag } from '@/lib/icons';
 import { Theme } from '@/contexts/ThemeContext';
+import { LucideIcon } from 'lucide-react';
 
 export const THEME_CONFIG: Record<Theme, { 
   label: string; 
   description: string;
-  icon: any; 
+  icon: LucideIcon; 
   colorClass: string;
   previewColors: string[];
 }> = {

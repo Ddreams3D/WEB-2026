@@ -93,8 +93,8 @@ const PopoverTrigger: React.FC<PopoverTriggerProps> = ({ children, className, as
   };
 
   if (asChild && React.isValidElement(children)) {
-    const childProps = children.props as any;
-    return React.cloneElement(children, {
+    const childProps = children.props as React.HTMLAttributes<HTMLElement>;
+    return React.cloneElement(children as React.ReactElement<any>, {
       ...childProps,
       ref: triggerRef,
       onClick: handleClick,

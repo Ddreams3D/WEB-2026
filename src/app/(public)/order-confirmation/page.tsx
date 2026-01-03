@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { ProductImage } from '@/shared/components/ui/DefaultImage';
 
 import { CartItem } from '@/shared/types';
 
@@ -221,9 +222,18 @@ DDreams 3D - Impresión 3D Personalizada
               {orderData.items.map((item, index) => (
                 <div key={index} className="flex items-center space-x-4">
                   <div className={cn(
-                    "w-16 h-16 rounded-lg flex items-center justify-center bg-muted"
+                    "w-16 h-16 rounded-lg flex items-center justify-center bg-muted relative overflow-hidden"
                   )}>
-                    <Package className="h-6 w-6 text-neutral-500 dark:text-neutral-400" />
+                    {item.product.images && item.product.images.length > 0 ? (
+                        <ProductImage 
+                            src={item.product.images.find(img => img.isPrimary)?.url || item.product.images[0].url} 
+                            alt={item.product.name}
+                            fill
+                            className="object-cover"
+                        />
+                    ) : (
+                        <Package className="h-6 w-6 text-neutral-500 dark:text-neutral-400" />
+                    )}
                   </div>
                   <div className="flex-1">
                     <h4 className="font-medium text-neutral-900 dark:text-white">{item.product.name}</h4>

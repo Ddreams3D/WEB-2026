@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import Image from 'next/image';
+import DefaultImage from '@/shared/components/ui/DefaultImage';
 
 interface StorageFile {
     type: 'file';
@@ -87,7 +87,14 @@ export default function StorageManager() {
     const loadFiles = useCallback(async (path: string) => {
         try {
             setLoading(true);
-            const storageRef = ref(storage, path);
+            const storageInstance = storage;
+            if (!storageInstance) {
+                console.warn('Firebase Storage not initialized');
+                setItems([]);
+                return;
+            }
+
+            const storageRef = ref(storageInstance, path);
             
             // List all items (files) and prefixes (folders)
             const result = await list(storageRef, { maxResults: 100 });
@@ -306,7 +313,7 @@ export default function StorageManager() {
                                         <>
                                             <div className="relative w-full h-full">
                                                 {item.contentType?.startsWith('image/') ? (
-                                                    <Image
+                                                    <DefaultImage
                                                         src={item.url}
                                                         alt={item.name}
                                                         fill
@@ -385,7 +392,7 @@ export default function StorageManager() {
                     <div className="flex flex-col gap-6">
                         <div className="aspect-square relative rounded-lg border bg-accent/20 overflow-hidden">
                             {selectedItem.contentType?.startsWith('image/') ? (
-                                <Image
+                                <DefaultImage
                                     src={selectedItem.url}
                                     alt={selectedItem.name}
                                     fill

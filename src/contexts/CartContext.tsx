@@ -2,6 +2,8 @@
 
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { CartItem, Cart, Product, CartItemCustomization } from '../shared/types';
+import { ProductService } from '@/services/product.service';
+import { cartSchema, type CartStorage } from '@/lib/validators/cart.schema';
 
 interface SerializedCartItem extends Omit<CartItem, 'addedAt'> {
   addedAt: string;
@@ -17,6 +19,7 @@ interface CartContextType {
   removeFromCart: (productId: string) => Promise<void>;
   updateQuantity: (productId: string, quantity: number) => Promise<void>;
   clearCart: () => Promise<void>;
+  refreshPrices: () => Promise<void>;
   isLoading: boolean;
   error: string | null;
 }
@@ -49,20 +52,42 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(true);
       const savedCart = localStorage.getItem('ddreams-cart');
       if (savedCart) {
-        const cartData = JSON.parse(savedCart);
+        const rawData = JSON.parse(savedCart);
+        
+        // Zod validation for integrity
+        const validation = cartSchema.safeParse(rawData);
+        
+        if (!validation.success) {
+           console.error("[CartContext] Corrupt cart data found, resetting.", validation.error);
+           localStorage.removeItem('ddreams-cart');
+           throw new Error("Corrupt cart data");
+        }
+
+        const cartData: CartStorage = validation.data;
+        
         // Restaurar fechas que vienen como string del JSON
-        const parsedItems = (cartData.items || []).map((item: SerializedCartItem) => ({
+        const parsedItems: CartItem[] = cartData.items.map((item) => ({
           ...item,
-          addedAt: new Date(item.addedAt)
+          product: item.product as unknown as Product, // Cast safe due to passthrough schema
+          addedAt: new Date(item.addedAt),
+          customizations: item.customizations as CartItemCustomization[] | undefined
         }));
         
         setItems(parsedItems);
-        setCart({
+        
+        const restoredCart: Cart = {
           ...cartData,
           items: parsedItems,
           createdAt: new Date(cartData.createdAt),
-          updatedAt: new Date(cartData.updatedAt)
-        });
+          updatedAt: new Date(cartData.updatedAt),
+          // Ensure mandatory fields exist (schema passthrough might have them, otherwise defaults)
+          tax: cartData.tax || 0,
+          shipping: cartData.shipping || 0,
+          discount: cartData.discount || 0,
+          currency: cartData.currency || 'PEN'
+        };
+
+        setCart(restoredCart);
       } else {
         // Inicializar carrito vacío
         const newCart: Cart = {
@@ -81,6 +106,23 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         setItems([]);
       }
     } catch (err) {
+      console.warn('Error loading/validating cart, resetting to empty:', err);
+      // Fallback to empty cart on error
+      const newCart: Cart = {
+          id: 'local-cart',
+          items: [],
+          subtotal: 0,
+          tax: 0,
+          shipping: 0,
+          discount: 0,
+          total: 0,
+          currency: 'PEN',
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+        setCart(newCart);
+        setItems([]);
+        localStorage.removeItem('ddreams-cart');
       setError('Error loading cart from localStorage');
     } finally {
       setIsLoading(false);
@@ -245,6 +287,85 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const refreshPrices = async () => {
+    try {
+      // Don't set global loading to avoid flickering entire UI, or handle gracefully
+      // But user requested validation, so maybe we should block.
+      // Let's set loading but maybe the UI handles it well.
+      setIsLoading(true);
+      setError(null);
+      
+      if (items.length === 0) {
+        setIsLoading(false);
+        return;
+      }
+
+      let hasChanges = false;
+
+      const updatedItemsPromises = items.map(async (item) => {
+        try {
+          // Re-fetch product data
+          const freshProduct = await ProductService.getProductById(item.productId);
+          
+          if (!freshProduct) {
+             // Product might be deleted. 
+             // Ideally we should mark it as unavailable or remove it.
+             // For now, let's keep it but maybe flag it? 
+             // Or just return as is to avoid data loss until user decides.
+             return item; 
+          }
+          
+          // Check if price changed
+          if (freshProduct.price !== item.product.price) {
+             hasChanges = true;
+             return {
+                ...item,
+                product: {
+                  ...item.product,
+                  price: freshProduct.price,
+                  name: freshProduct.name,
+                  images: freshProduct.images
+                }
+             };
+          }
+          
+          return item;
+        } catch (e) {
+            console.error(`Failed to refresh price for ${item.productId}`, e);
+            return item;
+        }
+      });
+
+      const updatedItems = await Promise.all(updatedItemsPromises);
+      
+      if (hasChanges) {
+          setItems(updatedItems);
+
+          const newSubtotal = updatedItems.reduce((total, item) => {
+            const price = item.product.price || 0;
+            return total + (price * item.quantity);
+          }, 0);
+
+          const updatedCart: Cart = {
+            ...cart!,
+            items: updatedItems,
+            subtotal: newSubtotal,
+            total: newSubtotal,
+            updatedAt: new Date()
+          };
+
+          setCart(updatedCart);
+          saveCartToLocalStorage(updatedCart);
+      }
+
+    } catch (err) {
+      console.error("Error refreshing prices", err);
+      // Don't show error to user for background refresh unless critical
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <CartContext.Provider value={{
       cart,
@@ -256,6 +377,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       removeFromCart,
       updateQuantity,
       clearCart,
+      refreshPrices,
       isLoading,
       error
     }}>

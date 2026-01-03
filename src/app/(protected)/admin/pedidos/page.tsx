@@ -16,7 +16,8 @@ import {
   Calendar,
   User as UserIcon,
   Phone,
-  Mail
+  Mail,
+  FileText
 } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import { OrderService } from '@/services/order.service';
@@ -24,6 +25,7 @@ import { Order, OrderStatus } from '@/shared/types/domain';
 import { useOrderTrackingHook } from '@/hooks/useOrderTracking';
 import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui/badge';
+import { ProductImage } from '@/shared/components/ui/DefaultImage';
 
 // --- Components ---
 
@@ -53,6 +55,7 @@ function OrderStatusBadge({ status }: { status: OrderStatus }) {
   };
 
   const icons = {
+    quote_requested: FileText,
     pending_payment: Clock,
     paid: DollarSign,
     processing: Package,
@@ -248,7 +251,9 @@ function OrderDetailsModal({
                 <div key={idx} className="p-3 flex items-center justify-between">
                   <div className="flex items-center">
                     {item.image && (
-                      <img src={item.image} alt={item.name} className="w-10 h-10 rounded-md object-cover mr-3" />
+                      <div className="w-10 h-10 mr-3 relative shrink-0">
+                         <ProductImage src={item.image} alt={item.name} fill className="object-cover rounded-md" />
+                      </div>
                     )}
                     <div>
                       <p className="text-sm font-medium">{item.name}</p>
@@ -458,7 +463,7 @@ export default function OrdersPage() {
           </div>
           <select 
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as any)}
+            onChange={(e) => setStatusFilter(e.target.value as OrderStatus | 'all')}
             className="px-3 py-2 border border-input rounded-lg text-sm bg-background min-w-[150px]"
           >
             <option value="all">Todos los estados</option>

@@ -183,7 +183,7 @@ export function ProductFilters({
                   <button
                     key={type.value}
                     onClick={() => {
-                      const newFilters = { ...filters, type: type.value as any };
+                      const newFilters = { ...filters, type: type.value as 'product' | 'service' | 'all' };
                       applyFilters(newFilters);
                       onFiltersChange?.(newFilters);
                     }}

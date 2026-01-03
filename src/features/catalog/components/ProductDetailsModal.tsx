@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { X, ShoppingCart, ChevronLeft, ChevronRight, MessageSquare } from 'lucide-react';
 import { Product } from '@/shared/types';

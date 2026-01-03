@@ -24,7 +24,7 @@ export async function POST(request: Request) {
 
     // Ajustar si hay servicios personalizados (toman más tiempo)
     // Verificamos propiedad 'type' en items (según definición OrderItem)
-    const hasCustomServices = order.items?.some((i: any) => i.type === 'service');
+    const hasCustomServices = order.items?.some((i: { type: string }) => i.type === 'service');
     if (hasCustomServices) {
       baseDays += 5;
     }

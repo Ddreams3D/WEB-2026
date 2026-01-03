@@ -1,11 +1,10 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Product, CartItemCustomization } from '@/shared/types';
-import { Service } from '@/shared/types/domain';
+import { Product, CartItemCustomization, ProductOption, ProductOptionValue } from '@/shared/types';
+import { Service, ProductImage as ProductImageType } from '@/shared/types/domain';
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/components/ui/ToastManager';
 import { ProductImage } from '@/shared/components/ui/DefaultImage';
@@ -71,7 +70,7 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
                     ...found,
                     createdAt: new Date(found.createdAt),
                     updatedAt: foundUpdatedAt,
-                    images: (found.images || []).map((img: any) => ({
+                    images: (found.images || []).map((img: ProductImageType) => ({
                       ...img,
                       createdAt: img.createdAt ? new Date(img.createdAt) : undefined,
                       updatedAt: img.updatedAt ? new Date(img.updatedAt) : undefined
@@ -157,8 +156,11 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
   // Calcular precio total incluyendo opciones
   const currentPrice = product.price + Object.entries(selectedOptions).reduce((total, [optionId, valueId]) => {
     if (product.kind !== 'product' || !product.options) return total;
-    const option = (product as any).options.find((o: any) => o.id === optionId);
-    const value = option?.values.find((v: any) => v.id === valueId);
+    
+    // Using type assertions since we verified kind is 'product'
+    const options = product.options as ProductOption[];
+    const option = options.find(o => o.id === optionId);
+    const value = option?.values.find(v => v.id === valueId);
     return total + (value?.priceModifier || 0);
   }, 0);
 

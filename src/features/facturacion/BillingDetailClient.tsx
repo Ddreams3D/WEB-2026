@@ -61,7 +61,7 @@ interface InvoiceActivity {
   description: string;
   timestamp: string;
   user?: string;
-  details?: any;
+  details?: Record<string, unknown>;
 }
 
 export default function BillingDetailClient() {
@@ -394,7 +394,7 @@ export default function BillingDetailClient() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {invoice.items.map((item: any, index: number) => (
+                    {invoice.items.map((item, index) => (
                       <div key={index} className="border rounded-lg p-4">
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
@@ -415,7 +415,7 @@ export default function BillingDetailClient() {
                             </div>
                           </div>
                           <div className="text-right">
-                            <p className="font-semibold text-lg">{formatCurrency(item.total)}</p>
+                            <p className="font-semibold text-lg">{formatCurrency(item.quantity * item.unitPrice)}</p>
                           </div>
                         </div>
                       </div>
@@ -585,12 +585,12 @@ export default function BillingDetailClient() {
                           </tr>
                         </thead>
                         <tbody>
-                          {invoice.items.map((item: any, index: number) => (
+                          {invoice.items.map((item, index) => (
                             <tr key={index}>
                               <td className="border border-gray-300 p-2">{item.description}</td>
                               <td className="border border-gray-300 p-2 text-center">{item.quantity}</td>
                               <td className="border border-gray-300 p-2 text-right">{formatCurrency(item.unitPrice)}</td>
-                              <td className="border border-gray-300 p-2 text-right">{formatCurrency(item.total)}</td>
+                              <td className="border border-gray-300 p-2 text-right">{formatCurrency(item.quantity * item.unitPrice)}</td>
                             </tr>
                           ))}
                         </tbody>

@@ -425,10 +425,11 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
           >
             <div className="aspect-[4/3] relative bg-neutral-100 dark:bg-neutral-900 overflow-hidden">
               {product.images && product.images.length > 0 ? (
-                 <img 
+                 <ProductImage 
                     src={product.images.find(i => i.isPrimary)?.url || product.images[0].url} 
                     alt={product.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
                  />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-neutral-400">

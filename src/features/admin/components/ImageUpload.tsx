@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import Image from 'next/image';
+import { ProductImage as ProductImageComponent } from '@/shared/components/ui/DefaultImage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -232,29 +232,30 @@ export default function ImageUpload({ value, onChange, onRemove, onUploadStatusC
               setUploadProgress(progress);
               console.log(`Upload status: pending (${Math.round(progress)}%)`);
             }, 
-            (error: any) => {
+            (error: unknown) => {
               console.error('Error uploading image:', error);
               
               let status = 500;
               let message = 'Error desconocido al subir la imagen';
+              const code = (error as { code?: string })?.code;
 
               // Map Firebase Storage errors to HTTP-like status codes for diagnostics
-              if (error.code === 'storage/unauthorized') {
+              if (code === 'storage/unauthorized') {
                 status = 403;
                 message = 'Permiso denegado (403). Verifica las reglas de Firebase Storage y tu sesión.';
                 alert(`Upload Failed (403): ${message}\n\nRevisa Storage Rules + estado de auth en el admin.`);
-              } else if (error.code === 'storage/canceled') {
+              } else if (code === 'storage/canceled') {
                 status = 0;
                 message = 'Subida cancelada por el usuario';
-              } else if (error.code === 'storage/quota-exceeded') {
+              } else if (code === 'storage/quota-exceeded') {
                 status = 413; // Payload Too Large / Quota
                 message = 'Cuota de almacenamiento excedida (413)';
-              } else if (error.code === 'storage/retry-limit-exceeded') {
+              } else if (code === 'storage/retry-limit-exceeded') {
                 status = 408; // Request Timeout
                 message = 'Tiempo de espera agotado (408). Tu conexión es inestable.';
               }
 
-              console.log(`Upload finished with status: ${status} (${error.code})`);
+              console.log(`Upload finished with status: ${status} (${code})`);
               
               if (status !== 0) {
                  alert(`Error al subir (${status}): ${message}`);
@@ -286,7 +287,7 @@ export default function ImageUpload({ value, onChange, onRemove, onUploadStatusC
                     if (fileInputRef.current) fileInputRef.current.value = '';
                 }, 1000);
                 
-              } catch (urlError: any) {
+              } catch (urlError: unknown) {
                 console.error('Error getting download URL:', urlError);
                 console.log('Upload finished but URL retrieval failed (500)');
                 alert('La imagen se subió pero no se pudo obtener el enlace.');
@@ -336,9 +337,10 @@ export default function ImageUpload({ value, onChange, onRemove, onUploadStatusC
           }
         }, 100);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error in upload process:', error);
-      alert(`Error inesperado: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      alert(`Error inesperado: ${errorMessage}`);
       updateUploadingState(false);
     }
   };
@@ -454,7 +456,7 @@ export default function ImageUpload({ value, onChange, onRemove, onUploadStatusC
       {value ? (
         <div className="relative">
           <div className="relative w-full h-48 bg-muted rounded-lg overflow-hidden border border-border">
-            <Image
+            <ProductImageComponent
               src={value}
               alt="Product image"
               fill

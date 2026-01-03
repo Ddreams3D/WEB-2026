@@ -131,7 +131,7 @@ export function UserAvatar({
       src={src}
       alt={alt}
       className={`rounded-full ${className}`}
-      fallbackSrc="https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fplaceholder-user.png?alt=media&token=placeholder-token"
+      fallbackSrc="https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fplaceholder-team.svg?alt=media&token=9393f5dd-069c-48db-a72f-c065bf98af13"
       placeholderText="Usuario"
       {...props}
     />

@@ -12,7 +12,9 @@ import {
   limit,
   startAfter,
   getDoc,
-  runTransaction
+  runTransaction,
+  DocumentData,
+  QueryDocumentSnapshot
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Order, OrderStatus, OrderHistoryEntry } from '@/shared/types/domain';
@@ -25,17 +27,17 @@ const VALID_STATUSES: OrderStatus[] = ['quote_requested', 'pending_payment', 'pa
 // In-memory cache
 let ordersCache: { data: Order[], timestamp: number } | null = null;
 
-const mapToOrder = (data: any): Order => {
+const mapToOrder = (data: DocumentData): Order => {
   return {
     ...data,
     createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate() : new Date(data.createdAt || Date.now()),
     updatedAt: data.updatedAt instanceof Timestamp ? data.updatedAt.toDate() : new Date(data.updatedAt || Date.now()),
     estimatedDeliveryDate: data.estimatedDeliveryDate instanceof Timestamp ? data.estimatedDeliveryDate.toDate() : (data.estimatedDeliveryDate ? new Date(data.estimatedDeliveryDate) : undefined),
-    history: (data.history || []).map((h: any) => ({
+    history: (data.history || []).map((h: Record<string, unknown>) => ({
       ...h,
-      timestamp: h.timestamp instanceof Timestamp ? h.timestamp.toDate() : new Date(h.timestamp)
+      timestamp: h.timestamp instanceof Timestamp ? h.timestamp.toDate() : new Date(h.timestamp as string | number | Date)
     }))
-  };
+  } as Order;
 };
 
 export const OrderService = {
@@ -189,7 +191,7 @@ export const OrderService = {
             updatedBy
         };
 
-        const updates: any = {
+        const updates: Partial<Order> = {
             status: newStatus,
             updatedAt: now,
             history: [...(orderData.history || []), newHistoryEntry]
@@ -233,7 +235,7 @@ export const OrderService = {
         
         const orderData = orderDoc.data();
         const now = new Date();
-        const updates: any = { updatedAt: now };
+        const updates: Record<string, unknown> = { updatedAt: now };
 
         if (isPrivate) {
             updates.adminNotes = orderData.adminNotes 
@@ -360,8 +362,9 @@ export const OrderService = {
     // Use dummy users we know exist from UserService seed
     // We'll just put some random IDs if we don't know them, 
     // or we can fetch users first. For now, let's assume 'user-demo-1' exists.
-
-    const dummyOrders: any[] = [
+    
+    // Using Partial<Order> but with some loose typing for seed data structure
+    const dummyOrders: Record<string, unknown>[] = [
       {
         userId: 'user-demo-1',
         userEmail: 'cliente@ejemplo.com',

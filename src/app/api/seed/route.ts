@@ -9,16 +9,16 @@ import { reviews } from '@/data/reviews.data';
 export const dynamic = 'force-dynamic';
 
 // Helper to remove undefined values since Firestore doesn't support them
-const deepClean = (obj: any): any => {
+const deepClean = (obj: unknown): unknown => {
   if (Array.isArray(obj)) {
     return obj.map(v => deepClean(v));
   } else if (obj !== null && typeof obj === 'object' && !(obj instanceof Date)) {
-    return Object.entries(obj).reduce((acc, [key, value]) => {
+    return Object.entries(obj as Record<string, unknown>).reduce((acc, [key, value]) => {
       if (value !== undefined) {
         acc[key] = deepClean(value);
       }
       return acc;
-    }, {} as any);
+    }, {} as Record<string, unknown>);
   }
   return obj;
 };
@@ -33,33 +33,37 @@ export async function GET() {
   }
 
   try {
-    const batch = writeBatch(db);
+    if (!db) {
+      throw new Error('Firebase Firestore is not initialized');
+    }
+    const firestore = db;
+    const batch = writeBatch(firestore);
     let count = 0;
 
     // Categories
     categories.forEach((item) => {
-      const ref = doc(collection(db, 'categories'), item.id);
+      const ref = doc(collection(firestore, 'categories'), item.id);
       batch.set(ref, deepClean(item));
       count++;
     });
 
     // Products
     products.forEach((item) => {
-      const ref = doc(collection(db, 'products'), item.id);
+      const ref = doc(collection(firestore, 'products'), item.id);
       batch.set(ref, deepClean(item));
       count++;
     });
     
     // Users
     users.forEach((item) => {
-      const ref = doc(collection(db, 'users'), item.id);
+      const ref = doc(collection(firestore, 'users'), item.id);
       batch.set(ref, deepClean(item));
       count++;
     });
 
     // Reviews
     reviews.forEach((item) => {
-      const ref = doc(collection(db, 'reviews'), item.id);
+      const ref = doc(collection(firestore, 'reviews'), item.id);
       batch.set(ref, deepClean(item));
       count++;
     });

@@ -11,16 +11,16 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 // Helper to remove undefined values
-const deepClean = (obj: any): any => {
+const deepClean = (obj: unknown): unknown => {
   if (Array.isArray(obj)) {
     return obj.map(v => deepClean(v));
   } else if (obj !== null && typeof obj === 'object' && !(obj instanceof Date)) {
-    return Object.entries(obj).reduce((acc, [key, value]) => {
+    return Object.entries(obj as Record<string, unknown>).reduce((acc, [key, value]) => {
       if (value !== undefined) {
         acc[key] = deepClean(value);
       }
       return acc;
-    }, {} as any);
+    }, {} as Record<string, unknown>);
   }
   return obj;
 };
@@ -38,13 +38,18 @@ export default function SeedPage() {
       setLogs([]);
       addLog('Iniciando migración...');
 
-      const batch = writeBatch(db);
+      if (!db) {
+        throw new Error('Firebase Firestore no está inicializado');
+      }
+      const firestore = db;
+
+      const batch = writeBatch(firestore);
       let count = 0;
 
       // Categories
       addLog(`Procesando ${categories.length} categorías...`);
       categories.forEach((item) => {
-        const ref = doc(collection(db, 'categories'), item.id);
+        const ref = doc(collection(firestore, 'categories'), item.id);
         batch.set(ref, deepClean(item));
         count++;
       });
@@ -52,7 +57,7 @@ export default function SeedPage() {
       // Products
       addLog(`Procesando ${products.length} productos...`);
       products.forEach((item) => {
-        const ref = doc(collection(db, 'products'), item.id);
+        const ref = doc(collection(firestore, 'products'), item.id);
         batch.set(ref, deepClean(item));
         count++;
       });
@@ -60,7 +65,7 @@ export default function SeedPage() {
       // Users
       addLog(`Procesando ${users.length} usuarios...`);
       users.forEach((item) => {
-        const ref = doc(collection(db, 'users'), item.id);
+        const ref = doc(collection(firestore, 'users'), item.id);
         batch.set(ref, deepClean(item));
         count++;
       });
@@ -68,7 +73,7 @@ export default function SeedPage() {
       // Reviews
       addLog(`Procesando ${reviews.length} reseñas...`);
       reviews.forEach((item) => {
-        const ref = doc(collection(db, 'reviews'), item.id);
+        const ref = doc(collection(firestore, 'reviews'), item.id);
         batch.set(ref, deepClean(item));
         count++;
       });
@@ -79,11 +84,12 @@ export default function SeedPage() {
       addLog('¡Migración completada con éxito!');
       setStatus('success');
       setMessage(`Se han migrado ${count} documentos correctamente.`);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Seed error:', error);
       setStatus('error');
-      setMessage(error.message || 'Error desconocido');
-      addLog(`ERROR: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+      setMessage(errorMessage);
+      addLog(`ERROR: ${errorMessage}`);
     }
   };
 

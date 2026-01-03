@@ -236,7 +236,7 @@ export default function Settings() {
     setTimeout(() => setSaved(false), 3000);
   };
 
-  const updateSetting = (section: keyof typeof defaultSettings, key: string, value: any) => {
+  const updateSetting = (section: keyof typeof defaultSettings, key: string, value: unknown) => {
     setSettings(prev => ({
       ...prev,
       [section]: {

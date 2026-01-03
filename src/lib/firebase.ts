@@ -1,8 +1,8 @@
-import { initializeApp, getApps } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
-import { getStorage } from 'firebase/storage';
-import { getAnalytics, isSupported } from 'firebase/analytics';
+import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
+import { getFirestore, Firestore } from 'firebase/firestore';
+import { getAuth, Auth } from 'firebase/auth';
+import { getStorage, FirebaseStorage } from 'firebase/storage';
+import { getAnalytics, isSupported, Analytics } from 'firebase/analytics';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -20,11 +20,11 @@ export const isFirebaseConfigured = !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY &
   process.env.NEXT_PUBLIC_FIREBASE_API_KEY !== 'null';
 
 // Initialize Firebase only if configured
-let app;
-let db: any;
-let auth: any;
-let storage: any;
-let analytics: any;
+let app: FirebaseApp | null;
+let db: Firestore | null;
+let auth: Auth | null;
+let storage: FirebaseStorage | null;
+let analytics: Analytics | null;
 
 if (isFirebaseConfigured) {
   // Check if apps are already initialized to avoid "Firebase: Firebase App named '[DEFAULT]' already exists" error
@@ -36,7 +36,7 @@ if (isFirebaseConfigured) {
   // Initialize Analytics only on client side
   if (typeof window !== 'undefined') {
     isSupported().then(supported => {
-      if (supported) {
+      if (supported && app) {
         analytics = getAnalytics(app);
       }
     });

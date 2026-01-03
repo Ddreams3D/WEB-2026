@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
+import DefaultImage from '@/shared/components/ui/DefaultImage';
 import PageHeader from '@/shared/components/PageHeader';
 import { EMAIL_BUSINESS, PHONE_DISPLAY, ADDRESS_BUSINESS, SCHEDULE_BUSINESS } from '@/shared/constants/contactInfo';
 
@@ -17,7 +17,7 @@ export default function Complaints() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="bg-card rounded-lg shadow-soft p-8">
           <div className="text-center mb-8">
-            <Image 
+            <DefaultImage 
               src="https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Flogo-libro-reclamaciones.svg?alt=media&token=783fb578-8069-4f28-9933-d2866929bfbf"
               alt="Libro de Reclamaciones"
               width={96}

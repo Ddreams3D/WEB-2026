@@ -7,7 +7,10 @@ import {
   orderBy, 
   Timestamp,
   deleteDoc,
-  writeBatch
+  writeBatch,
+  DocumentData,
+  QuerySnapshot,
+  QueryDocumentSnapshot
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { StoreProduct, Category } from '@/shared/types/domain';
@@ -25,21 +28,21 @@ const ENABLE_FIRESTORE_FOR_PUBLIC = true; // Enable for public/build if DB is co
 let productsCache: { data: StoreProduct[], timestamp: number } | null = null;
 let categoriesCache: { data: Category[], timestamp: number } | null = null;
 
-const mapToProduct = (data: any): StoreProduct => {
+const mapToProduct = (data: DocumentData): StoreProduct => {
   return {
     ...data,
     kind: 'product',
     createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate() : new Date(data.createdAt),
     updatedAt: data.updatedAt instanceof Timestamp ? data.updatedAt.toDate() : new Date(data.updatedAt),
-    images: data.images?.map((img: any) => ({
+    images: data.images?.map((img: DocumentData) => ({
       ...img,
       createdAt: img.createdAt instanceof Timestamp ? img.createdAt.toDate() : new Date(img.createdAt),
       updatedAt: img.updatedAt instanceof Timestamp ? img.updatedAt.toDate() : new Date(img.updatedAt),
     })) || []
-  };
+  } as StoreProduct;
 };
 
-const mapToFirestore = (data: StoreProduct): any => {
+const mapToFirestore = (data: StoreProduct): DocumentData => {
   return {
     ...data,
     createdAt: data.createdAt instanceof Date ? Timestamp.fromDate(data.createdAt) : Timestamp.fromDate(new Date()),
@@ -65,10 +68,11 @@ export const ProductService = {
     let products: StoreProduct[] = [];
 
     // 1. Try Firestore if configured
-    const shouldFetch = !!db;
+    const dbInstance = db;
+    const shouldFetch = !!dbInstance;
     let fetchFailed = false;
 
-    if (shouldFetch) {
+    if (shouldFetch && dbInstance) {
       try {
         console.log('[ProductService] Fetching from Firestore...');
         // Create a timeout promise
@@ -78,17 +82,17 @@ export const ProductService = {
 
         // REMOVED orderBy('displayOrder') to prevent hiding products without this field
         // We will sort in memory and auto-repair missing orders
-        const q = query(collection(db, COLLECTION_NAME));
+        const q = query(collection(dbInstance, COLLECTION_NAME));
         
         // Race between fetch and timeout
         const snapshot = await Promise.race([
           getDocs(q),
           timeoutPromise
-        ]) as any;
+        ]) as QuerySnapshot<DocumentData>;
 
         if (!snapshot.empty) {
           console.log(`[ProductService] Found ${snapshot.docs.length} products in Firestore`);
-          products = snapshot.docs.map((doc: any) => mapToProduct(doc.data()));
+          products = snapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => mapToProduct(doc.data()));
           
           // AUTO-REPAIR: Check for missing displayOrder and fix in background
           const productsMissingOrder = products.filter(p => typeof p.displayOrder !== 'number');
@@ -188,7 +192,8 @@ export const ProductService = {
 
   // Save (Create or Update) a product to Firestore
   async saveProduct(product: StoreProduct): Promise<void> {
-    if (!db) throw new Error('Firestore is not configured.');
+    const dbInstance = db;
+    if (!dbInstance) throw new Error('Firestore is not configured.');
 
     console.log('[ProductService] Saving product to Firestore:', product.id);
     
@@ -203,7 +208,7 @@ export const ProductService = {
       });
 
       // 2. Perform write
-      const docRef = doc(db, COLLECTION_NAME, product.id);
+      const docRef = doc(dbInstance, COLLECTION_NAME, product.id);
       await setDoc(docRef, firestoreData);
 
       console.log('[ProductService] Product saved successfully');
@@ -218,7 +223,8 @@ export const ProductService = {
 
   // Delete product
   async deleteProduct(id: string): Promise<boolean> {
-    if (!db) {
+    const dbInstance = db;
+    if (!dbInstance) {
        // Mock behavior if no DB
        const currentProducts = await this.getAllProducts();
        const newProducts = currentProducts.filter(p => p.id !== id);
@@ -228,7 +234,7 @@ export const ProductService = {
     }
 
     try {
-      await deleteDoc(doc(db, COLLECTION_NAME, id));
+      await deleteDoc(doc(dbInstance, COLLECTION_NAME, id));
       // Invalidate cache
       productsCache = null;
       return true;
@@ -321,10 +327,11 @@ export const ProductService = {
 
   // Auto-repair missing displayOrder fields
   async normalizeDisplayOrders(products: StoreProduct[]): Promise<void> {
-    if (!db) return;
+    const dbInstance = db;
+    if (!dbInstance) return;
     
     try {
-        const batch = writeBatch(db);
+        const batch = writeBatch(dbInstance);
         let maxOrder = 0;
         
         // Find current max order
@@ -338,7 +345,7 @@ export const ProductService = {
         products.forEach(p => {
             if (typeof p.displayOrder !== 'number') {
                 maxOrder++;
-                const docRef = doc(db, COLLECTION_NAME, p.id);
+                const docRef = doc(dbInstance, COLLECTION_NAME, p.id);
                 // Update only the displayOrder field to minimize impact
                 batch.update(docRef, { displayOrder: maxOrder });
                 updatesCount++;
@@ -357,30 +364,31 @@ export const ProductService = {
 
   // Seed Firestore with initial data from fallback
   async seedProducts(force = false): Promise<void> {
-    if (!db) return;
+    const dbInstance = db;
+    if (!dbInstance) return;
 
     try {
-      const snapshot = await getDocs(collection(db, COLLECTION_NAME));
+      const snapshot = await getDocs(collection(dbInstance, COLLECTION_NAME));
       if (!snapshot.empty && !force) {
         console.log('Products collection already exists. Skipping seed.');
         return;
       }
 
       console.log('Seeding products to Firestore (Force: ' + force + ')...');
-      const batch = writeBatch(db);
+      const batch = writeBatch(dbInstance);
       
       const fallbackProducts = productsFallbackData.map(mapToProduct);
       
       fallbackProducts.forEach(product => {
-        const docRef = doc(db, COLLECTION_NAME, product.id);
+        const docRef = doc(dbInstance, COLLECTION_NAME, product.id);
         const firestoreData = {
           ...product,
-          createdAt: Timestamp.fromDate(product.createdAt),
-          updatedAt: Timestamp.fromDate(product.updatedAt),
+          createdAt: product.createdAt ? Timestamp.fromDate(product.createdAt) : Timestamp.now(),
+          updatedAt: product.updatedAt ? Timestamp.fromDate(product.updatedAt) : Timestamp.now(),
           images: product.images.map(img => ({
             ...img,
-            createdAt: Timestamp.fromDate(img.createdAt),
-            updatedAt: Timestamp.fromDate(img.updatedAt)
+            createdAt: img.createdAt ? Timestamp.fromDate(img.createdAt) : Timestamp.now(),
+            updatedAt: img.updatedAt ? Timestamp.fromDate(img.updatedAt) : Timestamp.now()
           }))
         };
         batch.set(docRef, firestoreData);

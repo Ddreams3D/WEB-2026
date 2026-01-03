@@ -7,9 +7,11 @@ import { X, Plus } from 'lucide-react';
 import { useToast } from '@/components/ui/ToastManager';
 import ImageUpload from './ImageUpload';
 import { Product, ProductTab, ProductSpecification, ProductImage, ProductImageViewType } from '@/shared/types';
+import { ProductImage as ProductImageComponent } from '@/shared/components/ui/DefaultImage';
 import { Service } from '@/shared/types/domain';
 import { generateSlug } from '@/lib/utils';
 import { TabEditor, SpecificationsEditor, StringListEditor, OptionsEditor } from './AdminEditors';
+import { productSchema, serviceSchema } from '@/lib/validators/catalog.schema';
 
 interface ProductModalProps {
   isOpen: boolean;
@@ -122,23 +124,9 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validación manual
-    if (!formData.name?.trim()) {
-        showError('Error', 'El nombre es obligatorio');
-        setActiveMainTab('info');
-        return;
-    }
-
-    if (!formData.categoryName) {
-        showError('Error', 'La categoría es obligatoria');
-        setActiveMainTab('info');
-        return;
-    }
-
     console.log('[ProductModal] Submitting form data...');
-    console.log('[ProductModal] Current images state:', formData.images);
-
     setIsSubmitting(true);
+
     try {
       const baseData = {
         ...formData,
@@ -147,16 +135,30 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
 
       // Handle product-specific fields safely
       const dataToSave = formData.kind === 'product' 
-        ? { ...baseData, materials: selectedMaterial ? [selectedMaterial] : (formData as any).materials }
+        ? { ...baseData, materials: selectedMaterial ? [selectedMaterial] : (formData as Product).materials }
         : baseData;
+
+      // Zod Validation
+      const schema = formData.kind === 'service' ? serviceSchema : productSchema;
+      const result = schema.safeParse(dataToSave);
+
+      if (!result.success) {
+        console.warn('Validation failed:', result.error.issues);
+        const firstError = result.error.issues[0];
+        const errorMessage = `${firstError.path.join('.')}: ${firstError.message}`;
+        showError('Error de validación', errorMessage);
+        setIsSubmitting(false);
+        return;
+      }
 
       console.log('[ProductModal] Calling onSave with:', dataToSave);
       await onSave(dataToSave);
       console.log('[ProductModal] onSave completed successfully');
       onClose();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error saving product:', error);
-      showError('Error al guardar', error.message || 'Ha ocurrido un error inesperado al guardar el producto.');
+      const errorMessage = error instanceof Error ? error.message : 'Ha ocurrido un error inesperado al guardar el producto.';
+      showError('Error al guardar', errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -203,7 +205,7 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
         productId: product?.id || 'temp',
         url: url,
         alt: formData.name || 'Product Image',
-        isPrimary: formData.images && formData.images.length === 0,
+        isPrimary: !!(formData.images && formData.images.length === 0),
         width: 800,
         height: 600,
         createdAt: new Date(),
@@ -511,8 +513,8 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
                     <label className="text-sm font-medium">Opciones del Producto (Color, Personalización, etc.)</label>
                     <div className="p-4 border rounded-lg dark:border-neutral-700">
                       <OptionsEditor 
-                        options={(formData as any).options || []} 
-                        onChange={(options) => setFormData(prev => ({ ...prev, options } as any))} 
+                        options={(formData as Product).options || []} 
+                        onChange={(options) => setFormData(prev => ({ ...prev, options } as Product))} 
                       />
                     </div>
                   </div>
@@ -577,7 +579,7 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
                   {formData.images?.map((img, idx) => (
                     <div key={idx} className={`relative group border rounded-lg overflow-hidden bg-white dark:bg-neutral-800 shadow-sm ${img.isPrimary ? 'ring-2 ring-primary' : ''}`}>
                       <div className="aspect-square relative">
-                         <img src={img.url} alt={img.alt} className="w-full h-full object-cover" />
+                         <ProductImageComponent src={img.url} alt={img.alt} fill className="object-cover" />
                       </div>
                       
                       {/* File Info Overlay - Always visible at bottom */}

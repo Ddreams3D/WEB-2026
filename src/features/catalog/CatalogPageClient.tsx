@@ -10,6 +10,7 @@ import PageHeader from '@/shared/components/PageHeader';
 import { Button } from '@/components/ui';
 import { useScrollRestoration } from '@/hooks/useScrollRestoration';
 import { cn } from '@/lib/utils';
+import { heroImages } from '@/config/images';
 
 type ViewMode = 'grid' | 'list';
 
@@ -81,7 +82,7 @@ export default function CatalogPageClient() {
               <p>Todos los productos de nuestro catálogo de impresión 3D se fabrican bajo pedido y pueden personalizarse según tus requerimientos técnicos, estéticos o funcionales.</p>
             </div>
           }
-          image="https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fplaceholder-innovation.svg?alt=media&token=658ff156-be0c-42d7-9cfb-135e54aaf3f2"
+          image={heroImages.services}
         />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
            <ProductGridSkeleton count={6} />
@@ -101,7 +102,7 @@ export default function CatalogPageClient() {
             <p>Todos los productos de nuestro catálogo de impresión 3D se fabrican bajo pedido y pueden personalizarse según tus requerimientos técnicos, estéticos o funcionales.</p>
           </div>
         }
-        image="https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fplaceholder-innovation.svg?alt=media&token=658ff156-be0c-42d7-9cfb-135e54aaf3f2"
+        image={heroImages.services}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

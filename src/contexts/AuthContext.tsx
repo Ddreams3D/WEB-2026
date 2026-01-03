@@ -8,7 +8,6 @@ import {
   signInWithEmailAndPassword,
   signOut, 
   onAuthStateChanged, 
-  User as FirebaseUser,
   createUserWithEmailAndPassword,
   getAdditionalUserInfo,
   setPersistence,
@@ -156,7 +155,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Asegurar persistencia local
     setPersistence(auth, browserLocalPersistence)
-      .catch(() => {}); // Silenciar error de persistencia si ocurre
+      .catch((firebaseError: unknown) => {
+        console.error("Error setting persistence:", firebaseError);
+      });
 
     // Escuchar cambios de autenticación de Firebase
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -209,7 +210,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             localStorage.setItem('last_auth_sync', now.toString());
           }
 
-          const userRef = doc(db, 'users', firebaseUser.uid);
+          if (!db) {
+             console.warn('Firestore is not initialized, skipping user sync');
+             return;
+          }
+          const firestore = db;
+
+          const userRef = doc(firestore, 'users', firebaseUser.uid);
           
           // Leer de Firestore
           const userSnap = await getDoc(userRef);
@@ -300,7 +307,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
           await signInWithEmailAndPassword(auth, username, password);
           return true; // onAuthStateChanged manejará el estado
-        } catch (firebaseError: any) {
+        } catch (firebaseError: unknown) {
           // Si falla Firebase, intentar Mock silenciosamente
         }
       }
@@ -337,9 +344,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return true;
       }
       return false;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Registration error:', error);
-      showError('Error de registro', error.message || 'No se pudo crear la cuenta');
+      const errorMessage = error instanceof Error ? error.message : 'No se pudo crear la cuenta';
+      showError('Error de registro', errorMessage);
       return false;
     } finally {
       setIsLoading(false);
@@ -362,9 +370,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // onAuthStateChanged manejará el resto
       showSuccess('Bienvenido', 'Has iniciado sesión con Google correctamente');
       return { success: true, isNewUser };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Google login failed:', error);
-      showError('Error de inicio de sesión', error.message || 'No se pudo iniciar sesión con Google');
+      const errorMessage = error instanceof Error ? error.message : 'No se pudo iniciar sesión con Google';
+      showError('Error de inicio de sesión', errorMessage);
       setIsLoading(false);
       return { success: false, isNewUser: false };
     }
@@ -403,9 +412,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       showSuccess('Perfil actualizado', 'Tus datos se han guardado correctamente');
       return true;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error updating user:', error);
-      showError('Error', error.message || 'No se pudo actualizar el perfil');
+      const errorMessage = error instanceof Error ? error.message : 'No se pudo actualizar el perfil';
+      showError('Error', errorMessage);
       return false;
     } finally {
       setIsLoading(false);
