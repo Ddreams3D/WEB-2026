@@ -139,7 +139,12 @@ export const ProjectService = {
         return projects.sort((a, b) => b.projectDate.getTime() - a.projectDate.getTime());
       }
 
-      return [];
+      console.warn('No featured projects in Firestore, returning static data.');
+      let results = (staticProjects as unknown as PortfolioItem[]).filter(p => p.isFeatured);
+      if (limitCount) {
+        results = results.slice(0, limitCount);
+      }
+      return results;
 
     } catch (error) {
       console.error('Error fetching featured projects:', error);
@@ -177,7 +182,12 @@ export const ProjectService = {
         return projects.sort((a, b) => b.projectDate.getTime() - a.projectDate.getTime());
       }
 
-      return [];
+      console.warn('No projects by category in Firestore, returning static data.');
+      let results = (staticProjects as unknown as PortfolioItem[]).filter(p => p.category === category);
+      if (limitCount) {
+        results = results.slice(0, limitCount);
+      }
+      return results;
     } catch (error) {
       console.error('Error fetching projects by category:', error);
       let results = (staticProjects as unknown as PortfolioItem[]).filter(p => p.category === category);
