@@ -14,8 +14,13 @@ import { Button } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import CallToAction from '@/shared/components/CallToAction';
 import { ctaData } from '@/shared/data/ctaData';
+import { PortfolioItem } from '@/shared/types/domain';
 
-export default function HomePageClient() {
+interface HomePageClientProps {
+  featuredProjects?: PortfolioItem[];
+}
+
+export default function HomePageClient({ featuredProjects }: HomePageClientProps) {
   useEffect(() => {
     trackEvent(AnalyticsEvents.VIEW_HOME, {
       location: AnalyticsLocations.HERO,
@@ -55,7 +60,11 @@ export default function HomePageClient() {
               Explora algunos de nuestros trabajos más innovadores y creativos
             </p>
           </header>
-          <LazyProjectGallery isFeatured={true} limit={6} />
+          <LazyProjectGallery 
+            isFeatured={true} 
+            limit={6} 
+            initialProjects={featuredProjects}
+          />
 
           <div className="text-center mt-12">
             <Button

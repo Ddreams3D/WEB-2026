@@ -6,29 +6,37 @@ export interface ProjectsOptions {
   category?: string;
   isFeatured?: boolean;
   limit?: number;
+  skip?: boolean; // Added to skip fetching
 }
 
 export function useProjects(options?: ProjectsOptions) {
   const [projects, setProjects] = useState<PortfolioItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(!options?.skip);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
+    if (options?.skip) {
+      setIsLoading(false);
+      return;
+    }
+
     let isMounted = true;
 
     const loadProjects = async () => {
       try {
         setIsLoading(true);
         
-        let allProjects = await ProjectService.getAllProjects();
-
-        // Apply filters
-        if (options?.category) {
-          allProjects = allProjects.filter(p => p.category === options.category);
-        }
+        let allProjects: PortfolioItem[] = [];
 
         if (options?.isFeatured) {
-          allProjects = allProjects.filter(p => p.isFeatured);
+          allProjects = await ProjectService.getFeaturedProjects(options.limit);
+          if (options.category) {
+            allProjects = allProjects.filter(p => p.category === options.category);
+          }
+        } else if (options?.category) {
+          allProjects = await ProjectService.getProjectsByCategory(options.category, options.limit);
+        } else {
+          allProjects = await ProjectService.getAllProjects();
         }
 
         if (options?.limit) {

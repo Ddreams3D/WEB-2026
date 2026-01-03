@@ -13,10 +13,23 @@ import { PortfolioItem } from '@/shared/types/domain';
 
 import { GalleryCard } from '@/components/gallery/GalleryCard';
 
-interface ProjectGalleryProps extends ProjectsOptions {}
+interface ProjectGalleryProps extends ProjectsOptions {
+  initialProjects?: PortfolioItem[];
+}
 
 export default function ProjectGallery(props: ProjectGalleryProps) {
-  const { projects, isLoading } = useProjects(props);
+  // If initialProjects is provided, we use it directly. 
+  // Otherwise we fall back to useProjects hook which fetches data.
+  // We cannot conditionally call hooks, so we call it always but ignore if initialProjects exists.
+  // Actually, useProjects does fetching in useEffect. We can optimize it.
+  
+  const { projects: fetchedProjects, isLoading: isFetching } = useProjects(
+    props.initialProjects ? { skip: true } : props
+  );
+
+  const projects = props.initialProjects || fetchedProjects;
+  const isLoading = props.initialProjects ? false : isFetching;
+
   const [selectedProject, setSelectedProject] = useState<PortfolioItem | null>(null);
   const [activeImage, setActiveImage] = useState<string>('');
   const { ref, visibleItems } = useStaggeredItemsAnimation(projects.length, 150);

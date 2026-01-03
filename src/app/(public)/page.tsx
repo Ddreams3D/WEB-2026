@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import HomePageClient from '@/features/home/HomePageClient';
 import SeasonalBanner from '@/features/seasonal/components/SeasonalBanner';
 import { resolveActiveTheme } from '@/lib/seasonal-service';
+import { ProjectService } from '@/services/project.service';
 import { PHONE_BUSINESS, PHONE_DISPLAY, ADDRESS_BUSINESS, SCHEDULE_BUSINESS } from '@/shared/constants/contactInfo';
 import { JsonLd } from '@/components/seo/JsonLd';
 
@@ -46,12 +47,20 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const activeTheme = await resolveActiveTheme();
+  // Parallel fetching for performance
+  const [activeTheme, rawFeaturedProjects] = await Promise.all([
+    resolveActiveTheme(),
+    ProjectService.getFeaturedProjects(6)
+  ]);
+
+  // Serialize dates to strings to avoid "Objects with toJSON methods are not supported" error
+  // and ensure plain objects are passed to Client Component.
+  const featuredProjects = JSON.parse(JSON.stringify(rawFeaturedProjects));
 
   return (
     <>
       {activeTheme && <SeasonalBanner config={activeTheme} />}
-      <HomePageClient />
+      <HomePageClient featuredProjects={featuredProjects} />
     </>
   );
 }

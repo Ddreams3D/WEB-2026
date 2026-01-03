@@ -9,6 +9,7 @@ import {
   query, 
   orderBy,
   where,
+  limit,
   Timestamp,
   setDoc,
   writeBatch,
@@ -25,11 +26,30 @@ const COLLECTION = 'projects';
 const convertDoc = (doc: QueryDocumentSnapshot<DocumentData> | DocumentData): PortfolioItem => {
   const data = typeof doc.data === 'function' ? doc.data() : doc;
   const id = typeof doc.id === 'string' ? doc.id : data.id;
+  
+  // Ensure we don't leak Firestore types (Timestamps) that cause serialization issues
+  // and only return what's needed.
   return {
     id,
-    ...data,
-    projectDate: data.projectDate instanceof Timestamp ? data.projectDate.toDate() : new Date(data.projectDate),
-    createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate() : new Date(data.createdAt || Date.now()),
+    title: data.title || '',
+    slug: data.slug || '',
+    description: data.description || '',
+    clientName: data.clientName || data.client,
+    client: data.client, // Keep for legacy if needed
+    category: data.category || 'General',
+    coverImage: data.coverImage || '',
+    galleryImages: data.galleryImages || [],
+    galleryAlt: data.galleryAlt || [],
+    relatedServiceId: data.relatedServiceId,
+    applications: data.applications,
+    ctaText: data.ctaText,
+    tags: data.tags || [],
+    isFeatured: !!data.isFeatured,
+    
+    // Handle Dates
+    projectDate: data.projectDate instanceof Timestamp ? data.projectDate.toDate() : (data.projectDate ? new Date(data.projectDate) : new Date()),
+    createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate() : (data.createdAt ? new Date(data.createdAt) : new Date()),
+    // Explicitly exclude other fields like updatedAt if they exist as Timestamps
   } as PortfolioItem;
 };
 
@@ -92,14 +112,80 @@ export const ProjectService = {
     }
   },
 
-  async getFeaturedProjects(): Promise<PortfolioItem[]> {
-    const allProjects = await this.getAllProjects();
-    return allProjects.filter(p => p.isFeatured);
+  async getFeaturedProjects(limitCount?: number): Promise<PortfolioItem[]> {
+    const dbInstance = db;
+    if (!dbInstance) {
+      let results = (staticProjects as unknown as PortfolioItem[]).filter(p => p.isFeatured);
+      if (limitCount) {
+        results = results.slice(0, limitCount);
+      }
+      return results;
+    }
+    try {
+      let q = query(
+        collection(dbInstance, COLLECTION), 
+        where('isFeatured', '==', true)
+      );
+      
+      if (limitCount) {
+        q = query(q, limit(limitCount));
+      }
+
+      const snapshot = await getDocs(q);
+      
+      // If we find projects in DB, return them
+      if (!snapshot.empty) {
+        const projects = snapshot.docs.map(convertDoc);
+        return projects.sort((a, b) => b.projectDate.getTime() - a.projectDate.getTime());
+      }
+
+      return [];
+
+    } catch (error) {
+      console.error('Error fetching featured projects:', error);
+      let results = (staticProjects as unknown as PortfolioItem[]).filter(p => p.isFeatured);
+      if (limitCount) {
+        results = results.slice(0, limitCount);
+      }
+      return results;
+    }
   },
 
-  async getProjectsByCategory(category: string): Promise<PortfolioItem[]> {
-    const allProjects = await this.getAllProjects();
-    return allProjects.filter(p => p.category === category);
+  async getProjectsByCategory(category: string, limitCount?: number): Promise<PortfolioItem[]> {
+    const dbInstance = db;
+    if (!dbInstance) {
+      let results = (staticProjects as unknown as PortfolioItem[]).filter(p => p.category === category);
+      if (limitCount) {
+        results = results.slice(0, limitCount);
+      }
+      return results;
+    }
+    try {
+      let q = query(
+        collection(dbInstance, COLLECTION), 
+        where('category', '==', category)
+      );
+
+      if (limitCount) {
+        q = query(q, limit(limitCount));
+      }
+
+      const snapshot = await getDocs(q);
+      
+      if (!snapshot.empty) {
+        const projects = snapshot.docs.map(convertDoc);
+        return projects.sort((a, b) => b.projectDate.getTime() - a.projectDate.getTime());
+      }
+
+      return [];
+    } catch (error) {
+      console.error('Error fetching projects by category:', error);
+      let results = (staticProjects as unknown as PortfolioItem[]).filter(p => p.category === category);
+      if (limitCount) {
+        results = results.slice(0, limitCount);
+      }
+      return results;
+    }
   },
 
   // Admin Methods
