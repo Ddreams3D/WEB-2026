@@ -3,6 +3,7 @@ import ServicesPageClient from '@/features/services/ServicesPageClient';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { PHONE_BUSINESS, ADDRESS_BUSINESS, PHONE_DISPLAY } from '@/shared/constants/contactInfo';
 import { ServiceService } from '@/services/service.service';
+import { Service } from '@/shared/types/domain';
 
 export const revalidate = 3600; // Revalidar cada hora (ISR)
 
