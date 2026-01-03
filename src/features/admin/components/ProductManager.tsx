@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { cn } from '@/lib/utils';
 import { Plus, Edit, Trash2, Search, Filter, Package } from '@/lib/icons';
 import { Loader2, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -41,25 +42,24 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
   });
   const { showSuccess, showError } = useToast();
 
-  const loadProducts = useCallback(async () => {
+  const loadProducts = useCallback(async (force = false) => {
     try {
       setLoading(true);
       
-      let allItems: (Product | Service)[] = [];
+      const fetchProductsPromise = (mode === 'all' || mode === 'product') 
+        ? ProductService.getAllProducts(force) 
+        : Promise.resolve([]);
 
-      if (mode === 'all' || mode === 'product') {
-        // Force refresh to ensure we get the latest data from Firestore
-        const fetchedProducts = await ProductService.getAllProducts(true);
-        allItems = [...allItems, ...fetchedProducts];
-      }
+      const fetchServicesPromise = (mode === 'all' || mode === 'service')
+        ? ServiceService.getAllServices(force)
+        : Promise.resolve([]);
+
+      const [fetchedProducts, fetchedServices] = await Promise.all([
+        fetchProductsPromise,
+        fetchServicesPromise
+      ]);
       
-      if (mode === 'all' || mode === 'service') {
-        // Force refresh to ensure we get the latest data from Firestore
-        const fetchedServices = await ServiceService.getAllServices(true);
-        allItems = [...allItems, ...fetchedServices];
-      }
-      
-      setProducts(allItems);
+      setProducts([...fetchedProducts, ...fetchedServices]);
     } catch (error) {
       console.error('Error loading items:', error);
       showError('Error', 'Error al cargar los datos');
@@ -69,7 +69,7 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
   }, [showError, mode]);
 
   useEffect(() => {
-    loadProducts();
+    loadProducts(false);
   }, [loadProducts]);
 
   const handleAddProduct = () => {
@@ -264,9 +264,9 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
         </div>
         <div className="flex gap-2">
            <ViewToggle view={viewMode} onViewChange={setViewMode} />
-           <Button variant="outline" onClick={() => handleSeed(true)} disabled={isSeeding}>
-            {isSeeding ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <RefreshCw className="w-4 h-4 mr-2" />}
-            Sincronizar Datos Estáticos
+           <Button variant="outline" onClick={() => loadProducts(true)} disabled={loading}>
+            <RefreshCw className={cn("w-4 h-4 mr-2", loading && "animate-spin")} />
+            Actualizar
           </Button>
           <Button variant="outline" className="gap-2">
             <Filter className="w-4 h-4" />
