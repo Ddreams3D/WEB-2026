@@ -87,15 +87,11 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
   };
 
   const handleDeleteProduct = (id: string) => {
-    setConfirmation({
-      isOpen: true,
-      title: 'Eliminar Elemento',
-      message: '¿Estás seguro de eliminar este elemento?',
-      variant: 'danger',
-      isLoading: false,
-      onConfirm: async () => {
+    // Usar window.confirm para confirmación síncrona
+    if (window.confirm('¿Estás seguro de eliminar este elemento?')) {
+      (async () => {
         try {
-          setConfirmation(prev => ({ ...prev, isLoading: true }));
+          // setConfirmation({ ...prev, isLoading: true }) // No necesario con window.confirm
           const productToDelete = products.find(p => p.id === id);
           if (!productToDelete) return;
 
@@ -112,14 +108,12 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
           await revalidateCatalog();
           
           showSuccess('Eliminado', 'Elemento eliminado correctamente');
-          closeConfirmation();
         } catch (error) {
           console.error('Error deleting item:', error);
           showError('Error', 'Error al eliminar el elemento');
-          setConfirmation(prev => ({ ...prev, isLoading: false }));
         }
-      }
-    });
+      })();
+    }
   };
 
   const handleSaveProduct = async (formData: Partial<Product | Service>) => {
@@ -205,15 +199,9 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
       ? '¿Estás seguro de recargar los datos estáticos? Esto sobrescribirá los productos existentes con los datos originales.' 
       : '¿Importar productos desde el archivo estático? Esto creará documentos en Firestore.';
       
-    setConfirmation({
-      isOpen: true,
-      title: force ? 'Reiniciar Catálogo' : 'Importar Catálogo',
-      message,
-      variant: force ? 'danger' : 'warning',
-      isLoading: false,
-      onConfirm: async () => {
+    if (window.confirm(message)) {
+      (async () => {
         try {
-          setConfirmation(prev => ({ ...prev, isLoading: true }));
           setIsSeeding(true);
 
           // 1. Forzar siembra en DB
@@ -231,16 +219,14 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
           await loadProducts();
           
           showSuccess('Sincronización Completa', 'El catálogo se ha alineado correctamente con el sistema base.');
-          closeConfirmation();
         } catch (error) {
           console.error('Error syncing catalog:', error);
           showError('Error', 'Falló la sincronización. Revisa la consola.');
-          setConfirmation(prev => ({ ...prev, isLoading: false }));
         } finally {
           setIsSeeding(false);
         }
-      }
-    });
+      })();
+    }
   };
 
   const filteredProducts = products.filter(product =>

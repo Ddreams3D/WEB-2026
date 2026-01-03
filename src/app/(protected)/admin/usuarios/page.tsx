@@ -32,10 +32,10 @@ function UserModal({ user, isOpen, onClose, onSave, defaultRole = 'user' }: {
   useEffect(() => {
     if (user) {
       setFormData({
-        username: user.username,
-        email: user.email,
-        role: user.role,
-        status: user.status
+        username: user.username || '',
+        email: user.email || '',
+        role: user.role || defaultRole,
+        status: user.status || 'active'
       });
     } else {
       setFormData({
@@ -208,7 +208,8 @@ export default function UsersManagement() {
   };
 
   const handleDeleteUser = async (userId: string) => {
-    if (confirm('¿Estás seguro de que quieres eliminar este usuario permanentemente? Esta acción no se puede deshacer.')) {
+    // Usar window.confirm para una confirmación simple y síncrona que bloquea la ejecución
+    if (window.confirm('¿Estás seguro de que quieres eliminar este usuario permanentemente? Esta acción no se puede deshacer.')) {
       try {
         await UserService.deleteUser(userId);
         await fetchUsers();
@@ -310,7 +311,7 @@ export default function UsersManagement() {
                     <div className="w-10 h-10 mr-3 relative shrink-0">
                       <UserAvatar 
                         src={user.photoURL || undefined} 
-                        alt={user.username} 
+                        alt={user.username || 'Usuario'} 
                         fill
                         className="object-cover"
                       />

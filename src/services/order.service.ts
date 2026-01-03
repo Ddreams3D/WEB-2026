@@ -116,14 +116,17 @@ export const OrderService = {
     if (!db) return [];
 
     try {
+      // Query without orderBy to avoid composite index requirement
       const q = query(
         collection(db, COLLECTION_NAME), 
-        where('userId', '==', userId),
-        orderBy('createdAt', 'desc')
+        where('userId', '==', userId)
       );
       const snapshot = await getDocs(q);
       
-      return snapshot.docs.map((doc) => mapToOrder(doc.data()));
+      // Sort in memory instead
+      return snapshot.docs
+        .map((doc) => mapToOrder(doc.data()))
+        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
     } catch (error) {
       console.error('Error fetching user orders:', error);
       throw error;

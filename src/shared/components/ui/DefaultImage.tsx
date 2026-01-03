@@ -86,7 +86,7 @@ export default function DefaultImage({
       
       <Image
         src={finalSrc}
-        alt={alt}
+        alt={alt || placeholderText || 'Imagen'}
         className={`${className} ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
         onError={handleError}
         onLoad={handleLoad}

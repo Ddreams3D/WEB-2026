@@ -112,9 +112,17 @@ export const UserService = {
     if (!db) return;
 
     try {
+      // Remove undefined values from updates to prevent Firestore errors
+      const cleanUpdates = Object.entries(updates).reduce((acc, [key, value]) => {
+        if (value !== undefined) {
+          (acc as any)[key] = value;
+        }
+        return acc;
+      }, {} as Partial<User>);
+
       const userRef = doc(db, COLLECTION_NAME, id);
       await updateDoc(userRef, {
-        ...updates,
+        ...cleanUpdates,
         updatedAt: new Date()
       });
 
