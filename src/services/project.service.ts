@@ -224,8 +224,13 @@ export const ProjectService = {
   async checkMigrationNeeded(): Promise<boolean> {
     const dbInstance = db;
     if (!dbInstance) return false;
-    const snapshot = await getDocs(collection(dbInstance, COLLECTION));
-    return snapshot.empty;
+    try {
+      const snapshot = await getDocs(collection(dbInstance, COLLECTION));
+      return snapshot.empty;
+    } catch (error) {
+      console.warn('Error checking migration status (likely permission/connection issue):', error);
+      return false; // Assume no migration needed if we can't check, to prevent UI blocking
+    }
   },
 
   async seedProjectsFromStatic(force = false): Promise<void> {

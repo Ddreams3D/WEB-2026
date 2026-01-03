@@ -53,8 +53,18 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     toast({ type: 'warning', title, message });
   }, [toast]);
 
+  const contextValue = React.useMemo(() => ({
+    toast,
+    showToast: toast,
+    dismiss,
+    showSuccess,
+    showError,
+    showInfo,
+    showWarning
+  }), [toast, dismiss, showSuccess, showError, showInfo, showWarning]);
+
   return (
-    <ToastContext.Provider value={{ toast, showToast: toast, dismiss, showSuccess, showError, showInfo, showWarning }}>
+    <ToastContext.Provider value={contextValue}>
       {children}
       <div className="fixed top-4 right-4 z-[100] flex flex-col items-end gap-2 pointer-events-none w-full max-w-sm">
         {toasts.map((t) => (
