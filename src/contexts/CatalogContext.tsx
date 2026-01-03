@@ -60,8 +60,9 @@ export function CatalogProvider({
   const searchParams = useSearchParams();
 
   // 1. Static Data (Server Provided)
-  const [allProducts] = useState<CatalogItem[]>(initialItems);
-  const [categories] = useState<Category[]>(initialCategories);
+  // We use props directly to allow updates from server (e.g. via router.refresh())
+  const allProducts = initialItems;
+  const categories = initialCategories;
 
   // Calculate dynamic max price from products
   const maxGlobalPrice = useMemo(() => {

@@ -10,6 +10,7 @@ import ProjectModal from './ProjectModal';
 import DefaultImage from '@/shared/components/ui/DefaultImage';
 import { formatDate } from '@/lib/utils';
 import ConfirmationModal from './ConfirmationModal';
+import { revalidateCatalog } from '@/app/actions/revalidate';
 
 export default function ProjectManager() {
   const [projects, setProjects] = useState<PortfolioItem[]>([]);
@@ -72,6 +73,7 @@ export default function ProjectManager() {
         try {
           setConfirmation(prev => ({ ...prev, isLoading: true }));
           await ProjectService.deleteProject(project.id);
+          await revalidateCatalog();
           showSuccess('Proyecto eliminado');
           loadProjects();
           closeConfirmation();
@@ -94,6 +96,7 @@ export default function ProjectManager() {
         await ProjectService.createProject(newProject);
         showSuccess('Proyecto creado');
       }
+      await revalidateCatalog();
       loadProjects();
     } catch (error) {
       console.error(error);
@@ -117,6 +120,7 @@ export default function ProjectManager() {
           setConfirmation(prev => ({ ...prev, isLoading: true }));
           setIsSeeding(true);
           await ProjectService.seedProjectsFromStatic(force);
+          await revalidateCatalog();
           showSuccess('Proyectos importados correctamente');
           loadProjects();
           closeConfirmation();

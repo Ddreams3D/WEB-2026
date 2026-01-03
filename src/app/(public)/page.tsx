@@ -2,11 +2,12 @@ import { Metadata } from 'next';
 import HomePageClient from '@/features/home/HomePageClient';
 import SeasonalBanner from '@/features/seasonal/components/SeasonalBanner';
 import { resolveActiveTheme } from '@/lib/seasonal-service';
-import { ProjectService } from '@/services/project.service';
+import { getCachedFeaturedProjects } from '@/services/data-access.server';
 import { PHONE_BUSINESS, PHONE_DISPLAY, ADDRESS_BUSINESS, SCHEDULE_BUSINESS } from '@/shared/constants/contactInfo';
 import { JsonLd } from '@/components/seo/JsonLd';
 
 // Revalidate every hour to check for seasonal changes automatically
+// Note: Data Cache handles projects, this is for the page shell/seasonal theme
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
@@ -48,14 +49,10 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   // Parallel fetching for performance
-  const [activeTheme, rawFeaturedProjects] = await Promise.all([
+  const [activeTheme, featuredProjects] = await Promise.all([
     resolveActiveTheme(),
-    ProjectService.getFeaturedProjects(6)
+    getCachedFeaturedProjects(6)
   ]);
-
-  // Serialize dates to strings to avoid "Objects with toJSON methods are not supported" error
-  // and ensure plain objects are passed to Client Component.
-  const featuredProjects = JSON.parse(JSON.stringify(rawFeaturedProjects));
 
   return (
     <>

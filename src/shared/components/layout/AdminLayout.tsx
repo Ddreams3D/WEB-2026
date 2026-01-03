@@ -15,7 +15,9 @@ import {
   Bell,
   Search,
   Calendar,
-  Briefcase
+  Briefcase,
+  FolderOpen,
+  Sparkles
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -30,6 +32,8 @@ const navigation = [
   { name: 'Catálogo', href: '/admin/productos', icon: ShoppingBag },
   { name: 'Servicios', href: '/admin/servicios', icon: Package },
   { name: 'Proyectos', href: '/admin/projects', icon: Briefcase },
+  { name: 'Campañas', href: '/admin/campanas', icon: Sparkles },
+  { name: 'Archivos Cloud', href: '/admin/storage', icon: FolderOpen },
   { name: 'Pedidos', href: '/admin/pedidos', icon: Package },
   { name: 'Usuarios', href: '/admin/usuarios', icon: Users },
   { name: 'Configuración', href: '/admin/configuracion', icon: Settings },

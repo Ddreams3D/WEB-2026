@@ -28,7 +28,7 @@ export default function SeasonalBanner({ config }: SeasonalBannerProps) {
   return (
     <div className={cn(
       "relative w-full overflow-hidden transition-all duration-500",
-      "bg-gradient-to-r from-primary/90 to-primary/70 text-primary-foreground",
+      "bg-gradient-to-r from-primary to-primary/90 text-primary-foreground",
       "border-b border-primary/20 shadow-md"
     )}>
       {/* Background decoration */}

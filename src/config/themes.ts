@@ -45,10 +45,17 @@ export const THEME_CONFIG: Record<Theme, {
     previewColors: ['bg-amber-500', 'bg-white', 'bg-amber-500']
   },
   'festive-soft': {
-    label: 'Día de la madre y de la mujer',
+    label: 'Día de la Madre/Mujer',
     description: 'Ternura y calma. Rosado suave y blanco cálido.',
     icon: Heart,
     colorClass: 'text-pink-300 hover:text-pink-400 hover:bg-pink-50 dark:text-pink-200 dark:hover:bg-pink-900/20',
     previewColors: ['bg-pink-200', 'bg-rose-50']
+  },
+  'valentines': {
+    label: 'San Valentín',
+    description: 'Pasión y Romance. Rojo intenso y rosado.',
+    icon: Heart,
+    colorClass: 'text-red-500 hover:text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20',
+    previewColors: ['bg-red-600', 'bg-pink-400']
   }
 };

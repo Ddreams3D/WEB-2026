@@ -33,6 +33,29 @@ const VIEW_TYPES: { value: ProductImageViewType; label: string }[] = [
   { value: 'otro', label: 'Otro' },
 ];
 
+// Helper para limpiar stopwords y generar slug SEO optimizado
+const cleanAndSlugify = (text: string): string => {
+  // Lista de palabras vacías (stopwords) en español e inglés técnico común
+  const stopwords = new Set([
+    'el', 'la', 'los', 'las', 'un', 'una', 'unos', 'unas', 
+    'y', 'e', 'o', 'u', 'de', 'del', 'al', 'con', 'en', 'para', 'por', 'sin', 'sobre',
+    'img', 'image', 'imagen', 'foto', 'photo', 'dsc', 'pic', 'file', 'archivo', 'copia', 'copy',
+    'whatsapp', 'screenshot', 'captura', 'pantalla'
+  ]);
+  
+  // Remover extensión si existe
+  const lastDotIndex = text.lastIndexOf('.');
+  const textNoExt = lastDotIndex > 0 ? text.substring(0, lastDotIndex) : text;
+  
+  return textNoExt.toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Remover acentos
+    .replace(/[^a-z0-9\s-_]/g, "") // Remover caracteres especiales
+    .replace(/[\s-_]+/g, "-") // Unificar separadores
+    .split('-')
+    .filter(w => !stopwords.has(w) && w.length > 1) // Filtrar stopwords y letras sueltas
+    .join('-');
+};
+
 // Helper para generar nombre SEO inteligente
 const generateSeoFilename = (
   productName: string | undefined, 
@@ -40,28 +63,56 @@ const generateSeoFilename = (
   viewType: ProductImageViewType, 
   existingImages: ProductImage[]
 ): string => {
-  if (!productName) {
-    const nameWithoutExt = originalFile.name.substring(0, originalFile.name.lastIndexOf('.')) || originalFile.name;
-    return generateSlug(nameWithoutExt);
+  // 1. Determinar el slug base (Nombre del producto o nombre del archivo)
+  let baseSlug = '';
+  if (productName) {
+    baseSlug = cleanAndSlugify(productName);
+  } else {
+    baseSlug = cleanAndSlugify(originalFile.name);
   }
 
-  const baseSlug = generateSlug(productName);
-  
-  // Contar cuántas imágenes existen de este tipo
-  // Filtramos por viewType si está disponible, o intentamos adivinar por el nombre si no (fallback)
-  // Pero ahora asumiremos que viewType se guarda correctamente
-  const count = existingImages.filter(img => img.viewType === viewType).length;
-  const index = count;
+  // Fallback si el nombre quedó vacío después de limpiar
+  if (!baseSlug) baseSlug = 'producto-ddreams3d';
 
-  // Si es 'otro' o no definido, usamos numeración secuencial
-  if (viewType === 'otro') {
-    const suffix = index > 0 ? `-${index + 1}` : '';
-    return `${baseSlug}${suffix}`;
-  }
+  // 2. Determinar sufijo según tipo de vista
+  let suffix = '';
   
-  // Usamos el tipo de vista en el nombre
-  const suffix = index > 0 ? `-${index + 1}` : '';
-  return `${baseSlug}-${viewType}${suffix}`;
+  if (viewType !== 'otro') {
+    // Si es un tipo estándar, lo usamos
+    suffix = `-${viewType}`;
+  } else {
+    // Si es "otro", intentamos rescatar palabras clave del nombre original del archivo
+    // que no estén ya en el nombre del producto
+    const originalSlug = cleanAndSlugify(originalFile.name);
+    const productSlugParts = baseSlug.split('-');
+    
+    // Encontrar partes del nombre original que no estén en el nombre del producto
+    const extraParts = originalSlug.split('-').filter(part => !productSlugParts.includes(part));
+    
+    if (extraParts.length > 0) {
+      suffix = `-${extraParts.join('-')}`;
+    }
+  }
+
+  // 3. Manejo de duplicados/contadores
+  // Contamos cuántas imágenes de este "tipo" o con este "baseSlug" existen
+  const similarImages = existingImages.filter(img => {
+    // Si tiene el mismo viewType, es un "hermano"
+    if (img.viewType === viewType) return true;
+    return false;
+  });
+
+  const count = similarImages.length;
+  
+  // Construir nombre final
+  let finalName = `${baseSlug}${suffix}`;
+  
+  // Si ya hay imágenes de este tipo, agregamos contador
+  if (count > 0) {
+    finalName += `-${count + 1}`;
+  }
+
+  return finalName;
 };
 
 // Helper para comprimir imágenes en el cliente antes de subir

@@ -49,6 +49,10 @@ export interface Service {
   reviewCount: number;
   createdAt: Date;
   updatedAt: Date;
+
+  // Soft Delete
+  isDeleted?: boolean;
+  deletedAt?: Date;
 }
 
 // ==========================================
@@ -111,6 +115,10 @@ export interface StoreProduct {
   downloadCount?: number;
   createdAt: Date;
   updatedAt: Date;
+
+  // Soft Delete
+  isDeleted?: boolean;
+  deletedAt?: Date;
 }
 
 // ==========================================

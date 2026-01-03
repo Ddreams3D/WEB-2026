@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 import { Plus, Edit, Trash2, Search, Filter, Package } from '@/lib/icons';
-import { Loader2, RefreshCw } from 'lucide-react';
+import { Loader2, RefreshCw, RotateCcw, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/ToastManager';
 import { ProductImage } from '@/shared/components/ui/DefaultImage';
@@ -31,6 +31,7 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSeeding, setIsSeeding] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [showDeleted, setShowDeleted] = useState(false);
   const [confirmation, setConfirmation] = useState({
     isOpen: false,
     title: '',
@@ -46,11 +47,11 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
       setLoading(true);
       
       const fetchProductsPromise = (mode === 'all' || mode === 'product') 
-        ? ProductService.getAllProducts(force) 
+        ? ProductService.getAllProducts(force, true) 
         : Promise.resolve([]);
 
       const fetchServicesPromise = (mode === 'all' || mode === 'service')
-        ? ServiceService.getAllServices(force)
+        ? ServiceService.getAllServices(force, true)
         : Promise.resolve([]);
 
       const [fetchedProducts, fetchedServices] = await Promise.all([
@@ -88,9 +89,9 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
   const handleDeleteProduct = (id: string) => {
     setConfirmation({
       isOpen: true,
-      title: 'Eliminar Producto/Servicio',
-      message: '¿Estás seguro de eliminar este elemento? Esta acción es irreversible.',
-      variant: 'danger',
+      title: 'Mover a Papelera',
+      message: 'El elemento será movido a la papelera. Podrás restaurarlo después.',
+      variant: 'warning',
       isLoading: false,
       onConfirm: async () => {
         try {
@@ -104,13 +105,14 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
             await ProductService.deleteProduct(id);
           }
           
-          const newProducts = products.filter(product => product.id !== id);
-          setProducts(newProducts);
+          // Refresh list (don't remove locally if we want to support undo, 
+          // but for now we reload or just update state)
+          // Since we fetch all, we just update the isDeleted flag locally to avoid full reload
+          setProducts(prev => prev.map(p => p.id === id ? { ...p, isDeleted: true, isActive: false } : p));
           
-          // Revalidate cache for public site
           await revalidateCatalog();
           
-          showSuccess('Eliminado', 'Elemento eliminado correctamente');
+          showSuccess('Papelera', 'Elemento movido a la papelera');
           closeConfirmation();
         } catch (error) {
           console.error('Error deleting item:', error);
@@ -119,6 +121,59 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
         }
       }
     });
+  };
+
+  const handleRestoreProduct = async (id: string) => {
+    try {
+        const productToRestore = products.find(p => p.id === id);
+        if (!productToRestore) return;
+
+        if (productToRestore.kind === 'service') {
+            await ServiceService.restoreService(id);
+        } else {
+            await ProductService.restoreProduct(id);
+        }
+
+        setProducts(prev => prev.map(p => p.id === id ? { ...p, isDeleted: false } : p));
+        await revalidateCatalog();
+        showSuccess('Restaurado', 'Elemento restaurado correctamente');
+    } catch (error) {
+        console.error('Error restoring item:', error);
+        showError('Error', 'Error al restaurar el elemento');
+    }
+  };
+
+  const handlePermanentDeleteProduct = (id: string) => {
+      setConfirmation({
+        isOpen: true,
+        title: 'Eliminar Definitivamente',
+        message: '¿Estás seguro? Se eliminarán todas las imágenes y datos. NO SE PUEDE DESHACER.',
+        variant: 'danger',
+        isLoading: false,
+        onConfirm: async () => {
+          try {
+            setConfirmation(prev => ({ ...prev, isLoading: true }));
+            const productToDelete = products.find(p => p.id === id);
+            if (!productToDelete) return;
+  
+            if (productToDelete.kind === 'service') {
+              await ServiceService.permanentDeleteService(id);
+            } else {
+              await ProductService.permanentDeleteProduct(id);
+            }
+            
+            setProducts(prev => prev.filter(p => p.id !== id));
+            await revalidateCatalog();
+            
+            showSuccess('Eliminado', 'Elemento eliminado definitivamente');
+            closeConfirmation();
+          } catch (error) {
+            console.error('Error permanently deleting item:', error);
+            showError('Error', 'Error al eliminar el elemento');
+            setConfirmation(prev => ({ ...prev, isLoading: false }));
+          }
+        }
+      });
   };
 
   const handleSaveProduct = async (formData: Partial<Product | Service>) => {
@@ -234,10 +289,19 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
     }
   };
 
-  const filteredProducts = products.filter(product =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.categoryName?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredProducts = products.filter(product => {
+    // Filter by delete status
+    if (showDeleted) {
+        if (!product.isDeleted) return false;
+    } else {
+        if (product.isDeleted) return false;
+    }
+
+    return (
+      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.categoryName?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
 
   return (
     <div className="space-y-6">
@@ -268,6 +332,14 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
            <Button variant="outline" onClick={() => loadProducts(true)} disabled={loading}>
             <RefreshCw className={cn("w-4 h-4 mr-2", loading && "animate-spin")} />
             Actualizar
+          </Button>
+          <Button 
+            variant={showDeleted ? 'destructive' : 'outline'} 
+            onClick={() => setShowDeleted(!showDeleted)}
+            className="gap-2"
+          >
+            <Trash2 className="w-4 h-4" />
+            {showDeleted ? 'Ver Activos' : 'Papelera'}
           </Button>
           <Button variant="outline" className="gap-2">
             <Filter className="w-4 h-4" />
@@ -380,24 +452,49 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="h-8 w-8 p-0 text-neutral-500 hover:text-primary hover:bg-primary/10"
-                            onClick={() => handleEditProduct(product)}
-                            title="Editar"
-                          >
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="h-8 w-8 p-0 text-neutral-500 hover:text-destructive hover:bg-destructive/10"
-                            onClick={() => handleDeleteProduct(product.id)}
-                            title="Eliminar"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
+                          {showDeleted ? (
+                            <>
+                                <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="h-8 w-8 p-0 text-neutral-500 hover:text-green-600 hover:bg-green-50"
+                                    onClick={() => handleRestoreProduct(product.id)}
+                                    title="Restaurar"
+                                >
+                                    <RotateCcw className="w-4 h-4" />
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="h-8 w-8 p-0 text-neutral-500 hover:text-red-600 hover:bg-red-50"
+                                    onClick={() => handlePermanentDeleteProduct(product.id)}
+                                    title="Eliminar Definitivamente"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                </Button>
+                            </>
+                          ) : (
+                            <>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-8 w-8 p-0 text-neutral-500 hover:text-primary hover:bg-primary/10"
+                                onClick={() => handleEditProduct(product)}
+                                title="Editar"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-8 w-8 p-0 text-neutral-500 hover:text-destructive hover:bg-destructive/10"
+                                onClick={() => handleDeleteProduct(product.id)}
+                                title="Eliminar"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -429,22 +526,47 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
               )}
               
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="text-white hover:bg-white/20"
-                  onClick={() => handleEditProduct(product)}
-                >
-                  <Edit className="w-5 h-5" />
-                </Button>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="text-white hover:bg-red-500/80 hover:text-white"
-                  onClick={() => handleDeleteProduct(product.id)}
-                >
-                  <Trash2 className="w-5 h-5" />
-                </Button>
+                {showDeleted ? (
+                    <>
+                        <Button
+                            size="icon"
+                            variant="ghost"
+                            className="text-white hover:bg-green-500/80 hover:text-white"
+                            onClick={() => handleRestoreProduct(product.id)}
+                            title="Restaurar"
+                        >
+                            <RotateCcw className="w-5 h-5" />
+                        </Button>
+                        <Button
+                            size="icon"
+                            variant="ghost"
+                            className="text-white hover:bg-red-500/80 hover:text-white"
+                            onClick={() => handlePermanentDeleteProduct(product.id)}
+                            title="Eliminar Definitivamente"
+                        >
+                            <Trash2 className="w-5 h-5" />
+                        </Button>
+                    </>
+                ) : (
+                    <>
+                        <Button
+                        size="icon"
+                        variant="ghost"
+                        className="text-white hover:bg-white/20"
+                        onClick={() => handleEditProduct(product)}
+                        >
+                        <Edit className="w-5 h-5" />
+                        </Button>
+                        <Button
+                        size="icon"
+                        variant="ghost"
+                        className="text-white hover:bg-red-500/80 hover:text-white"
+                        onClick={() => handleDeleteProduct(product.id)}
+                        >
+                        <Trash2 className="w-5 h-5" />
+                        </Button>
+                    </>
+                )}
               </div>
 
               {mode === 'all' && (

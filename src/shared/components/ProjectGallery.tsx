@@ -1,5 +1,26 @@
 'use client';
 
+/**
+ * PROJECT GALLERY COMPONENT - "LEVEL GOD" PATTERN EXPLAINED
+ * 
+ * Este componente implementa el patrón híbrido Server/Client para optimizar SEO y Performance:
+ * 
+ * 1. Server Side (page.tsx):
+ *    - Obtiene los datos iniciales (featured projects) usando `getCachedFeaturedProjects()`.
+ *    - Estos datos están cacheados (Data Cache) para respuesta instantánea.
+ *    - Se pasan como prop `initialProjects` a este componente cliente.
+ * 
+ * 2. Client Side (ProjectGallery.tsx):
+ *    - Recibe `initialProjects`.
+ *    - Si existen, USA ESOS DATOS y salta el fetch del cliente (`skip: true` en useProjects).
+ *    - Resultado: HTML pre-renderizado con datos (SEO perfecto) + Interactividad (Client Component).
+ *    - Si no hay datos iniciales (ej. filtros dinámicos), hace el fetch normal.
+ * 
+ * 3. Revalidación (Admin):
+ *    - Al crear/editar en Admin, se llama a `revalidateTag('projects')`.
+ *    - La próxima visita al Home regenerará el caché del servidor automáticamente.
+ */
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { X, FileText } from '@/lib/icons';
 import DefaultImage from '@/shared/components/ui/DefaultImage';

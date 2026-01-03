@@ -28,6 +28,7 @@ import { useAdminPermissions } from '@/features/admin/components/AdminProtection
 import { useTheme } from '@/contexts/ThemeContext';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { MainLogo } from '@/components/ui';
 import { ScrollManager } from '@/hooks/useScrollRestoration';
 import { trackEvent, AnalyticsEvents, AnalyticsLocations } from '@/lib/analytics';
 
@@ -160,13 +161,9 @@ const Navbar: React.FC = () => {
                 ? "opacity-100 z-10 duration-500 delay-200" 
                 : "opacity-0 z-0 pointer-events-none duration-200"
             )}>
-              <Image
-                src="/logo/logo_DD_2026_blanco_V2.svg"
-                alt="Ddreams 3D Logo"
-                fill
-                sizes="(max-width: 768px) 250px, 350px"
-                className="object-contain object-left"
-                priority
+              <MainLogo 
+                variant="white"
+                className="w-full h-full"
               />
             </div>
 
@@ -177,13 +174,9 @@ const Navbar: React.FC = () => {
                 ? "opacity-100 z-10 duration-500 delay-200" 
                 : "opacity-0 z-0 pointer-events-none duration-200"
             )}>
-              <Image
-                src="/logo/logo_DD_2026_negro_V2.svg"
-                alt="Ddreams 3D Logo"
-                fill
-                sizes="(max-width: 768px) 250px, 350px"
-                className="object-contain object-left"
-                priority
+              <MainLogo 
+                variant="black"
+                className="w-full h-full"
               />
             </div>
           </Link>

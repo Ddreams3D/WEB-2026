@@ -8,12 +8,13 @@ import {
   Timestamp,
   deleteDoc,
   writeBatch,
-  DocumentData,
   QuerySnapshot,
-  QueryDocumentSnapshot
+  QueryDocumentSnapshot,
+  DocumentData
 } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
-import { StoreProduct, Category } from '@/shared/types/domain';
+import { ref, deleteObject } from 'firebase/storage';
+import { db, storage } from '@/lib/firebase';
+import { StoreProduct, Category, ProductImage } from '@/shared/types/domain';
 import { products as productsFallbackData } from '@/data/products.data';
 import { categories } from '@/data/categories.data';
 
@@ -34,6 +35,7 @@ const mapToProduct = (data: DocumentData): StoreProduct => {
     kind: 'product',
     createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate() : new Date(data.createdAt),
     updatedAt: data.updatedAt instanceof Timestamp ? data.updatedAt.toDate() : new Date(data.updatedAt),
+    deletedAt: data.deletedAt ? (data.deletedAt instanceof Timestamp ? data.deletedAt.toDate() : new Date(data.deletedAt)) : undefined,
     images: data.images?.map((img: DocumentData) => ({
       ...img,
       createdAt: img.createdAt instanceof Timestamp ? img.createdAt.toDate() : new Date(img.createdAt),
@@ -47,6 +49,7 @@ const mapToFirestore = (data: StoreProduct): DocumentData => {
     ...data,
     createdAt: data.createdAt instanceof Date ? Timestamp.fromDate(data.createdAt) : Timestamp.fromDate(new Date()),
     updatedAt: Timestamp.fromDate(new Date()),
+    deletedAt: data.deletedAt instanceof Date ? Timestamp.fromDate(data.deletedAt) : (data.deletedAt || null),
     images: data.images?.map(img => ({
       ...img,
       createdAt: img.createdAt instanceof Date ? Timestamp.fromDate(img.createdAt) : Timestamp.fromDate(new Date()),
@@ -55,14 +58,37 @@ const mapToFirestore = (data: StoreProduct): DocumentData => {
   };
 };
 
+const deleteImagesFromStorage = async (images: ProductImage[]) => {
+  if (!images || images.length === 0 || !storage) return;
+  const storageInstance = storage; // Capture non-null storage
+
+  console.log(`[ProductService] Deleting ${images.length} images from storage...`);
+  const deletePromises = images.map(async (img) => {
+    if (!img.url) return;
+    try {
+      // Create a reference from the URL
+      // Note: This works for Firebase Storage URLs. 
+      // If using external URLs, this might throw, so we catch errors.
+      const imageRef = ref(storageInstance, img.url);
+      await deleteObject(imageRef);
+      console.log(`[ProductService] Deleted image: ${img.url}`);
+    } catch (error) {
+      console.warn(`[ProductService] Failed to delete image ${img.url}:`, error);
+    }
+  });
+
+  await Promise.all(deletePromises);
+};
+
 export const ProductService = {
   // Get all products
-  async getAllProducts(forceRefresh = false): Promise<StoreProduct[]> {
-    console.log(`[ProductService] getAllProducts called. forceRefresh=${forceRefresh}`);
+  async getAllProducts(forceRefresh = false, includeDeleted = false): Promise<StoreProduct[]> {
+    console.log(`[ProductService] getAllProducts called. forceRefresh=${forceRefresh}, includeDeleted=${includeDeleted}`);
     // Check cache (memory)
     if (!forceRefresh && productsCache && (Date.now() - productsCache.timestamp < CACHE_DURATION)) {
       console.log('[ProductService] Returning cached data');
-      return productsCache.data;
+      const cachedProducts = productsCache.data;
+      return includeDeleted ? cachedProducts : cachedProducts.filter(p => !p.isDeleted);
     }
 
     let products: StoreProduct[] = [];
@@ -148,12 +174,12 @@ export const ProductService = {
         LocalStorageService.saveProducts(products);
     }
     
-    return products;
+    return includeDeleted ? products : products.filter(p => !p.isDeleted);
   },
 
   // Get product by ID or Slug
   async getProductById(idOrSlug: string): Promise<StoreProduct | undefined> {
-    const allProducts = await this.getAllProducts();
+    const allProducts = await this.getAllProducts(false, true); // Allow finding deleted for restore/admin
     return allProducts.find((p: StoreProduct) => p.id === idOrSlug || p.slug === idOrSlug);
   },
 
@@ -221,12 +247,36 @@ export const ProductService = {
     }
   },
 
-  // Delete product
+  // Soft Delete product (Moves to Trash)
   async deleteProduct(id: string): Promise<boolean> {
+    console.log(`[ProductService] Soft deleting product ${id}`);
+    // Use updateProduct to handle both DB and LocalStorage logic
+    const result = await this.updateProduct(id, { 
+      isDeleted: true, 
+      isActive: false, 
+      deletedAt: new Date() 
+    });
+    return !!result;
+  },
+
+  // Restore product from Trash
+  async restoreProduct(id: string): Promise<boolean> {
+    console.log(`[ProductService] Restoring product ${id}`);
+    const result = await this.updateProduct(id, { 
+      isDeleted: false, 
+      isActive: false, // Keep inactive for safety until manually activated
+      deletedAt: undefined 
+    });
+    return !!result;
+  },
+
+  // Permanent Delete product (Destroys data and images)
+  async permanentDeleteProduct(id: string): Promise<boolean> {
+    console.log(`[ProductService] Permanently deleting product ${id}`);
     const dbInstance = db;
     if (!dbInstance) {
        // Mock behavior if no DB
-       const currentProducts = await this.getAllProducts();
+       const currentProducts = await this.getAllProducts(false, true);
        const newProducts = currentProducts.filter(p => p.id !== id);
        LocalStorageService.saveProducts(newProducts);
        productsCache = { data: newProducts, timestamp: Date.now() };
@@ -234,12 +284,24 @@ export const ProductService = {
     }
 
     try {
+      // 1. Get product to find images
+      // We must force includeDeleted=true because it's likely already soft-deleted
+      const allProducts = await this.getAllProducts(false, true);
+      const product = allProducts.find(p => p.id === id);
+      
+      // 2. Delete images from Storage
+      if (product?.images) {
+        await deleteImagesFromStorage(product.images);
+      }
+
+      // 3. Delete doc from Firestore
       await deleteDoc(doc(dbInstance, COLLECTION_NAME, id));
+      
       // Invalidate cache
       productsCache = null;
       return true;
     } catch (error) {
-      console.error('Error deleting product:', error);
+      console.error('Error permanently deleting product:', error);
       return false;
     }
   },

@@ -13,3 +13,5 @@ export { Tabs, TabsList, TabsTrigger, TabsContent } from './tabs';
 export { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
 export { Checkbox } from './checkbox';
 export { CookieBanner } from './CookieBanner';
+export { FooterLogo } from './FooterLogo';
+export * from './MainLogo';

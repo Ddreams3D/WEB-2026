@@ -12,8 +12,9 @@ import {
   QuerySnapshot,
   QueryDocumentSnapshot
 } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
-import { Service } from '@/shared/types/domain';
+import { ref, deleteObject } from 'firebase/storage';
+import { db, storage } from '@/lib/firebase';
+import { Service, ProductImage } from '@/shared/types/domain';
 import servicesFallbackData from '@/shared/data/services-fallback.json';
 
 import { LocalStorageService } from './local-storage.service';
@@ -37,6 +38,7 @@ const mapToService = (data: DocumentData): Service => {
     isService: true,
     createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate() : new Date(data.createdAt),
     updatedAt: data.updatedAt instanceof Timestamp ? data.updatedAt.toDate() : new Date(data.updatedAt),
+    deletedAt: data.deletedAt ? (data.deletedAt instanceof Timestamp ? data.deletedAt.toDate() : new Date(data.deletedAt)) : undefined,
     images: data.images?.map((img: DocumentData) => ({
       ...img,
       createdAt: img.createdAt instanceof Timestamp ? img.createdAt.toDate() : new Date(img.createdAt),
@@ -50,6 +52,7 @@ const mapToFirestore = (data: Service): DocumentData => {
     ...data,
     createdAt: data.createdAt instanceof Date ? Timestamp.fromDate(data.createdAt) : Timestamp.fromDate(new Date()),
     updatedAt: Timestamp.fromDate(new Date()),
+    deletedAt: data.deletedAt instanceof Date ? Timestamp.fromDate(data.deletedAt) : (data.deletedAt || null),
     images: data.images?.map(img => ({
       ...img,
       createdAt: img.createdAt instanceof Date ? Timestamp.fromDate(img.createdAt) : Timestamp.fromDate(new Date()),
@@ -58,14 +61,34 @@ const mapToFirestore = (data: Service): DocumentData => {
   };
 };
 
+const deleteImagesFromStorage = async (images: ProductImage[]) => {
+  if (!images || images.length === 0 || !storage) return;
+  const storageInstance = storage;
+
+  console.log(`[ServiceService] Deleting ${images.length} images from storage...`);
+  const deletePromises = images.map(async (img) => {
+    if (!img.url) return;
+    try {
+      const imageRef = ref(storageInstance, img.url);
+      await deleteObject(imageRef);
+      console.log(`[ServiceService] Deleted image: ${img.url}`);
+    } catch (error) {
+      console.warn(`[ServiceService] Failed to delete image ${img.url}:`, error);
+    }
+  });
+
+  await Promise.all(deletePromises);
+};
+
 export const ServiceService = {
   // Get all services
-  async getAllServices(forceRefresh = false): Promise<Service[]> {
-    console.log(`[ServiceService] getAllServices called. forceRefresh=${forceRefresh}`);
+  async getAllServices(forceRefresh = false, includeDeleted = false): Promise<Service[]> {
+    console.log(`[ServiceService] getAllServices called. forceRefresh=${forceRefresh}, includeDeleted=${includeDeleted}`);
     // Check cache
     if (!forceRefresh && servicesCache && (Date.now() - servicesCache.timestamp < CACHE_DURATION)) {
       console.log('[ServiceService] Returning cached data');
-      return servicesCache.data;
+      const cachedServices = servicesCache.data;
+      return includeDeleted ? cachedServices : cachedServices.filter(s => !s.isDeleted);
     }
 
     let services: Service[] = [];
@@ -139,16 +162,14 @@ export const ServiceService = {
     if (shouldFetch && services.length > 0) {
         LocalStorageService.saveServices(services);
     }
-
-    return services;
+    
+    return includeDeleted ? services : services.filter(s => !s.isDeleted);
   },
 
-  /**
-   * Get service by ID or Slug.
-   */
+  // Get service by ID or Slug
   async getServiceById(idOrSlug: string): Promise<Service | undefined> {
-    const allServices = await this.getAllServices();
-    return allServices.find(s => s.id === idOrSlug || s.slug === idOrSlug);
+    const allServices = await this.getAllServices(false, true); // Allow finding deleted for restore
+    return allServices.find((s: Service) => s.id === idOrSlug || s.slug === idOrSlug);
   },
 
   /**
@@ -189,13 +210,38 @@ export const ServiceService = {
   },
 
   /**
-   * Delete a service from Firestore.
+   * Soft Delete a service (Moves to Trash).
    */
   async deleteService(id: string): Promise<void> {
+    console.log(`[ServiceService] Soft deleting service ${id}`);
+    await this.updateService(id, { 
+      isDeleted: true, 
+      isActive: false, 
+      deletedAt: new Date() 
+    });
+  },
+
+  /**
+   * Restore service from Trash.
+   */
+  async restoreService(id: string): Promise<void> {
+    console.log(`[ServiceService] Restoring service ${id}`);
+    await this.updateService(id, { 
+      isDeleted: false, 
+      isActive: false, 
+      deletedAt: undefined 
+    });
+  },
+
+  /**
+   * Permanent Delete service (Destroys data and images).
+   */
+  async permanentDeleteService(id: string): Promise<void> {
+    console.log(`[ServiceService] Permanently deleting service ${id}`);
     const dbInstance = db;
     if (!dbInstance) {
         // Mock with Persistence
-        const currentServices = await this.getAllServices();
+        const currentServices = await this.getAllServices(false, true);
         const newServices = currentServices.filter(s => s.id !== id);
         LocalStorageService.saveServices(newServices);
         servicesCache = { data: newServices, timestamp: Date.now() };
@@ -203,12 +249,19 @@ export const ServiceService = {
     }
 
     try {
+      const allServices = await this.getAllServices(false, true);
+      const service = allServices.find(s => s.id === id);
+      
+      if (service?.images) {
+        await deleteImagesFromStorage(service.images);
+      }
+
       await deleteDoc(doc(dbInstance, COLLECTION_NAME, id));
       
       // Invalidate cache
       servicesCache = null;
     } catch (error) {
-      console.error('Error deleting service:', error);
+      console.error('Error permanently deleting service:', error);
       throw error;
     }
   },

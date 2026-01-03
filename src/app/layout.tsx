@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, Montserrat, Montserrat_Alternates } from 'next/font/google';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import Script from 'next/script';
 import './globals.css';
@@ -12,6 +12,19 @@ import { AnalyticsTracker } from '@/components/analytics/AnalyticsTracker';
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
+  display: 'swap',
+});
+
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  variable: '--font-montserrat',
+  display: 'swap',
+});
+
+const montserratAlternates = Montserrat_Alternates({
+  subsets: ['latin'],
+  weight: ['300', '600'],
+  variable: '--font-montserrat-alternates',
   display: 'swap',
 });
 
@@ -86,7 +99,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={inter.variable} suppressHydrationWarning>
+    <html lang="es" className={`${inter.variable} ${montserrat.variable} ${montserratAlternates.variable}`} suppressHydrationWarning>
       <head>
         <Script id="theme-analytics-init" strategy="beforeInteractive">
           {`

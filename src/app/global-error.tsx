@@ -1,5 +1,6 @@
 'use client';
 
+import * as Sentry from "@sentry/nextjs";
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { AlertTriangle, Home, RefreshCw, Mail } from '@/lib/icons';
@@ -14,8 +15,8 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Log the error to an error reporting service
-    console.error('Global error:', error);
+    // Log the error to Sentry
+    Sentry.captureException(error);
   }, [error]);
 
   return (
@@ -36,7 +37,7 @@ export default function GlobalError({
                 ¡Algo salió mal!
               </h1>
               <p className="text-muted-foreground leading-relaxed mb-4">
-                Ha ocurrido un error inesperado en la aplicación. Nuestro equipo ha sido notificado.
+                Ha ocurrido un error inesperado en la aplicación. Nuestro equipo ha sido notificado automáticamente.
               </p>
               {process.env.NODE_ENV === 'development' && (
                 <details className="text-left bg-muted p-4 rounded-lg text-sm">

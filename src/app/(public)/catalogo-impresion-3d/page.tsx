@@ -1,14 +1,13 @@
 import { Suspense } from 'react';
 import { Metadata } from 'next';
 import CatalogPageClient from '@/features/catalog/CatalogPageClient';
-import { ProductService } from '@/services/product.service';
-import { ServiceService } from '@/services/service.service';
+import { getCachedProducts, getCachedCategories, getCachedServices } from '@/services/data-access.server';
 import { CatalogProvider } from '@/contexts/CatalogContext';
 import { StoreProduct, Service, CatalogItem, getCatalogSortDate } from '@/shared/types/catalog';
 import { Category } from '@/shared/types';
 
-export const dynamic = 'force-dynamic'; // Disable caching to ensure real-time updates from Firestore
-export const revalidate = 0;
+// Use standard ISR (1 hour) or rely on Data Cache revalidation
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: 'Catálogo de productos bajo pedido | Ddreams 3D',
@@ -27,11 +26,11 @@ export const metadata: Metadata = {
 
 export default async function CatalogPage() {
   try {
-    // 1. Cargar datos en paralelo (Server Side)
+    // 1. Cargar datos en paralelo (Server Side - Cached)
     const [fetchedProducts, fetchedCategories, fetchedServices] = await Promise.all([
-      ProductService.getAllProducts(),
-      ProductService.getCategories(),
-      ServiceService.getAllServices()
+      getCachedProducts(),
+      getCachedCategories(),
+      getCachedServices()
     ]);
 
     // 2. Normalizar y combinar

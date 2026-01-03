@@ -63,7 +63,7 @@ export function useProjects(options?: ProjectsOptions) {
     return () => {
       isMounted = false;
     };
-  }, [options?.category, options?.isFeatured, options?.limit]);
+  }, [options?.category, options?.isFeatured, options?.limit, options?.skip]);
 
   return { projects, isLoading, error };
 }

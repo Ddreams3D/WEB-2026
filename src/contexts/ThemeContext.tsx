@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-export const THEMES = ['standard', 'halloween', 'promo', 'festive-strong', 'festive-warm', 'festive-soft'] as const;
+export const THEMES = ['standard', 'halloween', 'promo', 'festive-strong', 'festive-warm', 'festive-soft', 'valentines'] as const;
 export type Theme = typeof THEMES[number];
 
 type ThemeContextType = {

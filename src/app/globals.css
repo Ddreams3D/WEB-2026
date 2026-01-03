@@ -176,6 +176,68 @@ body {
   --secondary-foreground: 0 0 0;
 }
 
+/* 6️⃣ VALENTINES (San Valentín) - Romance & Passion */
+[data-theme='valentines'] {
+  /* HSL Variables - Deep Passion Red & Soft Pink */
+  --primary: 350 90% 50%; /* Passion Red #F3092A */
+  --ring: 350 90% 50%;
+  --secondary: 340 100% 96%; /* Very Light Pink */
+
+  /* Primary: Passion Red Palette */
+  --primary-50: 255 240 242;
+  --primary-100: 255 228 231;
+  --primary-200: 255 204 210;
+  --primary-300: 255 160 170;
+  --primary-400: 252 100 115;
+  --primary-500: 243 9 42;    /* #F3092A - Main Brand Red */
+  --primary-600: 215 5 35;
+  --primary-700: 180 5 30;
+  --primary-800: 150 10 30;
+  --primary-900: 125 15 30;
+  --primary-950: 70 5 15;
+  --primary-foreground: 255 255 255;
+
+  /* Secondary: Soft Pink Palette */
+  --secondary-50: 255 245 247;
+  --secondary-100: 255 235 240;
+  --secondary-200: 255 215 225;
+  --secondary-300: 255 185 200;
+  --secondary-400: 255 145 165;
+  --secondary-500: 255 240 245; /* Soft background pink */
+  --secondary-600: 235 200 215;
+  --secondary-700: 200 150 170;
+  --secondary-800: 150 100 120;
+  --secondary-900: 100 60 80;
+  --secondary-950: 50 20 30;
+  --secondary-foreground: 180 5 30; /* Dark Red Text */
+}
+
+/* Logic for Valentines - Romantic Gradient */
+[data-theme='valentines'] .bg-clip-text,
+[data-theme='valentines'] .text-transparent.bg-gradient-to-r {
+  /* Red to Pink to Red */
+  background-image: linear-gradient(
+    to right, 
+    rgb(var(--primary-600)), 
+    rgb(var(--primary-400)), 
+    rgb(var(--primary-600))
+  ) !important;
+  background-size: 200% auto !important;
+  filter: drop-shadow(0 2px 4px rgba(243, 9, 42, 0.2));
+  animation: shine 4s linear infinite;
+}
+
+[data-theme='valentines'] .bg-gradient-to-r.text-white {
+  background-image: linear-gradient(
+    to right, 
+    rgb(var(--primary-600)), 
+    rgb(var(--primary-500)), 
+    rgb(var(--primary-600))
+  ) !important;
+  border: 1px solid rgba(255,255,255,0.3);
+  box-shadow: 0 4px 15px rgba(243, 9, 42, 0.3);
+}
+
 /* Logic for Halloween Theme - Orange & White Gradient Animation (Pulse) */
 [data-theme='halloween'] .bg-clip-text,
 [data-theme='halloween'] .text-transparent.bg-gradient-to-r {

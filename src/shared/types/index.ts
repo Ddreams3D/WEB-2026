@@ -23,6 +23,10 @@ export interface Project {
   status: 'active' | 'completed' | 'pending';
   createdAt: Date;
   updatedAt: Date;
+
+  // Soft Delete (Optional as it might not be present on all product types yet)
+  isDeleted?: boolean;
+  deletedAt?: Date;
 }
 
 export interface Service {
@@ -86,6 +90,10 @@ export interface Category {
   sortOrder: number;
   createdAt: Date;
   updatedAt: Date;
+
+  // Soft Delete
+  isDeleted?: boolean;
+  deletedAt?: Date;
 }
 
 // Productos del catálogo
@@ -133,6 +141,10 @@ export interface Product {
   displayOrder?: number;
   createdAt: Date;
   updatedAt: Date;
+
+  // Soft Delete
+  isDeleted?: boolean;
+  deletedAt?: Date;
 }
 
 export interface ProductTab {
