@@ -102,10 +102,10 @@ export const ProductService = {
               this.normalizeDisplayOrders(products).catch(err => console.error('Auto-repair failed:', err));
           }
         } else {
-           console.log('No products found in Firestore. Auto-seeding default data...');
-           await this.seedProducts();
+           console.log('No products found in Firestore. Using fallback data...');
+           // Auto-seeding disabled to prevent permission errors in build/production environments
+           // await this.seedProducts();
            products = productsFallbackData.map(mapToProduct);
-           console.log(`[ProductService] Auto-seeded ${products.length} products`);
         }
       } catch (error) {
         console.error('Error fetching products from Firestore:', error);

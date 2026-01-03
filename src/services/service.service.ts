@@ -99,10 +99,10 @@ export const ServiceService = {
               this.normalizeDisplayOrders(services).catch((err: unknown) => console.error('Auto-repair failed:', err));
           }
         } else {
-           console.log('No services found in Firestore. Auto-seeding default data...');
-           await this.seedServices();
+           console.log('No services found in Firestore. Using fallback data...');
+           // Auto-seeding disabled to prevent permission errors in build/production environments
+           // await this.seedServices();
            services = servicesFallbackData.map(mapToService);
-           console.log(`[ServiceService] Auto-seeded ${services.length} services`);
         }
       } catch (error) {
         console.error('Error fetching services from Firestore:', error);
