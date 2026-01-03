@@ -39,7 +39,7 @@ export const metadata: Metadata = {
 export default async function ServicesPage() {
   // Fetch services on the server (ISR)
   // This removes the need for client-side fetching and loading states
-  let services = [];
+  let services: Service[] = [];
   try {
     const allServices = await ServiceService.getAllServices();
     services = allServices.filter(s => 
