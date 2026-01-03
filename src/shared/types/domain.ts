@@ -180,9 +180,18 @@ export interface User {
     zip: string;
     country: string;
   };
+  
+  // Settings
+  notificationPreferences?: {
+    email: boolean;
+    push: boolean;
+    marketing: boolean;
+  };
 }
 
-// --- Order System ---
+// ==========================================
+// 5. ORDER SYSTEM
+// ==========================================
 
 export type OrderStatus = 
   | 'quote_requested' // Solicitud de cotización (Servicios)
@@ -264,4 +273,21 @@ export interface Order {
 
   // Admin Notes
   adminNotes?: string;
+}
+
+// ==========================================
+// 6. NOTIFICATIONS (Notificaciones)
+// ==========================================
+export type NotificationType = 'info' | 'success' | 'warning' | 'error' | 'order' | 'system';
+
+export interface AppNotification {
+  id: string;
+  userId?: string | null; // If null/undefined, it is a system-wide notification for admins
+  title: string;
+  message: string;
+  type: NotificationType;
+  read: boolean;
+  link?: string;
+  createdAt: Date;
+  metadata?: Record<string, any>;
 }

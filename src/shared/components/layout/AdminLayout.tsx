@@ -27,7 +27,7 @@ interface AdminLayoutProps {
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: Home },
-  { name: 'Productos', href: '/admin/productos', icon: ShoppingBag },
+  { name: 'Catálogo', href: '/admin/productos', icon: ShoppingBag },
   { name: 'Servicios', href: '/admin/servicios', icon: Package },
   { name: 'Proyectos', href: '/admin/projects', icon: Briefcase },
   { name: 'Pedidos', href: '/admin/pedidos', icon: Package },
@@ -35,10 +35,22 @@ const navigation = [
   { name: 'Configuración', href: '/admin/configuracion', icon: Settings },
 ];
 
+import { NotificationsDropdown } from '@/features/admin/components/NotificationsDropdown';
+
+import ConnectionStatus from '@/features/admin/components/ConnectionStatus';
+
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
   const { user, logout } = useAuth();
+
+  // Determine if we should show the connection status badge
+  // Only for: servicios, proyectos, productos (catalog)
+  const showConnectionStatus = 
+    pathname.includes('/admin/servicios') || 
+    pathname.includes('/admin/projects') || 
+    pathname.includes('/admin/productos') ||
+    pathname.includes('/admin/catalogo'); // Including catalogo just in case routes change
 
   const handleLogout = async () => {
     try {
@@ -103,14 +115,15 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
              <p className="text-xs text-muted-foreground truncate">Administrador</p>
            </div>
         </div>
-        <Button
-          onClick={handleLogout}
-          variant="outline"
-          className="w-full justify-start text-muted-foreground hover:text-destructive hover:border-destructive/30 hover:bg-destructive/10"
-        >
-          <LogOut className="mr-2 h-4 w-4" />
-          Cerrar Sesión
-        </Button>
+        <Link href="/">
+          <Button
+            variant="outline"
+            className="w-full justify-start text-muted-foreground hover:text-primary hover:border-primary/30 hover:bg-primary/10"
+          >
+            <Home className="mr-2 h-4 w-4" />
+            Volver al Inicio
+          </Button>
+        </Link>
       </div>
     </div>
   );
@@ -165,11 +178,14 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             </div>
             
             <div className="flex items-center space-x-3 sm:space-x-4">
+               {showConnectionStatus && (
+                 <div className="hidden md:block mr-2">
+                   <ConnectionStatus />
+                 </div>
+               )}
+               
                {/* Notifications */}
-               <button className="p-2 text-muted-foreground hover:text-foreground rounded-full hover:bg-muted transition-colors relative">
-                 <Bell className="w-5 h-5" />
-                 <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-background"></span>
-               </button>
+               <NotificationsDropdown />
 
                <div className="h-6 w-px bg-border hidden sm:block"></div>
 

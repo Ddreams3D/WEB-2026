@@ -7,6 +7,9 @@ import { CatalogProvider } from '@/contexts/CatalogContext';
 import { StoreProduct, Service, CatalogItem, getCatalogSortDate } from '@/shared/types/catalog';
 import { Category } from '@/shared/types';
 
+export const dynamic = 'force-dynamic'; // Disable caching to ensure real-time updates from Firestore
+export const revalidate = 0;
+
 export const metadata: Metadata = {
   title: 'Catálogo de productos bajo pedido | Ddreams 3D',
   description: 'Explora nuestra amplia variedad de productos impresos en 3D. Elige un diseño base y lo fabricamos a medida en Arequipa.',

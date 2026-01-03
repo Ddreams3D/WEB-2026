@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useToast } from '@/components/ui/ToastManager';
 import { Button } from '@/components/ui/button';
@@ -31,8 +32,9 @@ import {
 import { cn } from '@/lib/utils';
 
 export default function SettingsPage() {
+  const { user, updateUser } = useAuth();
   const { darkMode, toggleDarkMode } = useTheme();
-  const { showSuccess } = useToast();
+  const { showSuccess, showError } = useToast();
   
   const [notifications, setNotifications] = useState({
     email: true,
@@ -40,14 +42,31 @@ export default function SettingsPage() {
     marketing: false
   });
 
+  // Load preferences from user profile
+  useEffect(() => {
+    if (user?.notificationPreferences) {
+      setNotifications(user.notificationPreferences);
+    }
+  }, [user]);
+
   const [language, setLanguage] = useState('es');
 
-  const handleNotificationChange = (key: keyof typeof notifications) => {
-    setNotifications(prev => {
-      const newState = { ...prev, [key]: !prev[key] };
+  const handleNotificationChange = async (key: keyof typeof notifications) => {
+    // Optimistic update
+    const newState = { ...notifications, [key]: !notifications[key] };
+    setNotifications(newState);
+
+    try {
+      await updateUser({
+        notificationPreferences: newState
+      });
       showSuccess('Configuración actualizada', 'Tus preferencias de notificación han sido guardadas.');
-      return newState;
-    });
+    } catch (error) {
+      console.error('Error updating notification preferences:', error);
+      // Revert on error
+      setNotifications(notifications);
+      showError('Error', 'No se pudieron guardar los cambios.');
+    }
   };
 
   const handleLanguageChange = (value: string) => {

@@ -9,7 +9,6 @@ import { useToast } from '@/components/ui/ToastManager';
 import { ProductImage } from '@/shared/components/ui/DefaultImage';
 import ProductModal from './ProductModal';
 import { ViewToggle } from './ViewToggle';
-import ConnectionStatus from './ConnectionStatus';
 import ConfirmationModal from './ConfirmationModal';
 import { Product } from '@/shared/types';
 import { Service, StoreProduct } from '@/shared/types/domain';
@@ -87,11 +86,15 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
   };
 
   const handleDeleteProduct = (id: string) => {
-    // Usar window.confirm para confirmación síncrona
-    if (window.confirm('¿Estás seguro de eliminar este elemento?')) {
-      (async () => {
+    setConfirmation({
+      isOpen: true,
+      title: 'Eliminar Producto/Servicio',
+      message: '¿Estás seguro de eliminar este elemento? Esta acción es irreversible.',
+      variant: 'danger',
+      isLoading: false,
+      onConfirm: async () => {
         try {
-          // setConfirmation({ ...prev, isLoading: true }) // No necesario con window.confirm
+          setConfirmation(prev => ({ ...prev, isLoading: true }));
           const productToDelete = products.find(p => p.id === id);
           if (!productToDelete) return;
 
@@ -108,12 +111,14 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
           await revalidateCatalog();
           
           showSuccess('Eliminado', 'Elemento eliminado correctamente');
+          closeConfirmation();
         } catch (error) {
           console.error('Error deleting item:', error);
           showError('Error', 'Error al eliminar el elemento');
+          setConfirmation(prev => ({ ...prev, isLoading: false }));
         }
-      })();
-    }
+      }
+    });
   };
 
   const handleSaveProduct = async (formData: Partial<Product | Service>) => {
@@ -246,10 +251,6 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
         isLoading={confirmation.isLoading}
       />
       <div className="flex flex-col gap-4">
-        <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">Gestión de Catálogo</h1>
-            <ConnectionStatus />
-        </div>
         
         <div className="flex flex-col sm:flex-row justify-between gap-4">
         <div className="relative flex-1 max-w-md">
@@ -289,7 +290,9 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
                   <th className="px-6 py-4 text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Producto</th>
                   <th className="px-6 py-4 text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Categoría</th>
                   <th className="px-6 py-4 text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Precio</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Tipo</th>
+                  {mode === 'all' && (
+                    <th className="px-6 py-4 text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Tipo</th>
+                  )}
                   <th className="px-6 py-4 text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Estado</th>
                   <th className="px-6 py-4 text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider text-right">Acciones</th>
                 </tr>
@@ -354,15 +357,17 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
                             : `S/ ${product.price.toFixed(2)}`
                         }
                       </td>
-                      <td className="px-6 py-4">
-                         <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium border ${
-                          product.kind === 'service' 
-                            ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800'
-                            : 'bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800'
-                        }`}>
-                          {product.kind === 'service' ? 'Servicio' : 'Producto'}
-                        </span>
-                      </td>
+                      {mode === 'all' && (
+                        <td className="px-6 py-4">
+                          <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium border ${
+                            product.kind === 'service' 
+                              ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800'
+                              : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border-neutral-200 dark:border-neutral-700'
+                          }`}>
+                            {product.kind === 'service' ? 'Servicio' : 'Producto'}
+                          </span>
+                        </td>
+                      )}
                       <td className="px-6 py-4">
                         <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${
                             product.isActive 
@@ -442,15 +447,17 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
                 </Button>
               </div>
 
-              <div className="absolute top-2 right-2">
-                <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                  product.kind === 'service' 
-                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
-                    : 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'
-                }`}>
-                  {product.kind === 'service' ? 'Servicio' : 'Producto'}
-                </span>
-              </div>
+              {mode === 'all' && (
+                <div className="absolute top-2 right-2">
+                  <span className={`px-2 py-1 text-xs font-medium rounded-full backdrop-blur-sm ${
+                    product.kind === 'service' 
+                      ? 'bg-blue-100/90 text-blue-700 dark:bg-blue-900/50 dark:text-blue-200'
+                      : 'bg-neutral-100/90 text-neutral-700 dark:bg-neutral-900/50 dark:text-neutral-200'
+                  }`}>
+                    {product.kind === 'service' ? 'Servicio' : 'Producto'}
+                  </span>
+                </div>
+              )}
             </div>
 
             <div className="p-4">

@@ -5,6 +5,9 @@ import ProductDetailClient from '@/features/catalog/ProductDetailClient';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { BreadcrumbJsonLd } from '@/components/seo/BreadcrumbJsonLd';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 interface Props {
   params: Promise<{ category: string; slug: string }>;
 }

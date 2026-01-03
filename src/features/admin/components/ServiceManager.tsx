@@ -10,7 +10,6 @@ import ServiceModal from './ServiceModal';
 import { ViewToggle } from './ViewToggle';
 import { Service } from '@/shared/types/domain';
 import { ServiceService } from '@/services/service.service';
-import ConnectionStatus from './ConnectionStatus';
 import ConfirmationModal from './ConfirmationModal';
 
 export default function ServiceManager() {
@@ -66,7 +65,7 @@ export default function ServiceManager() {
     setConfirmation({
       isOpen: true,
       title: 'Eliminar Servicio',
-      message: '¿Estás seguro de eliminar este servicio?',
+      message: '¿Estás seguro de eliminar este servicio? Esta acción es irreversible.',
       variant: 'danger',
       isLoading: false,
       onConfirm: async () => {
@@ -154,7 +153,6 @@ export default function ServiceManager() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
            <h2 className="text-xl font-bold">Servicios</h2>
-           <ConnectionStatus />
         </div>
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />

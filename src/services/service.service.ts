@@ -19,7 +19,7 @@ import servicesFallbackData from '@/shared/data/services-fallback.json';
 import { LocalStorageService } from './local-storage.service';
 
 const COLLECTION_NAME = 'services';
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+const CACHE_DURATION = 1000 * 30; // 30 seconds cache
 const FIRESTORE_TIMEOUT = 5000; // 5s timeout for Admin/Explicit fetches
 
 // In-memory cache

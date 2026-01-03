@@ -30,6 +30,11 @@ const mapToUser = (data: DocumentData): User => {
     createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate() : new Date(data.createdAt || Date.now()),
     updatedAt: data.updatedAt instanceof Timestamp ? data.updatedAt.toDate() : new Date(data.updatedAt || Date.now()),
     lastLogin: data.lastLogin instanceof Timestamp ? data.lastLogin.toDate() : new Date(data.lastLogin || Date.now()),
+    notificationPreferences: data.notificationPreferences || {
+      email: true,
+      push: false,
+      marketing: false
+    },
   };
 };
 

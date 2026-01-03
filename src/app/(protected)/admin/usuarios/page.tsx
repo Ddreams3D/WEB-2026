@@ -8,6 +8,8 @@ import { cn } from '@/lib/utils';
 import { UserService } from '@/services/user.service';
 import { User, UserRole, UserStatus } from '@/shared/types/domain';
 import { UserAvatar } from '@/shared/components/ui/DefaultImage';
+import { useAuth } from '@/contexts/AuthContext';
+import ConfirmationModal from '@/features/admin/components/ConfirmationModal';
 
 function UserModal({ user, isOpen, onClose, onSave, defaultRole = 'user' }: {
   user: User | null;
@@ -160,15 +162,33 @@ function UserModal({ user, isOpen, onClose, onSave, defaultRole = 'user' }: {
 }
 
 export default function UsersManagement() {
+  const { user: currentUser } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filterStatus, setFilterStatus] = useState<'all' | UserStatus>('all');
+  const [confirmation, setConfirmation] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+    variant: 'danger' | 'warning' | 'info';
+    isLoading: boolean;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: async () => {},
+    variant: 'warning',
+    isLoading: false
+  });
   const [activeTab, setActiveTab] = useState('customers');
 
   const fetchUsers = async () => {
+    if (!currentUser) return; // Wait for auth
+    
     setIsLoading(true);
     try {
       // First try to seed if empty (for demo purposes if DB is clean)
@@ -185,8 +205,10 @@ export default function UsersManagement() {
   };
 
   useEffect(() => {
-    fetchUsers();
-  }, []);
+    if (currentUser) {
+      fetchUsers();
+    }
+  }, [currentUser]);
 
   const getFilteredUsers = (role: 'user' | 'admin') => {
     return users.filter(user => {
@@ -209,17 +231,26 @@ export default function UsersManagement() {
     await fetchUsers(); // Refresh list
   };
 
-  const handleDeleteUser = async (userId: string) => {
-    // Usar window.confirm para una confirmación simple y síncrona que bloquea la ejecución
-    if (window.confirm('¿Estás seguro de que quieres eliminar este usuario permanentemente? Esta acción no se puede deshacer.')) {
-      try {
-        await UserService.deleteUser(userId);
-        await fetchUsers();
-      } catch (error) {
-        console.error('Error deleting user:', error);
-        alert('Error al eliminar usuario');
+  const handleDeleteUser = (userId: string) => {
+    setConfirmation({
+      isOpen: true,
+      title: 'Eliminar Usuario',
+      message: '¿Estás seguro de que quieres eliminar este usuario permanentemente? Esta acción NO se puede deshacer.',
+      variant: 'danger',
+      isLoading: false,
+      onConfirm: async () => {
+        try {
+          setConfirmation(prev => ({ ...prev, isLoading: true }));
+          await UserService.deleteUser(userId);
+          await fetchUsers();
+          setConfirmation(prev => ({ ...prev, isOpen: false }));
+        } catch (error) {
+          console.error('Error deleting user:', error);
+          alert('Error al eliminar usuario');
+          setConfirmation(prev => ({ ...prev, isLoading: false }));
+        }
       }
-    }
+    });
   };
 
   const openModal = (user?: User) => {
@@ -406,6 +437,15 @@ export default function UsersManagement() {
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <ConfirmationModal
+        isOpen={confirmation.isOpen}
+        onClose={() => setConfirmation(prev => ({ ...prev, isOpen: false }))}
+        onConfirm={confirmation.onConfirm}
+        title={confirmation.title}
+        message={confirmation.message}
+        variant={confirmation.variant}
+        isLoading={confirmation.isLoading}
+      />
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

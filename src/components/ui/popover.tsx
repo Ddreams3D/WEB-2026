@@ -126,7 +126,7 @@ const PopoverContent: React.FC<PopoverContentProps> = ({
   sideOffset = 4 
 }) => {
   const { open, triggerRef } = React.useContext(PopoverContext);
-  const [position, setPosition] = React.useState({ top: 0, left: 0 });
+  const [position, setPosition] = React.useState<{ top: number, left?: number, right?: number }>({ top: 0, left: 0 });
   const contentRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
@@ -135,7 +135,8 @@ const PopoverContent: React.FC<PopoverContentProps> = ({
       const contentRect = contentRef.current.getBoundingClientRect();
       
       let top = 0;
-      let left = 0;
+      let left: number | undefined = 0;
+      let right: number | undefined = undefined;
 
       // Calculate position based on side
       switch (side) {
@@ -165,7 +166,10 @@ const PopoverContent: React.FC<PopoverContentProps> = ({
             left = triggerRect.left + (triggerRect.width - contentRect.width) / 2;
             break;
           case "end":
-            left = triggerRect.right - contentRect.width;
+            // Use right positioning to avoid dependency on content width measurement for horizontal alignment
+            // right is distance from viewport right edge
+            right = window.innerWidth - triggerRect.right;
+            left = undefined;
             break;
         }
       } else {
@@ -182,7 +186,7 @@ const PopoverContent: React.FC<PopoverContentProps> = ({
         }
       }
 
-      setPosition({ top, left });
+      setPosition({ top, left, right });
     }
   }, [open, side, align, sideOffset, triggerRef]);
 
@@ -205,6 +209,7 @@ const PopoverContent: React.FC<PopoverContentProps> = ({
         style={{
           top: position.top,
           left: position.left,
+          right: position.right,
         }}
       >
         {children}

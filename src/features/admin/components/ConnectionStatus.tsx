@@ -1,36 +1,51 @@
 import React from 'react';
-import { Wifi, WifiOff, Database, HardDrive } from 'lucide-react';
+import { Database, HardDrive } from 'lucide-react';
 import { isFirebaseConfigured } from '@/lib/firebase';
+import { cn } from '@/lib/utils';
 
 export default function ConnectionStatus() {
   const isConnected = isFirebaseConfigured;
 
   return (
-    <div className="flex items-center gap-4 px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-sm">
+    <div className={cn(
+      "flex items-center gap-3 px-3 py-1.5 rounded-full border transition-all duration-300",
+      "bg-white/80 dark:bg-neutral-900/80 backdrop-blur-sm",
+      isConnected 
+        ? "border-emerald-200/50 dark:border-emerald-800/50 shadow-[0_0_15px_-3px_rgba(16,185,129,0.15)]" 
+        : "border-rose-200/50 dark:border-rose-800/50 shadow-[0_0_15px_-3px_rgba(244,63,94,0.15)]"
+    )}>
+      {/* Status Indicator */}
       <div className="flex items-center gap-2">
-        <div className={`p-1.5 rounded-full ${isConnected ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
-          {isConnected ? <Wifi className="w-4 h-4" /> : <WifiOff className="w-4 h-4" />}
+        <div className="relative flex h-2 w-2">
+          {isConnected && (
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          )}
+          <span className={cn(
+            "relative inline-flex rounded-full h-2 w-2 shadow-sm",
+            isConnected ? "bg-emerald-500" : "bg-rose-500"
+          )}></span>
         </div>
-        <div className="flex flex-col">
-          <span className="text-xs font-medium text-neutral-500 uppercase tracking-wider">Estado de Conexión</span>
-          <span className={`text-sm font-bold ${isConnected ? 'text-green-700' : 'text-red-700'}`}>
-            {isConnected ? 'Conectado a Firestore' : 'Modo Offline (Mock)'}
-          </span>
-        </div>
+        <span className={cn(
+          "text-xs font-semibold tracking-wide",
+          isConnected ? "text-emerald-700 dark:text-emerald-400" : "text-rose-700 dark:text-rose-400"
+        )}>
+          {isConnected ? 'ONLINE' : 'OFFLINE'}
+        </span>
       </div>
 
-      <div className="w-px h-8 bg-neutral-200 dark:bg-neutral-700 mx-2" />
+      {/* Vertical Divider */}
+      <div className="w-px h-3 bg-neutral-200 dark:bg-neutral-700" />
 
-      <div className="flex items-center gap-2">
-        <div className="p-1.5 rounded-full bg-blue-100 text-blue-600">
-          <Database className="w-4 h-4" />
-        </div>
-        <div className="flex flex-col">
-          <span className="text-xs font-medium text-neutral-500 uppercase tracking-wider">Fuente de Datos</span>
-          <span className="text-sm font-bold text-neutral-700 dark:text-neutral-300">
-            {isConnected ? 'Firebase Cloud' : 'Local Storage / Fallback'}
-          </span>
-        </div>
+      {/* Source Indicator */}
+      <div className="flex items-center gap-1.5 text-muted-foreground">
+        {isConnected ? (
+          <Database className="w-3 h-3" />
+        ) : (
+          <HardDrive className="w-3 h-3" />
+        )}
+        <span className="text-[10px] font-medium uppercase tracking-wider opacity-80">
+          {isConnected ? 'Cloud' : 'Local'}
+        </span>
       </div>
     </div>
   );

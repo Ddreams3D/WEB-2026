@@ -8,6 +8,7 @@ import { OrderTrackingProvider } from './OrderTrackingContext';
 import { BillingProvider } from './BillingContext';
 import { QuoteProvider } from './QuoteContext';
 import { FavoritesProvider } from './FavoritesContext';
+import { NotificationProvider } from './NotificationContext';
 import { ToastProvider } from '../components/ui/ToastManager';
 
 interface ProvidersProps {
@@ -24,7 +25,9 @@ export function Providers({ children }: ProvidersProps) {
               <QuoteProvider>
                 <FavoritesProvider>
                   <CartProvider>
-                    {children}
+                    <NotificationProvider>
+                      {children}
+                    </NotificationProvider>
                   </CartProvider>
                 </FavoritesProvider>
               </QuoteProvider>

@@ -31,6 +31,11 @@ interface User {
   addresses?: Address[]; // Lista de direcciones
   favorites?: string[]; // Lista de IDs de productos favoritos
   birthDate?: string;
+  notificationPreferences?: {
+    email: boolean;
+    push: boolean;
+    marketing: boolean;
+  };
 }
 
 export interface Address {

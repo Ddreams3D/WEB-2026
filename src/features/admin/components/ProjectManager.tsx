@@ -9,7 +9,6 @@ import { useToast } from '@/components/ui/ToastManager';
 import ProjectModal from './ProjectModal';
 import DefaultImage from '@/shared/components/ui/DefaultImage';
 import { formatDate } from '@/lib/utils';
-import ConnectionStatus from './ConnectionStatus';
 import ConfirmationModal from './ConfirmationModal';
 
 export default function ProjectManager() {
@@ -158,7 +157,6 @@ export default function ProjectManager() {
             Gestiona el portafolio de trabajos realizados.
           </p>
         </div>
-        <ConnectionStatus />
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => handleSeed(true)} disabled={isSeeding}>
             {isSeeding ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <RefreshCw className="w-4 h-4 mr-2" />}

@@ -20,7 +20,7 @@ import { categories } from '@/data/categories.data';
 import { LocalStorageService } from './local-storage.service';
 
 const COLLECTION_NAME = 'products';
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+const CACHE_DURATION = 1000 * 30; // 30 seconds cache to balance performance and freshness
 const FIRESTORE_TIMEOUT = 5000; // 5s timeout
 const ENABLE_FIRESTORE_FOR_PUBLIC = true; // Enable for public/build if DB is configured
 

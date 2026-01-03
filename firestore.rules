@@ -215,7 +215,11 @@ service cloud.firestore {
     // 9. NOTIFICATIONS
     // ========================================================================
     match /notifications/{notifId} {
-      allow read: if isOwner(resource.data.userId);
+      // Allow read if:
+      // 1. The notification belongs to the user (resource.data.userId == auth.uid)
+      // 2. OR it is a system notification (resource.data.userId == null) AND the requester is an admin
+      allow read: if (resource.data.userId == request.auth.uid) || (resource.data.userId == null && isAdmin());
+      
       // Writes usually by system/admin.
       allow write: if isAdmin(); 
     }
