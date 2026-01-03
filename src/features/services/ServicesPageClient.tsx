@@ -7,7 +7,13 @@ import ServicesCTA from '@/features/services/components/ServicesCTA';
 import { BusinessServicesView } from '@/features/services/components/BusinessServicesView';
 import { useScrollRestoration } from '@/hooks/useScrollRestoration';
 
-export default function ServicesPageClient() {
+import { Service } from '@/shared/types/domain';
+
+interface ServicesPageClientProps {
+  initialServices: Service[];
+}
+
+export default function ServicesPageClient({ initialServices }: ServicesPageClientProps) {
   // Enable scroll restoration for services page
   // Assuming services load statically or fast enough, we can set contentReady to true
   useScrollRestoration(true, true);
@@ -20,7 +26,7 @@ export default function ServicesPageClient() {
         
         {/* Contenido: Servicios Generales y B2B */}
         <div id="servicios-generales" className="space-y-6 scroll-mt-24">
-          <BusinessServicesView />
+          <BusinessServicesView initialServices={initialServices} />
         </div>
 
         {/* Beneficios */}

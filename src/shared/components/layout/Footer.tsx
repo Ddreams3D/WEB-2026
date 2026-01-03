@@ -25,7 +25,7 @@ import {
 } from '@/shared/constants/contactInfo';
 import { Button, Input } from '@/components/ui';
 import { cn } from '@/lib/utils';
-import DefaultImage from '@/shared/components/ui/DefaultImage';
+import Image from 'next/image';
 
 const Footer = () => {
   const router = useRouter();
@@ -111,11 +111,12 @@ const Footer = () => {
           {/* Logo y descripción - Centrado y elegante */}
           <div className="text-center">
             <div className="flex justify-center mb-4">
-              <DefaultImage
+              <Image
                 src="/logo/isotipo_DD_blanco_V2.svg"
                 alt="isotipo"
                 width={100}
                 height={40}
+                className="object-contain"
               />
             </div>
             <p className="text-white/80 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">

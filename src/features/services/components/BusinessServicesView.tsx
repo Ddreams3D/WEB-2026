@@ -5,38 +5,21 @@ import { ServiceCard } from '@/components/services/ServiceCard';
 import { ServiceService } from '@/services/service.service';
 import { Service } from '@/shared/types/domain';
 
-const BusinessServicesView = () => {
-  const [services, setServices] = useState<Service[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+interface BusinessServicesViewProps {
+  initialServices?: Service[];
+}
 
-  useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const allServices = await ServiceService.getAllServices();
-        // Show both general and business services
-        const filtered = allServices.filter(s => 
-          s.tags && (s.tags.includes('general-service') || s.tags.includes('business-service'))
-        );
-        setServices(filtered);
-      } catch (error) {
-        console.error('Error fetching services:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+const BusinessServicesView = ({ initialServices = [] }: BusinessServicesViewProps) => {
+  // Si initialServices viene lleno, lo usamos. Si no, podríamos hacer fetch (pero lo ideal es que venga lleno)
+  // Para mantener compatibilidad si se usa en otro lado sin props, podemos dejar el efecto pero condicionado.
+  // Pero para este caso, asumiremos que siempre pasaremos datos desde el Server Component.
+  
+  const uniqueServices = initialServices.length > 0 
+    ? Array.from(new Map(initialServices.map(s => [s.id, s])).values())
+        .sort((a, b) => a.displayOrder - b.displayOrder)
+    : [];
 
-    fetchServices();
-  }, []);
-
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
-  if (services.length === 0) {
+  if (uniqueServices.length === 0) {
     return (
       <div className="text-center py-12">
         <p className="text-lg text-muted-foreground">No se encontraron servicios disponibles.</p>
@@ -44,11 +27,6 @@ const BusinessServicesView = () => {
       </div>
     );
   }
-
-  // Eliminar duplicados si los hubiera y mostrar una sola lista unificada
-  // Usamos un Map para asegurar unicidad por ID
-  const uniqueServices = Array.from(new Map(services.map(s => [s.id, s])).values())
-    .sort((a, b) => a.displayOrder - b.displayOrder);
 
   return (
     <div className="space-y-20 animate-fade-in">

@@ -65,13 +65,18 @@ service cloud.firestore {
       allow read: if isOwner(userId) || isAdmin();
       
       // Create: Owner only (Registration)
-      // Must set basic fields, role must default to 'user' or not be present (handled by backend usually, but here we prevent setting 'admin')
+      // Must set basic fields.
+      // FORCE ROLE CHECK: If 'role' is present, it MUST be 'user'. (Or it must be absent).
+      // WHITELIST: Only allow specific fields to be written by the user.
       allow create: if isOwner(userId) 
                     && (!request.resource.data.keys().hasAny(['role']) || request.resource.data.role == 'user')
+                    && request.resource.data.keys().hasOnly(['name', 'email', 'username', 'photoURL', 'phone', 'address', 'birthDate', 'createdAt', 'updatedAt', 'role', 'lastLogin', 'favorites', 'addresses'])
                     && isValidTimestamp(request.resource.data, 'createdAt');
 
       // Update: Owner (can edit profile but NOT role or stats) or Admin (can edit everything)
+      // WHITELIST for Owner: Only allow updating specific fields.
       allow update: if (isOwner(userId) 
+                        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'username', 'photoURL', 'phone', 'address', 'birthDate', 'updatedAt', 'lastLogin', 'favorites', 'addresses'])
                         && notUpdating('role') 
                         && notUpdating('createdAt')
                         && notUpdating('totalOrders') 
@@ -94,7 +99,11 @@ service cloud.firestore {
                     && isValidString(request.resource.data, 'name', 3, 100)
                     && isValidNumber(request.resource.data, 'price', 0, 100000);
                     
-      allow update: if isAdmin();
+      // Apply SAME validation logic for update
+      allow update: if isAdmin()
+                    && isValidString(request.resource.data, 'name', 3, 100)
+                    && isValidNumber(request.resource.data, 'price', 0, 100000);
+                    
       allow delete: if isAdmin();
     }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
@@ -24,7 +24,6 @@ import {
 } from '@/lib/icons';
 import { useCart } from '@/contexts/CartContext';
 import { useAdminPermissions } from '@/features/admin/components/AdminProtection';
-import DefaultImage from '@/shared/components/ui/DefaultImage';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -160,7 +159,7 @@ const Navbar: React.FC = () => {
                 ? "opacity-100 z-10 duration-500 delay-200" 
                 : "opacity-0 z-0 pointer-events-none duration-200"
             )}>
-              <DefaultImage
+              <Image
                 src="/logo/logo_DD_2026_blanco_V2.svg"
                 alt="Ddreams 3D Logo"
                 fill
@@ -177,7 +176,7 @@ const Navbar: React.FC = () => {
                 ? "opacity-100 z-10 duration-500 delay-200" 
                 : "opacity-0 z-0 pointer-events-none duration-200"
             )}>
-              <DefaultImage
+              <Image
                 src="/logo/logo_DD_2026_negro_V2.svg"
                 alt="Ddreams 3D Logo"
                 fill

@@ -361,7 +361,7 @@ export default function OrdersPage() {
   // Disable hook's auto-refresh on mount
   useEffect(() => {
     configureRealTime({ autoRefresh: false, enabled: false });
-  }, []);
+  }, [configureRealTime]);
 
   // Update hook filters when local state changes
   useEffect(() => {

@@ -30,7 +30,7 @@ export default function ProfilePage() {
   // Load orders on mount
   useEffect(() => {
     loadOrders();
-  }, []);
+  }, [loadOrders]);
 
   // Calculate stats
   const activeOrders = orders.filter(o => !['completed', 'cancelled', 'refunded'].includes(o.status)).length;

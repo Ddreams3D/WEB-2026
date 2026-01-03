@@ -52,7 +52,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
     };
 
     loadFavorites();
-  }, [user?.favorites]); // Depend on the array of IDs
+  }, [user]); // Depend on the array of IDs
 
   const isFavorite = (productId: string) => {
     return user?.favorites?.includes(productId) || false;

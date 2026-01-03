@@ -229,7 +229,7 @@ export function CatalogProvider({
     // Usually applyFilters comes from filter panel, preserving search is good.
 
     updateUrl(params);
-  }, [searchParams, updateUrl]);
+  }, [maxGlobalPrice, searchParams, updateUrl]);
 
   const setSearchQuery = useCallback((query: string) => {
     const params = new URLSearchParams(searchParams?.toString());

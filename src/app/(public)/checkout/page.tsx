@@ -44,7 +44,7 @@ export default function CheckoutPage() {
   // Refresh prices on mount to ensure SSoT
   useEffect(() => {
     refreshPrices();
-  }, []); // Run once on mount
+  }, [refreshPrices]); // Run once on mount
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;

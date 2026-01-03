@@ -2,6 +2,9 @@ import { Metadata } from 'next';
 import ServicesPageClient from '@/features/services/ServicesPageClient';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { PHONE_BUSINESS, ADDRESS_BUSINESS, PHONE_DISPLAY } from '@/shared/constants/contactInfo';
+import { ServiceService } from '@/services/service.service';
+
+export const revalidate = 3600; // Revalidar cada hora (ISR)
 
 export const metadata: Metadata = {
   title: 'Servicios de Impresión 3D y Diseño CAD en Arequipa | Ddreams 3D',
@@ -33,7 +36,20 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  // Fetch services on the server (ISR)
+  // This removes the need for client-side fetching and loading states
+  let services = [];
+  try {
+    const allServices = await ServiceService.getAllServices();
+    services = allServices.filter(s => 
+      s.tags && (s.tags.includes('general-service') || s.tags.includes('business-service'))
+    );
+  } catch (error) {
+    console.error('Error pre-fetching services:', error);
+    // Fallback handled by empty array passed to client
+  }
+
   const serviceSchema = {
     '@context': 'https://schema.org',
     '@type': 'ProfessionalService',
@@ -108,7 +124,7 @@ export default function ServicesPage() {
   return (
     <>
       <JsonLd data={serviceSchema} />
-      <ServicesPageClient />
+      <ServicesPageClient initialServices={services} />
     </>
   );
 }

@@ -17,20 +17,19 @@ export default function SeasonalManager() {
   const { showSuccess, showError } = useToast();
 
   useEffect(() => {
-    loadThemes();
-  }, []);
-
-  async function loadThemes() {
-    try {
-      setLoading(true);
-      const data = await fetchSeasonalThemesAction();
-      setThemes(data);
-    } catch (error) {
-      showError('Error al cargar temas');
-    } finally {
-      setLoading(false);
+    async function loadThemes() {
+      try {
+        setLoading(true);
+        const data = await fetchSeasonalThemesAction();
+        setThemes(data);
+      } catch (error) {
+        showError('Error al cargar temas');
+      } finally {
+        setLoading(false);
+      }
     }
-  }
+    loadThemes();
+  }, [showError]);
 
   async function handleSave() {
     try {
