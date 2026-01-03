@@ -17,11 +17,21 @@ service cloud.firestore {
     }
 
     // Role-based Access Control
-    // Reads the user's document to check for 'admin' role.
-    function isAdmin() {
+    // Checks if the user is a hardcoded SuperAdmin (Security Bootstrap)
+    function isSuperAdmin() {
       return isSignedIn() && (
-        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+        (request.auth.token.email == 'dreamings.desings.3d@gmail.com' && request.auth.uid == 'uJ9780LRm5f27mFOSuxbgKuwSIC3') ||
+        (request.auth.token.email == 'danielanthonychaina@gmail.com' && request.auth.uid == 'MoklmYcQa1h47mQqo7deCT9qdqp1')
+      );
+    }
+
+    // Reads the user's document to check for 'admin' role OR allows hardcoded SuperAdmins.
+    function isAdmin() {
+      return isSuperAdmin() || (
+        isSignedIn() && (
+          exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+        )
       );
     }
 
@@ -67,21 +77,32 @@ service cloud.firestore {
       
       // Create: Owner only (Registration)
       // Must set basic fields.
-      // FORCE ROLE CHECK: If 'role' is present, it MUST be 'user'. (Or it must be absent).
-      // WHITELIST: Only allow specific fields to be written by the user.
+      // Allow 'admin' role ONLY if the email is a specific superadmin email (hardcoded for security bootstrap)
+      // or if the role is 'user'.
       allow create: if isOwner(userId) 
-                    && (!request.resource.data.keys().hasAny(['role']) || request.resource.data.role == 'user')
-                    && request.resource.data.keys().hasOnly(['name', 'email', 'username', 'photoURL', 'phone', 'address', 'birthDate', 'createdAt', 'updatedAt', 'role', 'lastLogin', 'favorites', 'addresses'])
+                    && (
+                      (!request.resource.data.keys().hasAny(['role']) || request.resource.data.role == 'user')
+                      || 
+                      (request.resource.data.role == 'admin' && isSuperAdmin())
+                    )
+                    && request.resource.data.keys().hasOnly(['name', 'email', 'username', 'photoURL', 'phone', 'address', 'birthDate', 'createdAt', 'updatedAt', 'role', 'lastLogin', 'favorites', 'addresses', 'isActive'])
                     && isValidTimestamp(request.resource.data, 'createdAt');
 
       // Update: Owner (can edit profile but NOT role or stats) or Admin (can edit everything)
       // WHITELIST for Owner: Only allow updating specific fields.
+      // EXCEPTION: SuperAdmins can update their own role to 'admin' (bootstrap/recovery)
       allow update: if (isOwner(userId) 
-                        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'username', 'photoURL', 'phone', 'address', 'birthDate', 'updatedAt', 'lastLogin', 'favorites', 'addresses', 'status'])
-                        && notUpdating('role') 
-                        && notUpdating('createdAt')
-                        && notUpdating('totalOrders') 
-                        && notUpdating('totalSpent')) // Financial stats managed by backend
+                        && (
+                          // Standard User Update
+                          (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'username', 'photoURL', 'phone', 'address', 'birthDate', 'updatedAt', 'lastLogin', 'favorites', 'addresses', 'status'])
+                           && notUpdating('role') 
+                           && notUpdating('createdAt')
+                           && notUpdating('totalOrders') 
+                           && notUpdating('totalSpent'))
+                          ||
+                          // SuperAdmin Bootstrap/Recovery (Self-promotion)
+                          (request.resource.data.role == 'admin' && isSuperAdmin())
+                        ))
                     || isAdmin();
       
       // Delete: Admin only (Soft delete preferred usually, but keeping strict)
