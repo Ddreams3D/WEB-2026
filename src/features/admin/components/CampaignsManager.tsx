@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { SeasonalThemeConfig, DateRange } from '@/shared/types/seasonal';
-import { updateSeasonalThemesAction, fetchSeasonalThemesAction } from '@/actions/seasonal-actions';
+import { fetchSeasonalThemesAction, revalidateSeasonalCacheAction } from '@/actions/seasonal-actions';
+import { saveSeasonalThemes } from '@/lib/seasonal-service';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -46,11 +47,16 @@ export default function CampaignsManager() {
   async function handleSave() {
     try {
       setSaving(true);
-      await updateSeasonalThemesAction(themes);
+      // Save directly from client to use browser auth (Admin)
+      await saveSeasonalThemes(themes);
+      // Revalidate cache on server
+      await revalidateSeasonalCacheAction();
+      
       showSuccess('Cambios guardados correctamente');
       setEditingId(null);
-    } catch (error) {
-      showError('Error al guardar cambios');
+    } catch (error: any) {
+      console.error('Save error:', error);
+      showError(error.message || 'Error al guardar cambios');
     } finally {
       setSaving(false);
     }

@@ -1,11 +1,16 @@
 'use server';
 
-import { getSeasonalThemes, saveSeasonalThemes } from '@/lib/seasonal-service';
-import { SeasonalThemeConfig } from '@/shared/types/seasonal';
 import { revalidatePath } from 'next/cache';
+import { SeasonalThemeConfig } from '@/shared/types/seasonal';
+import { saveSeasonalThemes, getSeasonalThemes } from '@/lib/seasonal-service';
 
 export async function fetchSeasonalThemesAction() {
-  return await getSeasonalThemes();
+  try {
+    return await getSeasonalThemes();
+  } catch (error) {
+    console.error('Failed to fetch themes:', error);
+    return [];
+  }
 }
 
 export async function updateSeasonalThemesAction(themes: SeasonalThemeConfig[]) {
@@ -17,9 +22,21 @@ export async function updateSeasonalThemesAction(themes: SeasonalThemeConfig[]) 
     // Also revalidate the admin page
     revalidatePath('/admin/configuracion');
     return { success: true };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Failed to update themes:', error);
-    // Return error structure if needed or let it throw
-    throw new Error('Error al guardar en Firestore. Verifique su conexión y permisos.');
+    // Return the actual error message to the client for debugging
+    throw new Error(error.message || 'Error desconocido al guardar en Firestore');
+  }
+}
+
+export async function revalidateSeasonalCacheAction() {
+  try {
+    revalidatePath('/');
+    revalidatePath('/campanas/[slug]');
+    revalidatePath('/admin/configuracion');
+    return { success: true };
+  } catch (error) {
+    console.error('Revalidation failed:', error);
+    return { success: false };
   }
 }

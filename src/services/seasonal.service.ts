@@ -14,7 +14,7 @@ import seasonalThemesData from '@/data/seasonal-themes.json';
 
 const COLLECTION_NAME = 'seasonal_themes';
 const FIRESTORE_TIMEOUT = 2000; // 2s timeout
-const ENABLE_FIRESTORE_FOR_PUBLIC = false; // Same strategy as ServiceService
+const ENABLE_FIRESTORE_FOR_PUBLIC = true; // Enabled to allow public/admin read/write
 
 // Fallback data from JSON
 const FALLBACK_THEMES = seasonalThemesData as SeasonalThemeConfig[];
@@ -82,7 +82,10 @@ export async function saveThemesToFirestore(themes: SeasonalThemeConfig[]): Prom
     
     themes.forEach((theme) => {
       const docRef = doc(dbInstance, COLLECTION_NAME, theme.id);
-      batch.set(docRef, theme);
+      // Firestore does not accept 'undefined' values. We must sanitize the object.
+      // JSON stringify/parse is a quick way to strip undefined fields.
+      const sanitizedTheme = JSON.parse(JSON.stringify(theme));
+      batch.set(docRef, sanitizedTheme);
     });
 
     await batch.commit();
