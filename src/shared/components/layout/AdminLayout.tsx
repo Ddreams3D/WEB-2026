@@ -33,6 +33,7 @@ const navigation = [
   { name: 'Servicios', href: '/admin/servicios', icon: Package },
   { name: 'Proyectos', href: '/admin/projects', icon: Briefcase },
   { name: 'Campañas', href: '/admin/campanas', icon: Sparkles },
+  { name: 'Landing Principal', href: '/admin/landing', icon: Sparkles },
   { name: 'Archivos Cloud', href: '/admin/storage', icon: FolderOpen },
   { name: 'Pedidos', href: '/admin/pedidos', icon: Package },
   { name: 'Usuarios', href: '/admin/usuarios', icon: Users },

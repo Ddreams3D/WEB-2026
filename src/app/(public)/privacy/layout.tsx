@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description: 'Conoce cómo protegemos y utilizamos tus datos personales.',
   robots: {
     index: false,
-    follow: false,
+    follow: true,
   },
 };
 

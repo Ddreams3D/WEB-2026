@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description: 'Accede a tu cuenta de Ddreams 3D para gestionar tus pedidos y cotizaciones.',
   robots: {
     index: false,
-    follow: false,
+    follow: true,
   },
 };
 

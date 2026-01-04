@@ -208,6 +208,7 @@ export default function UsersManagement() {
     if (currentUser) {
       fetchUsers();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
 
   const getFilteredUsers = (role: 'user' | 'admin') => {

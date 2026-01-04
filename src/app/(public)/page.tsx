@@ -11,7 +11,9 @@ import { JsonLd } from '@/components/seo/JsonLd';
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: 'Ddreams 3D | Impresión 3D y Regalos Personalizados en Arequipa',
+  title: {
+    absolute: 'Ddreams 3D | Estudio de Diseño e Impresión 3D en Arequipa',
+  },
   description: 'Especialistas en impresión 3D y regalos personalizados en Arequipa. Creamos trofeos, prototipos y maquetas con envíos a todo el Perú.',
   keywords: 'impresión 3D arequipa, regalos personalizados, trofeos 3d, maquetas, prototipado rápido, diseño 3D, regalos corporativos, envíos a todo el perú',
   authors: [{ name: 'Ddreams 3D' }],
@@ -23,7 +25,7 @@ export const metadata: Metadata = {
     telephone: false,
   },
   openGraph: {
-    title: 'Ddreams 3D | Impresión 3D y Regalos Personalizados en Arequipa',
+    title: 'Ddreams 3D | Estudio de Diseño e Impresión 3D en Arequipa',
     description: 'Especialistas en impresión 3D y regalos personalizados en Arequipa. Creamos trofeos, prototipos y maquetas con envíos a todo el Perú.',
     type: 'website',
     locale: 'es_PE',
@@ -31,7 +33,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Ddreams 3D | Regalos Personalizados e Impresión 3D en Arequipa',
+    title: 'Ddreams 3D | Estudio de Diseño e Impresión 3D en Arequipa',
     description: 'Especialistas en impresión 3D y regalos personalizados en Arequipa. Envíos a todo el Perú.',
   },
   robots: {

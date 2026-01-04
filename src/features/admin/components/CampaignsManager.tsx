@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Calendar as CalendarIcon, Save, Plus, Trash2, Edit, X, ChevronDown, ChevronUp, Camera, ExternalLink } from '@/lib/icons';
+import Link from 'next/link';
 import { useToast } from '@/components/ui/ToastManager';
 import { cn } from '@/lib/utils';
 import SeasonalLanding from '@/features/seasonal/components/SeasonalLanding';
@@ -135,6 +136,12 @@ export default function CampaignsManager() {
 
   return (
     <div className="space-y-8">
+      <div className="flex justify-between items-center mb-2">
+        <h1 className="text-2xl font-bold tracking-tight">Campañas Estacionales</h1>
+        <Link href="/admin/landing">
+          <Button variant="outline">Gestionar Landing Principal</Button>
+        </Link>
+      </div>
       
       {/* Header Actions */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-card p-6 rounded-xl border shadow-sm">

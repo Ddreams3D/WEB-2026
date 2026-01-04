@@ -50,14 +50,6 @@ service cloud.firestore {
           && data[field] <= max;
     }
 
-    function isOptionalString(data, field) {
-      return !data.keys().hasAny([field]) || data[field] is string;
-    }
-    
-    function isOptionalNumber(data, field) {
-      return !data.keys().hasAny([field]) || data[field] is number;
-    }
-
     // Check if field is NOT modified in an update
     function notUpdating(field) {
       return !request.resource.data.diff(resource.data).affectedKeys().hasAny([field]);
@@ -233,6 +225,21 @@ service cloud.firestore {
                     && isValidString(request.resource.data, 'email', 3, 200)
                     && isValidString(request.resource.data, 'message', 1, 5000);
       allow read, update, delete: if isAdmin();
+    }
+
+    // ========================================================================
+    // 11. LANDINGS CONFIGURATION (Main & Seasonal)
+    // ========================================================================
+    // Configuración Landing Principal
+    match /landing_main/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Configuración Campañas Estacionales (Navidad, Cyber, etc.)
+    match /seasonal_themes/{themeId} {
+      allow read: if true;
+      allow write: if isAdmin();
     }
 
     // ========================================================================

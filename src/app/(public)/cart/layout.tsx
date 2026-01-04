@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description: 'Revisa los productos en tu carrito y procede al pago.',
   robots: {
     index: false,
-    follow: false,
+    follow: true,
   },
 };
 
