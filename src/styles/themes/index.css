@@ -1,0 +1,12 @@
+/* 
+  THEME INDEX MANIFEST
+  Import all campaign themes here.
+  This ensures the main global.css remains clean and themes are isolated.
+*/
+
+@import './halloween.css';
+@import './valentines.css';
+@import './promo.css';
+@import './festive-strong.css';
+@import './festive-warm.css';
+@import './festive-soft.css';

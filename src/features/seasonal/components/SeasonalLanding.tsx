@@ -6,7 +6,7 @@ import { Button, FooterLogo } from '@/components/ui';
 import Link from 'next/link';
 import { ArrowRight, Sparkles, Heart, Gift, Ghost, Skull, Smile } from 'lucide-react';
 
-// Custom Pumpkin Icon (using SVG) - More recognizable shape
+// Custom Pumpkin Icon (using SVG) - Authentic Jack-o'-lantern with Zigzag Smile
 const Pumpkin = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -20,65 +20,138 @@ const Pumpkin = (props: React.SVGProps<SVGSVGElement>) => (
     strokeLinejoin="round"
     {...props}
   >
-    <path d="M12 2c0 .667 0 1.333.5 2C13 5 15 5 15 5c2.5 0 5 2.5 5 6 0 3.866-2.239 7-5 7-1.5 0-2.5-.5-2.5-.5" />
-    <path d="M12 2c0 .667 0 1.333-.5 2C11 5 9 5 9 5c-2.5 0-5 2.5-5 6 0 3.866 2.239 7 5 7 1.5 0 2.5-.5 2.5-.5" />
-    <path d="M12 4v14" />
-    <path d="M15 9s-1 1-1.5 3c-.5 2 .5 3 1.5 3" />
-    <path d="M9 9s1 1 1.5 3c.5 2-.5 3-1.5 3" />
-    <path d="M16 11c0 1-1 2-2 2h-4c-1 0-2-1-2-2" stroke="currentColor" fill="none" />
+    {/* Stem - Adjusted for wider body */}
+    <path d="M12 4c0-2-1-3-3-3" />
+    
+    {/* Pumpkin Body - Wide & Oblong (Radio X=11, Y=8) */}
+    <path d="M23 12c0 4.5-5 8-11 8s-11-3.5-11-8 5-8 11-8 11 3.5 11 8z" />
+    
+    {/* Ribs - Adjusted for wider shape */}
+    <path d="M12 4v16" className="opacity-30" />
+    <path d="M19 5c1 2 2 4 2 7s-1 5-2 7" className="opacity-30" />
+    <path d="M5 5c-1 2-2 4-2 7s1 5 2 7" className="opacity-30" />
+
+    {/* Triangular Eyes - Wider apart */}
+    <path d="M7 11l-1.5 2h3z" fill="currentColor" className="opacity-80" />
+    <path d="M17 11l-1.5 2h3z" fill="currentColor" className="opacity-80" />
+    
+    {/* Zigzag Mouth - Wider smile */}
+    <path d="M6 16l1.5 1.5 1.5-1.5 1.5 1.5 1.5-1.5 1.5 1.5 1.5-1.5 1.5 1.5" />
   </svg>
 );
 
 // Interactive Floating Icon Component
-const InteractiveFloatingIcon = ({ Icon, isHalloween, index }: { Icon: any, isHalloween: boolean, index: number }) => {
+interface FloatingIconProps {
+    Icon: any;
+    isHalloween: boolean;
+    index: number;
+    onExorcise?: () => void;
+}
+
+const InteractiveFloatingIcon = ({ Icon, isHalloween, index, onExorcise }: FloatingIconProps) => {
     const [vanished, setVanished] = useState(false);
-    const [style, setStyle] = useState<React.CSSProperties>({});
+    const [isAnimating, setIsAnimating] = useState(false);
+    const [style, setStyle] = useState<React.CSSProperties>({ opacity: 0 }); 
     
-    // Generate random position only on mount
+    // VARIANT SELECTION (Fixed on mount to avoid hydration mismatch)
+    const variantRef = React.useRef<'a' | 'b' | 'c'>('a');
+    // EASTER EGG: 1 in ~33 chance (3%) to be Immortal (Retreat & Reappear) - True rarity
+    const isImmortalRef = React.useRef(false);
+    // Track mount status to prevent memory leaks on unmount
+    const isMountedRef = React.useRef(true);
+
     useEffect(() => {
+        return () => { isMountedRef.current = false; };
+    }, []);
+
+    useEffect(() => {
+        // Randomly assign variant and immortality only on client
+        const variants: ('a' | 'b' | 'c')[] = ['a', 'b', 'c'];
+        variantRef.current = variants[Math.floor(Math.random() * variants.length)];
+        isImmortalRef.current = Math.random() < 0.03; 
+
         setStyle({
-            left: `${Math.random() * 90 + 5}%`,
+            // Constrain positioning to 10-90% to avoid edge clipping (Design Purist)
+            left: `${Math.random() * 80 + 10}%`,
             top: `${Math.random() * 80 + 10}%`,
-            width: isHalloween ? `${Math.random() * 50 + 25}px` : `${Math.random() * 40 + 15}px`,
-            height: isHalloween ? `${Math.random() * 50 + 25}px` : `${Math.random() * 40 + 15}px`,
-            animationDuration: isHalloween ? `${Math.random() * 8 + 12}s` : `${Math.random() * 15 + 10}s`,
-            animationDelay: `${Math.random() * 10}s`
+            width: isHalloween ? `${Math.random() * 60 + 40}px` : `${Math.random() * 40 + 20}px`,
+            height: isHalloween ? `${Math.random() * 60 + 40}px` : `${Math.random() * 40 + 20}px`,
+            animationDuration: isHalloween ? `${Math.random() * 10 + 20}s` : `${Math.random() * 15 + 10}s`,
+            animationDelay: `-${Math.random() * 20}s`,
+            opacity: 1 
         });
     }, [isHalloween]);
 
-    if (!style.left) return null;
+    const handleInteraction = () => {
+        // COOLDOWN CHECK
+        if (vanished || isAnimating) return;
+        
+        setIsAnimating(true);
+        setVanished(true);
+        
+        // TRIGGER TEXT FEEDBACK
+        if (onExorcise) onExorcise();
+
+        // EASTER EGG LOGIC: If Immortal, reappear elsewhere
+        if (isHalloween && isImmortalRef.current) {
+            setTimeout(() => {
+                if (!isMountedRef.current) return; // Prevent leak if unmounted
+                
+                // Reset position after retreat animation (1s)
+                setStyle(prev => ({
+                    ...prev,
+                    left: `${Math.random() * 80 + 10}%`,
+                    top: `${Math.random() * 80 + 10}%`,
+                    // Slight change in size to mask the reset
+                    width: `${Math.random() * 60 + 40}px`,
+                }));
+                setVanished(false);
+                setIsAnimating(false);
+            }, 1200); // Wait slightly longer than animation (1s)
+        }
+    };
+
+    // Determine animation class based on variant
+    const getAnimationClass = () => {
+        if (!isHalloween) return "transition-all duration-700 ease-out transform opacity-0 scale-150 blur-[50px] pointer-events-none";
+        
+        if (isImmortalRef.current) return "animate-retreat"; // Special retreat animation
+        
+        switch (variantRef.current) {
+            case 'b': return "animate-resist-b";
+            case 'c': return "animate-resist-c";
+            default: return "animate-resist-a";
+        }
+    };
 
     return (
         <div 
-            className="absolute z-10"
-            style={{ left: style.left, top: style.top }}
+            className="absolute z-10" 
+            style={style}
         >
              <div 
                 className={cn(
-                    "transition-all duration-500 ease-out transform", 
-                    vanished ? "opacity-0 scale-0 blur-xl pointer-events-none" : "opacity-100 scale-100"
+                    vanished 
+                        ? getAnimationClass()
+                        : "transition-all duration-700 ease-out transform opacity-100 scale-100"
                 )}
              >
                 <div 
                     className={cn(
-                        "pointer-events-auto cursor-crosshair p-12 -m-12", // Large hit area
+                        "pointer-events-auto cursor-crosshair p-24 -m-24 rounded-full", 
                         isHalloween ? "animate-ghost-wander" : "animate-float"
                     )}
-                    style={{ 
-                        width: style.width, 
-                        height: style.height,
-                        animationDuration: style.animationDuration,
-                        animationDelay: style.animationDelay
-                    }}
-                    onMouseEnter={() => setVanished(true)}
+                    onMouseEnter={handleInteraction}
+                    onTouchStart={handleInteraction}
                 >
                     <Icon 
+                        strokeWidth={1.5}
                         className={cn(
-                            "w-full h-full",
+                            "w-full h-full drop-shadow-[0_0_15px_rgba(255,100,0,0.2)]",
                             isHalloween
                                 ? cn(
-                                    index % 3 === 0 ? "text-orange-500/20 fill-orange-500/10" : 
-                                    index % 3 === 1 ? "text-white/20 fill-white/10" :           
+                                    index % 3 === 0 ? "text-orange-500/20 fill-orange-500/5" : 
+                                    index % 3 === 1 ? "text-white/20 fill-white/5" :           
                                     "text-red-500/20 fill-red-500/5"                        
                                   ) 
                                 : cn(
@@ -92,32 +165,31 @@ const InteractiveFloatingIcon = ({ Icon, isHalloween, index }: { Icon: any, isHa
     );
 };
 
-// Interactive Eye Component
-const InteractiveEye = () => {
-    const [closed, setClosed] = useState(false);
+// Spooky Eyes Component (Simple blinking red eyes)
+const SpookyEyes = () => {
     const [style, setStyle] = useState<React.CSSProperties>({});
 
     useEffect(() => {
+        // Random positioning and delay
         setStyle({
             top: `${20 + Math.random() * 60}%`, 
             left: `${10 + Math.random() * 80}%`,
             animationDelay: `${Math.random() * 5}s`,
-            transform: `scale(${1 + Math.random()})`
+            transform: `scale(${0.8 + Math.random() * 0.5})`,
+            opacity: 0.8
         });
     }, []);
 
     return (
          <div 
-            className={cn(
-                "absolute animate-blink pointer-events-auto cursor-crosshair p-8 -m-8 transition-opacity duration-200",
-                closed ? "opacity-0 pointer-events-none" : "opacity-100"
-            )}
+            className="absolute animate-blink pointer-events-none p-4"
             style={style}
-            onMouseEnter={() => setClosed(true)}
          >
-             <div className="flex gap-4 pointer-events-none">
-                 <div className="w-3 h-3 md:w-4 md:h-4 rounded-full bg-red-600 shadow-[0_0_15px_rgba(255,0,0,0.8)]" />
-                 <div className="w-3 h-3 md:w-4 md:h-4 rounded-full bg-red-600 shadow-[0_0_15px_rgba(255,0,0,0.8)]" />
+             <div className="flex gap-3">
+                 {/* Left Eye */}
+                 <div className="w-3 h-3 md:w-4 md:h-4 rounded-full bg-red-600 shadow-[0_0_15px_rgba(255,0,0,1)] animate-pulse" />
+                 {/* Right Eye */}
+                 <div className="w-3 h-3 md:w-4 md:h-4 rounded-full bg-red-600 shadow-[0_0_15px_rgba(255,0,0,1)] animate-pulse" />
              </div>
          </div>
     );
@@ -138,6 +210,8 @@ export default function SeasonalLanding({ config }: SeasonalLandingProps) {
   const [featuredProducts, setFeaturedProducts] = useState<CatalogItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
+  const [textEffectTriggered, setTextEffectTriggered] = useState(false);
+  const hasTriggeredRef = React.useRef(false);
 
   // Get theme colors from existing config
   const themeStyles = THEME_CONFIG[config.themeId] || THEME_CONFIG.standard;
@@ -147,6 +221,19 @@ export default function SeasonalLanding({ config }: SeasonalLandingProps) {
   const isMothersDay = config.id === 'dia-de-la-madre' || config.id === 'mothers-day';
   const isHalloween = config.id === 'halloween';
   
+  // TRIGGER TEXT SCANLINE EFFECT
+  const handleExorcise = () => {
+    if (hasTriggeredRef.current) return;
+    
+    hasTriggeredRef.current = true;
+    setTextEffectTriggered(true);
+    
+    // Remove class after animation finishes
+    setTimeout(() => {
+        setTextEffectTriggered(false);
+    }, 500);
+  };
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -186,7 +273,7 @@ export default function SeasonalLanding({ config }: SeasonalLandingProps) {
     }
 
     if (isHalloween) {
-      const deadline = new Date(year, 9, 31); // Oct 31 (Month is 0-indexed)
+      const deadline = new Date(year, 9, 1); // Oct 1st (Start of Campaign)
       if (now > deadline) deadline.setFullYear(year + 1);
       return deadline;
     }
@@ -239,14 +326,14 @@ export default function SeasonalLanding({ config }: SeasonalLandingProps) {
             {/* Halloween Atmosphere: Fog & Eyes */}
             {isHalloween && (
                 <>
-                    {/* Low Fog */}
-                    <div className="absolute bottom-0 left-0 w-[200%] h-64 bg-gradient-to-t from-orange-900/20 to-transparent animate-fog z-0 pointer-events-none blur-xl" />
+                    {/* Low Fog - Made more visible with brighter color */}
+                    <div className="absolute bottom-0 left-0 w-[200%] h-[500px] bg-gradient-to-t from-orange-500/10 via-orange-900/5 to-transparent animate-fog z-0 pointer-events-none blur-3xl" />
                     
                     {/* Watching Eyes (Randomly placed with JS for variety) */}
                     {mounted && (
                     <div className="absolute inset-0 overflow-hidden pointer-events-none">
                          {[...Array(2)].map((_, i) => (
-                             <InteractiveEye key={i} />
+                             <SpookyEyes key={i} />
                          ))}
                     </div>
                     )}
@@ -284,8 +371,8 @@ export default function SeasonalLanding({ config }: SeasonalLandingProps) {
 
             {/* Floating Hearts/Ghosts */}
             {mounted && (isValentines || isMothersDay || isHalloween) && (
-                <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
-                    {[...Array(isHalloween ? 15 : 8)].map((_, i) => {
+                <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+                    {[...Array(isHalloween ? 20 : 8)].map((_, i) => {
                         // Halloween Icon Mix
                         const halloweenIcons = [Ghost, Skull, Pumpkin];
                         const Icon = isHalloween ? halloweenIcons[i % halloweenIcons.length] : Heart;
@@ -333,7 +420,8 @@ export default function SeasonalLanding({ config }: SeasonalLandingProps) {
                     )}
                     <span className={cn(
                         "bg-clip-text text-transparent font-bold",
-                        isHalloween ? "bg-gradient-to-r from-orange-500 via-red-500 to-orange-600" : "bg-gradient-to-r from-primary via-rose-600 to-rose-500"
+                        isHalloween ? "bg-gradient-to-r from-orange-500 via-red-500 to-orange-600" : "bg-gradient-to-r from-primary via-rose-600 to-rose-500",
+                        textEffectTriggered && isHalloween && "animate-scanline"
                     )}>
                         {config.landing.heroSubtitle || config.name}
                     </span>
@@ -399,6 +487,16 @@ export default function SeasonalLanding({ config }: SeasonalLandingProps) {
 
       {/* 2. COUNTDOWN & BENEFITS SECTION */}
       <section className="py-24 relative bg-[#020617]">
+        {/* TV Static Overlay for Halloween */}
+        {isHalloween && (
+            <div className="absolute inset-0 pointer-events-none z-0 opacity-[0.06] overflow-hidden mix-blend-overlay">
+                <div 
+                  className="absolute inset-[-100%] w-[300%] h-[300%] bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj48ZmlsdGVyIGlkPSJnoiPjxmZVR1cmJ1bGVuY2UgdHlwZT0iZnJhY3RhbE5vaXNlIiBiYXNlRnJlcXVlbmN5PSIwLjY1IiBudW1PY3RhdmVzPSIzIiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsdGVyPSJ1cmwoI2cpIiBvcGFjaXR5PSIwLjUiLz48L3N2Zz4=')]"
+                  style={{ animation: 'noise 8s steps(10) infinite' }}
+                />
+            </div>
+        )}
+        
         {/* Top Gradient Transition - Absorbs previous section */}
         <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-[#020617] via-[#020617]/90 to-transparent z-20 pointer-events-none" />
 
@@ -407,12 +505,21 @@ export default function SeasonalLanding({ config }: SeasonalLandingProps) {
 
         <div className="container mx-auto px-4 relative z-10">
             <div className="text-center mb-16">
-                <h2 className="text-2xl md:text-3xl font-light text-rose-100/80 mb-8 tracking-wide">
+                <h2 className={cn(
+                    "text-2xl md:text-3xl font-light mb-8 tracking-wide transition-colors duration-500",
+                    isHalloween 
+                        ? "text-orange-100/90 font-serif tracking-widest drop-shadow-[0_0_15px_rgba(249,115,22,0.4)]" 
+                        : "text-rose-100/80"
+                )}>
                     {isMothersDay ? 'Tiempo restante para el Día de la Madre' : 
                      isValentines ? 'Tiempo restante para San Valentín' : 
+                     isHalloween ? 'El Portal se Abre en' :
                      `Tiempo restante para ${config.name}`}
                 </h2>
-                <CountdownTimer targetDate={getDeadline()} />
+                <CountdownTimer 
+                    targetDate={getDeadline()} 
+                    variant={isHalloween ? 'halloween' : 'default'}
+                />
             </div>
             
             <div className="mt-16">
@@ -443,18 +550,34 @@ export default function SeasonalLanding({ config }: SeasonalLandingProps) {
         <div className="container mx-auto px-4 relative z-10">
             <div className="flex flex-col md:flex-row items-end justify-between mb-16 gap-4">
                 <div className="space-y-4">
-                    <div className="inline-block px-3 py-1 rounded-full bg-rose-900/20 border border-rose-500/20 text-rose-300 text-xs font-bold tracking-[0.2em] uppercase mb-2 shadow-[0_0_10px_-3px_rgba(225,29,72,0.2)]">
+                    <div className={cn(
+                        "inline-block px-3 py-1 rounded-full border text-xs font-bold tracking-[0.2em] uppercase mb-2 shadow-[0_0_10px_-3px_rgba(0,0,0,0.2)]",
+                        isHalloween 
+                            ? "bg-orange-900/20 border-orange-500/20 text-orange-300 shadow-orange-500/20" 
+                            : "bg-rose-900/20 border-rose-500/20 text-rose-300 shadow-rose-500/20"
+                    )}>
                         Colección Limitada
                     </div>
                     <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-white drop-shadow-lg">
                         {config.landing.featuredTitle || 'Destacados de Temporada'}
                     </h2>
-                    <p className="text-lg text-rose-200/60 max-w-xl font-light">
-                        Estamos preparando algo especial para sorprender a quien más quieres.
+                    <p className={cn(
+                        "text-lg max-w-xl font-light",
+                        isHalloween ? "text-orange-200/60" : "text-rose-200/60"
+                    )}>
+                        {isHalloween 
+                            ? "Artefactos malditos diseñados para poseer tu espacio."
+                            : "Estamos preparando algo especial para sorprender a quien más quieres."
+                        }
                     </p>
                 </div>
                 
-                <Button variant="ghost" className="group hidden md:flex text-rose-300 hover:text-rose-100 hover:bg-rose-900/20 rounded-full px-6" asChild>
+                <Button variant="ghost" className={cn(
+                    "group hidden md:flex rounded-full px-6",
+                    isHalloween 
+                        ? "text-orange-300 hover:text-orange-100 hover:bg-orange-900/20" 
+                        : "text-rose-300 hover:text-rose-100 hover:bg-rose-900/20"
+                )} asChild>
                     <Link href={`/catalogo-impresion-3d?q=${config.landing.featuredTag}`}>
                         Ver colección completa
                         <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -470,8 +593,11 @@ export default function SeasonalLanding({ config }: SeasonalLandingProps) {
                 />
             ) : (
                 /* Placeholder state designed to look good even empty */
-                <div className="border-2 border-dashed border-primary/20 rounded-3xl p-12 text-center bg-muted/10">
-                    <Sparkles className="w-12 h-12 text-primary/40 mx-auto mb-4" />
+                <div className={cn(
+                    "border-2 border-dashed rounded-3xl p-12 text-center bg-muted/10",
+                    isHalloween ? "border-orange-500/20" : "border-primary/20"
+                )}>
+                    <Sparkles className={cn("w-12 h-12 mx-auto mb-4", isHalloween ? "text-orange-500/40" : "text-primary/40")} />
                     <h3 className="text-xl font-semibold mb-2">Preparando la Colección</h3>
                     <p className="text-muted-foreground max-w-md mx-auto mb-6">
                         Estamos curando los mejores productos para {config.name}. 
@@ -494,43 +620,78 @@ export default function SeasonalLanding({ config }: SeasonalLandingProps) {
         <div className="absolute bottom-0 left-0 w-full h-48 bg-gradient-to-t from-[#020617] via-[#020617]/90 to-transparent z-20 pointer-events-none" />
       </section>
 
-      {/* 4. SOCIAL PROOF / TESTIMONIALS - GHOST VARIANT */}
-      <section className="py-32 relative overflow-hidden bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#1a0505] via-neutral-950 to-[#020617]">
+      {/* 4. SOCIAL PROOF / TESTIMONIALS - THEMED VARIANT */}
+      <section className={cn(
+          "py-32 relative overflow-hidden",
+          isHalloween 
+            ? "bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#0f0a05] via-neutral-950 to-[#020617]"
+            : "bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#1a0505] via-neutral-950 to-[#020617]"
+      )}>
         {/* Top Gradient Transition */}
         <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-[#020617] via-[#020617]/90 to-transparent z-20 pointer-events-none" />
 
         {/* Subtle Ambient Light - Reduced intensity */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-rose-900/10 rounded-full blur-[128px] opacity-40" />
+        <div className={cn(
+            "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-[128px] opacity-40",
+            isHalloween ? "bg-orange-900/10" : "bg-rose-900/10"
+        )} />
 
         <div className="container mx-auto px-4 relative z-10 text-center">
             
-            {/* The Whisper - Fainter, more distant */}
-            <p className="text-lg md:text-xl text-white/30 italic font-serif tracking-widest mb-12">
-                "No sabía qué regalarle..."
+            {/* The Whisper */}
+            <p className={cn(
+                "text-lg md:text-xl italic font-serif tracking-widest mb-12",
+                isHalloween ? "text-orange-100/30" : "text-white/30"
+            )}>
+                {isHalloween ? "\"Algo extraño sucedió al abrir la caja...\"" : "\"No sabía qué regalarle...\""}
             </p>
 
-            {/* The Divider - Barely visible */}
-            <div className="h-px w-12 mx-auto bg-gradient-to-r from-transparent via-rose-900/30 to-transparent mb-12" />
+            {/* The Divider */}
+            <div className={cn(
+                "h-px w-12 mx-auto bg-gradient-to-r from-transparent to-transparent mb-12",
+                isHalloween ? "via-orange-900/30" : "via-rose-900/30"
+            )} />
 
             {/* The Impact */}
             <h2 className="text-3xl md:text-5xl font-light text-white/80 mb-12 tracking-tight leading-snug max-w-4xl mx-auto">
-                El regalo más <span className="text-highlight-theme">original</span> que he dado.
+                {isHalloween ? (
+                    <>
+                        Los detalles son tan reales que <span className="text-orange-500 font-normal drop-shadow-[0_0_15px_rgba(249,115,22,0.3)]">hielan la sangre</span>.
+                    </>
+                ) : (
+                    <>
+                        El regalo más <span className="text-highlight-theme">original</span> que he dado.
+                    </>
+                )}
             </h2>
 
-            {/* The Hearts - Darker, subtle glow */}
+            {/* The Icons - Hearts or Ghosts */}
             <div className="flex justify-center gap-4 mb-8 opacity-80">
                 {[...Array(5)].map((_, i) => (
-                    <Heart 
-                        key={i} 
-                        className="w-5 h-5 text-rose-800 fill-rose-900 animate-pulse-slow drop-shadow-[0_0_10px_rgba(225,29,72,0.25)]" 
-                        style={{ animationDelay: `${i * 150}ms` }} 
-                    />
+                    isHalloween ? (
+                        <Ghost 
+                            key={i} 
+                            className="w-5 h-5 text-orange-700 fill-orange-900/50 animate-pulse-slow drop-shadow-[0_0_10px_rgba(249,115,22,0.15)]" 
+                            style={{ animationDelay: `${i * 300}ms` }} 
+                        />
+                    ) : (
+                        <Heart 
+                            key={i} 
+                            className="w-5 h-5 text-rose-800 fill-rose-900 animate-pulse-slow drop-shadow-[0_0_10px_rgba(225,29,72,0.25)]" 
+                            style={{ animationDelay: `${i * 150}ms` }} 
+                        />
+                    )
                 ))}
             </div>
 
-            {/* The Signature - Warmer tone */}
+            {/* The Signature */}
             <div className="flex flex-col items-center gap-2">
-                 <p className="text-xs font-medium tracking-[0.25em] uppercase text-rose-800/90">Laura M.</p>
+                 <p className={cn(
+                     "text-xs font-medium tracking-[0.25em] uppercase",
+                     isHalloween ? "text-orange-800/90" : "text-rose-800/90"
+                 )}>
+                    {isHalloween ? "Cliente Anónimo" : "Laura M."}
+                 </p>
             </div>
         </div>
 
@@ -544,20 +705,46 @@ export default function SeasonalLanding({ config }: SeasonalLandingProps) {
         <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-[#020617] via-[#020617]/90 to-transparent z-20 pointer-events-none" />
         
         <div className="container mx-auto px-4 relative z-10">
-            <div className="max-w-3xl mx-auto bg-neutral-900/30 backdrop-blur-md border border-rose-500/10 rounded-3xl p-8 md:p-16 shadow-[0_0_50px_-10px_rgba(225,29,72,0.05)] relative overflow-hidden z-10">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-rose-600/30 to-transparent opacity-50" />
+            <div className={cn(
+                "max-w-3xl mx-auto backdrop-blur-md border rounded-3xl p-8 md:p-16 relative overflow-hidden z-10",
+                isHalloween 
+                    ? "bg-neutral-900/30 border-orange-500/10 shadow-[0_0_50px_-10px_rgba(249,115,22,0.05)]"
+                    : "bg-neutral-900/30 border-rose-500/10 shadow-[0_0_50px_-10px_rgba(225,29,72,0.05)]"
+            )}>
+                <div className={cn(
+                    "absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent to-transparent opacity-50",
+                    isHalloween ? "via-orange-600/30" : "via-rose-600/30"
+                )} />
                 
-                <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white tracking-tight">¿Tienes una idea especial?</h2>
-                <p className="text-lg text-rose-200/50 mb-10 font-light">
-                    Si no existe todavía, lo creamos para ti.
+                <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white tracking-tight">
+                    {isHalloween ? "¿Te atreves a invocarlo?" : "¿Tienes una idea especial?"}
+                </h2>
+                <p className={cn(
+                    "text-lg mb-10 font-light",
+                    isHalloween ? "text-orange-200/50" : "text-rose-200/50"
+                )}>
+                    {isHalloween 
+                        ? "Materializamos tus pesadillas más creativas antes de que amanezca."
+                        : "Si no existe todavía, lo creamos para ti."
+                    }
                 </p>
                 <div className="flex flex-col sm:flex-row justify-center gap-4">
-                    <Button size="lg" className="h-12 px-8 text-lg bg-rose-600 hover:bg-rose-700 text-white border-0 shadow-[0_0_20px_-5px_rgba(225,29,72,0.4)]" asChild>
+                    <Button size="lg" className={cn(
+                        "h-12 px-8 text-lg border-0 shadow-lg",
+                        isHalloween 
+                            ? "bg-orange-700 hover:bg-orange-800 text-white shadow-[0_0_20px_-5px_rgba(249,115,22,0.4)]" 
+                            : "bg-rose-600 hover:bg-rose-700 text-white shadow-[0_0_20px_-5px_rgba(225,29,72,0.4)]"
+                    )} asChild>
                         <Link href="/cotizar">
-                            Solicitar Diseño Personalizado
+                            {isHalloween ? "Crear mi Pesadilla" : "Solicitar Diseño Personalizado"}
                         </Link>
                     </Button>
-                    <Button variant="outline" size="lg" className="h-12 px-8 text-lg hover:bg-rose-500/10 hover:text-rose-200 border-rose-500/20" asChild>
+                    <Button variant="outline" size="lg" className={cn(
+                        "h-12 px-8 text-lg",
+                        isHalloween 
+                            ? "hover:bg-orange-500/10 hover:text-orange-200 border-orange-500/20" 
+                            : "hover:bg-rose-500/10 hover:text-rose-200 border-rose-500/20"
+                    )} asChild>
                         <Link href="/contacto">
                             Hablar con un asesor
                         </Link>

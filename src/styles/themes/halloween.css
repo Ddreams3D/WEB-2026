@@ -1,0 +1,299 @@
+/* --- HALLOWEEN THEME (Orange & White) --- */
+@keyframes pulse-halloween-v2 { 0%, 100% { background-size: 100% auto; } 50% { background-size: 200% auto; } }
+
+@keyframes ghost-wander {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(15px, -15px) rotate(5deg); }
+  50% { transform: translate(-5px, -25px) rotate(-5deg); }
+  75% { transform: translate(-20px, 10px) rotate(3deg); }
+}
+
+@keyframes fog-flow {
+  0% { transform: translateX(-5%); opacity: 0.3; }
+  50% { opacity: 0.6; }
+  100% { transform: translateX(5%); opacity: 0.3; }
+}
+
+@keyframes blink-eyes {
+  0%, 45%, 55%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.1); }
+}
+
+@keyframes tv-static-slow {
+  0% { background-position: 0% 0%; filter: contrast(150%) brightness(100%); }
+  25% { background-position: 10% 10%; filter: contrast(120%) brightness(120%); }
+  50% { background-position: -10% -20%; filter: contrast(150%) brightness(100%); }
+  75% { background-position: 5% 25%; filter: contrast(120%) brightness(80%); }
+  100% { background-position: 0% 0%; filter: contrast(150%) brightness(100%); }
+}
+
+[data-theme='halloween'] {
+  --primary: 25 100% 55%; /* Pumpkin Orange */
+  --ring: 25 100% 55%;
+  --secondary: 0 0% 100%; /* White */
+
+  /* Primary: Orange */
+  --primary-50: 255 247 237;
+  --primary-100: 255 237 213;
+  --primary-200: 254 215 170;
+  --primary-300: 253 186 116;
+  --primary-400: 251 146 60;
+  --primary-500: 255 117 24; /* #FF7518 */
+  --primary-600: 234 88 12;
+  --primary-700: 194 65 12;
+  --primary-800: 154 52 18;
+  --primary-900: 124 45 18;
+  --primary-950: 67 20 7;
+  --primary-foreground: 255 255 255;
+
+  /* Secondary: White */
+  --secondary-50: 255 255 255;
+  --secondary-100: 255 255 255;
+  --secondary-200: 250 250 250;
+  --secondary-300: 245 245 245;
+  --secondary-400: 229 229 229;
+  --secondary-500: 255 255 255;
+  --secondary-600: 204 204 204;
+  --secondary-700: 153 153 153;
+  --secondary-800: 102 102 102;
+  --secondary-900: 51 51 51;
+  --secondary-950: 26 26 26;
+  --secondary-foreground: 0 0 0;
+
+  /* Gradient Variables */
+  --highlight-start: #FF7518;
+  --highlight-mid: #ffffff;
+  --highlight-end: #FF7518;
+}
+
+[data-theme='halloween'] .bg-clip-text,
+[data-theme='halloween'] .text-transparent.bg-gradient-to-r {
+  background-image: linear-gradient(
+    to right, 
+    rgb(var(--primary-500)), 
+    rgb(var(--secondary-500)), 
+    rgb(var(--primary-500))
+  ) !important;
+  background-size: 100% auto !important;
+  background-position: center !important;
+  animation: pulse-halloween-v2 3s ease-in-out infinite !important;
+}
+
+[data-theme='halloween'] .bg-gradient-to-r.text-white {
+  background-image: linear-gradient(
+    to right, 
+    rgb(var(--primary-500)), 
+    rgb(var(--secondary-600)), 
+    rgb(var(--primary-500))
+  ) !important;
+  background-size: 100% auto !important;
+  background-position: center !important;
+  border: 1px solid rgba(255,255,255,0.1);
+  animation: pulse-halloween-v2 3s ease-in-out infinite !important;
+}
+
+/* Missing Animations Implementation */
+[data-theme='halloween'] .animate-ghost-wander {
+  animation: ghost-wander 20s ease-in-out infinite alternate;
+}
+
+[data-theme='halloween'] .animate-fog {
+  animation: fog-flow 30s linear infinite alternate;
+}
+
+[data-theme='halloween'] .animate-blink {
+  animation: blink-eyes 5s infinite;
+}
+
+/* TV Static Effect for Hero Title - Optimized for Atmosphere (Low Contrast) */
+[data-theme='halloween'] .glitch-effect {
+  position: relative;
+  display: inline-block;
+  color: transparent;
+  /* Noise pattern: reduced opacity for subtle texture */
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(255, 255, 255, 0.2) 2px,
+    rgba(255, 255, 255, 0.2) 4px
+  ), repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 2px,
+    rgba(136, 136, 136, 0.2) 2px,
+    rgba(136, 136, 136, 0.2) 4px
+  );
+  background-size: 4px 4px;
+  -webkit-background-clip: text;
+  background-clip: text;
+  /* Slower animation for less motion sickness risk */
+  animation: tv-static-slow 8s steps(3) infinite alternate;
+  text-shadow: 2px 0 rgba(255,0,0,0.15), -2px 0 rgba(0,0,255,0.15);
+  opacity: 0.85;
+}
+
+/* VARIANT A: Fast Blink + Slight Blur */
+@keyframes resist-vanish-a {
+  0% { opacity: 1; transform: scale(1); filter: blur(0px); }
+  20% { opacity: 0.3; transform: scale(1.02); filter: blur(2px); }
+  40% { opacity: 0.9; transform: scale(0.98); filter: blur(0px); }
+  60% { opacity: 0.2; transform: scale(1.05); filter: blur(1px); }
+  80% { opacity: 0.6; transform: scale(1.0); filter: blur(2px); }
+  100% { opacity: 0; transform: scale(1.1); filter: blur(4px); }
+}
+
+/* VARIANT B: Slow Blink + Stronger Scale */
+@keyframes resist-vanish-b {
+  0% { opacity: 1; transform: scale(1); filter: blur(0px); }
+  30% { opacity: 0.6; transform: scale(1.08); filter: blur(1px); }
+  50% { opacity: 0.8; transform: scale(1.04); filter: blur(0px); }
+  70% { opacity: 0.4; transform: scale(1.12); filter: blur(2px); }
+  100% { opacity: 0; transform: scale(1.2); filter: blur(3px); }
+}
+
+/* VARIANT C: Micro Shake + Less Blur */
+@keyframes resist-vanish-c {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; filter: blur(0px); }
+  10% { transform: translate(-2px, 1px) scale(1.01); opacity: 0.8; }
+  20% { transform: translate(2px, -1px) scale(1.02); opacity: 0.9; }
+  30% { transform: translate(-1px, 2px) scale(1.03); opacity: 0.6; }
+  40% { transform: translate(1px, -2px) scale(1.04); opacity: 0.8; }
+  50% { transform: translate(0, 0) scale(1.05); opacity: 0.4; filter: blur(1px); }
+  100% { transform: scale(1.1); opacity: 0; filter: blur(2px); }
+}
+
+/* IMMORTAL: Retreat and Reappear */
+@keyframes retreat-immortal {
+  0% { transform: scale(1); opacity: 1; filter: blur(0px); }
+  50% { transform: scale(0.4); opacity: 0.5; filter: blur(2px); }
+  100% { transform: scale(0); opacity: 0; filter: blur(4px); }
+}
+
+/* SCANLINE TEXT EFFECT */
+@keyframes scanline-flash {
+  0% { text-shadow: 2px 0 rgba(255,0,0,0.5), -2px 0 rgba(0,0,255,0.5); opacity: 1; }
+  10% { opacity: 0.8; transform: skewX(10deg); }
+  20% { opacity: 1; transform: skewX(-10deg); }
+  30% { text-shadow: 4px 0 rgba(255,0,0,0.7), -4px 0 rgba(0,0,255,0.7); }
+  100% { text-shadow: 2px 0 rgba(255,0,0,0.3), -2px 0 rgba(0,0,255,0.3); opacity: 0.9; transform: skewX(0); }
+}
+
+[data-theme='halloween'] .animate-resist-a {
+  animation: resist-vanish-a 1.2s ease-out forwards;
+  pointer-events: none;
+}
+
+[data-theme='halloween'] .animate-resist-b {
+  animation: resist-vanish-b 1.8s ease-out forwards;
+  pointer-events: none;
+}
+
+[data-theme='halloween'] .animate-resist-c {
+  animation: resist-vanish-c 1.0s ease-out forwards;
+  pointer-events: none;
+}
+
+[data-theme='halloween'] .animate-retreat {
+  animation: retreat-immortal 1s ease-in forwards;
+  pointer-events: none;
+}
+
+[data-theme='halloween'] .animate-scanline {
+  animation: scanline-flash 0.3s steps(5) forwards;
+}
+
+@keyframes scanline-vertical {
+  0% { transform: translateY(-100%); opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { transform: translateY(300%); opacity: 0; }
+}
+
+[data-theme='halloween'] .animate-scanline-vertical {
+  animation: scanline-vertical 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* --- OLD & SCARY COUNTDOWN EFFECTS --- */
+
+/* Flickering light effect - Intense & Dying */
+@keyframes flicker-dying {
+  0%, 100% { opacity: 1; text-shadow: 0 0 10px rgba(249,115,22,0.8); }
+  /* Frequent dimming/flickering */
+  5% { opacity: 0.7; }
+  10% { opacity: 1; }
+  15% { opacity: 0.2; text-shadow: none; } /* Failure */
+  16% { opacity: 1; text-shadow: 0 0 15px rgba(249,115,22,1); } /* Surge */
+  17% { opacity: 0.4; }
+  18% { opacity: 1; }
+  40% { opacity: 1; }
+  41% { opacity: 0.3; }
+  42% { opacity: 0.8; }
+  70% { opacity: 1; }
+  71% { opacity: 0.1; text-shadow: none; } /* Deep failure */
+  72% { opacity: 0.1; }
+  73% { opacity: 1; }
+}
+
+/* Micro-jitter - Visible Shake */
+@keyframes jitter-micro {
+  0%, 100% { transform: translate(0, 0); }
+  /* Periodic distinct twitch */
+  20% { transform: translate(-1px, 1px); }
+  22% { transform: translate(1px, -1px); }
+  24% { transform: translate(0, 0); }
+  /* Random vibration */
+  60% { transform: translate(0, 0); }
+  61% { transform: translate(-0.5px, 0.5px); }
+  62% { transform: translate(0, 0); }
+  85% { transform: translate(0, 0); }
+  86% { transform: translate(1px, 0); }
+  87% { transform: translate(-1px, 0); }
+  88% { transform: translate(0, 0); }
+}
+
+[data-theme='halloween'] .animate-flicker-dying {
+  animation: flicker-dying 4s infinite steps(1); /* Faster cycle */
+}
+
+[data-theme='halloween'] .animate-jitter {
+  animation: jitter-micro 3s infinite; /* Faster cycle */
+}
+
+/* Accessibility: Disable inducing animations */
+@media (prefers-reduced-motion: reduce) {
+  [data-theme='halloween'] .animate-flicker-dying,
+  [data-theme='halloween'] .animate-jitter,
+  [data-theme='halloween'] .animate-scanline-vertical {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    text-shadow: none !important;
+  }
+}
+
+/* Grime overlay pattern - Visible Dust/Scratch Texture for Dark Backgrounds */
+[data-theme='halloween'] .grime-overlay {
+  /* High frequency noise = dust/grain. White fill for visibility on black. */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3CcolorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.5' fill='white'/%3E%3C/svg%3E");
+  opacity: 0.15;
+  mix-blend-mode: screen; /* Light dust on dark background */
+  pointer-events: none;
+  z-index: 20;
+}
+
+/* Vignette dirt effect */
+[data-theme='halloween'] .vignette-dirt {
+  background: radial-gradient(circle, transparent 40%, rgba(20, 10, 5, 0.8) 100%);
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+/* Rusty/Old Border Effect */
+[data-theme='halloween'] .border-rusty {
+  border-color: rgba(124, 45, 18, 0.6) !important;
+  box-shadow: 
+    inset 0 0 20px rgba(0,0,0,0.9),
+    0 0 10px rgba(194, 65, 12, 0.2),
+    inset 0 0 5px rgba(160, 60, 20, 0.4);
+}

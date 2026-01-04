@@ -64,7 +64,7 @@ const nextConfig = {
   generateEtags: false,
   
   // Optimizaciones de navegación
-  reactStrictMode: true,
+  reactStrictMode: false,
   
   // Webpack optimizations
   webpack: (config, { dev, isServer }) => {

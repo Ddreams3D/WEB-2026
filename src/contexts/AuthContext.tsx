@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { 
   GoogleAuthProvider, 
   signInWithPopup, 
+  signInWithRedirect,
   signInWithEmailAndPassword,
   signOut, 
   onAuthStateChanged, 
@@ -441,10 +442,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error('Google login failed:', error);
       
       const fbError = error as { code?: string; message?: string };
+      const errorMessage = error instanceof Error ? error.message : '';
+      
+      // Fallback a redirección si falla el popup por temas de entorno/red/bloqueadores
+      const isNetworkError = fbError.code === 'auth/network-request-failed';
+      const isInternalError = errorMessage.includes('INTERNAL ASSERTION FAILED');
+      const isPopupBlocked = fbError.code === 'auth/popup-blocked' || fbError.code === 'auth/popup-closed-by-user';
+      
+      // Nota: popup-closed-by-user a veces es un falso positivo de bloqueadores, 
+      // pero si es genuino (usuario cerró), el redirect también será cancelado por el usuario, 
+      // así que es seguro intentar redirect si el usuario realmente quiere loguearse.
+      // Sin embargo, para no ser intrusivos, solo forzamos redirect en errores técnicos.
+
+      if (isNetworkError || isInternalError) {
+         console.warn('Popup failed (Network/Internal), attempting redirect fallback...');
+         try {
+            if (auth) {
+               showSuccess('Redirigiendo...', 'Cambiando a modo redirección por problemas de conexión/seguridad.');
+               const redirectProvider = new GoogleAuthProvider();
+               await signInWithRedirect(auth, redirectProvider);
+               return { success: true, isNewUser: false }; // La página se recargará
+            }
+         } catch (redirectError) {
+             console.error('Redirect fallback also failed:', redirectError);
+             // Si falla el redirect, dejamos que el flujo continúe al manejo de errores abajo
+         }
+      }
       
       if (fbError.code === 'auth/network-request-failed') {
-        showError('Error de conexión', 'No se pudo conectar con los servidores de Google. Verifica tu internet.');
-      } else if (fbError.code === 'auth/popup-closed-by-user') {
+              let errorMsg = 'No se pudo conectar con Google.';
+              if (navigator.onLine) {
+                errorMsg += ' Tu internet funciona, pero algo bloquea la conexión a Firebase. Revisa: 1) Desactiva bloqueadores de anuncios (AdBlock/uBlock). 2) Agrega "localhost" a Dominios Autorizados en Firebase. 3) Verifica la hora de tu PC.';
+              } else {
+                errorMsg += ' Verifica tu conexión a internet.';
+              }
+              console.warn(errorMsg);
+              showError('Error de conexión', errorMsg);
+            } else if (fbError.code === 'auth/popup-closed-by-user') {
         // User closed popup, just ignore or show mild warning
         console.log('User closed Google popup');
       } else {
