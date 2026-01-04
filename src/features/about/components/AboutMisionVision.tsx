@@ -16,7 +16,7 @@ export default function AboutMisionVision() {
             className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-6"
           >
             Lo Que Nos{' '}
-            <span className="text-primary">
+            <span className="text-highlight-theme">
               Impulsa
             </span>
           </h2>

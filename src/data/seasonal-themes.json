@@ -81,7 +81,7 @@
     }
   },
   {
-    "id": "valentines",
+    "id": "san-valentin",
     "themeId": "valentines",
     "name": "San Valentín",
     "dateRanges": [
@@ -108,7 +108,7 @@
     }
   },
   {
-    "id": "mothers-day",
+    "id": "dia-de-la-madre",
     "themeId": "festive-soft",
     "name": "Día de la Madre",
     "dateRanges": [

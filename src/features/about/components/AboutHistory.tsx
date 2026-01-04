@@ -15,7 +15,7 @@ export default function AboutHistory() {
             className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-6"
           >
             ¿Cómo nace{' '}
-            <span className="text-primary">
+            <span className="text-highlight-theme">
               Ddreams3D?
             </span>
           </h2>

@@ -6,15 +6,15 @@ export default function ContactAddressMap() {
   return (
     <section className="mt-20 sm:mt-24" aria-labelledby="location">
       <div className="text-center mb-12 sm:mb-16">
-        <span className="text-muted-foreground font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-2 block">
-          Ubicación
+        <span className="block text-muted-foreground font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-3">
+          NUESTRA UBICACIÓN
         </span>
         <h2
           id="location"
           className="text-3xl sm:text-4xl font-bold mb-4 text-foreground"
         >
           Visítanos en{' '}
-          <span className="text-primary">
+          <span className="text-highlight-theme">
             Arequipa
           </span>
         </h2>

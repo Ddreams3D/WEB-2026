@@ -43,7 +43,7 @@ export default function AboutValues() {
             className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-6"
           >
             Principios que nos{' '}
-            <span className="text-primary">
+            <span className="text-highlight-theme">
               Guían
             </span>
           </h2>

@@ -4,13 +4,130 @@ import React, { useEffect, useState } from 'react';
 import { SeasonalThemeConfig } from '@/shared/types/seasonal';
 import { Button, FooterLogo } from '@/components/ui';
 import Link from 'next/link';
-import { ArrowRight, Sparkles, Heart, Gift } from 'lucide-react';
+import { ArrowRight, Sparkles, Heart, Gift, Ghost, Skull, Smile } from 'lucide-react';
+
+// Custom Pumpkin Icon (using SVG) - More recognizable shape
+const Pumpkin = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M12 2c0 .667 0 1.333.5 2C13 5 15 5 15 5c2.5 0 5 2.5 5 6 0 3.866-2.239 7-5 7-1.5 0-2.5-.5-2.5-.5" />
+    <path d="M12 2c0 .667 0 1.333-.5 2C11 5 9 5 9 5c-2.5 0-5 2.5-5 6 0 3.866 2.239 7 5 7 1.5 0 2.5-.5 2.5-.5" />
+    <path d="M12 4v14" />
+    <path d="M15 9s-1 1-1.5 3c-.5 2 .5 3 1.5 3" />
+    <path d="M9 9s1 1 1.5 3c.5 2-.5 3-1.5 3" />
+    <path d="M16 11c0 1-1 2-2 2h-4c-1 0-2-1-2-2" stroke="currentColor" fill="none" />
+  </svg>
+);
+
+// Interactive Floating Icon Component
+const InteractiveFloatingIcon = ({ Icon, isHalloween, index }: { Icon: any, isHalloween: boolean, index: number }) => {
+    const [vanished, setVanished] = useState(false);
+    const [style, setStyle] = useState<React.CSSProperties>({});
+    
+    // Generate random position only on mount
+    useEffect(() => {
+        setStyle({
+            left: `${Math.random() * 90 + 5}%`,
+            top: `${Math.random() * 80 + 10}%`,
+            width: isHalloween ? `${Math.random() * 50 + 25}px` : `${Math.random() * 40 + 15}px`,
+            height: isHalloween ? `${Math.random() * 50 + 25}px` : `${Math.random() * 40 + 15}px`,
+            animationDuration: isHalloween ? `${Math.random() * 8 + 12}s` : `${Math.random() * 15 + 10}s`,
+            animationDelay: `${Math.random() * 10}s`
+        });
+    }, [isHalloween]);
+
+    if (!style.left) return null;
+
+    return (
+        <div 
+            className="absolute z-10"
+            style={{ left: style.left, top: style.top }}
+        >
+             <div 
+                className={cn(
+                    "transition-all duration-500 ease-out transform", 
+                    vanished ? "opacity-0 scale-0 blur-xl pointer-events-none" : "opacity-100 scale-100"
+                )}
+             >
+                <div 
+                    className={cn(
+                        "pointer-events-auto cursor-crosshair p-12 -m-12", // Large hit area
+                        isHalloween ? "animate-ghost-wander" : "animate-float"
+                    )}
+                    style={{ 
+                        width: style.width, 
+                        height: style.height,
+                        animationDuration: style.animationDuration,
+                        animationDelay: style.animationDelay
+                    }}
+                    onMouseEnter={() => setVanished(true)}
+                >
+                    <Icon 
+                        className={cn(
+                            "w-full h-full",
+                            isHalloween
+                                ? cn(
+                                    index % 3 === 0 ? "text-orange-500/20 fill-orange-500/10" : 
+                                    index % 3 === 1 ? "text-white/20 fill-white/10" :           
+                                    "text-red-500/20 fill-red-500/5"                        
+                                  ) 
+                                : cn(
+                                    (index % 2 === 0 ? "text-rose-400/20 fill-rose-400/10" : "text-primary/20 stroke-rose-300/30")
+                                )
+                        )}
+                    />
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// Interactive Eye Component
+const InteractiveEye = () => {
+    const [closed, setClosed] = useState(false);
+    const [style, setStyle] = useState<React.CSSProperties>({});
+
+    useEffect(() => {
+        setStyle({
+            top: `${20 + Math.random() * 60}%`, 
+            left: `${10 + Math.random() * 80}%`,
+            animationDelay: `${Math.random() * 5}s`,
+            transform: `scale(${1 + Math.random()})`
+        });
+    }, []);
+
+    return (
+         <div 
+            className={cn(
+                "absolute animate-blink pointer-events-auto cursor-crosshair p-8 -m-8 transition-opacity duration-200",
+                closed ? "opacity-0 pointer-events-none" : "opacity-100"
+            )}
+            style={style}
+            onMouseEnter={() => setClosed(true)}
+         >
+             <div className="flex gap-4 pointer-events-none">
+                 <div className="w-3 h-3 md:w-4 md:h-4 rounded-full bg-red-600 shadow-[0_0_15px_rgba(255,0,0,0.8)]" />
+                 <div className="w-3 h-3 md:w-4 md:h-4 rounded-full bg-red-600 shadow-[0_0_15px_rgba(255,0,0,0.8)]" />
+             </div>
+         </div>
+    );
+};
 import { ProductService } from '@/services/product.service';
 import { CatalogItem } from '@/shared/types/catalog';
 import { ProductGrid } from '@/features/catalog/components/ProductGrid';
 import { THEME_CONFIG } from '@/config/themes';
 import { cn } from '@/lib/utils';
-import { ValentinesBenefits } from './BenefitCards';
+import { ValentinesBenefits, MothersDayBenefits, HalloweenBenefits } from './BenefitCards';
 import { CountdownTimer } from './CountdownTimer';
 
 interface SeasonalLandingProps {
@@ -26,21 +143,63 @@ export default function SeasonalLanding({ config }: SeasonalLandingProps) {
   const themeStyles = THEME_CONFIG[config.themeId] || THEME_CONFIG.standard;
 
   // Specific check for Valentine's to enable special features
-  const isValentines = config.id === 'valentines';
+  const isValentines = config.id === 'san-valentin' || config.id === 'valentines'; // Handle both for safety
+  const isMothersDay = config.id === 'dia-de-la-madre' || config.id === 'mothers-day';
+  const isHalloween = config.id === 'halloween';
   
   useEffect(() => {
     setMounted(true);
   }, []);
   
-  // Set deadline for Feb 14th of current year (or next if passed)
+  // Set deadline based on theme
   const getDeadline = () => {
     const now = new Date();
     let year = now.getFullYear();
-    const deadline = new Date(year, 1, 14); // Month is 0-indexed, so 1 is Feb
-    if (now > deadline) {
-      deadline.setFullYear(year + 1);
+    
+    if (isValentines) {
+      const deadline = new Date(year, 1, 14); // Feb 14
+      if (now > deadline) deadline.setFullYear(year + 1);
+      return deadline;
     }
-    return deadline;
+    
+    if (isMothersDay) {
+      // Mother's Day: 2nd Sunday of May
+      // Month is 4 (May is 5th month, index 4)
+      const getMothersDay = (y: number) => {
+        const d = new Date(y, 4, 1);
+        // Find first Sunday
+        while (d.getDay() !== 0) {
+          d.setDate(d.getDate() + 1);
+        }
+        // Add 7 days to get 2nd Sunday
+        d.setDate(d.getDate() + 7);
+        // Set end of day
+        d.setHours(23, 59, 59, 999);
+        return d;
+      };
+
+      let deadline = getMothersDay(year);
+      if (now > deadline) {
+        deadline = getMothersDay(year + 1);
+      }
+      return deadline;
+    }
+
+    if (isHalloween) {
+      const deadline = new Date(year, 9, 31); // Oct 31 (Month is 0-indexed)
+      if (now > deadline) deadline.setFullYear(year + 1);
+      return deadline;
+    }
+
+    // Default: end of the first date range or end of year
+    if (config.dateRanges && config.dateRanges.length > 0) {
+      const range = config.dateRanges[0];
+      const deadline = new Date(year, range.end.month - 1, range.end.day);
+      if (now > deadline) deadline.setFullYear(year + 1);
+      return deadline;
+    }
+    
+    return new Date(year, 11, 31); // Fallback to NYE
   };
 
   useEffect(() => {
@@ -70,46 +229,76 @@ export default function SeasonalLanding({ config }: SeasonalLandingProps) {
     <div className="min-h-screen bg-background overflow-x-hidden" data-theme={config.themeId}>
       
       {/* 1. HERO SECTION */}
-      <section className="relative min-h-screen supports-[min-height:100dvh]:min-h-[100dvh] flex items-center justify-center overflow-hidden bg-muted/10 py-12 lg:py-0">
+      <section className={cn(
+          "relative min-h-screen supports-[min-height:100dvh]:min-h-[100dvh] flex items-center justify-center overflow-hidden py-12 lg:py-0",
+          isHalloween ? "bg-black" : "bg-muted/10"
+      )}>
         
         {/* Dynamic Background */}
         <div className="absolute inset-0 pointer-events-none">
-            {/* Gradient Orbs - Balanced 50/50 */}
+            {/* Halloween Atmosphere: Fog & Eyes */}
+            {isHalloween && (
+                <>
+                    {/* Low Fog */}
+                    <div className="absolute bottom-0 left-0 w-[200%] h-64 bg-gradient-to-t from-orange-900/20 to-transparent animate-fog z-0 pointer-events-none blur-xl" />
+                    
+                    {/* Watching Eyes (Randomly placed with JS for variety) */}
+                    {mounted && (
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                         {[...Array(2)].map((_, i) => (
+                             <InteractiveEye key={i} />
+                         ))}
+                    </div>
+                    )}
+                </>
+            )}
+
+            {/* Gradient Orbs - Balanced 50/50 - Hidden for Halloween */}
+            {!isHalloween && (
+            <>
             <div className={cn(
-                "absolute -top-[10%] -right-[10%] w-[900px] h-[900px] rounded-full opacity-25 blur-[120px] animate-pulse-slow mix-blend-screen",
+                "absolute rounded-full opacity-25 animate-pulse-slow mix-blend-screen",
+                // Default size/pos/blur
+                "w-[900px] h-[900px] -top-[10%] -right-[10%] blur-[120px]",
+                // Valentines/Mothers Day: Responsive sizing to prevent touching on small screens
+                // Mobile: 300px, Tablet: 500px, Desktop: 800px
+                (isValentines || isMothersDay) && "w-[300px] h-[300px] md:w-[500px] md:h-[500px] lg:w-[800px] lg:h-[800px] -top-[5%] -right-[5%] blur-[60px] md:blur-[75px] lg:blur-[90px]",
                 themeStyles.previewColors[0]
             )} />
             <div className={cn(
-                "absolute -bottom-[10%] -left-[10%] w-[900px] h-[900px] rounded-full opacity-25 blur-[120px] animate-pulse-slow delay-1000 mix-blend-screen",
+                "absolute rounded-full opacity-25 mix-blend-screen",
+                "animate-pulse-slow delay-1000",
+                // Default size/pos/blur
+                "w-[900px] h-[900px] -bottom-[10%] -left-[10%] blur-[120px]",
+                // Valentines/Mothers Day: Responsive sizing
+                (isValentines || isMothersDay) && "w-[300px] h-[300px] md:w-[500px] md:h-[500px] lg:w-[800px] lg:h-[800px] -bottom-[5%] -left-[5%] blur-[60px] md:blur-[75px] lg:blur-[90px]",
                 themeStyles.previewColors[1] || themeStyles.previewColors[0]
             )} />
+            </>
+            )}
             
             {/* Grid Pattern */}
             <div className="absolute inset-0 opacity-[0.03]" 
                 style={{ backgroundImage: 'radial-gradient(circle, currentColor 1px, transparent 1px)', backgroundSize: '40px 40px' }} 
             />
 
-            {/* Floating Hearts for Valentines - Warm Pink Highlights */}
-            {mounted && isValentines && (
-                <div className="absolute inset-0 overflow-hidden">
-                    {[...Array(8)].map((_, i) => (
-                        <Heart 
-                            key={i} 
-                            className={cn(
-                                "absolute animate-float",
-                                // Warm pink (rose) for tenderness, mixed with base primary
-                                i % 2 === 0 ? "text-rose-400/20 fill-rose-400/10" : "text-primary/20 stroke-rose-300/30"
-                            )}
-                            style={{
-                                left: `${Math.random() * 100}%`,
-                                top: `${Math.random() * 100}%`,
-                                width: `${Math.random() * 40 + 15}px`, // Slightly smaller for elegance
-                                height: `${Math.random() * 40 + 15}px`,
-                                animationDuration: `${Math.random() * 15 + 10}s`, // Slower, more mysterious
-                                animationDelay: `${Math.random() * 5}s`
-                            }}
-                        />
-                    ))}
+            {/* Floating Hearts/Ghosts */}
+            {mounted && (isValentines || isMothersDay || isHalloween) && (
+                <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
+                    {[...Array(isHalloween ? 15 : 8)].map((_, i) => {
+                        // Halloween Icon Mix
+                        const halloweenIcons = [Ghost, Skull, Pumpkin];
+                        const Icon = isHalloween ? halloweenIcons[i % halloweenIcons.length] : Heart;
+                        
+                        return (
+                            <InteractiveFloatingIcon 
+                                key={i}
+                                Icon={Icon}
+                                isHalloween={isHalloween}
+                                index={i}
+                            />
+                        );
+                    })}
                 </div>
             )}
         </div>
@@ -137,15 +326,34 @@ export default function SeasonalLanding({ config }: SeasonalLandingProps) {
                 </div>
 
                 <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-background/60 backdrop-blur-md border border-rose-200/20 text-sm font-medium shadow-sm w-fit mx-auto lg:mx-0 group hover:border-rose-400/40 transition-colors">
-                    <Sparkles className="w-4 h-4 text-rose-500 animate-pulse" />
-                    <span className="bg-gradient-to-r from-primary via-rose-600 to-rose-500 bg-clip-text text-transparent font-bold">
+                    {isHalloween ? (
+                        <Skull className="w-4 h-4 text-orange-500 animate-pulse" />
+                    ) : (
+                        <Sparkles className="w-4 h-4 text-rose-500 animate-pulse" />
+                    )}
+                    <span className={cn(
+                        "bg-clip-text text-transparent font-bold",
+                        isHalloween ? "bg-gradient-to-r from-orange-500 via-red-500 to-orange-600" : "bg-gradient-to-r from-primary via-rose-600 to-rose-500"
+                    )}>
                         {config.landing.heroSubtitle || config.name}
                     </span>
                 </div>
                 
-                <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-[1.1] text-foreground">
+                <h1 className={cn(
+                    "text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-[1.1] text-foreground",
+                    isHalloween && "text-white drop-shadow-[0_0_10px_rgba(255,165,0,0.5)]"
+                )}>
                     {config.landing.heroTitle.split(' ').map((word, i) => (
-                        <span key={i} className="block">{word}</span>
+                        <span 
+                            key={i} 
+                            className={cn(
+                                "block",
+                                isHalloween && "glitch-effect"
+                            )}
+                            data-text={word}
+                        >
+                            {word}
+                        </span>
                     ))}
                 </h1>
                 
@@ -169,6 +377,7 @@ export default function SeasonalLanding({ config }: SeasonalLandingProps) {
             </div>
 
             {/* Hero Image / Visual */}
+            {!isHalloween && (
             <div className="relative animate-fade-in-up delay-200 group perspective-1000">
                 <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-4 border-background/50 transform transition-transform duration-700 hover:rotate-y-6 hover:scale-[1.02]">
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent z-10" />
@@ -184,6 +393,7 @@ export default function SeasonalLanding({ config }: SeasonalLandingProps) {
                 <div className={cn("absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-40 blur-2xl", themeStyles.previewColors[0])} />
                 <div className={cn("absolute -bottom-10 -left-10 w-40 h-40 rounded-full opacity-40 blur-2xl", themeStyles.previewColors[1] || themeStyles.previewColors[0])} />
             </div>
+            )}
         </div>
       </section>
 
@@ -197,13 +407,21 @@ export default function SeasonalLanding({ config }: SeasonalLandingProps) {
 
         <div className="container mx-auto px-4 relative z-10">
             <div className="text-center mb-16">
-                <h2 className="text-2xl md:text-3xl font-light text-rose-100/80 mb-8 tracking-wide">Tiempo restante para San Valentín</h2>
+                <h2 className="text-2xl md:text-3xl font-light text-rose-100/80 mb-8 tracking-wide">
+                    {isMothersDay ? 'Tiempo restante para el Día de la Madre' : 
+                     isValentines ? 'Tiempo restante para San Valentín' : 
+                     `Tiempo restante para ${config.name}`}
+                </h2>
                 <CountdownTimer targetDate={getDeadline()} />
             </div>
             
             <div className="mt-16">
                 {isValentines ? (
                     <ValentinesBenefits />
+                ) : isMothersDay ? (
+                    <MothersDayBenefits />
+                ) : isHalloween ? (
+                    <HalloweenBenefits />
                 ) : (
                     /* Generic fallback benefits could go here */
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
@@ -296,7 +514,7 @@ export default function SeasonalLanding({ config }: SeasonalLandingProps) {
 
             {/* The Impact */}
             <h2 className="text-3xl md:text-5xl font-light text-white/80 mb-12 tracking-tight leading-snug max-w-4xl mx-auto">
-                El regalo más <span className="font-serif italic text-rose-800 drop-shadow-[0_0_15px_rgba(225,29,72,0.35)]">original</span> que he dado.
+                El regalo más <span className="text-highlight-theme">original</span> que he dado.
             </h2>
 
             {/* The Hearts - Darker, subtle glow */}

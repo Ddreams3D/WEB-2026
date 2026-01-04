@@ -46,7 +46,7 @@ export default function ContactInfo() {
         id="contact-info"
         className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6 sm:mb-8 text-foreground"
       >
-        Información de Contacto
+        Información de <span className="text-highlight-theme">Contacto</span>
       </h2>
       <div className="space-y-8">
         <div className="grid grid-cols-1 gap-6">

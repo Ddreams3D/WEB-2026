@@ -14,7 +14,7 @@ export default function ProcessAdvantages() {
           className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-6"
         >
           Ventajas{' '}
-          <span className="text-primary">
+          <span className="text-highlight-theme">
             Competitivas
           </span>
         </h2>

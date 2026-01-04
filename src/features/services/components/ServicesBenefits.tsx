@@ -33,23 +33,23 @@ const benefits = [
 export default function ServicesBenefits() {
   return (
     <section className="mb-12 sm:mb-16 lg:mb-20" aria-labelledby="benefits">
-      <div className="text-center mb-4">
-        <span className="text-muted-foreground font-medium tracking-[0.2em] uppercase text-xs sm:text-sm">
+      <header className="text-center mb-12 sm:mb-16">
+        <span className="block text-muted-foreground font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-3">
           Excelencia & Calidad
         </span>
-      </div>
-      <h2
-        id="benefits"
-        className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center mb-4 sm:mb-6 text-foreground"
-      >
-        ¿Cómo{' '}
-        <span className="text-primary">
-          trabajamos?
-        </span>
-      </h2>
-      <p className="text-center text-muted-foreground max-w-3xl mx-auto mb-8 sm:mb-12 text-base sm:text-lg px-4">
-        Trabajamos cada proyecto de forma personalizada, cuidando el diseño, la fabricación y los acabados según el uso final de la pieza.
-      </p>
+        <h2
+          id="benefits"
+          className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-4 sm:mb-6"
+        >
+          ¿Cómo{' '}
+          <span className="text-highlight-theme">
+            trabajamos?
+          </span>
+        </h2>
+        <p className="text-muted-foreground max-w-3xl mx-auto text-base sm:text-lg px-4">
+          Trabajamos cada proyecto de forma personalizada, cuidando el diseño, la fabricación y los acabados según el uso final de la pieza.
+        </p>
+      </header>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
         {benefits.map((benefit, index) => (
           <InfoCard

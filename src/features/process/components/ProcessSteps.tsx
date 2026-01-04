@@ -80,7 +80,7 @@ export default function ProcessSteps() {
           className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-6"
         >
           Proceso de{' '}
-          <span className="text-primary">
+          <span className="text-highlight-theme">
             Trabajo
           </span>
         </h2>

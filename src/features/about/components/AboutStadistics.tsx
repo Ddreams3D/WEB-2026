@@ -68,7 +68,7 @@ export default function AboutStadistics() {
             )}`}
           >
             Transformando Ideas en{' '}
-            <span className="text-primary">
+            <span className="text-highlight-theme">
               Realidad
             </span>
           </h2>
@@ -97,10 +97,10 @@ export default function AboutStadistics() {
               suffix={stat.suffix}
               description={stat.description}
               className="bg-transparent border-none shadow-none hover:shadow-none hover:translate-y-0 p-0 sm:p-0"
-              iconClassName="w-16 h-16 text-primary mb-6"
+              iconClassName="w-16 h-16 !text-[var(--highlight-start)] mb-6"
               valueClassName={cn(
                 "text-4xl sm:text-5xl font-bold mb-3",
-                "text-primary"
+                "!text-[var(--highlight-mid)]"
               )}
               labelClassName="text-muted-foreground text-base font-medium"
             />

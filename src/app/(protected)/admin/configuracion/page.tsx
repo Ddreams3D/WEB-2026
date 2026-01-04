@@ -26,7 +26,6 @@ import {
   Calendar
 } from '@/lib/icons';
 import { AnalyticsExclusion } from '@/features/admin/components/AnalyticsExclusion';
-import SeasonalManager from '@/features/admin/components/SeasonalManager';
 import { useTheme, THEMES } from '@/contexts/ThemeContext';
 import { THEME_CONFIG } from '@/config/themes';
 import { cn } from '@/lib/utils';
@@ -246,12 +245,12 @@ export default function Settings() {
     }));
   };
 
+  // Pestañas de navegación
   const tabs = [
     { id: 'general', label: 'General y Contacto', icon: CogIcon },
     { id: 'appearance', label: 'Apariencia', icon: PaintBrushIcon },
     { id: 'store', label: 'Tienda y Pagos', icon: StoreIcon },
-    { id: 'analytics', label: 'Analytics', icon: ShieldCheckIcon },
-    { id: 'seasonal', label: 'Temas Estacionales', icon: Calendar }
+    { id: 'analytics', label: 'Analytics', icon: ShieldCheckIcon }
   ];
 
   return (
@@ -592,11 +591,6 @@ export default function Settings() {
                  </div>
                </div>
              </SettingSection>
-          )}
-          {activeTab === 'seasonal' && (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <SeasonalManager />
-            </div>
           )}
         </div>
       </div>

@@ -31,9 +31,9 @@ export default function BenefitsSection() {
           <span className="block text-muted-foreground font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-3">
             Nuestras Ventajas
           </span>
-          <h2 id="benefits-heading" className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-6">
+          <h2 id="benefits-heading" className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6 text-foreground">
             ¿Por Qué{' '}
-            <span className="text-primary">
+            <span className="text-highlight-theme">
               Elegirnos?
             </span>
           </h2>

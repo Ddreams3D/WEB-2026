@@ -12,28 +12,36 @@ const stats = [
     value: 1000,
     label: "Proyectos Completados",
     icon: Printer,
-    suffix: '+'
+    suffix: '+',
+    iconColor: 'text-[var(--highlight-start)]',
+    valueColor: 'text-[var(--highlight-mid)]'
   },
   {
     id: 2,
     value: 500,
     label: "Clientes Satisfechos",
     icon: Users,
-    suffix: '+'
+    suffix: '+',
+    iconColor: 'text-[var(--highlight-start)]',
+    valueColor: 'text-[var(--highlight-mid)]'
   },
   {
     id: 3,
     value: 4.9,
     label: "Valoración Media",
     icon: Star,
-    suffix: ''
+    suffix: '',
+    iconColor: 'text-[var(--highlight-start)]',
+    valueColor: 'text-[var(--highlight-mid)]'
   },
   {
     id: 4,
     value: 24,
     label: "Tiempo de Respuesta",
     icon: Clock,
-    suffix: 'h'
+    suffix: 'h',
+    iconColor: 'text-[var(--highlight-start)]',
+    valueColor: 'text-[var(--highlight-mid)]'
   }
 ];
 
@@ -69,10 +77,13 @@ export default function Stats() {
               isVisible={visibleItems[index]}
               animationDelay={index * 150}
               className="bg-transparent border-none shadow-none hover:shadow-none hover:translate-y-0 p-0 sm:p-0"
-              iconClassName="w-16 h-16 text-primary mb-6"
+              iconClassName={cn(
+                "w-16 h-16 mb-6",
+                stat.iconColor
+              )}
               valueClassName={cn(
                  "text-4xl sm:text-5xl font-bold mb-3",
-                 "text-primary"
+                 stat.valueColor
                )}
               labelClassName="text-muted-foreground text-base font-medium"
             />

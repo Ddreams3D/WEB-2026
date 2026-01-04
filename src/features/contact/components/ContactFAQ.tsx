@@ -82,10 +82,10 @@ function FAQStats() {
           isVisible={visibleItems[index]}
           animationDelay={index * 150}
           className="bg-transparent border-none shadow-none hover:shadow-none hover:translate-y-0 p-0 sm:p-0"
-          iconClassName="w-16 h-16 text-primary mb-6"
+          iconClassName="w-16 h-16 !text-[var(--highlight-start)] mb-6"
           valueClassName={cn(
             "text-4xl sm:text-5xl font-bold mb-3",
-            "text-primary"
+            "!text-[var(--highlight-mid)]"
           )}
           labelClassName="text-muted-foreground text-base font-medium"
         />
@@ -100,12 +100,12 @@ export default function ContactFAQ() {
   return (
     <section className="mt-12 sm:mt-16" aria-labelledby="faq">
       <div className="text-center mb-16">
-        <span className="text-muted-foreground font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-6 block">
+        <span className="block text-muted-foreground font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-3">
           Soporte & Claridad
         </span>
         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-4">
           Preguntas{' '}
-          <span className="text-primary">
+          <span className="text-highlight-theme">
             Frecuentes
           </span>
         </h2>

@@ -44,17 +44,14 @@ export default function HomePageClient({ featuredProjects }: HomePageClientProps
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <header className="text-center mb-16">
-            <span className="text-muted-foreground font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-6 block">
+            <span className="block text-muted-foreground font-medium tracking-[0.2em] uppercase text-xs sm:text-sm mb-3">
               Innovación & Detalle
             </span>
             <h2
               id="projects-heading"
               className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-6"
             >
-              Proyectos{' '}
-              <span className="text-primary">
-                Destacados
-              </span>
+              Proyectos <span className="text-highlight-theme">Destacados</span>
             </h2>
             <p className="text-sm sm:text-base text-muted-foreground max-w-3xl mx-auto">
               Explora algunos de nuestros trabajos más innovadores y creativos

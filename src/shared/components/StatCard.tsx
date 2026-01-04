@@ -70,7 +70,8 @@ export function StatCard({
     >
       <div className="flex justify-center mb-4">
         <Icon className={cn(
-          "h-10 w-10 sm:h-12 sm:w-12 text-primary group-hover:scale-110 group-hover:rotate-3 transition-all duration-300",
+          "h-10 w-10 sm:h-12 sm:w-12 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300",
+          !iconClassName?.includes('text-') && "text-primary",
           iconClassName
         )} />
       </div>
