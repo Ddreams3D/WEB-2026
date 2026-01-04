@@ -11,10 +11,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '',
     '/catalogo-impresion-3d',
     '/services',
-    '/about',
     '/contact',
-    '/privacy',
-    '/terms',
   ].map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
