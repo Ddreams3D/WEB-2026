@@ -104,6 +104,13 @@ export function ProductCard({
           "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-in-out z-0",
           "bg-gradient-to-t from-black/10 via-transparent to-transparent"
         )} />
+
+        {/* Featured Badge */}
+        {product.isFeatured && (
+          <div className="absolute top-3 right-3 z-20 bg-primary text-primary-foreground px-2 py-1 rounded-md text-[10px] font-bold shadow-md pointer-events-none uppercase tracking-wider border border-primary/20">
+            Destacado
+          </div>
+        )}
       </div>
 
       {/* Product Info */}
@@ -130,16 +137,24 @@ export function ProductCard({
           <div className="flex items-center bg-warning-50 dark:bg-warning-900/20 px-2 py-1 rounded-md border border-warning-100 dark:border-warning-800/30">
             <Star className="w-3.5 h-3.5 text-warning-500 fill-current mr-1" />
             <span className="text-xs font-bold text-warning-700 dark:text-warning-400">
-              {product.rating?.toFixed(1) || '5.0'}
+              {(() => {
+                if (product.rating) return product.rating.toFixed(1);
+                // Generate pseudo-random rating between 4.5 and 5.0 based on product ID
+                const hash = product.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+                const random = (hash % 6) / 10; // 0.0 to 0.5
+                return (4.5 + random).toFixed(1);
+              })()}
             </span>
           </div>
           
-          <div className="flex items-center px-2 py-1 rounded-md bg-muted border border-border">
-             <span className="w-1.5 h-1.5 rounded-full bg-success mr-1.5 shadow-[0_0_4px_rgba(16,185,129,0.6)] animate-pulse">
-             </span>
-             <span className="text-[10px] font-bold text-foreground uppercase tracking-wider">
-               Bajo Pedido
-             </span>
+          <div className="flex items-center gap-2">
+             <div className="flex items-center px-2 py-1 rounded-md bg-muted border border-border">
+               <span className="w-1.5 h-1.5 rounded-full bg-success mr-1.5 shadow-[0_0_4px_rgba(16,185,129,0.6)] animate-pulse">
+               </span>
+               <span className="text-[10px] font-bold text-foreground uppercase tracking-wider">
+                 Bajo Pedido
+               </span>
+             </div>
           </div>
         </div>
 

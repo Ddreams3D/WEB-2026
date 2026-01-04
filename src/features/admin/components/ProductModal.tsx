@@ -19,32 +19,80 @@ interface ProductModalProps {
   onSave: (data: Partial<Product | Service>) => void;
   product?: Product | Service | null;
   forcedType?: 'product' | 'service';
+  categoryCounts?: Record<string, number>;
 }
 
-const categories = [
-  'Prototipado',
-  'Arquitectura',
-  'Medicina',
-  'Arte',
-  'Educación',
-  'Decoración',
-  'Juguetes',
-  'Herramientas',
-  'Otros'
-];
+export default function ProductModal({ isOpen, onClose, onSave, product, forcedType, categoryCounts = {} }: ProductModalProps) {
+  // Category Management State
+  const [availableCategories, setAvailableCategories] = useState<string[]>([
+    'Prototipado', 'Arquitectura', 'Medicina', 'Arte', 'Educación',
+    'Decoración', 'Juguetes', 'Herramientas', 'Otros'
+  ]);
+  const [showCategoryManager, setShowCategoryManager] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState('');
 
-const materials = [
-  'PLA',
-  'PETG',
-  'ABS',
-  'TPU',
-  'Resina',
-  'WOOD',
-  'Metal',
-  'Otros'
-];
+  // Material Management State
+  const [availableMaterials, setAvailableMaterials] = useState<string[]>([
+    'PLA+', 'PLA', 'PETG', 'ABS', 'TPU', 'Resina', 'WOOD', 'Metal', 'Otros'
+  ]);
+  const [showMaterialManager, setShowMaterialManager] = useState(false);
+  const [newMaterialName, setNewMaterialName] = useState('');
 
-export default function ProductModal({ isOpen, onClose, onSave, product, forcedType }: ProductModalProps) {
+  // Cargar categorías y materiales guardados
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+        const storedCats = localStorage.getItem('catalog_categories');
+        if (storedCats) {
+            try {
+                setAvailableCategories(JSON.parse(storedCats));
+            } catch(e) { console.error(e); }
+        }
+
+        const storedMats = localStorage.getItem('catalog_materials');
+        if (storedMats) {
+            try {
+                setAvailableMaterials(JSON.parse(storedMats));
+            } catch(e) { console.error(e); }
+        }
+    }
+  }, []);
+
+  const saveCategories = (cats: string[]) => {
+      setAvailableCategories(cats);
+      localStorage.setItem('catalog_categories', JSON.stringify(cats));
+  };
+
+  const saveMaterials = (mats: string[]) => {
+      setAvailableMaterials(mats);
+      localStorage.setItem('catalog_materials', JSON.stringify(mats));
+  };
+
+  const addCategory = () => {
+      if (newCategoryName && !availableCategories.includes(newCategoryName)) {
+          saveCategories([...availableCategories, newCategoryName]);
+          setNewCategoryName('');
+      }
+  };
+
+  const addMaterial = () => {
+      if (newMaterialName && !availableMaterials.includes(newMaterialName)) {
+          saveMaterials([...availableMaterials, newMaterialName]);
+          setNewMaterialName('');
+      }
+  };
+
+  const removeCategory = (cat: string) => {
+      if (confirm(`¿Eliminar categoría "${cat}"? Si hay productos vinculados, seguirán mostrándola hasta que se editen.`)) {
+          saveCategories(availableCategories.filter(c => c !== cat));
+      }
+  };
+
+  const removeMaterial = (mat: string) => {
+      if (confirm(`¿Eliminar material "${mat}"?`)) {
+          saveMaterials(availableMaterials.filter(m => m !== mat));
+      }
+  };
+
   // Estado inicial extendido para cubrir todas las propiedades de Product y Service
   const [formData, setFormData] = useState<Partial<Product | Service>>({
     name: '',
@@ -117,7 +165,7 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
         materials: [],
         kind: initialKind
       });
-      setSelectedMaterial('');
+      setSelectedMaterial('PLA+');
     }
   }, [product, isOpen, forcedType]);
 
@@ -356,7 +404,50 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
                           <h3 className="font-medium text-sm text-neutral-900 dark:text-neutral-100 border-b pb-2 dark:border-neutral-700">Detalles del Producto</h3>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                              <div className="space-y-2">
-                                <label className="text-sm font-medium">Material Principal</label>
+                                <div className="flex items-center justify-between">
+                                    <label className="text-sm font-medium">Material Principal</label>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowMaterialManager(!showMaterialManager)}
+                                        className="text-xs text-primary hover:underline"
+                                    >
+                                        {showMaterialManager ? 'Cerrar Gestor' : 'Gestionar Materiales'}
+                                    </button>
+                                </div>
+
+                                {showMaterialManager && (
+                                    <div className="p-3 mb-2 bg-neutral-50 dark:bg-neutral-800/50 border rounded-lg space-y-3 animate-in slide-in-from-top-2">
+                                        <div className="flex gap-2">
+                                            <input
+                                                type="text"
+                                                value={newMaterialName}
+                                                onChange={(e) => setNewMaterialName(e.target.value)}
+                                                placeholder="Nuevo material..."
+                                                className="flex-1 px-3 py-1.5 text-sm border rounded bg-white dark:bg-neutral-800"
+                                                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addMaterial())}
+                                            />
+                                            <Button type="button" size="sm" onClick={addMaterial} disabled={!newMaterialName}>
+                                                <Plus className="w-4 h-4" />
+                                            </Button>
+                                        </div>
+                                        <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+                                            {availableMaterials.map(mat => (
+                                                <div key={mat} className="flex items-center gap-1 bg-white dark:bg-neutral-800 border px-2 py-1 rounded text-xs group">
+                                                    <span>{mat}</span>
+                                                    <button 
+                                                        type="button" 
+                                                        onClick={() => removeMaterial(mat)}
+                                                        className="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                        title="Eliminar"
+                                                    >
+                                                        <X className="w-3 h-3" />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
                                 <select
                                   name="selectedMaterial"
                                   value={selectedMaterial}
@@ -364,7 +455,7 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
                                   className="w-full px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg"
                                 >
                                   <option value="">Seleccionar...</option>
-                                  {materials.map(mat => (
+                                  {availableMaterials.map(mat => (
                                     <option key={mat} value={mat}>{mat}</option>
                                   ))}
                                 </select>
@@ -467,19 +558,65 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
                     <div className="p-4 bg-white dark:bg-neutral-900/50 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-sm space-y-4">
                         <h3 className="font-medium text-sm text-neutral-900 dark:text-neutral-100 border-b pb-2 dark:border-neutral-700">Organización</h3>
                         <div className="space-y-2">
+                        <div className="flex items-center justify-between">
                             <label className="text-sm font-medium">Categoría</label>
-                            <select
-                                name="categoryName"
-                                value={formData.categoryName}
-                                onChange={handleChange}
-                                className="w-full px-4 py-2 bg-white dark:bg-neutral-800 border rounded-lg"
+                            <button
+                                type="button"
+                                onClick={() => setShowCategoryManager(!showCategoryManager)}
+                                className="text-xs text-primary hover:underline"
                             >
-                                <option value="">Seleccionar...</option>
-                                {categories.map(cat => (
-                                <option key={cat} value={cat}>{cat}</option>
-                                ))}
-                            </select>
+                                {showCategoryManager ? 'Cerrar Gestor' : 'Gestionar Categorías'}
+                            </button>
                         </div>
+                        
+                        {showCategoryManager && (
+                            <div className="p-3 mb-2 bg-neutral-50 dark:bg-neutral-800/50 border rounded-lg space-y-3 animate-in slide-in-from-top-2">
+                                <div className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        value={newCategoryName}
+                                        onChange={(e) => setNewCategoryName(e.target.value)}
+                                        placeholder="Nueva categoría..."
+                                        className="flex-1 px-3 py-1.5 text-sm border rounded bg-white dark:bg-neutral-800"
+                                        onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addCategory())}
+                                    />
+                                    <Button type="button" size="sm" onClick={addCategory} disabled={!newCategoryName}>
+                                        <Plus className="w-4 h-4" />
+                                    </Button>
+                                </div>
+                                <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+                                    {availableCategories.map(cat => (
+                                        <div key={cat} className="flex items-center gap-1 bg-white dark:bg-neutral-800 border px-2 py-1 rounded text-xs group">
+                                            <span>{cat}</span>
+                                            <span className="text-neutral-400">({categoryCounts[cat] || 0})</span>
+                                            <button 
+                                                type="button" 
+                                                onClick={() => removeCategory(cat)}
+                                                className="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                title="Eliminar"
+                                            >
+                                                <X className="w-3 h-3" />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        <select
+                            name="categoryName"
+                            value={formData.categoryName}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 bg-white dark:bg-neutral-800 border rounded-lg"
+                        >
+                            <option value="">Seleccionar...</option>
+                            {availableCategories.map(cat => (
+                            <option key={cat} value={cat}>
+                                {cat} ({categoryCounts[cat] || 0})
+                            </option>
+                            ))}
+                        </select>
+                    </div>
                     </div>
                   </div>
                 </div>

@@ -113,7 +113,8 @@ export function CatalogProvider({
     // Categories
     if (filters.categoryIds && filters.categoryIds.length > 0) {
       filteredItems = filteredItems.filter(item => 
-        filters.categoryIds!.includes(item.categoryId)
+        filters.categoryIds!.includes(item.categoryId) || 
+        (item.categoryName && filters.categoryIds!.includes(item.categoryName))
       );
     }
 
@@ -136,6 +137,15 @@ export function CatalogProvider({
     // Sort
     if (filters.sortBy) {
       filteredItems = [...filteredItems].sort((a, b) => {
+        // Special handling for Featured items when sorting by 'createdAt' (Default/Newest)
+        // We pin featured items to the top ONLY for the default/newest view.
+        // For strict sorts like Price, Rating, or Name, we do NOT pin them to avoid 
+        // "fighting" with the user's explicit sorting criteria (e.g. Price Low to High).
+        if (filters.sortBy === 'createdAt') {
+           if (a.isFeatured && !b.isFeatured) return -1;
+           if (!a.isFeatured && b.isFeatured) return 1;
+        }
+
         let aValue: number | string | Date;
         let bValue: number | string | Date;
 

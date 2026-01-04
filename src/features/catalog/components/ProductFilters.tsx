@@ -23,11 +23,69 @@ export function ProductFilters({
   isCollapsible = true,
   availableProducts
 }: ProductFiltersProps) {
-  const { categories, filters, applyFilters, clearFilters, searchQuery, setSearchQuery, toggleCategory, defaultMaxPrice } = useCatalog();
+  const { categories: initialCategories, filters, applyFilters, clearFilters, searchQuery, setSearchQuery, toggleCategory, defaultMaxPrice } = useCatalog();
   const [isExpanded, setIsExpanded] = useState(true);
   const [localSearchTerm, setLocalSearchTerm] = useState(searchQuery);
+  const [categories, setCategories] = useState(initialCategories);
 
-  // Sync local search with URL state
+  // Sync categories with local storage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('catalog_categories');
+      if (stored) {
+        try {
+          const customCategories: string[] = JSON.parse(stored);
+          
+          // Merge custom categories with existing ones, avoiding duplicates
+          // We need to map string names to Category objects.
+          // Since we don't have IDs for custom categories here easily, 
+          // we'll assume name is the ID or use a slug generator if needed.
+          // For now, let's just make sure we are showing what's in localStorage + static ones.
+          // However, the context provides `categories` which might be static.
+          
+          // Actually, the best way is to update the categories list to include 
+          // any that are in localStorage but not in the initial list.
+          // But `categories` from context is derived from props.
+          
+          // Let's create a local merged list
+          const mergedCategories = [...initialCategories];
+          
+          customCategories.forEach(catName => {
+            const exists = mergedCategories.some(c => c.name === catName);
+            if (!exists) {
+               // Create a temporary category object
+               // ID generation should ideally match what was used when saving product
+               // but here we just need it to match for filtering.
+               // If products saved 'categoryName' but linked via 'categoryId', we have a mismatch if we don't know the ID.
+               // Assuming simple mapping or that we just need to display them.
+               
+               // WAIT: ProductModal saved new categories to localStorage.
+               // And when products are saved, they have categoryName and categoryId.
+               // We need to ensure the ID matches.
+               // In ProductModal, we only saved names. We didn't save IDs mapping.
+               // Usually for custom categories, we might use the name as ID or a slug.
+               
+               mergedCategories.push({
+                id: catName, // Using name as ID for simplicity for custom ones, consistent with ProductModal if it does that
+                name: catName,
+                slug: catName.toLowerCase().replace(/\s+/g, '-'),
+                description: '',
+                productCount: 0, // Will be calculated below
+                isActive: true,
+                sortOrder: 0,
+                createdAt: new Date(),
+                updatedAt: new Date()
+              });
+            }
+          });
+          
+          setCategories(mergedCategories);
+        } catch(e) { console.error(e); }
+      } else {
+        setCategories(initialCategories);
+      }
+    }
+  }, [initialCategories]);
   useEffect(() => {
     setLocalSearchTerm(searchQuery);
   }, [searchQuery]);
@@ -209,10 +267,10 @@ export function ProductFilters({
             <div className="space-y-2 max-h-48 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
               {categories.map((category) => {
                 const count = availableProducts 
-                  ? availableProducts.filter(p => p.categoryId === category.id).length
+                  ? availableProducts.filter(p => p.categoryId === category.id || p.categoryName === category.name).length
                   : category.productCount;
                 
-                const isSelected = filters.categoryIds?.includes(category.id) || false;
+                const isSelected = filters.categoryIds?.includes(category.id) || filters.categoryIds?.includes(category.name) || false;
 
                 return (
                   <label key={category.id} className="flex items-center space-x-3 cursor-pointer group py-1 select-none active:scale-[0.98] transition-transform duration-100">

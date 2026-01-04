@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { cn } from '@/lib/utils';
-import { Plus, Edit, Trash2, Search, Filter, Package } from '@/lib/icons';
+import { Plus, Edit, Trash2, Search, Filter, Package, Star } from '@/lib/icons';
 import { Loader2, RefreshCw, RotateCcw, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/ToastManager';
@@ -41,6 +41,16 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
     isLoading: false
   });
   const { showSuccess, showError } = useToast();
+
+  // Calculate category counts for ProductModal
+  const categoryCounts = React.useMemo(() => {
+    return products.reduce((acc, curr) => {
+      if (curr.kind === 'product' && curr.categoryName) {
+        acc[curr.categoryName] = (acc[curr.categoryName] || 0) + 1;
+      }
+      return acc;
+    }, {} as Record<string, number>);
+  }, [products]);
 
   const loadProducts = useCallback(async (force = false) => {
     try {
@@ -409,8 +419,15 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
                               )}
                             </div>
                             <div className="min-w-0">
-                                <div className="font-medium text-neutral-900 dark:text-neutral-100 truncate max-w-[200px]" title={product.name}>
-                                    {product.name}
+                                <div className="font-medium text-neutral-900 dark:text-neutral-100 flex items-center gap-1">
+                                    <span className="truncate max-w-[200px]" title={product.name}>
+                                        {product.name}
+                                    </span>
+                                    {product.isFeatured && (
+                                        <span title="Destacado">
+                                            <Star className="w-3 h-3 text-primary fill-primary" />
+                                        </span>
+                                    )}
                                 </div>
                                 <div className="text-xs text-neutral-500 truncate max-w-[200px]">
                                     {product.description}
@@ -570,7 +587,7 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
               </div>
 
               {mode === 'all' && (
-                <div className="absolute top-2 right-2">
+                <div className="absolute top-2 left-2">
                   <span className={`px-2 py-1 text-xs font-medium rounded-full backdrop-blur-sm ${
                     product.kind === 'service' 
                       ? 'bg-blue-100/90 text-blue-700 dark:bg-blue-900/50 dark:text-blue-200'
@@ -578,6 +595,13 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
                   }`}>
                     {product.kind === 'service' ? 'Servicio' : 'Producto'}
                   </span>
+                </div>
+              )}
+
+              {/* Featured Badge */}
+              {product.isFeatured && (
+                <div className="absolute top-2 right-2 z-20 bg-primary text-primary-foreground px-2 py-1 rounded-md text-[10px] font-bold shadow-md pointer-events-none uppercase tracking-wider border border-primary/20">
+                  Destacado
                 </div>
               )}
             </div>
@@ -624,6 +648,7 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
         onSave={handleSaveProduct}
         product={selectedProduct}
         forcedType={mode === 'service' ? 'service' : mode === 'product' ? 'product' : undefined}
+        categoryCounts={categoryCounts}
       />
     </div>
   );

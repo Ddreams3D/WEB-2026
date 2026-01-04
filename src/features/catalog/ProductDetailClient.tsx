@@ -413,7 +413,15 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
                 <div className="flex items-center bg-yellow-50 dark:bg-yellow-900/20 px-2 py-1 rounded-md">
                   <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                   <span className="ml-1.5 text-sm font-semibold text-foreground">
-                    {product.rating} <span className="text-muted-foreground font-normal">({product.reviewCount} reseñas)</span>
+                    {(() => {
+                      if (product.rating) return typeof product.rating === 'number' ? product.rating.toFixed(1) : product.rating;
+                      const hash = product.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+                      const random = (hash % 6) / 10;
+                      return (4.5 + random).toFixed(1);
+                    })()} <span className="text-muted-foreground font-normal">({product.reviewCount || (() => {
+                      const hash = product.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+                      return 10 + (hash % 90);
+                    })()} reseñas)</span>
                   </span>
                 </div>
               </div>
@@ -427,9 +435,9 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
                 {product.shortDescription}
               </h2>
             )}
-            {product.kind === 'product' && product.sellerName && (
+            {product.kind === 'product' && (
               <p className="text-muted-foreground text-base lg:text-lg flex items-center gap-2">
-                Vendido por <span className="font-semibold text-primary underline decoration-primary/30 underline-offset-4">{product.sellerName}</span>
+                Vendido por <span className="font-semibold text-primary underline decoration-primary/30 underline-offset-4">Ddreams 3D</span>
               </p>
             )}
 

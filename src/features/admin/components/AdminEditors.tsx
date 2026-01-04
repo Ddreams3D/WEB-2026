@@ -81,9 +81,9 @@ export function OptionsEditor({ options = [], onChange }: OptionsEditorProps) {
                 onChange={(e) => handleUpdateOption(optIndex, 'type', e.target.value)}
                 className="text-xs border rounded px-2 py-1 dark:bg-neutral-700"
               >
-                <option value="radio">Radio (Única)</option>
-                <option value="select">Select (Lista)</option>
-                <option value="checkbox">Checkbox (Múltiple)</option>
+                <option value="radio">Opción Única (Botones)</option>
+                <option value="select">Opción Única (Lista)</option>
+                <option value="checkbox">Opción Múltiple (Casillas)</option>
               </select>
               <label className="flex items-center gap-1 text-xs cursor-pointer select-none">
                 <input
@@ -150,10 +150,18 @@ export function OptionsEditor({ options = [], onChange }: OptionsEditorProps) {
                       <input
                         type="checkbox"
                         checked={val.hasInput}
-                        onChange={(e) => handleUpdateValue(optIndex, valIndex, 'hasInput', e.target.checked)}
+                        onChange={(e) => {
+                           const newOptions = [...options];
+                           newOptions[optIndex].values[valIndex] = {
+                             ...newOptions[optIndex].values[valIndex],
+                             hasInput: e.target.checked,
+                             inputPlaceholder: e.target.checked ? (val.inputPlaceholder || 'Especifique detalle...') : val.inputPlaceholder
+                           };
+                           onChange(newOptions);
+                        }}
                         className="rounded border-neutral-300"
                       />
-                      Con Input
+                      Con Input (Permitir texto)
                     </label>
                     {val.hasInput && (
                         <input 
