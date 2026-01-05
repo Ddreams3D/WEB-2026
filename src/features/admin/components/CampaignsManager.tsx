@@ -35,7 +35,21 @@ export default function CampaignsManager() {
       try {
         setLoading(true);
         const data = await fetchSeasonalThemesAction();
-        setThemes(data);
+        
+        // Orden personalizado solicitado: San Valentín -> Madre -> Patrias -> Halloween -> Navidad
+        const ORDER = ['san-valentin', 'dia-de-la-madre', 'fiestas-patrias', 'halloween', 'christmas'];
+        
+        const sortedData = [...data].sort((a, b) => {
+          const idxA = ORDER.indexOf(a.id);
+          const idxB = ORDER.indexOf(b.id);
+          
+          if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+          if (idxA !== -1) return -1;
+          if (idxB !== -1) return 1;
+          return 0;
+        });
+
+        setThemes(sortedData);
       } catch (error) {
         showError('Error al cargar campañas');
       } finally {
