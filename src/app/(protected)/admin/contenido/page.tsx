@@ -4,7 +4,8 @@ import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import CampaignsManager from '@/features/admin/components/CampaignsManager';
 import LandingMainManager from '@/features/admin/components/LandingMainManager';
-import { Sparkles, LayoutTemplate, CalendarRange } from 'lucide-react';
+import ServiceLandingsManager from '@/features/admin/components/ServiceLandingsManager';
+import { Sparkles, LayoutTemplate, CalendarRange, Package } from 'lucide-react';
 
 export default function ContentManagerPage() {
   return (
@@ -12,19 +13,23 @@ export default function ContentManagerPage() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight mb-2">Gestión de Contenido y Marketing</h1>
         <p className="text-muted-foreground">
-          Administra la apariencia de la página principal, campañas estacionales y anuncios.
+          Administra la apariencia de la página principal, campañas estacionales y landings de servicios.
         </p>
       </div>
 
       <Tabs defaultValue="campaigns" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2 lg:w-[400px]">
+        <TabsList className="grid w-full grid-cols-3 lg:w-[600px]">
           <TabsTrigger value="campaigns" className="flex items-center gap-2">
             <CalendarRange className="w-4 h-4" />
-            Campañas Estacionales
+            Campañas
           </TabsTrigger>
           <TabsTrigger value="landing" className="flex items-center gap-2">
             <LayoutTemplate className="w-4 h-4" />
             Landing Principal
+          </TabsTrigger>
+          <TabsTrigger value="services" className="flex items-center gap-2">
+            <Package className="w-4 h-4" />
+            Landings Servicios
           </TabsTrigger>
         </TabsList>
 
@@ -55,6 +60,12 @@ export default function ContentManagerPage() {
                </p>
             </div>
             <LandingMainManager />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="services" className="animate-in fade-in-50 slide-in-from-bottom-2 duration-300">
+          <div className="bg-card border rounded-xl p-6 shadow-sm">
+             <ServiceLandingsManager />
           </div>
         </TabsContent>
       </Tabs>

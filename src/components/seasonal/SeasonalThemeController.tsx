@@ -1,15 +1,23 @@
 'use client';
 
 import { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { useTheme } from '@/contexts/ThemeContext';
 import { resolveActiveTheme } from '@/lib/seasonal-service';
 
 export function SeasonalThemeController() {
   const { setTheme, theme } = useTheme();
+  const pathname = usePathname();
 
   useEffect(() => {
     const checkSeasonalTheme = async () => {
       try {
+        if (pathname === '/impresion-3d-arequipa') {
+          if (theme !== 'standard') {
+            setTheme('standard');
+          }
+          return;
+        }
         const activeSeasonalConfig = await resolveActiveTheme();
         
         if (activeSeasonalConfig) {

@@ -1,4 +1,4 @@
-import OrderDetailClient from '../../../../features/pedidos/OrderDetailClient';
+import OrderDetailClient from '@/features/orders/OrderDetailClient';
 
 export async function generateStaticParams() {
   // Para static export, necesitamos retornar al menos un parámetro

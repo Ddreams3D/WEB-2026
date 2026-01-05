@@ -3,163 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Search as MagnifyingGlassIcon, Plus as PlusIcon, Edit as PencilIcon, Trash2 as TrashIcon, UserCircle as UserCircleIcon, Ban as BanIcon, CheckCircle as CheckCircleIcon, ShieldCheck as ShieldCheckIcon, Users as UsersIcon } from '@/lib/icons';
-import { cn } from '@/lib/utils';
+import { ShieldCheck as ShieldCheckIcon, Users as UsersIcon } from '@/lib/icons';
 import { UserService } from '@/services/user.service';
-import { User, UserRole, UserStatus } from '@/shared/types/domain';
-import { UserAvatar } from '@/shared/components/ui/DefaultImage';
+import { User, UserStatus } from '@/shared/types/domain';
 import { useAuth } from '@/contexts/AuthContext';
 import ConfirmationModal from '@/features/admin/components/ConfirmationModal';
-
-function UserModal({ user, isOpen, onClose, onSave, defaultRole = 'user' }: {
-  user: User | null;
-  isOpen: boolean;
-  onClose: () => void;
-  onSave: (id: string, updates: Partial<User>) => Promise<void>;
-  defaultRole?: UserRole;
-}) {
-  const [formData, setFormData] = useState<{
-    username: string;
-    email: string;
-    role: UserRole;
-    status: UserStatus;
-  }>({
-    username: '',
-    email: '',
-    role: defaultRole,
-    status: 'active'
-  });
-  const [isSaving, setIsSaving] = useState(false);
-
-  useEffect(() => {
-    if (user) {
-      setFormData({
-        username: user.username || '',
-        email: user.email || '',
-        role: user.role || defaultRole,
-        status: user.status || 'active'
-      });
-    } else {
-      setFormData({
-        username: '',
-        email: '',
-        role: defaultRole,
-        status: 'active'
-      });
-    }
-  }, [user, defaultRole]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) return; // Currently only editing is supported via modal for existing users (auth handles creation)
-
-    setIsSaving(true);
-    try {
-      await onSave(user.id, {
-        role: formData.role,
-        status: formData.status
-      });
-      onClose();
-    } catch (error) {
-      console.error('Error saving user:', error);
-      alert('Error al guardar el usuario');
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-        <div className="fixed inset-0 transition-opacity bg-background/80" onClick={onClose} />
-        
-        <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-card shadow-xl rounded-2xl border border-border">
-          <h3 className="text-lg font-medium leading-6 text-foreground mb-4">
-            {user ? 'Editar Usuario' : 'Nuevo Usuario'}
-          </h3>
-          
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1">
-                Nombre de usuario
-              </label>
-              <input
-                type="text"
-                value={formData.username}
-                disabled
-                className="w-full px-3 py-2 border border-input rounded-lg bg-muted text-muted-foreground cursor-not-allowed"
-              />
-              <p className="text-xs text-muted-foreground mt-1">El nombre de usuario se gestiona desde el perfil del cliente.</p>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1">
-                Email
-              </label>
-              <input
-                type="email"
-                value={formData.email}
-                disabled
-                className="w-full px-3 py-2 border border-input rounded-lg bg-muted text-muted-foreground cursor-not-allowed"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1">
-                Rol
-              </label>
-              <select
-                value={formData.role}
-                onChange={(e) => setFormData({ ...formData, role: e.target.value as UserRole })}
-                className="w-full px-3 py-2 border border-input rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-background text-foreground"
-              >
-                <option value="user">Usuario (Cliente)</option>
-                <option value="admin">Administrador (Staff)</option>
-              </select>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1">
-                Estado
-              </label>
-              <select
-                value={formData.status}
-                onChange={(e) => setFormData({ ...formData, status: e.target.value as UserStatus })}
-                className="w-full px-3 py-2 border border-input rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-background text-foreground"
-              >
-                <option value="active">Activo</option>
-                <option value="inactive">Inactivo</option>
-                <option value="banned">Baneado</option>
-              </select>
-            </div>
-            
-            <div className="flex justify-end space-x-3 pt-4">
-              <Button
-                type="button"
-                onClick={onClose}
-                variant="ghost"
-                className="bg-muted hover:bg-muted/80 text-foreground"
-                disabled={isSaving}
-              >
-                Cancelar
-              </Button>
-              <Button
-                type="submit"
-                variant="gradient"
-                className="transform hover:scale-105"
-                disabled={isSaving}
-              >
-                {isSaving ? 'Guardando...' : 'Actualizar'}
-              </Button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  );
-}
+import { UserModal } from '@/features/admin/users/components/UserModal';
+import { UserTable } from '@/features/admin/users/components/UserTable';
+import { UserFilters } from '@/features/admin/users/components/UserFilters';
 
 export default function UsersManagement() {
   const { user: currentUser } = useAuth();
@@ -191,8 +42,6 @@ export default function UsersManagement() {
     
     setIsLoading(true);
     try {
-      // First try to seed if empty (for demo purposes if DB is clean)
-      // await UserService.seedInitialUsers();
       console.log('Fetching users...');
       const data = await UserService.getAllUsers(true);
       console.log('Users fetched:', data.length);
@@ -259,183 +108,6 @@ export default function UsersManagement() {
     setIsModalOpen(true);
   };
 
-  const getStatusColor = (status: UserStatus) => {
-    switch (status) {
-      case 'active': return 'bg-success/20 text-success';
-      case 'inactive': return 'bg-yellow-500/20 text-yellow-600';
-      case 'banned': return 'bg-destructive/20 text-destructive';
-      default: return 'bg-muted text-muted-foreground';
-    }
-  };
-
-  const getStatusLabel = (status: UserStatus) => {
-    switch (status) {
-      case 'active': return 'Activo';
-      case 'inactive': return 'Inactivo';
-      case 'banned': return 'Baneado';
-      default: return status;
-    }
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-PE', {
-      style: 'currency',
-      currency: 'PEN',
-    }).format(amount);
-  };
-
-  const renderUserTable = (role: 'user' | 'admin') => {
-    const filteredList = getFilteredUsers(role);
-
-    if (isLoading) {
-      return (
-        <div className="p-12 text-center text-muted-foreground">
-          Cargando usuarios...
-        </div>
-      );
-    }
-
-    if (filteredList.length === 0) {
-      return (
-        <div className="p-12 text-center text-muted-foreground">
-          No se encontraron {role === 'user' ? 'clientes' : 'administradores'} con los filtros actuales.
-        </div>
-      );
-    }
-
-    return (
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-muted/50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                Usuario
-              </th>
-              {role === 'admin' && (
-                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                  Rol
-                </th>
-              )}
-              {role === 'user' && (
-                <>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                    Pedidos
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                    Total Gastado
-                  </th>
-                </>
-              )}
-              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                Estado
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                Último acceso
-              </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                Acciones
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
-            {filteredList.map((user) => (
-              <tr key={user.id} className="hover:bg-muted/50 transition-colors">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="w-10 h-10 mr-3 relative shrink-0">
-                      <UserAvatar 
-                        src={user.photoURL || undefined} 
-                        alt={user.username || 'Usuario'} 
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-foreground">
-                        {user.username || 'Sin nombre'}
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {user.email}
-                      </div>
-                    </div>
-                  </div>
-                </td>
-                {role === 'admin' && (
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-secondary/20 text-secondary">
-                      Administrador
-                    </span>
-                  </td>
-                )}
-                {role === 'user' && (
-                  <>
-                    <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium text-foreground">
-                      {user.totalOrders || 0}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-foreground">
-                      {formatCurrency(user.totalSpent || 0)}
-                    </td>
-                  </>
-                )}
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(user.status)}`}>
-                    {getStatusLabel(user.status)}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
-                  {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString('es-ES') : '-'}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <div className="flex items-center justify-end space-x-2">
-                    <Button
-                      onClick={() => openModal(user)}
-                      variant="ghost"
-                      size="icon"
-                      className="hover:text-primary"
-                      title="Editar Permisos"
-                    >
-                      <PencilIcon className="w-4 h-4" />
-                    </Button>
-                    {user.status !== 'banned' ? (
-                      <Button
-                        onClick={() => handleUpdateUser(user.id, { status: 'banned' })}
-                        variant="ghost"
-                        size="icon"
-                        className="hover:text-destructive text-destructive/70"
-                        title="Banear Usuario"
-                      >
-                        <BanIcon className="w-4 h-4" />
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={() => handleUpdateUser(user.id, { status: 'active' })}
-                        variant="ghost"
-                        size="icon"
-                        className="hover:text-success text-success/70"
-                        title="Reactivar Usuario"
-                      >
-                        <CheckCircleIcon className="w-4 h-4" />
-                      </Button>
-                    )}
-                    <Button
-                      onClick={() => handleDeleteUser(user.id)}
-                      variant="ghost"
-                      size="icon"
-                      className="hover:text-destructive"
-                      title="Eliminar permanentemente"
-                    >
-                      <TrashIcon className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    );
-  };
-
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <ConfirmationModal
@@ -479,36 +151,23 @@ export default function UsersManagement() {
         </TabsList>
 
         {/* Filters and Search - Common for both tabs */}
-        <div className="bg-card rounded-xl shadow-sm border border-border p-6 mb-6">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <input
-                  type="text"
-                  placeholder="Buscar por nombre o email..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-input rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-background text-foreground"
-                />
-              </div>
-            </div>
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value as 'all' | 'active' | 'inactive' | 'banned')}
-              className="px-3 py-2 border border-input rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-background text-foreground"
-            >
-              <option value="all">Todos los estados</option>
-              <option value="active">Activos</option>
-              <option value="inactive">Inactivos</option>
-              <option value="banned">Baneados</option>
-            </select>
-          </div>
-        </div>
+        <UserFilters
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          filterStatus={filterStatus}
+          onFilterChange={setFilterStatus}
+        />
 
         <TabsContent value="customers" className="space-y-4">
           <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
-            {renderUserTable('user')}
+            <UserTable
+              users={getFilteredUsers('user')}
+              role="user"
+              isLoading={isLoading}
+              onEdit={openModal}
+              onUpdate={handleUpdateUser}
+              onDelete={handleDeleteUser}
+            />
           </div>
           <div className="text-sm text-muted-foreground">
              Mostrando {getFilteredUsers('user').length} clientes
@@ -517,7 +176,14 @@ export default function UsersManagement() {
 
         <TabsContent value="admins" className="space-y-4">
           <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
-             {renderUserTable('admin')}
+            <UserTable
+              users={getFilteredUsers('admin')}
+              role="admin"
+              isLoading={isLoading}
+              onEdit={openModal}
+              onUpdate={handleUpdateUser}
+              onDelete={handleDeleteUser}
+            />
           </div>
           <div className="text-sm text-muted-foreground">
              Mostrando {getFilteredUsers('admin').length} administradores

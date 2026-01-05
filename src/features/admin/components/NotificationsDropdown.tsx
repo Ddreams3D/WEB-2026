@@ -5,9 +5,7 @@ import { Bell, Check, Trash2, X } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { useNotifications } from '@/contexts/NotificationContext';
-import { cn } from '@/lib/utils';
-import { formatDistanceToNow } from 'date-fns';
-import { es } from 'date-fns/locale';
+import { NotificationItem } from './NotificationItem';
 
 export function NotificationsDropdown() {
   const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification } = useNotifications();
@@ -45,60 +43,12 @@ export function NotificationsDropdown() {
           ) : (
             <div className="divide-y">
               {notifications.map((notification) => (
-                <div 
-                    key={notification.id} 
-                    className={cn(
-                        "p-4 hover:bg-muted/50 transition-colors relative group",
-                        !notification.read && "bg-muted/20"
-                    )}
-                >
-                  <div className="flex gap-3">
-                    <div className={cn(
-                        "w-2 h-2 mt-2 rounded-full flex-shrink-0",
-                        !notification.read ? "bg-primary" : "bg-transparent"
-                    )} />
-                    <div className="flex-1 space-y-1">
-                      <p className={cn("text-sm font-medium leading-none", !notification.read && "font-semibold")}>
-                        {notification.title}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {notification.message}
-                      </p>
-                      <p className="text-[10px] text-muted-foreground pt-1">
-                        {formatDistanceToNow(notification.createdAt, { addSuffix: true, locale: es })}
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 bg-background/80 rounded p-1 shadow-sm border">
-                    {!notification.read && (
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-6 w-6 hover:text-primary"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                markAsRead(notification.id);
-                            }}
-                            title="Marcar como leída"
-                        >
-                            <Check className="h-3 w-3" />
-                        </Button>
-                    )}
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6 text-muted-foreground hover:text-destructive"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            deleteNotification(notification.id);
-                        }}
-                        title="Eliminar"
-                    >
-                        <Trash2 className="h-3 w-3" />
-                    </Button>
-                  </div>
-                </div>
+                <NotificationItem
+                  key={notification.id}
+                  notification={notification}
+                  onMarkAsRead={markAsRead}
+                  onDelete={deleteNotification}
+                />
               ))}
             </div>
           )}

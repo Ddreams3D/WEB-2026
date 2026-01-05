@@ -121,6 +121,9 @@ export interface StoreProduct {
   deletedAt?: Date;
 }
 
+// Alias for backward compatibility
+export type Product = StoreProduct;
+
 // ==========================================
 // 3. PORTFOLIO / GALLERY (Proyectos)
 // ==========================================

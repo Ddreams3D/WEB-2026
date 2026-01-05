@@ -117,10 +117,14 @@ export default function RootLayout({
                   document.documentElement.classList.add('dark');
                 }
                 
-                // Cargar tema inmediatamente para evitar parpadeo
+                // Cargar tema inmediatamente para evitar parpadeo (excepto en /impresion-3d-arequipa)
                 var theme = localStorage.getItem('theme');
-                if (theme) {
+                var path = (typeof location !== 'undefined' && location.pathname) || '';
+                if (theme && path !== '/impresion-3d-arequipa') {
                   document.documentElement.setAttribute('data-theme', theme);
+                } else {
+                  // Asegurar tema estándar desde el inicio en esa landing
+                  document.documentElement.setAttribute('data-theme', 'standard');
                 }
               } catch (e) {}
             })()

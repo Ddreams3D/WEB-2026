@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import CotizacionesPageClient from '@/features/cotizaciones/CotizacionesPageClient';
+import QuotesPageClient from '@/features/quotes/QuotesPageClient';
 
 export const metadata: Metadata = {
   title: 'Cotizaciones y Presupuestos 3D | Ddreams 3D',
@@ -13,5 +13,5 @@ export const metadata: Metadata = {
 };
 
 export default function CotizacionesPage() {
-  return <CotizacionesPageClient />;
+  return <QuotesPageClient />;
 }

@@ -1,16 +1,13 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { ProductImage as ProductImageComponent } from '@/shared/components/ui/DefaultImage';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Progress } from '@/components/ui/progress';
-import { Upload, X, ImageIcon, Check, RefreshCw } from '@/lib/icons';
 import { storage } from '@/lib/firebase';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { generateSlug } from '@/lib/utils';
 import { ProductImageViewType, ProductImage } from '@/shared/types';
+import { compressImage, generateSeoFilename } from '@/features/admin/utils/image-upload-utils';
+import { ImageUploadConfig } from './image-upload/ImageUploadConfig';
+import { ImageUploadDropzone } from './image-upload/ImageUploadDropzone';
+import { ImageUploadPreview } from './image-upload/ImageUploadPreview';
 
 interface ImageUploadProps {
   value?: string;
@@ -20,167 +17,6 @@ interface ImageUploadProps {
   defaultName?: string;
   existingImages?: ProductImage[];
 }
-
-const VIEW_TYPES: { value: ProductImageViewType; label: string }[] = [
-  { value: 'frontal', label: 'Frontal' },
-  { value: 'lateral', label: 'Lateral' },
-  { value: 'posterior', label: 'Posterior' },
-  { value: 'superior', label: 'Superior' },
-  { value: 'inferior', label: 'Inferior' },
-  { value: 'detalle', label: 'Detalle' },
-  { value: 'en_uso', label: 'En Uso' },
-  { value: 'empaque', label: 'Empaque' },
-  { value: 'otro', label: 'Otro' },
-];
-
-// Helper para limpiar stopwords y generar slug SEO optimizado
-const cleanAndSlugify = (text: string): string => {
-  // Lista de palabras vacías (stopwords) en español e inglés técnico común
-  const stopwords = new Set([
-    'el', 'la', 'los', 'las', 'un', 'una', 'unos', 'unas', 
-    'y', 'e', 'o', 'u', 'de', 'del', 'al', 'con', 'en', 'para', 'por', 'sin', 'sobre',
-    'img', 'image', 'imagen', 'foto', 'photo', 'dsc', 'pic', 'file', 'archivo', 'copia', 'copy',
-    'whatsapp', 'screenshot', 'captura', 'pantalla'
-  ]);
-  
-  // Remover extensión si existe
-  const lastDotIndex = text.lastIndexOf('.');
-  const textNoExt = lastDotIndex > 0 ? text.substring(0, lastDotIndex) : text;
-  
-  return textNoExt.toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Remover acentos
-    .replace(/[^a-z0-9\s-_]/g, "") // Remover caracteres especiales
-    .replace(/[\s-_]+/g, "-") // Unificar separadores
-    .split('-')
-    .filter(w => !stopwords.has(w) && w.length > 1) // Filtrar stopwords y letras sueltas
-    .join('-');
-};
-
-// Helper para generar nombre SEO inteligente
-const generateSeoFilename = (
-  productName: string | undefined, 
-  originalFile: File, 
-  viewType: ProductImageViewType, 
-  existingImages: ProductImage[]
-): string => {
-  // 1. Determinar el slug base (Nombre del producto o nombre del archivo)
-  let baseSlug = '';
-  if (productName) {
-    baseSlug = cleanAndSlugify(productName);
-  } else {
-    baseSlug = cleanAndSlugify(originalFile.name);
-  }
-
-  // Fallback si el nombre quedó vacío después de limpiar
-  if (!baseSlug) baseSlug = 'producto-ddreams3d';
-
-  // 2. Determinar sufijo según tipo de vista
-  let suffix = '';
-  
-  if (viewType !== 'otro') {
-    // Si es un tipo estándar, lo usamos
-    suffix = `-${viewType}`;
-  } else {
-    // Si es "otro", intentamos rescatar palabras clave del nombre original del archivo
-    // que no estén ya en el nombre del producto
-    const originalSlug = cleanAndSlugify(originalFile.name);
-    const productSlugParts = baseSlug.split('-');
-    
-    // Encontrar partes del nombre original que no estén en el nombre del producto
-    const extraParts = originalSlug.split('-').filter(part => !productSlugParts.includes(part));
-    
-    if (extraParts.length > 0) {
-      suffix = `-${extraParts.join('-')}`;
-    }
-  }
-
-  // 3. Manejo de duplicados/contadores
-  // Contamos cuántas imágenes de este "tipo" o con este "baseSlug" existen
-  const similarImages = existingImages.filter(img => {
-    // Si tiene el mismo viewType, es un "hermano"
-    if (img.viewType === viewType) return true;
-    return false;
-  });
-
-  const count = similarImages.length;
-  
-  // Construir nombre final
-  let finalName = `${baseSlug}${suffix}`;
-  
-  // Si ya hay imágenes de este tipo, agregamos contador
-  if (count > 0) {
-    finalName += `-${count + 1}`;
-  }
-
-  return finalName;
-};
-
-// Helper para comprimir imágenes en el cliente antes de subir
-const compressImage = async (file: File): Promise<Blob> => {
-  return new Promise((resolve, reject) => {
-    try {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = (event) => {
-        const img = document.createElement('img');
-        img.src = event.target?.result as string;
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          if (!ctx) {
-              resolve(file); // Fallback: return original if canvas fails
-              return;
-          }
-
-          // Max dimensions (Full HD is enough for web product images)
-          const MAX_WIDTH = 1200;
-          const MAX_HEIGHT = 1200;
-          let width = img.width;
-          let height = img.height;
-
-          if (width > height) {
-            if (width > MAX_WIDTH) {
-              height *= MAX_WIDTH / width;
-              width = MAX_WIDTH;
-            }
-          } else {
-            if (height > MAX_HEIGHT) {
-              width *= MAX_HEIGHT / height;
-              height = MAX_HEIGHT;
-            }
-          }
-
-          canvas.width = width;
-          canvas.height = height;
-          ctx.drawImage(img, 0, 0, width, height);
-
-          canvas.toBlob(
-            (blob) => {
-              if (blob) {
-                  resolve(blob);
-              } else {
-                  resolve(file); // Fallback
-              }
-            },
-            'image/jpeg',
-            0.85 // 85% quality (better for products)
-          );
-        };
-        img.onerror = (err) => {
-          console.warn('Image load error, using original file', err);
-          resolve(file);
-        };
-      };
-      reader.onerror = (err) => {
-        console.warn('FileReader error, using original file', err);
-        resolve(file);
-      };
-    } catch (e) {
-      console.warn('Compression error, using original file', e);
-      resolve(file);
-    }
-  });
-};
 
 export default function ImageUpload({ value, onChange, onRemove, onUploadStatusChange, defaultName, existingImages = [] }: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
@@ -192,7 +28,6 @@ export default function ImageUpload({ value, onChange, onRemove, onUploadStatusC
   const [isSuccess, setIsSuccess] = useState(false);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const filenameInputRef = useRef<HTMLInputElement>(null);
 
   // Clean up preview URL on unmount or when file changes
   useEffect(() => {
@@ -202,13 +37,6 @@ export default function ImageUpload({ value, onChange, onRemove, onUploadStatusC
       }
     };
   }, [previewUrl, value]);
-
-  // Auto-select text when input appears
-  useEffect(() => {
-    if (selectedFile && !value && filenameInputRef.current) {
-        setTimeout(() => filenameInputRef.current?.select(), 100);
-    }
-  }, [selectedFile, value]);
 
   const updateUploadingState = (state: boolean) => {
     setIsUploading(state);
@@ -238,7 +66,6 @@ export default function ImageUpload({ value, onChange, onRemove, onUploadStatusC
     setPreviewUrl(URL.createObjectURL(file));
     
     // Default to 'frontal' if it's the first image, otherwise 'otro' or maybe 'detalle'
-    // For now defaults to 'otro' to force user selection or keep it neutral
     const initialViewType: ProductImageViewType = existingImages.length === 0 ? 'frontal' : 'otro';
     setSelectedViewType(initialViewType);
 
@@ -417,80 +244,18 @@ export default function ImageUpload({ value, onChange, onRemove, onUploadStatusC
   // 1. Mostrar Preview y Formulario de Renombrado si hay archivo seleccionado pero no subido
   if (selectedFile && !value) {
     return (
-      <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-        <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3">Configuración de Imagen</h4>
-        
-        {/* View Type Selector Chips */}
-        <div className="mb-4">
-          <label className="text-xs text-gray-500 dark:text-gray-400 mb-2 block">Tipo de Vista</label>
-          <div className="flex flex-wrap gap-2">
-            {VIEW_TYPES.map((type) => (
-              <button
-                type="button"
-                key={type.value}
-                onClick={() => handleViewTypeChange(type.value)}
-                className={`px-3 py-1 text-xs rounded-full border transition-colors ${
-                  selectedViewType === type.value
-                    ? 'bg-blue-100 text-blue-700 border-blue-300 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700'
-                    : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600'
-                }`}
-              >
-                {type.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
-            Nombre del archivo (SEO)
-          </label>
-          <div className="flex">
-            <input
-              ref={filenameInputRef}
-              type="text"
-              value={fileName}
-              onChange={(e) => setFileName(e.target.value)}
-              className="flex-1 min-w-0 block w-full px-3 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm focus:ring-blue-500 focus:border-blue-500 dark:text-white"
-            />
-            <span className="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 text-sm">
-              .{selectedFile.name.split('.').pop()}
-            </span>
-          </div>
-          <p className="mt-1 text-xs text-gray-500">
-            Se usará: {fileName}.{selectedFile.name.split('.').pop()}
-          </p>
-        </div>
-
-        <div className="flex gap-2 justify-end">
-          <Button 
-            type="button"
-            variant="ghost" 
-            size="sm" 
-            onClick={handleCancelSelection}
-            disabled={isUploading}
-            className="h-8"
-          >
-            Cancelar
-          </Button>
-          <Button 
-            type="button"
-            size="sm" 
-            onClick={handleUpload}
-            disabled={isUploading || !fileName}
-            className="h-8 gap-2"
-          >
-            {isUploading ? (
-              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-            ) : isSuccess ? (
-              <Check className="w-3.5 h-3.5 text-green-500" />
-            ) : (
-              <Upload className="w-3.5 h-3.5" />
-            )}
-            {isUploading ? 'Subiendo' : isSuccess ? '¡Completado!' : 'Confirmar Subida'}
-          </Button>
-        </div>
-      </div>
+      <ImageUploadConfig
+        selectedFile={selectedFile}
+        value={value}
+        selectedViewType={selectedViewType}
+        handleViewTypeChange={handleViewTypeChange}
+        fileName={fileName}
+        setFileName={setFileName}
+        isUploading={isUploading}
+        isSuccess={isSuccess}
+        handleCancelSelection={handleCancelSelection}
+        handleUpload={handleUpload}
+      />
     );
   }
 
@@ -505,50 +270,14 @@ export default function ImageUpload({ value, onChange, onRemove, onUploadStatusC
       />
       
       {value ? (
-        <div className="relative">
-          <div className="relative w-full h-48 bg-muted rounded-lg overflow-hidden border border-border">
-            <ProductImageComponent
-              src={value}
-              alt="Product image"
-              fill
-              className="object-cover"
-            />
-            <Button
-              type="button"
-              onClick={handleRemove}
-              variant="destructive"
-              size="icon"
-              className="absolute top-2 right-2 h-8 w-8 rounded-full shadow-md hover:bg-red-600 transition-colors"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-          <Button
-            type="button"
-            onClick={handleClick}
-            disabled={isUploading}
-            variant="outline"
-            size="sm"
-            className="mt-2 w-full border-dashed border-border hover:bg-accent hover:text-accent-foreground"
-          >
-            Cambiar imagen
-          </Button>
-        </div>
+        <ImageUploadPreview
+            value={value}
+            handleRemove={handleRemove}
+            handleClick={handleClick}
+            isUploading={isUploading}
+        />
       ) : (
-        <div
-          onClick={handleClick}
-          className="relative cursor-pointer w-full h-48 border-2 border-dashed border-input rounded-lg hover:border-primary transition-all duration-200 bg-muted/10 hover:bg-muted/30 group"
-        >
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground group-hover:text-primary transition-colors">
-            <div className="p-4 bg-background rounded-full shadow-sm mb-3 group-hover:scale-110 transition-transform duration-200">
-               <ImageIcon className="h-8 w-8 opacity-70" />
-            </div>
-            <p className="text-sm font-medium">Haz clic para seleccionar imagen</p>
-            <p className="text-xs opacity-60 mt-1 text-center px-4">
-              Podrás renombrarla antes de subir (JPG/PNG, máx 10MB)
-            </p>
-          </div>
-        </div>
+        <ImageUploadDropzone handleClick={handleClick} />
       )}
     </div>
   );

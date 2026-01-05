@@ -1,4 +1,4 @@
-import QuoteDetailClient from '@/features/cotizaciones/QuoteDetailClient';
+import QuoteDetailClient from '@/features/quotes/QuoteDetailClient';
 
 // Función requerida para build estático
 export async function generateStaticParams() {

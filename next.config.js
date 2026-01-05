@@ -66,6 +66,70 @@ const nextConfig = {
   // Optimizaciones de navegación
   reactStrictMode: false,
   
+  // Configuración de redirecciones para SEO (Migración de rutas antiguas)
+  async redirects() {
+    return [
+      // 1. Redirección principal de marketplace a catálogo
+      {
+        source: '/marketplace',
+        destination: '/catalogo-impresion-3d',
+        permanent: true, // 301
+      },
+      // 2. Intentar preservar productos específicos si el slug coincide
+      {
+        source: '/marketplace/product/:slug',
+        destination: '/catalogo-impresion-3d/product/:slug',
+        permanent: true,
+      },
+      // 3. Catch-all para cualquier otra ruta huérfana bajo marketplace
+      {
+        source: '/marketplace/:path*',
+        destination: '/catalogo-impresion-3d',
+        permanent: true,
+      },
+      // 4. Otras rutas comunes legacy
+      {
+        source: '/shop',
+        destination: '/catalogo-impresion-3d',
+        permanent: true,
+      },
+      {
+        source: '/products',
+        destination: '/catalogo-impresion-3d',
+        permanent: true,
+      },
+      // 5. Redirecciones específicas de casos de estudio
+      {
+        source: '/portfolio',
+        destination: '/catalogo-impresion-3d',
+        permanent: true,
+      },
+      {
+         source: '/casos-estudio/techpro-industries',
+         destination: '/servicios/modelado-3d-personalizado', // Destino válido en ruta pública /servicios/[slug]
+         permanent: true,
+       },
+      // 6. Catch-all para casos de estudio (excepto los explícitamente ignorados o definidos arriba)
+      // Nota: Next.js evalúa en orden. Si '/casos-estudio/clinica-innovacion' no está definida, caería aquí.
+      // Pero como queremos que sea 404, NO debemos matchearla aquí.
+      // Solución: Usar regex negativo o definir primero la redirección general y excluir la específica es complejo en simple config.
+      // Mejor estrategia: Redirigir todo lo que NO sea la excepción.
+      // Sin embargo, Next.js redirects no soporta "excepto X" fácilmente sin regex complejos.
+      // Estrategia purista: Definir el catch-all pero sabiendo que la excepción del 404 se maneja implícitamente al NO definirla
+      // PERO, si ponemos catch-all, se comerá al 404.
+      // Solución técnica: No podemos forzar un 404 desde next.config.js redirects (solo redirects/rewrites).
+      // Si la URL '/casos-estudio/clinica-innovacion' llega al servidor y no hay página, dará 404 nativo.
+      // El problema es que el catch-all de abajo la redirigiría.
+      // Truco: Usar 'has' o regex para excluir, o simplemente no usar catch-all ciego si hay excepciones 404.
+      // Dado el requisito "Resto -> redirigir", asumimos que la excepción es única.
+      {
+        source: '/casos-estudio/:slug((?!clinica-innovacion$).*)', // Regex para excluir 'clinica-innovacion'
+        destination: '/services',
+        permanent: true,
+      },
+    ];
+  },
+
   // Webpack optimizations
   webpack: (config, { dev, isServer }) => {
     if (!dev && !isServer) {

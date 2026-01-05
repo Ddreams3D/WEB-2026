@@ -3,12 +3,13 @@ import HomePageClient from '@/features/home/HomePageClient';
 import { getCachedFeaturedProjects } from '@/services/data-access.server';
 import { PHONE_BUSINESS, PHONE_DISPLAY, ADDRESS_BUSINESS, SCHEDULE_BUSINESS } from '@/shared/constants/contactInfo';
 import { JsonLd } from '@/components/seo/JsonLd';
+import { generateSeoMetadata } from '@/services/seo.service';
 
 // Revalidate every hour to check for seasonal changes automatically
 // Note: Data Cache handles projects, this is for the page shell/seasonal theme
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
+const defaultMetadata: Metadata = {
   title: {
     absolute: 'Ddreams 3D | Estudio de Diseño e Impresión 3D en Arequipa',
   },
@@ -46,6 +47,10 @@ export const metadata: Metadata = {
     },
   },
 };
+
+export async function generateMetadata(): Promise<Metadata> {
+  return generateSeoMetadata('/', defaultMetadata);
+}
 
 export default async function HomePage() {
   // Parallel fetching for performance

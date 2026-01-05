@@ -17,7 +17,8 @@ import {
   Calendar,
   Briefcase,
   FolderOpen,
-  Sparkles
+  Sparkles,
+  LayoutTemplate
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';

@@ -1,68 +1,17 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
-  GoogleAuthProvider, 
-  signInWithPopup, 
-  signInWithRedirect,
-  signInWithEmailAndPassword,
-  signOut, 
   onAuthStateChanged, 
-  createUserWithEmailAndPassword,
-  getAdditionalUserInfo,
   setPersistence,
   browserLocalPersistence
 } from 'firebase/auth';
-import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { auth, db } from '@/lib/firebase';
+import { auth } from '@/lib/firebase';
 import { useToast } from '@/components/ui/ToastManager';
 import { isSuperAdmin } from '@/config/roles';
-
-interface User {
-  id: string;
-  username: string;
-  email: string;
-  photoURL?: string;
-  role?: string;
-  // Campos extendidos de perfil
-  name?: string;
-  phone?: string;
-  address?: string; // Dirección principal (legacy)
-  addresses?: Address[]; // Lista de direcciones
-  favorites?: string[]; // Lista de IDs de productos favoritos
-  birthDate?: string;
-  notificationPreferences?: {
-    email: boolean;
-    push: boolean;
-    marketing: boolean;
-  };
-}
-
-export interface Address {
-  id: string;
-  label: string; // "Casa", "Trabajo", etc.
-  recipientName: string;
-  street: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  country: string;
-  phone: string;
-  isDefault: boolean;
-}
-
-interface AuthContextType {
-  user: User | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  login: (username: string, password: string) => Promise<boolean>;
-  register: (email: string, password: string) => Promise<boolean>;
-  loginWithGoogle: () => Promise<{ success: boolean; isNewUser: boolean }>;
-  logout: () => void;
-  checkAuth: () => boolean;
-  updateUser: (data: Partial<User>) => Promise<boolean>;
-}
+import { User, AuthContextType } from '@/features/auth/types/auth.types';
+import { AuthService } from '@/features/auth/services/auth.service';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -76,7 +25,7 @@ const MOCK_CREDENTIALS = [
       username: 'Admin User',
       email: 'admin@ddreams3d.com',
       role: 'admin'
-    }
+    } as User
   }
 ];
 
@@ -113,7 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const checkStoredAuth = React.useCallback(() => {
+  const checkStoredAuth = useCallback(() => {
     try {
       const storedUser = localStorage.getItem(AUTH_USER_KEY);
       const token = localStorage.getItem(AUTH_TOKEN_KEY);
@@ -146,7 +95,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  // Inicializar estado desde localStorage después del montaje para evitar errores de hidratación
+  // Inicializar estado desde localStorage después del montaje
   useEffect(() => {
     try {
       const storedUser = localStorage.getItem(AUTH_USER_KEY);
@@ -158,10 +107,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-
   // Verificar autenticación al cargar la aplicación con Firebase
   useEffect(() => {
-    // Safety timeout to prevent infinite loading
     const safetyTimeout = setTimeout(() => {
         if (isLoading) {
             console.warn('[AuthContext] Safety timeout triggered. Forcing isLoading=false');
@@ -170,7 +117,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, 5000);
 
     console.log('[AuthContext] Initializing auth check...');
-    // Si Firebase no está configurado, verificar sesión mock y salir
     if (!auth) {
       console.log('[AuthContext] No auth instance, checking stored auth');
       checkStoredAuth();
@@ -179,151 +125,71 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    // Asegurar persistencia local
     setPersistence(auth, browserLocalPersistence)
       .then(() => console.log('[AuthContext] Persistence set'))
-      .catch((firebaseError: unknown) => {
-        console.error("Error setting persistence:", firebaseError);
-      });
+      .catch((err) => console.error("Error setting persistence:", err));
 
-    // Escuchar cambios de autenticación de Firebase
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       console.log('[AuthContext] Auth state changed:', firebaseUser ? 'User logged in' : 'No user');
       clearTimeout(safetyTimeout);
       
       try {
         if (firebaseUser) {
-          // 1. Evitar sincronizaciones concurrentes (Global lock)
-          if (globalIsSyncing) {
-              console.log('[AuthContext] Sync in progress, skipping');
-              return;
-          }
+          if (globalIsSyncing) return;
           
-          // 2. Throttle global en memoria (5 segundos) para evitar rebotes rápidos
           const now = Date.now();
           if (now - globalLastSync < 5000) {
-             console.log('[AuthContext] Throttled sync');
              setIsLoading(false);
              return;
           }
 
-          // 3. Verificar si necesitamos sincronizar con Firestore (5 minutos persistente)
           const lastSyncTimeStr = localStorage.getItem('last_auth_sync');
           const lastSyncTime = lastSyncTimeStr ? parseInt(lastSyncTimeStr) : 0;
           const shouldSync = !lastSyncTime || (now - lastSyncTime > 5 * 60 * 1000);
           
-          // 4. Verificar caché local
           const storedUserJson = localStorage.getItem(AUTH_USER_KEY);
           let storedUser: User | null = null;
           try {
             if (storedUserJson) storedUser = JSON.parse(storedUserJson);
           } catch (e) { console.error(e); }
 
-          // Si tenemos usuario local, coincide el ID y no toca sincronizar, usamos caché local
           if (storedUser && storedUser.id === firebaseUser.uid && !shouldSync) {
-              console.log('[AuthContext] Using cached user');
               setUserIfChanged(storedUser);
               setIsLoading(false);
               return;
           }
 
-          // Iniciar sincronización
-          console.log('[AuthContext] Starting sync...');
           globalIsSyncing = true;
 
-          // Usuario base de Firebase
-          const userData: User = {
-            id: firebaseUser.uid,
-            username: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Usuario',
-            email: firebaseUser.email || '',
-            photoURL: firebaseUser.photoURL || '',
-            role: isSuperAdmin(firebaseUser.email) ? 'admin' : 'user'
-          };
-
-          // Sincronizar con Firestore
           try {
-            // Actualizar timestamps
             if (shouldSync) {
               globalLastSync = now;
               localStorage.setItem('last_auth_sync', now.toString());
             }
 
-            if (!db) {
-               console.warn('Firestore is not initialized, skipping user sync');
-               throw new Error('Firestore is not initialized');
-            }
-            const firestore = db;
-
-            const userRef = doc(firestore, 'users', firebaseUser.uid);
+            const userData = await AuthService.syncUserWithFirestore(firebaseUser, shouldSync);
             
-            // Leer de Firestore
-            const userSnap = await getDoc(userRef);
+            setUserIfChanged(userData);
+            localStorage.setItem(AUTH_USER_KEY, JSON.stringify(userData));
+            localStorage.setItem(AUTH_TOKEN_KEY, await firebaseUser.getIdToken());
             
-            if (!userSnap.exists()) {
-              // Crear nuevo usuario
-              const initialRole = isSuperAdmin(firebaseUser.email) ? 'admin' : 'user';
-              
-              await setDoc(userRef, {
-                ...userData,
-                createdAt: serverTimestamp(),
-                lastLogin: serverTimestamp(),
-                role: initialRole,
-                isActive: true
-              });
-              userData.role = initialRole;
+            if (userData.role === 'admin' || isSuperAdmin(userData.email)) {
+              setAdminCookie();
             } else {
-              // Usuario existente
-              const currentData = userSnap.data();
-              let userRole = currentData.role || 'user';
-              
-              // Forzar admin si corresponde
-              if (isSuperAdmin(firebaseUser.email) && userRole !== 'admin') {
-                userRole = 'admin';
-                await setDoc(userRef, { role: 'admin' }, { merge: true });
-              }
-
-              userData.role = userRole; 
-              
-              // Completar datos del perfil
-              userData.name = currentData.name || userData.username;
-              userData.phone = currentData.phone;
-              userData.address = currentData.address;
-              userData.birthDate = currentData.birthDate;
-              
-              // Actualizar lastLogin si toca sync
-              if (shouldSync) {
-                await setDoc(userRef, {
-                  lastLogin: serverTimestamp()
-                }, { merge: true });
-              }
+              removeAdminCookie();
             }
           } catch (error) {
-            console.error('Error syncing user to Firestore:', error);
-            // En caso de error de red, usar datos básicos de auth
-            showError('Conexión inestable', 'No se pudieron sincronizar todos los datos, pero puedes continuar.');
+            console.error('Error syncing user:', error);
+            showError('Conexión inestable', 'No se pudieron sincronizar todos los datos.');
           } finally {
-            console.log('[AuthContext] Sync finished');
             globalIsSyncing = false;
           }
-
-          setUserIfChanged(userData);
-          localStorage.setItem(AUTH_USER_KEY, JSON.stringify(userData));
-          localStorage.setItem(AUTH_TOKEN_KEY, await firebaseUser.getIdToken());
-          
-          // Set admin cookie if user has admin role
-          if (userData.role === 'admin' || isSuperAdmin(userData.email)) {
-            setAdminCookie();
-          } else {
-            removeAdminCookie();
-          }
         } else {
-          console.log('[AuthContext] No firebase user');
-          // No hay usuario de Firebase
+          // No user
           const token = localStorage.getItem(AUTH_TOKEN_KEY);
           if (token && token.startsWith('mock_token_')) {
             checkStoredAuth();
           } else {
-            // Logout real
             if (user) { 
               localStorage.removeItem(AUTH_TOKEN_KEY);
               localStorage.removeItem(AUTH_USER_KEY);
@@ -334,15 +200,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       } catch (globalError) {
           console.error('Critical Auth Error:', globalError);
-          // Fallback para evitar bloqueo total
           setIsLoading(false);
       }
       setIsLoading(false);
     }, (error) => {
-         // Manejador de errores del observer de Firebase
          console.error('Firebase Auth Observer Error:', error);
          setIsLoading(false);
-         // Type assertion safely since Firebase errors usually have a code property
          const firebaseError = error as { code?: string; message?: string };
          if (firebaseError.code === 'auth/network-request-failed') {
               showError('Error de red', 'Verifica tu conexión a internet.');
@@ -350,35 +213,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
      });
 
     return () => unsubscribe();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [checkStoredAuth]);
-
-
+  }, [checkStoredAuth, showError]); // Removed user from deps to avoid loop
 
   const login = async (username: string, password: string): Promise<boolean> => {
     try {
       setIsLoading(true);
       
-      // 1. Intentar Login con Firebase (Email/Password)
       if (auth) {
         try {
-          await signInWithEmailAndPassword(auth, username, password);
-          return true; // onAuthStateChanged manejará el estado
-        } catch (firebaseError: unknown) {
-          // Tipado seguro del error
-          const fbError = firebaseError as { code?: string; message?: string };
-          console.warn('[AuthContext] Firebase login failed:', fbError.code, fbError.message);
-          
-          if (fbError.code === 'auth/network-request-failed') {
-             showError('Error de conexión', 'No se pudo conectar con el servidor. Verificando acceso local...');
-             // No retornamos false aquí para permitir que intente el Mock (acceso de emergencia/legacy)
-             // pero ya le avisamos al usuario que hay un problema de red.
+          await AuthService.loginWithEmail(username, password);
+          return true;
+        } catch (firebaseError: any) {
+          console.warn('[AuthContext] Firebase login failed:', firebaseError.code, firebaseError.message);
+          if (firebaseError.code === 'auth/network-request-failed') {
+             showError('Error de conexión', 'No se pudo conectar con el servidor.');
           }
         }
       }
       
-      // 2. Intentar Mock Credentials (SOLO DESARROLLO)
-      // Esto permite trabajar offline o sin configurar Firebase en local
+      // Mock Credentials (DEV ONLY)
       if (process.env.NODE_ENV === 'development') {
         const validCredential = MOCK_CREDENTIALS.find(
           cred => (cred.username === username || cred.user.email === username) && cred.password === password
@@ -408,15 +261,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = async (email: string, password: string): Promise<boolean> => {
     try {
       setIsLoading(true);
-      if (auth) {
-        await createUserWithEmailAndPassword(auth, email, password);
-        return true;
-      }
-      return false;
-    } catch (error: unknown) {
+      await AuthService.registerWithEmail(email, password);
+      return true;
+    } catch (error: any) {
       console.error('Registration error:', error);
-      const errorMessage = error instanceof Error ? error.message : 'No se pudo crear la cuenta';
-      showError('Error de registro', errorMessage);
+      showError('Error de registro', error.message || 'No se pudo crear la cuenta');
       return false;
     } finally {
       setIsLoading(false);
@@ -425,66 +274,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginWithGoogle = async (): Promise<{ success: boolean; isNewUser: boolean }> => {
     try {
-      if (!auth) {
-        showError('Error', 'Firebase no está configurado. No se puede iniciar sesión con Google.');
-        return { success: false, isNewUser: false };
-      }
       setIsLoading(true);
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      
-      const additionalUserInfo = getAdditionalUserInfo(result);
-      const isNewUser = additionalUserInfo?.isNewUser || false;
-
-      // onAuthStateChanged manejará el resto
+      const result = await AuthService.loginWithGoogle();
       showSuccess('Bienvenido', 'Has iniciado sesión con Google correctamente');
-      return { success: true, isNewUser };
-    } catch (error: unknown) {
+      return result;
+    } catch (error: any) {
       console.error('Google login failed:', error);
       
-      const fbError = error as { code?: string; message?: string };
-      const errorMessage = error instanceof Error ? error.message : '';
-      
-      // Fallback a redirección si falla el popup por temas de entorno/red/bloqueadores
-      const isNetworkError = fbError.code === 'auth/network-request-failed';
-      const isInternalError = errorMessage.includes('INTERNAL ASSERTION FAILED');
-      const isPopupBlocked = fbError.code === 'auth/popup-blocked' || fbError.code === 'auth/popup-closed-by-user';
-      
-      // Nota: popup-closed-by-user a veces es un falso positivo de bloqueadores, 
-      // pero si es genuino (usuario cerró), el redirect también será cancelado por el usuario, 
-      // así que es seguro intentar redirect si el usuario realmente quiere loguearse.
-      // Sin embargo, para no ser intrusivos, solo forzamos redirect en errores técnicos.
-
-      if (isNetworkError || isInternalError) {
-         console.warn('Popup failed (Network/Internal), attempting redirect fallback...');
-         try {
-            if (auth) {
-               showSuccess('Redirigiendo...', 'Cambiando a modo redirección por problemas de conexión/seguridad.');
-               const redirectProvider = new GoogleAuthProvider();
-               await signInWithRedirect(auth, redirectProvider);
-               return { success: true, isNewUser: false }; // La página se recargará
-            }
-         } catch (redirectError) {
-             console.error('Redirect fallback also failed:', redirectError);
-             // Si falla el redirect, dejamos que el flujo continúe al manejo de errores abajo
-         }
-      }
-      
-      if (fbError.code === 'auth/network-request-failed') {
-              let errorMsg = 'No se pudo conectar con Google.';
-              if (navigator.onLine) {
-                errorMsg += ' Tu internet funciona, pero algo bloquea la conexión a Firebase. Revisa: 1) Desactiva bloqueadores de anuncios (AdBlock/uBlock). 2) Agrega "localhost" a Dominios Autorizados en Firebase. 3) Verifica la hora de tu PC.';
-              } else {
-                errorMsg += ' Verifica tu conexión a internet.';
-              }
-              console.warn(errorMsg);
-              showError('Error de conexión', errorMsg);
-            } else if (fbError.code === 'auth/popup-closed-by-user') {
-        // User closed popup, just ignore or show mild warning
+      if (error.code === 'auth/network-request-failed') {
+          showError('Error de conexión', 'Verifica tu conexión a internet.');
+      } else if (error.code === 'auth/popup-closed-by-user') {
         console.log('User closed Google popup');
       } else {
-        const errorMessage = error instanceof Error ? error.message : 'No se pudo iniciar sesión con Google';
-        showError('Error de inicio de sesión', errorMessage);
+        showError('Error de inicio de sesión', error.message || 'No se pudo iniciar sesión');
       }
       
       setIsLoading(false);
@@ -497,7 +299,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     try {
       setIsLoading(true);
-      // Si es un usuario legacy (mock), solo actualizamos localStorage
+      // Mock user
       if (user.id === 'admin-legacy' || user.id.startsWith('mock_')) {
         const updatedUser = { ...user, ...data };
         setUser(updatedUser);
@@ -506,17 +308,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return true;
       }
 
-      // Usuario Firebase
-      if (!db) {
-        throw new Error('Firebase no está configurado');
-      }
-      const userRef = doc(db, 'users', user.id);
-      
-      // Update in Firestore
-      await setDoc(userRef, {
-        ...data,
-        updatedAt: serverTimestamp()
-      }, { merge: true });
+      await AuthService.updateUserProfile(user.id, data);
       
       // Update local state
       const updatedUser = { ...user, ...data };
@@ -525,10 +317,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       showSuccess('Perfil actualizado', 'Tus datos se han guardado correctamente');
       return true;
-    } catch (error: unknown) {
+    } catch (error: any) {
       console.error('Error updating user:', error);
-      const errorMessage = error instanceof Error ? error.message : 'No se pudo actualizar el perfil';
-      showError('Error', errorMessage);
+      showError('Error', error.message || 'No se pudo actualizar el perfil');
       return false;
     } finally {
       setIsLoading(false);
@@ -537,9 +328,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     try {
-      if (auth) {
-        await signOut(auth);
-      }
+      await AuthService.logout();
       localStorage.removeItem(AUTH_TOKEN_KEY);
       localStorage.removeItem(AUTH_USER_KEY);
       setUser(null);

@@ -1,0 +1,62 @@
+export type ServiceLandingTheme = 'light' | 'dark' | 'system';
+
+export interface ServiceLandingSection {
+  id: string;
+  type: 'hero' | 'features' | 'gallery' | 'cta' | 'testimonials' | 'faq';
+  title?: string;
+  subtitle?: string;
+  content?: string;
+  image?: string;
+  // Flexible props for different section types without over-engineering
+  items?: Array<{
+    title: string;
+    description: string;
+    icon?: string;
+    image?: string;
+  }>;
+}
+
+export interface ServiceLandingConfig {
+  id: string;
+  slug: string; // URL path: /servicios-especiales/impresion-resina
+  name: string; // Internal name
+  isActive: boolean;
+  themeMode: ServiceLandingTheme;
+  
+  // SEO
+  metaTitle: string;
+  metaDescription: string;
+  
+  // Visual Identity
+  primaryColor?: string; // Optional override
+  heroImage?: string;
+  featuredTag?: string; // Tag to filter products
+  
+  // Content Sections (Modular approach)
+  sections: ServiceLandingSection[];
+  
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Initial state for new landings
+export const DEFAULT_SERVICE_LANDING: ServiceLandingConfig = {
+  id: '',
+  slug: '',
+  name: 'Nueva Landing',
+  isActive: false,
+  themeMode: 'system',
+  metaTitle: '',
+  metaDescription: '',
+  sections: [
+    {
+      id: 'hero-1',
+      type: 'hero',
+      title: 'Título Principal del Servicio',
+      subtitle: 'Descripción corta e impactante del servicio.',
+      content: 'Llamada a la acción principal',
+    }
+  ],
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+};
