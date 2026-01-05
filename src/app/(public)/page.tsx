@@ -1,7 +1,5 @@
 import { Metadata } from 'next';
 import HomePageClient from '@/features/home/HomePageClient';
-import SeasonalBanner from '@/features/seasonal/components/SeasonalBanner';
-import { resolveActiveTheme } from '@/lib/seasonal-service';
 import { getCachedFeaturedProjects } from '@/services/data-access.server';
 import { PHONE_BUSINESS, PHONE_DISPLAY, ADDRESS_BUSINESS, SCHEDULE_BUSINESS } from '@/shared/constants/contactInfo';
 import { JsonLd } from '@/components/seo/JsonLd';
@@ -51,14 +49,10 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   // Parallel fetching for performance
-  const [activeTheme, featuredProjects] = await Promise.all([
-    resolveActiveTheme(),
-    getCachedFeaturedProjects(6)
-  ]);
+  const featuredProjects = await getCachedFeaturedProjects(6);
 
   return (
     <>
-      {activeTheme && <SeasonalBanner config={activeTheme} />}
       <HomePageClient featuredProjects={featuredProjects} />
     </>
   );

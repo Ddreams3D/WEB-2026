@@ -97,6 +97,86 @@ export default function LandingMainManager() {
           <Input value={form.ctaLink} onChange={e => updateField('ctaLink', e.target.value)} />
         </div>
       </div>
+
+      <div className="border-t pt-6 mt-6">
+        <h3 className="text-lg font-semibold mb-4">Barra de Anuncios Superior</h3>
+        <div className="space-y-4 bg-muted/20 p-4 rounded-lg">
+          <div className="flex items-center justify-between">
+             <label className="text-sm font-medium">Habilitar Barra</label>
+             <div className="flex items-center gap-2">
+                <input 
+                  type="checkbox" 
+                  checked={form.announcement?.enabled ?? false}
+                  onChange={e => updateField('announcement', { ...form.announcement, enabled: e.target.checked })}
+                  className="h-4 w-4"
+                />
+             </div>
+          </div>
+          
+          {form.announcement?.enabled && (
+            <>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Contenido del Mensaje</label>
+                <Input 
+                  value={form.announcement?.content || ''} 
+                  onChange={e => updateField('announcement', { ...form.announcement, content: e.target.value })}
+                  placeholder="Ej: ¡Envíos gratis por compras mayores a S/100!"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                 <div className="space-y-2">
+                    <label className="text-sm font-medium">Texto del Link (Opcional)</label>
+                    <Input 
+                      value={form.announcement?.linkText || ''} 
+                      onChange={e => updateField('announcement', { ...form.announcement, linkText: e.target.value })}
+                      placeholder="Ver detalles"
+                    />
+                 </div>
+                 <div className="space-y-2">
+                    <label className="text-sm font-medium">URL del Link (Opcional)</label>
+                    <Input 
+                      value={form.announcement?.linkUrl || ''} 
+                      onChange={e => updateField('announcement', { ...form.announcement, linkUrl: e.target.value })}
+                      placeholder="/catalogo"
+                    />
+                 </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                 <div className="space-y-2">
+                    <label className="text-sm font-medium">Color de Fondo (Tailwind o Hex)</label>
+                    <Input 
+                      value={form.announcement?.bgColor || ''} 
+                      onChange={e => updateField('announcement', { ...form.announcement, bgColor: e.target.value })}
+                      placeholder="bg-primary o #ff0000"
+                    />
+                    <p className="text-xs text-muted-foreground">Dejar vacío para usar el color por defecto (Primary).</p>
+                 </div>
+                 <div className="space-y-2">
+                    <label className="text-sm font-medium">Color de Texto</label>
+                    <Input 
+                      value={form.announcement?.textColor || ''} 
+                      onChange={e => updateField('announcement', { ...form.announcement, textColor: e.target.value })}
+                      placeholder="text-white o #ffffff"
+                    />
+                 </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <input 
+                  type="checkbox" 
+                  checked={form.announcement?.closable ?? true}
+                  onChange={e => updateField('announcement', { ...form.announcement, closable: e.target.checked })}
+                  className="h-4 w-4"
+                />
+                <label className="text-sm font-medium">Permitir cerrar</label>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
       <div className="flex gap-3">
         <Button onClick={handleSave} disabled={saving}>
           {saving ? 'Guardando...' : 'Guardar'}

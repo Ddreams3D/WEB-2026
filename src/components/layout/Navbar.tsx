@@ -127,8 +127,9 @@ const Navbar: React.FC = () => {
 
   return (
     <nav
+      style={{ top: 'var(--navbar-offset, 0px)' }}
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ease-in-out border-b",
+        "fixed left-0 right-0 z-50 transition-all duration-300 ease-in-out border-b",
         isNavbarSolid
           ? "bg-background/95 backdrop-blur-md shadow-sm border-border"
           : "bg-transparent border-transparent"
