@@ -17,5 +17,6 @@ export interface LandingMainConfig {
   ctaLink: string;
   bubbleImages?: string[];
   announcement?: AnnouncementBarConfig;
+  themeMode?: 'system' | 'light' | 'dark';
 }
 

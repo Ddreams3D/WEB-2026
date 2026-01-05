@@ -16,7 +16,6 @@ import {
   Linkedin as LinkedinIcon,
   // Alias manuales para iconos importados como componentes directos
   Settings as CogIcon,
-  Paintbrush as PaintBrushIcon,
   ShieldCheck as ShieldCheckIcon,
   Check as CheckIcon,
   Bell as BellIcon,
@@ -26,8 +25,6 @@ import {
   Calendar
 } from '@/lib/icons';
 import { AnalyticsExclusion } from '@/features/admin/components/AnalyticsExclusion';
-import { useTheme, THEMES } from '@/contexts/ThemeContext';
-import { THEME_CONFIG } from '@/config/themes';
 import { cn } from '@/lib/utils';
 
 // Configuraciones por defecto
@@ -205,7 +202,6 @@ export default function Settings() {
   const [settings, setSettings] = useState(defaultSettings);
   const [activeTab, setActiveTab] = useState(searchParams?.get('tab') || 'general');
   const [saved, setSaved] = useState(false);
-  const { theme: currentTheme, setTheme } = useTheme();
 
   // Cargar configuraciones desde localStorage
   useEffect(() => {
@@ -248,7 +244,6 @@ export default function Settings() {
   // Pestañas de navegación
   const tabs = [
     { id: 'general', label: 'General y Contacto', icon: CogIcon },
-    { id: 'appearance', label: 'Apariencia', icon: PaintBrushIcon },
     { id: 'store', label: 'Tienda y Pagos', icon: StoreIcon },
     { id: 'analytics', label: 'Analytics', icon: ShieldCheckIcon }
   ];
@@ -312,7 +307,7 @@ export default function Settings() {
             <div className="space-y-6">
               <SettingSection 
                 title="Información del Negocio" 
-                icon={GlobeIcon}
+                icon={CogIcon}
                 description="Estos datos aparecerán en el pie de página y en la sección de contacto."
               >
                 <div className="space-y-6">
@@ -391,109 +386,6 @@ export default function Settings() {
                 </div>
               </SettingSection>
             </div>
-          )}
-
-          {activeTab === 'appearance' && (
-            <SettingSection 
-              title="Apariencia y Temas" 
-              icon={PaintBrushIcon}
-              description="Personaliza la identidad visual de tu tienda."
-            >
-              <div className="space-y-8">
-                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {THEMES.map((themeKey) => {
-                    const config = THEME_CONFIG[themeKey];
-                    const isActive = currentTheme === themeKey;
-                    const Icon = config.icon;
-                    // Extract the primary color class, handling hex codes if present in future or using bg- classes
-                    const primaryColorClass = config.previewColors[0] || 'bg-primary-500';
-
-                    return (
-                      <button 
-                        key={themeKey}
-                        onClick={() => setTheme(themeKey)}
-                        className={cn(
-                          "relative group rounded-xl border-2 transition-all duration-300 overflow-hidden bg-white dark:bg-neutral-800 text-left w-full flex flex-col h-full",
-                          isActive 
-                            ? "border-primary-500 shadow-xl ring-2 ring-primary-500/20 scale-[1.02]" 
-                            : "border-neutral-200 dark:border-neutral-700 hover:border-primary-300 dark:hover:border-primary-700 hover:shadow-lg"
-                        )}
-                      >
-                        {/* Mini UI Preview */}
-                        <div className="h-40 relative bg-neutral-50 dark:bg-neutral-900/50 overflow-hidden border-b border-neutral-100 dark:border-neutral-700">
-                          {/* Simulated Navbar */}
-                          <div className={cn("h-6 w-full flex items-center justify-between px-3 shadow-sm z-10 relative", primaryColorClass)}>
-                             <div className="flex items-center space-x-1.5">
-                               <div className="w-2 h-2 rounded-full bg-white/40" />
-                               <div className="w-8 h-1.5 rounded-full bg-white/30" />
-                             </div>
-                             <div className="flex space-x-1">
-                               <div className="w-4 h-1.5 rounded-full bg-white/20" />
-                               <div className="w-4 h-1.5 rounded-full bg-white/20" />
-                             </div>
-                          </div>
-
-                          {/* Simulated Hero Section */}
-                          <div className="absolute inset-0 top-6 flex flex-col items-center justify-center p-4 space-y-3">
-                             <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center text-white shadow-md transform group-hover:scale-110 transition-transform duration-500", primaryColorClass)}>
-                                <Icon className="w-6 h-6 text-white drop-shadow-sm" />
-                             </div>
-                             
-                             <div className="space-y-1.5 flex flex-col items-center w-full">
-                               <div className="w-2/3 h-2 rounded-full bg-neutral-200 dark:bg-neutral-700" />
-                               <div className="w-1/2 h-2 rounded-full bg-neutral-100 dark:bg-neutral-800" />
-                             </div>
-                             
-                             {/* Simulated CTA Button */}
-                             <div className={cn("mt-1 px-4 py-1.5 rounded-md text-[10px] text-white font-medium shadow-sm opacity-90", primaryColorClass)}>
-                               Ver catálogo
-                             </div>
-                          </div>
-                          
-                          {/* Active Badge overlay */}
-                          {isActive && (
-                            <div className="absolute top-2 right-2 z-20 bg-white dark:bg-neutral-800 text-primary-600 dark:text-primary-400 p-1.5 rounded-full shadow-md border border-primary-100 dark:border-primary-900/30">
-                              <CheckIcon className="w-4 h-4" />
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Content */}
-                        <div className="p-5 flex-1 flex flex-col">
-                          <div className="mb-2">
-                            <h3 className="text-lg font-bold text-neutral-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-                              {config.label}
-                            </h3>
-                          </div>
-                          
-                          <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-4 line-clamp-2 flex-1">
-                            {config.description}
-                          </p>
-
-                          {/* Color Palette Indicators */}
-                          <div className="flex items-center space-x-1.5 pt-4 border-t border-neutral-100 dark:border-neutral-700/50 mt-auto">
-                            <span className="text-xs text-neutral-400 mr-1">Paleta:</span>
-                            {config.previewColors.map((color, i) => (
-                              <div 
-                                key={i} 
-                                className={cn("w-4 h-4 rounded-full ring-1 ring-inset ring-black/5 dark:ring-white/10", color)}
-                                title={`Color ${i + 1}`}
-                              />
-                            ))}
-                          </div>
-                        </div>
-                        
-                        {/* Selection Indicator Bar */}
-                        <div className={cn(
-                          "h-1 w-full transition-all duration-300",
-                          isActive ? "bg-primary-500" : "bg-transparent group-hover:bg-primary-200 dark:group-hover:bg-primary-800"
-                        )} />
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            </SettingSection>
           )}
 
           {activeTab === 'store' && (

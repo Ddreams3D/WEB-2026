@@ -32,8 +32,7 @@ const navigation = [
   { name: 'Catálogo', href: '/admin/productos', icon: ShoppingBag },
   { name: 'Servicios', href: '/admin/servicios', icon: Package },
   { name: 'Proyectos', href: '/admin/projects', icon: Briefcase },
-  { name: 'Campañas', href: '/admin/campanas', icon: Sparkles },
-  { name: 'Landing Principal', href: '/admin/landing', icon: Sparkles },
+  { name: 'Marketing & Contenido', href: '/admin/contenido', icon: Sparkles },
   { name: 'Archivos Cloud', href: '/admin/storage', icon: FolderOpen },
   { name: 'Pedidos', href: '/admin/pedidos', icon: Package },
   { name: 'Usuarios', href: '/admin/usuarios', icon: Users },
@@ -161,7 +160,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       {/* Main content wrapper */}
       <div className="flex-1 flex flex-col lg:pl-72 min-h-screen transition-all duration-300">
         {/* Top Header */}
-        <header className="sticky top-0 z-20 bg-background/80 backdrop-blur-md border-b border-border shadow-sm h-16">
+        <header className="sticky top-0 z-[50] bg-background/80 backdrop-blur-md border-b border-border shadow-sm h-16">
           <div className="flex items-center justify-between h-full px-4 sm:px-6 lg:px-8">
             <div className="flex items-center gap-4">
               <button

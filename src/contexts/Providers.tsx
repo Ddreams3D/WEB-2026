@@ -10,6 +10,7 @@ import { QuoteProvider } from './QuoteContext';
 import { FavoritesProvider } from './FavoritesContext';
 import { NotificationProvider } from './NotificationContext';
 import { ToastProvider } from '../components/ui/ToastManager';
+import { SeasonalThemeController } from '@/components/seasonal/SeasonalThemeController';
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -18,6 +19,7 @@ interface ProvidersProps {
 export function Providers({ children }: ProvidersProps) {
   return (
     <ThemeProvider>
+      <SeasonalThemeController />
       <ToastProvider>
         <AuthProvider>
           <OrderTrackingProvider>

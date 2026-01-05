@@ -90,8 +90,11 @@ export default function LandingMainPageClient({
     }
   ];
 
+  // Determine theme class override
+  const themeClass = initialConfig?.themeMode === 'dark' ? 'dark' : initialConfig?.themeMode === 'light' ? 'light' : '';
+
   return (
-    <div className="min-h-screen bg-background text-foreground overflow-x-hidden selection:bg-primary/20">
+    <div className={cn("min-h-screen bg-background text-foreground overflow-x-hidden selection:bg-primary/20", themeClass)}>
       
       {/* 1. HERO SECTION (Full Screen) */}
       <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden py-12 lg:py-0 bg-gradient-to-b from-background via-muted/20 to-background">

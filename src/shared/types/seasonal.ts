@@ -1,4 +1,5 @@
 import { Theme } from '@/contexts/ThemeContext';
+import { AnnouncementBarConfig } from './landing';
 
 export interface DateRange {
   start: { month: number; day: number }; // 1-12, 1-31
@@ -15,6 +16,7 @@ export interface SeasonalThemeConfig {
   
   // Landing Page Content
   landing: {
+    themeMode?: 'system' | 'light' | 'dark';
     heroTitle: string;
     heroSubtitle?: string;
     heroDescription: string;
@@ -30,6 +32,9 @@ export interface SeasonalThemeConfig {
     featuredTitle?: string; // Title for the featured section (e.g. "Regalos de Navidad")
   };
   
+  // Announcement Bar Override for this Season
+  announcement?: AnnouncementBarConfig;
+
   // Manual override (useful for testing or forced events)
   isActive?: boolean; 
 }

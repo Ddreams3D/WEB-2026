@@ -3,8 +3,15 @@
 import React, { useEffect, useState } from 'react';
 import { SeasonalThemeConfig } from '@/shared/types/seasonal';
 import { Button, FooterLogo } from '@/components/ui';
+import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { ArrowRight, Sparkles, Heart, Gift, Ghost, Skull, Smile } from 'lucide-react';
+import { ProductService } from '@/services/product.service';
+import { CatalogItem } from '@/shared/types/catalog';
+import { ProductGrid } from '@/features/catalog/components/ProductGrid';
+import { THEME_CONFIG } from '@/config/themes';
+import { ValentinesBenefits, MothersDayBenefits, HalloweenBenefits } from './BenefitCards';
+import { CountdownTimer } from './CountdownTimer';
 
 // Custom Pumpkin Icon (using SVG) - Authentic Jack-o'-lantern with Zigzag Smile
 const Pumpkin = (props: React.SVGProps<SVGSVGElement>) => (
@@ -194,13 +201,6 @@ const SpookyEyes = () => {
          </div>
     );
 };
-import { ProductService } from '@/services/product.service';
-import { CatalogItem } from '@/shared/types/catalog';
-import { ProductGrid } from '@/features/catalog/components/ProductGrid';
-import { THEME_CONFIG } from '@/config/themes';
-import { cn } from '@/lib/utils';
-import { ValentinesBenefits, MothersDayBenefits, HalloweenBenefits } from './BenefitCards';
-import { CountdownTimer } from './CountdownTimer';
 
 interface SeasonalLandingProps {
   config: SeasonalThemeConfig;
@@ -312,8 +312,13 @@ export default function SeasonalLanding({ config }: SeasonalLandingProps) {
     loadProducts();
   }, [config.landing.featuredTag]);
 
+  // Determine theme class override
+  const themeClass = config.landing.themeMode === 'dark' ? 'dark' : config.landing.themeMode === 'light' ? 'light' : '';
+
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden" data-theme={config.themeId}>
+    <div className={cn("min-h-screen bg-background overflow-x-hidden text-foreground", themeClass)} data-theme={config.themeId}>
+      {/* Background with Theme Colors */}
+      <div className={cn("fixed inset-0 pointer-events-none transition-colors duration-700", themeStyles.previewColors[0], "opacity-[0.03] dark:opacity-[0.05]")} />
       
       {/* 1. HERO SECTION */}
       <section className={cn(
