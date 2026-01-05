@@ -338,13 +338,13 @@ export default function CampaignsManager() {
                                    <div className="flex gap-2">
                                      <Input 
                                        type="number" min="1" max="12" 
-                                       value={range.start.month}
+                                       value={range.start.month || ''}
                                        onChange={(e) => updateDateRange(theme.id, idx, 'start', 'month', parseInt(e.target.value))}
                                        className="h-8 px-2"
                                      />
                                      <Input 
                                        type="number" min="1" max="31" 
-                                       value={range.start.day}
+                                       value={range.start.day || ''}
                                        onChange={(e) => updateDateRange(theme.id, idx, 'start', 'day', parseInt(e.target.value))}
                                        className="h-8 px-2"
                                      />
@@ -355,13 +355,13 @@ export default function CampaignsManager() {
                                    <div className="flex gap-2">
                                      <Input 
                                        type="number" min="1" max="12" 
-                                       value={range.end.month}
+                                       value={range.end.month || ''}
                                        onChange={(e) => updateDateRange(theme.id, idx, 'end', 'month', parseInt(e.target.value))}
                                        className="h-8 px-2"
                                      />
                                      <Input 
                                        type="number" min="1" max="31" 
-                                       value={range.end.day}
+                                       value={range.end.day || ''}
                                        onChange={(e) => updateDateRange(theme.id, idx, 'end', 'day', parseInt(e.target.value))}
                                        className="h-8 px-2"
                                      />
