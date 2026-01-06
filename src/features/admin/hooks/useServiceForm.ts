@@ -170,8 +170,7 @@ export function useServiceForm({ service, onSave, onClose }: UseServiceFormProps
       id: `tab-${Date.now()}`,
       label: 'Nueva Pestaña',
       description: '',
-      idealFor: [],
-      conditions: [],
+      features: [],
       ctaText: 'Solicitar Cotización',
       ctaAction: 'quote'
     };

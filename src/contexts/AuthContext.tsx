@@ -213,7 +213,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
      });
 
     return () => unsubscribe();
-  }, [checkStoredAuth, showError]); // Removed user from deps to avoid loop
+  }, [checkStoredAuth, showError, isLoading, user]); // Incluye dependencias para satisfacer linter
 
   const login = async (username: string, password: string): Promise<boolean> => {
     try {

@@ -1,78 +1,68 @@
-import React from 'react';
-import { Sheet } from '@/components/ui/simple-sheet';
-import { Button } from '@/components/ui/button';
+import React, { useMemo } from 'react';
 import { SeasonalThemeConfig } from '@/shared/types/seasonal';
 import { AnnouncementBarConfig } from '@/shared/types/landing';
-import { CampaignEditorGeneral } from './CampaignEditorGeneral';
-import { CampaignEditorDates } from './CampaignEditorDates';
-import { CampaignEditorContent } from './CampaignEditorContent';
-import { CampaignEditorAnnouncement } from './CampaignEditorAnnouncement';
+import { UniversalLandingEditor } from '../universal-landing/UniversalLandingEditor';
+import { campaignToUnified, unifiedToCampaign } from '../universal-landing/adapters';
+import { UnifiedLandingData } from '../universal-landing/types';
 
 interface CampaignEditorSheetProps {
   editingId: string | null;
   themes: SeasonalThemeConfig[];
   onClose: () => void;
+  onSave: (theme?: SeasonalThemeConfig) => Promise<void>;
+  isSaving: boolean;
   updateTheme: (themeId: string, updates: Partial<SeasonalThemeConfig>) => void;
-  updateLanding: (themeId: string, updates: Partial<SeasonalThemeConfig['landing']>) => void;
-  updateAnnouncement: (themeId: string, updates: Partial<AnnouncementBarConfig>) => void;
-  updateDateRange: (themeId: string, index: number, field: 'start' | 'end', subField: 'month' | 'day', value: number) => void;
-  addDateRange: (themeId: string) => void;
-  removeDateRange: (themeId: string, index: number) => void;
+  // Legacy props - not used by UniversalEditor but kept for compatibility if needed
+  updateLanding?: (themeId: string, updates: Partial<SeasonalThemeConfig['landing']>) => void;
+  updateAnnouncement?: (themeId: string, updates: Partial<AnnouncementBarConfig>) => void;
+  updateDateRange?: (themeId: string, index: number, field: 'start' | 'end', subField: 'month' | 'day', value: number) => void;
+  addDateRange?: (themeId: string) => void;
+  removeDateRange?: (themeId: string, index: number) => void;
 }
 
 export function CampaignEditorSheet({
   editingId,
   themes,
   onClose,
-  updateTheme,
-  updateLanding,
-  updateAnnouncement,
-  updateDateRange,
-  addDateRange,
-  removeDateRange
+  onSave,
+  isSaving,
+  updateTheme
 }: CampaignEditorSheetProps) {
   const editingTheme = themes.find(t => t.id === editingId);
 
+  const initialData: UnifiedLandingData | null = useMemo(() => {
+    if (!editingTheme) return null;
+    return campaignToUnified(editingTheme);
+  }, [editingTheme]);
+
+  const handleUniversalSave = async (data: UnifiedLandingData) => {
+    if (!editingTheme) return;
+    
+    // Convert back to Campaign format
+    const updates = unifiedToCampaign(data);
+    
+    // Create the full updated theme object
+    const updatedTheme = { ...editingTheme, ...updates };
+
+    // Update local state
+    updateTheme(editingTheme.id, updates);
+    
+    // Persist to backend with the NEW theme data
+    await onSave(updatedTheme);
+    
+    // Close editor
+    onClose();
+  };
+
+  if (!editingTheme || !initialData) return null;
+
   return (
-    <Sheet 
-      isOpen={!!editingId} 
-      onClose={onClose} 
-      title={editingTheme ? `Editar: ${editingTheme.name}` : 'Editar Campaña'}
-      description={editingTheme ? `ID: ${editingTheme.id}` : ''}
-      className="sm:max-w-xl md:max-w-2xl"
-      underHeader={true}
-    >
-      {editingTheme && (
-        <div className="space-y-8 pb-8">
-          <CampaignEditorGeneral 
-            theme={editingTheme} 
-            updateTheme={updateTheme} 
-          />
-
-          <CampaignEditorDates
-            theme={editingTheme}
-            updateDateRange={updateDateRange}
-            addDateRange={addDateRange}
-            removeDateRange={removeDateRange}
-          />
-
-          <CampaignEditorContent 
-            theme={editingTheme} 
-            updateLanding={updateLanding} 
-          />
-
-          <CampaignEditorAnnouncement
-            theme={editingTheme}
-            updateAnnouncement={updateAnnouncement}
-          />
-
-          <div className="flex justify-end pt-8 border-t">
-             <Button onClick={onClose} className="min-w-[120px]">
-                Hecho
-             </Button>
-          </div>
-        </div>
-      )}
-    </Sheet>
+    <UniversalLandingEditor
+      isOpen={!!editingId}
+      onClose={onClose}
+      onSave={handleUniversalSave}
+      initialData={initialData}
+      isSaving={isSaving}
+    />
   );
 }

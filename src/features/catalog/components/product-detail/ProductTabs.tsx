@@ -54,28 +54,14 @@ export function ProductTabs({ product, activeTab, setActiveTab }: ProductTabsPro
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-primary/5 rounded-xl p-5 border border-primary/10">
+            <div className="bg-primary/5 rounded-xl p-5 border border-primary/10 md:col-span-2">
               <h3 className="font-semibold text-primary mb-3 flex items-center gap-2">
-                <Star className="w-4 h-4" /> Ideal para
+                <Star className="w-4 h-4" /> Características
               </h3>
-              <ul className="space-y-2">
-                {tab.idealFor.map((item, idx) => (
+              <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
+                {tab.features?.map((item, idx) => (
                   <li key={idx} className="flex items-start gap-2 text-sm text-primary/80">
                     <span className="mt-1.5 w-1 h-1 rounded-full bg-primary flex-shrink-0" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="bg-muted/30 rounded-xl p-5 border border-border">
-              <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-                <Check className="w-4 h-4" /> Condiciones
-              </h3>
-              <ul className="space-y-2">
-                {tab.conditions.map((item, idx) => (
-                  <li key={idx} className="flex items-start gap-2 text-sm text-muted-foreground">
-                    <span className="mt-1.5 w-1 h-1 rounded-full bg-muted-foreground/50 flex-shrink-0" />
                     {item}
                   </li>
                 ))}

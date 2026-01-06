@@ -58,7 +58,6 @@ export function adaptServiceToProduct(service: Service): Product {
     stock: 999, // Infinite stock for services
     minQuantity: 1,
     maxQuantity: 100,
-    sku: service.id, // Use ID as SKU
     options: [],
     
     // Optional fields initialized as undefined

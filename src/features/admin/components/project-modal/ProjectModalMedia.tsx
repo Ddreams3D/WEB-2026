@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { Layers, ImageIcon, Trash2 } from 'lucide-react';
 import ImageUpload from '../ImageUpload';
 import { PortfolioItem } from '@/shared/types/domain';
@@ -98,10 +99,12 @@ export const ProjectModalMedia: React.FC<ProjectModalMediaProps> = ({
                                     exit={{ opacity: 0, scale: 0.8 }}
                                     className="relative aspect-square rounded-xl overflow-hidden border bg-muted group"
                                 >
-                                    <img 
+                                    <Image 
                                         src={url} 
                                         alt={`Galería ${idx + 1}`} 
-                                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                        fill
+                                        sizes="(max-width: 768px) 50vw, 25vw"
+                                        className="object-cover transition-transform duration-300 group-hover:scale-105"
                                     />
                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                                         <Button

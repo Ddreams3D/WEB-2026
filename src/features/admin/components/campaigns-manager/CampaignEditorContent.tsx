@@ -2,8 +2,10 @@ import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Camera, ExternalLink, Sun, Moon, Monitor } from 'lucide-react';
+import { Camera, ExternalLink, Sun, Moon, Monitor, Upload, Link as LinkIcon } from 'lucide-react';
 import { SeasonalThemeConfig } from '@/shared/types/seasonal';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ImageUpload from '../ImageUpload';
 import {
   Select,
   SelectContent,
@@ -102,26 +104,101 @@ export function CampaignEditorContent({ theme, updateLanding }: CampaignEditorCo
           <div className="space-y-2">
              <Label className="flex items-center gap-2">
                <Camera className="w-4 h-4" />
-               URL de Imagen Hero
+               Imagen Hero Principal
              </Label>
-             <div className="flex gap-2">
-               <Input 
-                  value={theme.landing.heroImage || ''}
-                  onChange={(e) => updateLanding(theme.id, { heroImage: e.target.value })}
-                  className="font-mono text-xs"
-               />
-               {theme.landing.heroImage && (
-                 <a href={theme.landing.heroImage} target="_blank" rel="noreferrer" className="flex items-center justify-center p-2 bg-muted rounded-md border hover:bg-muted/80">
-                    <ExternalLink className="w-4 h-4" />
-                 </a>
-               )}
+             
+             <Tabs defaultValue="upload" className="w-full">
+               <TabsList className="grid w-full grid-cols-2">
+                 <TabsTrigger value="upload" className="flex items-center gap-2">
+                   <Upload className="w-4 h-4" />
+                   Subir Imagen
+                 </TabsTrigger>
+                 <TabsTrigger value="url" className="flex items-center gap-2">
+                   <LinkIcon className="w-4 h-4" />
+                   URL Externa
+                 </TabsTrigger>
+               </TabsList>
+               
+               <TabsContent value="upload" className="pt-4">
+                 <div className="space-y-4">
+                   <ImageUpload 
+                     value={theme.landing.heroImage}
+                     onChange={(url) => updateLanding(theme.id, { heroImage: url })}
+                     onRemove={() => updateLanding(theme.id, { heroImage: '' })}
+                     defaultName={`hero-${theme.themeId}`}
+                     storagePath={`campaigns/${theme.id}/hero-images`}
+                   />
+                   <p className="text-xs text-muted-foreground">
+                     Imagen principal que se mostrará por defecto.
+                   </p>
+                 </div>
+               </TabsContent>
+               
+               <TabsContent value="url" className="pt-4">
+                <div className="space-y-2">
+                  <Label>URL de la imagen</Label>
+                  <div className="flex gap-2">
+                    <Input 
+                       value={theme.landing.heroImage || ''}
+                       onChange={(e) => updateLanding(theme.id, { heroImage: e.target.value })}
+                       placeholder="https://ejemplo.com/imagen.jpg"
+                       className="font-mono text-xs"
+                    />
+                    {theme.landing.heroImage && (
+                      <a href={theme.landing.heroImage} target="_blank" rel="noreferrer" className="flex items-center justify-center p-2 bg-muted rounded-md border hover:bg-muted/80">
+                         <ExternalLink className="w-4 h-4" />
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
+
+          <div className="space-y-2 border-t pt-4">
+             <Label className="flex items-center gap-2">
+               <Camera className="w-4 h-4" />
+               Galería / Slider (Opcional)
+             </Label>
+             <p className="text-xs text-muted-foreground mb-4">
+                Sube múltiples imágenes para mostrar un carrusel en el Hero.
+             </p>
+
+             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+                {theme.landing.heroImages?.map((img, index) => (
+                    <div key={index} className="relative group aspect-square rounded-md overflow-hidden border bg-muted">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={img} alt={`Slide ${index + 1}`} className="w-full h-full object-cover" />
+                        <button
+                            onClick={() => {
+                                const newImages = [...(theme.landing.heroImages || [])];
+                                newImages.splice(index, 1);
+                                updateLanding(theme.id, { heroImages: newImages });
+                            }}
+                            className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                            <ExternalLink className="w-3 h-3 rotate-45" /> {/* Using as X icon */}
+                        </button>
+                    </div>
+                ))}
              </div>
-             {theme.landing.heroImage && (
-               <div className="mt-2 h-32 w-full rounded-md overflow-hidden bg-muted border">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={theme.landing.heroImage} alt="Preview" className="w-full h-full object-cover" />
-               </div>
-             )}
+
+             <div className="p-4 border rounded-lg bg-muted/30">
+                 <Label className="mb-2 block text-xs">Agregar nueva imagen al slider</Label>
+                 <ImageUpload 
+                     value=""
+                     onChange={(url) => {
+                         if (url) {
+                             updateLanding(theme.id, { 
+                                 heroImages: [...(theme.landing.heroImages || []), url] 
+                             });
+                         }
+                     }}
+                     onRemove={() => {}}
+                     defaultName={`hero-slider-${Date.now()}`}
+                     storagePath={`campaigns/${theme.id}/hero-images/slider`}
+                 />
+             </div>
           </div>
       </div>
     </div>

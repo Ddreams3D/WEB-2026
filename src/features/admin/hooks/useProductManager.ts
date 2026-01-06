@@ -20,6 +20,9 @@ export function useProductManager({ mode }: UseProductManagerProps) {
   const [isSeeding, setIsSeeding] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showDeleted, setShowDeleted] = useState(false);
+  const [filterActive, setFilterActive] = useState<'all' | 'active' | 'inactive'>('all');
+  const [sortBy, setSortBy] = useState<'recent' | 'name' | 'price' | 'category' | 'status'>('recent');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
   const [confirmation, setConfirmation] = useState({
     isOpen: false,
     title: '',
@@ -249,10 +252,33 @@ export function useProductManager({ mode }: UseProductManagerProps) {
         if (product.isDeleted) return false;
     }
 
+    if (filterActive !== 'all') {
+      const isActive = !!product.isActive;
+      if (filterActive === 'active' && !isActive) return false;
+      if (filterActive === 'inactive' && isActive) return false;
+    }
+
     return (
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.categoryName?.toLowerCase().includes(searchTerm.toLowerCase())
     );
+  }).sort((a, b) => {
+    const dir = sortDir === 'asc' ? 1 : -1;
+    switch (sortBy) {
+      case 'name':
+        return a.name.localeCompare(b.name) * dir;
+      case 'price':
+        return ((a as any).price ?? 0) > ((b as any).price ?? 0) ? dir : -dir;
+      case 'category':
+        return (a.categoryName || '').localeCompare(b.categoryName || '') * dir;
+      case 'status':
+        return (a.isActive === b.isActive ? 0 : a.isActive ? -1 : 1) * dir;
+      case 'recent':
+      default:
+        const ad = (a as any).updatedAt ? new Date((a as any).updatedAt).getTime() : 0;
+        const bd = (b as any).updatedAt ? new Date((b as any).updatedAt).getTime() : 0;
+        return (ad - bd) * dir;
+    }
   });
 
   return {
@@ -263,6 +289,9 @@ export function useProductManager({ mode }: UseProductManagerProps) {
     isModalOpen,
     viewMode,
     showDeleted,
+    filterActive,
+    sortBy,
+    sortDir,
     confirmation,
     categoryCounts,
     filteredProducts,
@@ -270,6 +299,9 @@ export function useProductManager({ mode }: UseProductManagerProps) {
     setSearchTerm,
     setViewMode,
     setShowDeleted,
+    setFilterActive,
+    setSortBy,
+    setSortDir,
     setIsModalOpen,
     setSelectedProduct,
     loadProducts,

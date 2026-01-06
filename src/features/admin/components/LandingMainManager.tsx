@@ -54,7 +54,7 @@ export default function LandingMainManager() {
                         Ver en vivo
                     </a>
                 </Button>
-                <Button onClick={handleSave} disabled={saving} className="min-w-[140px] shadow-md">
+                <Button onClick={() => handleSave()} disabled={saving} className="min-w-[140px] shadow-md">
                     {saving ? (
                         <>
                         <div className="animate-spin mr-2 h-4 w-4 border-2 border-b-transparent rounded-full" />
@@ -96,6 +96,8 @@ export default function LandingMainManager() {
             handleAddBubble={handleAddBubble}
             handleRemoveBubble={handleRemoveBubble}
             handleUpdateBubble={handleUpdateBubble}
+            onSave={handleSave}
+            isSaving={saving}
         />
     </div>
   );

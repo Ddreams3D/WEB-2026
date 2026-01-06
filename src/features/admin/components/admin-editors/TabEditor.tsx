@@ -48,52 +48,42 @@ export function TabEditor({ tab, onChange, onRemove, isOpen, onToggle }: TabEdit
 
       {isOpen && (
         <div className="p-4 space-y-6 border-t dark:border-neutral-700">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                    <label className="text-xs font-semibold uppercase text-muted-foreground">ID (Único)</label>
-                    <input
-                        type="text"
-                        value={tab.id}
-                        onChange={(e) => handleChange('id', e.target.value)}
-                        className="w-full px-3 py-2 border rounded-md dark:bg-neutral-700"
-                    />
-                </div>
-                <div className="space-y-2">
-                    <label className="text-xs font-semibold uppercase text-muted-foreground">Etiqueta</label>
-                    <input
-                        type="text"
-                        value={tab.label}
-                        onChange={(e) => handleChange('label', e.target.value)}
-                        className="w-full px-3 py-2 border rounded-md dark:bg-neutral-700"
-                    />
-                </div>
+            {/* ID Hidden for cleaner UI */}
+            
+            <div className="space-y-2">
+                <label className="text-xs font-semibold uppercase text-muted-foreground">Título de la Pestaña</label>
+                <input
+                    type="text"
+                    value={tab.label}
+                    onChange={(e) => handleChange('label', e.target.value)}
+                    placeholder="Ej. Detalles Técnicos"
+                    className="w-full px-3 py-2 border rounded-md dark:bg-neutral-700 font-medium"
+                />
             </div>
 
             <div className="space-y-2">
-                <label className="text-xs font-semibold uppercase text-muted-foreground">Descripción</label>
+                <label className="text-xs font-semibold uppercase text-muted-foreground">Contenido de Texto (Opcional)</label>
                 <textarea
                     value={tab.description}
                     onChange={(e) => handleChange('description', e.target.value)}
                     rows={3}
+                    placeholder="Descripción detallada o información adicional..."
                     className="w-full px-3 py-2 border rounded-md dark:bg-neutral-700"
                 />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                    <label className="text-xs font-semibold uppercase text-muted-foreground">Ideal Para (Lista)</label>
+                <div className="space-y-2 md:col-span-2">
+                    <label className="text-xs font-semibold uppercase text-muted-foreground flex items-center gap-2">
+                        Lista de Características
+                        <span className="text-[10px] normal-case font-normal bg-muted px-2 py-0.5 rounded text-muted-foreground">
+                            Ej: Color: Rojo, Material: PLA
+                        </span>
+                    </label>
                     <StringListEditor 
-                        items={tab.idealFor || []} 
-                        onChange={(items) => handleChange('idealFor', items)}
-                        placeholder="Ej. Principiantes"
-                    />
-                </div>
-                <div className="space-y-2">
-                    <label className="text-xs font-semibold uppercase text-muted-foreground">Condiciones (Lista)</label>
-                    <StringListEditor 
-                        items={tab.conditions || []} 
-                        onChange={(items) => handleChange('conditions', items)}
-                        placeholder="Ej. Entrega en 24h"
+                        items={tab.features || []} 
+                        onChange={(items) => handleChange('features', items)}
+                        placeholder="Escribe una característica y presiona Enter..."
                     />
                 </div>
             </div>

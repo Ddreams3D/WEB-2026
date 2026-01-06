@@ -216,7 +216,7 @@ export function PagesManager() {
                    <Search className="w-8 h-8 text-muted-foreground/50" />
                  </div>
                  <h3 className="text-lg font-medium text-foreground mb-1">No se encontraron resultados</h3>
-                 <p className="text-muted-foreground">No hay páginas que coincidan con "{searchTerm}" en ninguna categoría.</p>
+                 <p className="text-muted-foreground">No hay páginas que coincidan con &quot;{searchTerm}&quot; en ninguna categoría.</p>
                </div>
             ) : (
               <>

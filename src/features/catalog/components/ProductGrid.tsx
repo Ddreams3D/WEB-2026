@@ -87,7 +87,11 @@ export function ProductGrid({
       variants={container}
       initial="hidden"
       animate="show"
-      className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6", className)}
+      className={cn(
+        "grid gap-6",
+        viewMode === 'list' ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
+        className
+      )}
     >
       <AnimatePresence mode="popLayout">
         {products.map((item) => (

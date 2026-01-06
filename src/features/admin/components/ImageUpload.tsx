@@ -16,9 +16,10 @@ interface ImageUploadProps {
   onUploadStatusChange?: (isUploading: boolean) => void;
   defaultName?: string;
   existingImages?: ProductImage[];
+  storagePath?: string;
 }
 
-export default function ImageUpload({ value, onChange, onRemove, onUploadStatusChange, defaultName, existingImages = [] }: ImageUploadProps) {
+export default function ImageUpload({ value, onChange, onRemove, onUploadStatusChange, defaultName, existingImages = [], storagePath = 'images/catalogo' }: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -97,8 +98,9 @@ export default function ImageUpload({ value, onChange, onRemove, onUploadStatusC
       });
       
       if (storage) {
-          // FIX: Upload to 'images/catalogo' instead of root 'products'
-          const storageRef = ref(storage, `images/catalogo/${Date.now()}_${fileName}.jpg`);
+          // Use provided storagePath or default to 'images/catalogo'
+          const finalPath = storagePath.endsWith('/') ? storagePath : `${storagePath}/`;
+          const storageRef = ref(storage, `${finalPath}${Date.now()}_${fileName}.jpg`);
           
           // 2. Upload with Progress Tracking
           const uploadTask = uploadBytesResumable(storageRef, fileToUpload);
@@ -240,21 +242,33 @@ export default function ImageUpload({ value, onChange, onRemove, onUploadStatusC
     }
   };
 
-  // 1. Mostrar Preview y Formulario de Renombrado si hay archivo seleccionado pero no subido
-  if (selectedFile && !value) {
+  // 1. Mostrar Preview y Formulario de Renombrado si hay archivo seleccionado (sea nuevo o reemplazo)
+  if (selectedFile) {
     return (
-      <ImageUploadConfig
-        selectedFile={selectedFile}
-        value={value}
-        selectedViewType={selectedViewType}
-        handleViewTypeChange={handleViewTypeChange}
-        fileName={fileName}
-        setFileName={setFileName}
-        isUploading={isUploading}
-        isSuccess={isSuccess}
-        handleCancelSelection={handleCancelSelection}
-        handleUpload={handleUpload}
-      />
+      <div className="space-y-4">
+        {previewUrl && (
+           <div className="relative w-full h-48 bg-muted rounded-lg overflow-hidden border border-border">
+               {/* eslint-disable-next-line @next/next/no-img-element */}
+               <img 
+                   src={previewUrl} 
+                   alt="Preview" 
+                   className="w-full h-full object-cover"
+               />
+           </div>
+        )}
+        <ImageUploadConfig
+            selectedFile={selectedFile}
+            value={value}
+            selectedViewType={selectedViewType}
+            handleViewTypeChange={handleViewTypeChange}
+            fileName={fileName}
+            setFileName={setFileName}
+            isUploading={isUploading}
+            isSuccess={isSuccess}
+            handleCancelSelection={handleCancelSelection}
+            handleUpload={handleUpload}
+        />
+      </div>
     );
   }
 

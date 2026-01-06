@@ -237,7 +237,6 @@ DDreams 3D - Impresión 3D Personalizada
                   </div>
                   <div className="flex-1">
                     <h4 className="font-medium text-neutral-900 dark:text-white">{item.product.name}</h4>
-                    <p className="text-sm text-neutral-600 dark:text-neutral-400">SKU: {item.product.sku}</p>
                     <p className="text-sm text-neutral-600 dark:text-neutral-400">Cantidad: {item.quantity}</p>
                   </div>
                   <div className="text-right">

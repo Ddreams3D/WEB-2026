@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { Edit, Trash2, Calendar, AlertTriangle, Loader2 } from 'lucide-react';
+import { Edit, Trash2, Calendar, AlertTriangle, Loader2, Star } from 'lucide-react';
 import DefaultImage from '@/shared/components/ui/DefaultImage';
 import { PortfolioItem } from '@/shared/types/domain';
 
@@ -21,6 +21,32 @@ export function ProjectManagerGrid({
   handleDelete, 
   handleSeed 
 }: ProjectManagerGridProps) {
+  const clickTimer = useRef<number | null>(null);
+  const lastClickedId = useRef<string | null>(null);
+
+  const handleSingleClick = (project: PortfolioItem) => {
+    lastClickedId.current = project.id;
+    if (clickTimer.current) {
+      clearTimeout(clickTimer.current);
+      clickTimer.current = null;
+    }
+    clickTimer.current = window.setTimeout(() => {
+      if (lastClickedId.current === project.id) {
+        handleEdit(project);
+      }
+      lastClickedId.current = null;
+      clickTimer.current = null;
+    }, 220);
+  };
+
+  const handleDoubleClick = (project: PortfolioItem) => {
+    if (clickTimer.current) {
+      clearTimeout(clickTimer.current);
+      clickTimer.current = null;
+    }
+    lastClickedId.current = null;
+    handleDelete(project);
+  };
   
   if (loading) {
     return (
@@ -46,19 +72,21 @@ export function ProjectManagerGrid({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
       {projects.map((project) => (
         <div 
           key={project.id} 
-          className="group relative bg-card border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col"
+          className="group bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-800 hover:shadow-md transition-all duration-300 overflow-hidden relative cursor-pointer"
+          onClick={() => handleSingleClick(project)}
+          onDoubleClick={() => handleDoubleClick(project)}
         >
-          <div className="relative aspect-video bg-muted">
+          <div className="aspect-video relative bg-neutral-100 dark:bg-neutral-900 overflow-hidden">
             {project.coverImage ? (
               <DefaultImage 
                 src={project.coverImage} 
                 alt={project.title}
                 fill
-                className="object-cover"
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
             ) : (
@@ -66,36 +94,31 @@ export function ProjectManagerGrid({
                 Sin Imagen
               </div>
             )}
+            {/* Featured Badge */}
             {project.isFeatured && (
-              <div className="absolute top-2 right-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full font-medium shadow-sm">
-                Destacado
+              <div className="absolute top-2 left-2 z-10">
+                  <div className="bg-primary text-primary-foreground p-1 rounded-full shadow-sm backdrop-blur-sm">
+                    <Star className="w-3 h-3 fill-current" />
+                  </div>
               </div>
             )}
           </div>
           
-          <div className="p-4 flex-1 flex flex-col">
-            <div className="flex justify-between items-start mb-2">
-              <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full dark:bg-blue-900/20 dark:text-blue-400">
-                {project.category}
-              </span>
-              <div className="flex items-center text-xs text-muted-foreground">
+          <div className="p-3">
+            <div className="flex justify-between items-start gap-2 mb-1">
+              <h3 className="font-medium text-sm text-neutral-900 dark:text-neutral-100 truncate flex-1" title={project.title}>
+                {project.title}
+              </h3>
+              <span className="font-semibold text-xs text-neutral-500 dark:text-neutral-400 shrink-0 flex items-center">
                 <Calendar className="w-3 h-3 mr-1" />
-                {new Date(project.projectDate).toLocaleDateString()}
-              </div>
+                {new Date(project.projectDate).getFullYear()}
+              </span>
             </div>
             
-            <h3 className="font-semibold text-lg mb-1 line-clamp-1">{project.title}</h3>
-            <p className="text-sm text-muted-foreground line-clamp-2 mb-4 flex-1">
-              {project.description}
-            </p>
-            
-            <div className="flex justify-end gap-2 pt-2 border-t mt-auto opacity-0 group-hover:opacity-100 transition-opacity">
-              <Button variant="ghost" size="sm" onClick={() => handleEdit(project)}>
-                <Edit className="w-4 h-4 mr-1" /> Editar
-              </Button>
-              <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => handleDelete(project)}>
-                <Trash2 className="w-4 h-4 mr-1" /> Eliminar
-              </Button>
+            <div className="flex items-center justify-between mt-2">
+              <span className="text-[10px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 truncate max-w-[80%]">
+                {project.category}
+              </span>
             </div>
           </div>
         </div>

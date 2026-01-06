@@ -325,7 +325,7 @@ export default function ServiceModal({ isOpen, onClose, onSave, service }: Servi
                                 </li>
                                 <li className="flex gap-2">
                                     <span className="text-primary">•</span>
-                                    El precio base es referencial, usa "Cotización personalizada" si es variable.
+                                    El precio base es referencial, usa &quot;Cotización personalizada&quot; si es variable.
                                 </li>
                             </ul>
                         </CardContent>

@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Plus, Info, Layers, Check, Trash2, Star, ImageIcon, FileText } from 'lucide-react';
 import { EditableBlock } from '../EditableBlock';
@@ -218,7 +219,7 @@ export const ProductModalGeneral: React.FC<ProductModalGeneralProps> = ({
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {formData.images?.map((img, idx) => (
                         <div key={img.id} className="relative aspect-square rounded-xl overflow-hidden border bg-muted group">
-                            <img src={img.url} alt={img.alt} className="w-full h-full object-cover" />
+                            <Image src={img.url} alt={img.alt || 'Imagen'} fill className="object-cover" sizes="(max-width: 768px) 50vw, 25vw" />
                             {idx === 0 && <div className="absolute top-2 left-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-sm">Principal</div>}
                         </div>
                     ))}
@@ -242,7 +243,7 @@ export const ProductModalGeneral: React.FC<ProductModalGeneralProps> = ({
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
                     {formData.images?.map((img, index) => (
                         <div key={img.id} className="relative group aspect-square rounded-xl overflow-hidden border bg-muted">
-                            <img src={img.url} alt={img.alt} className="w-full h-full object-cover" />
+                            <Image src={img.url} alt={img.alt || 'Imagen'} fill className="object-cover" sizes="(max-width: 768px) 50vw, 33vw" />
                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                                 <Button
                                     size="icon"

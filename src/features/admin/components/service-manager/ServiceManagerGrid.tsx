@@ -1,5 +1,5 @@
-import React from 'react';
-import { Edit, Trash2, Package } from '@/lib/icons';
+import React, { useRef } from 'react';
+import { Edit, Trash2, Package, Star } from '@/lib/icons';
 import { Button } from '@/components/ui/button';
 import { ProductImage } from '@/shared/components/ui/DefaultImage';
 import { Service } from '@/shared/types/domain';
@@ -15,79 +15,89 @@ export function ServiceManagerGrid({
     handleEditService,
     handleDeleteService
 }: ServiceManagerGridProps) {
+    const clickTimer = useRef<number | null>(null);
+    const lastClickedId = useRef<string | null>(null);
+
+    const handleSingleClick = (service: Service) => {
+        lastClickedId.current = service.id;
+        if (clickTimer.current) {
+            clearTimeout(clickTimer.current);
+            clickTimer.current = null;
+        }
+        clickTimer.current = window.setTimeout(() => {
+            if (lastClickedId.current === service.id) {
+                handleEditService(service);
+            }
+            lastClickedId.current = null;
+            clickTimer.current = null;
+        }, 220);
+    };
+
+    const handleDoubleClick = (service: Service) => {
+        if (clickTimer.current) {
+            clearTimeout(clickTimer.current);
+            clickTimer.current = null;
+        }
+        lastClickedId.current = null;
+        handleDeleteService(service.id);
+    };
+
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {filteredServices.map((service) => (
                 <div
                     key={service.id}
-                    className="group bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden hover:shadow-lg transition-all duration-300"
+                    className="group bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-800 hover:shadow-md transition-all duration-300 overflow-hidden relative cursor-pointer"
+                    onClick={() => handleSingleClick(service)}
+                    onDoubleClick={() => handleDoubleClick(service)}
                 >
-                    <div className="aspect-[4/3] relative bg-neutral-100 dark:bg-neutral-900 overflow-hidden">
+                    <div className="aspect-square relative bg-neutral-100 dark:bg-neutral-900 overflow-hidden">
                         {service.images && service.images.length > 0 ? (
                             <ProductImage 
                                 src={service.images.find(i => i.isPrimary)?.url || service.images[0].url} 
                                 alt={service.name}
                                 fill
-                                className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                className="object-cover transition-transform duration-500 group-hover:scale-105"
                             />
                         ) : (
                             <div className="w-full h-full flex items-center justify-center text-neutral-400">
-                                <Package className="w-12 h-12" />
+                                <Package className="w-10 h-10 opacity-20" />
                             </div>
                         )}
                         
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                            <Button
-                                size="icon"
-                                variant="ghost"
-                                className="text-white hover:bg-white/20"
-                                onClick={() => handleEditService(service)}
-                            >
-                                <Edit className="w-5 h-5" />
-                            </Button>
-                            <Button
-                                size="icon"
-                                variant="ghost"
-                                className="text-white hover:bg-red-500/80 hover:text-white"
-                                onClick={() => handleDeleteService(service.id)}
-                            >
-                                <Trash2 className="w-5 h-5" />
-                            </Button>
-                        </div>
-
-                        <div className="absolute top-2 right-2">
-                            <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
-                                Servicio
-                            </span>
-                        </div>
+                        {/* Featured Badge */}
+                        {service.isFeatured && (
+                            <div className="absolute top-2 left-2 z-10">
+                                <div className="bg-primary text-primary-foreground p-1 rounded-full shadow-sm backdrop-blur-sm">
+                                    <Star className="w-3 h-3 fill-current" />
+                                </div>
+                            </div>
+                        )}
                     </div>
 
-                    <div className="p-4">
-                        <div className="flex justify-between items-start gap-2 mb-2">
-                            <h3 className="font-semibold text-neutral-900 dark:text-white line-clamp-1">
+                    <div className="p-3">
+                        <div className="flex justify-between items-start gap-2 mb-1">
+                            <h3 className="font-medium text-sm text-neutral-900 dark:text-neutral-100 truncate flex-1" title={service.name}>
                                 {service.name}
                             </h3>
-                            <span className="font-mono text-sm text-neutral-500 dark:text-neutral-400">
+                            <span className="font-semibold text-sm text-neutral-900 dark:text-white shrink-0">
                                 {service.customPriceDisplay || 'Cotización'}
                             </span>
                         </div>
                         
-                        <p className="text-sm text-neutral-500 dark:text-neutral-400 line-clamp-2 mb-4 h-10">
-                            {service.shortDescription || service.description}
-                        </p>
-
-                        <div className="flex items-center justify-between pt-4 border-t border-neutral-100 dark:border-neutral-700">
-                            <span className="text-xs text-neutral-500 dark:text-neutral-400">
-                                {service.categoryName}
+                        <div className="flex items-center justify-between mt-2">
+                            <span className="text-[10px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 truncate max-w-[60%]">
+                                {service.categoryName || 'Sin categoría'}
                             </span>
-                            <span className={`flex items-center gap-1.5 text-xs font-medium ${
-                                service.isActive ? 'text-green-600 dark:text-green-400' : 'text-amber-600 dark:text-amber-400'
-                            }`}>
-                                <span className={`w-1.5 h-1.5 rounded-full ${
-                                    service.isActive ? 'bg-green-500' : 'bg-amber-500'
+                            
+                            <div className="flex items-center gap-1.5" title={service.isActive ? 'Activo' : 'Inactivo'}>
+                                <div className={`w-1.5 h-1.5 rounded-full ${
+                                    service.isActive ? 'bg-green-500 shadow-[0_0_4px_rgba(34,197,94,0.5)]' : 'bg-neutral-300 dark:bg-neutral-600'
                                 }`} />
-                                {service.isActive ? 'Activo' : 'Inactivo'}
-                            </span>
+                                <span className={`text-xs ${service.isActive ? 'text-neutral-700 dark:text-neutral-300' : 'text-neutral-400'}`}>
+                                    {service.isActive ? 'Activo' : 'Inactivo'}
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>

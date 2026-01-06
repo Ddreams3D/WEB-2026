@@ -39,13 +39,21 @@ export function useCampaignsManager() {
       }
     }
     loadThemes();
-  }, []);
+  }, [showError]);
 
-  async function handleSave() {
+  async function handleSave(updatedTheme?: SeasonalThemeConfig) {
     try {
       setSaving(true);
+      
+      let themesToSave = themes;
+      if (updatedTheme) {
+        themesToSave = themes.map(t => t.id === updatedTheme.id ? updatedTheme : t);
+        // Also update local state to reflect the change immediately
+        setThemes(themesToSave);
+      }
+
       // Save directly from client to use browser auth (Admin)
-      await saveSeasonalThemes(themes);
+      await saveSeasonalThemes(themesToSave);
       // Revalidate cache on server
       await revalidateSeasonalCacheAction();
       

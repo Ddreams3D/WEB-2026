@@ -30,23 +30,32 @@ export function Sheet({
 }: SheetProps) {
   const [mounted, setMounted] = React.useState(false);
 
-  // Prevent body scroll when open
-  React.useEffect(() => {
+  // Use useLayoutEffect to prevent layout shift before paint
+  React.useLayoutEffect(() => {
     setMounted(true);
     if (isOpen) {
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
       document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'unset';
+      // Small timeout to allow animation to start before restoring scroll
+      // This prevents the scrollbar from appearing too early
+      const timer = setTimeout(() => {
+        document.body.style.overflow = 'unset';
+        document.body.style.paddingRight = '0px';
+      }, 0);
+      return () => clearTimeout(timer);
     }
     return () => {
       document.body.style.overflow = 'unset';
+      document.body.style.paddingRight = '0px';
     };
   }, [isOpen]);
 
   if (!mounted) return null;
 
   return createPortal(
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {isOpen && (
         <>
           {/* Backdrop */}
@@ -54,11 +63,13 @@ export function Sheet({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
             onClick={onClose}
             className={cn(
               "fixed inset-0 bg-black/40 backdrop-blur-sm",
               underHeader ? "z-[44]" : "z-50"
             )}
+            style={{ willChange: 'opacity' }}
           />
           
           {/* Panel */}
@@ -66,7 +77,12 @@ export function Sheet({
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 20, stiffness: 300 }}
+            transition={{ type: 'tween', ease: 'easeOut', duration: 0.3 }}
+            style={{ 
+              willChange: 'transform',
+              transform: 'translate3d(0,0,0)',
+              backfaceVisibility: 'hidden'
+            }}
             className={cn(
               "fixed right-0 top-0 h-full w-full max-w-2xl border-l bg-background shadow-2xl overflow-hidden flex flex-col",
               underHeader ? "z-[45] pt-16" : "z-50",

@@ -5,6 +5,7 @@ import { FileText, Layers, Tag, Save, ArrowLeft, LayoutGrid, Box, Check, Eye } f
 import { Product } from '@/shared/types';
 import { Service } from '@/shared/types/domain';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect } from 'react';
 import { useProductForm } from '../hooks/useProductForm';
 import { ProductModalGeneral } from './product-modal/ProductModalGeneral';
 import { ProductModalDetails } from './product-modal/ProductModalDetails';
@@ -46,7 +47,9 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
     handleSubmit,
     handleChange,
     handleCheckboxChange,
-    handleImageUploaded
+    handleImageUploaded,
+    handleEsc,
+    requestClose
   } = useProductForm({ product, forcedType, onSave, onClose });
 
   // --- RENDER HELPERS ---
@@ -82,6 +85,17 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
     tabs: formData.tabs || [],
   } as Product | Service;
 
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        handleEsc();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [handleEsc]);
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -101,7 +115,7 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
           <nav className="w-20 lg:w-64 border-r bg-card flex flex-col justify-between h-full z-20 shadow-xl shrink-0">
             <div>
               <div className="p-6 flex items-center gap-3 border-b border-border/50">
-                <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full hover:bg-muted">
+                <Button variant="ghost" size="icon" onClick={requestClose} className="rounded-full hover:bg-muted">
                   <ArrowLeft className="w-5 h-5" />
                 </Button>
                 <span className="font-bold text-lg hidden lg:block tracking-tight">Editor de Productos</span>
@@ -335,8 +349,8 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
                     <p className="font-medium text-foreground">💡 Tips de Edición:</p>
                     <ul className="list-disc list-inside space-y-1 text-xs">
                         <li>Usa imágenes cuadradas (1:1) o 4:3 para mejor visualización.</li>
-                        <li>El precio tachado aparecerá si llenas el "Precio Original".</li>
-                        <li>La etiqueta "Bajo Pedido" se muestra automáticamente.</li>
+                        <li>El precio tachado aparecerá si llenas el &quot;Precio Original&quot;.</li>
+                        <li>La etiqueta &quot;Bajo Pedido&quot; se muestra automáticamente.</li>
                     </ul>
                   </div>
                 </div>

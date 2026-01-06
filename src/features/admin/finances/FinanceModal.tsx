@@ -49,7 +49,7 @@ export function FinanceModal({ isOpen, onClose, record, onSave }: FinanceModalPr
     if (isIncome) return FINANCE_CATEGORIES.income;
     if (formData.expenseType) return FINANCE_CATEGORIES.expense[formData.expenseType] || [];
     return [];
-  }, [formData.type, formData.expenseType]);
+  }, [isIncome, formData.expenseType]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

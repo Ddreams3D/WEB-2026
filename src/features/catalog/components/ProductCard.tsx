@@ -24,6 +24,7 @@ interface ProductCardProps {
     icon?: React.ReactNode;
   };
   source?: string;
+  layout?: 'grid' | 'list';
 }
 
 export function ProductCard({ 
@@ -32,11 +33,13 @@ export function ProductCard({
   showAddToCart = true, 
   onViewDetails,
   customAction,
-  source
+  source,
+  layout = 'grid'
 }: ProductCardProps) {
   const { addToCart } = useCart();
   const { showSuccess, showError } = useToast();
   const pathname = usePathname();
+  const isList = layout === 'list';
 
   const handleScrollSave = () => {
     if (typeof window !== 'undefined') {
@@ -206,7 +209,10 @@ export function ProductCard({
       {onViewDetails ? (
         <button 
           onClick={() => onViewDetails(product)}
-          className="flex-1 flex flex-col relative cursor-pointer text-left w-full focus:outline-none focus:ring-2 focus:ring-primary rounded-t-xl active:scale-[0.98] transition-transform duration-100"
+          className={cn(
+            "relative cursor-pointer text-left focus:outline-none focus:ring-2 focus:ring-primary rounded-t-xl active:scale-[0.98] transition-transform duration-100",
+            isList ? "flex flex-row flex-[3]" : "flex-1 flex flex-col w-full"
+          )}
           type="button"
           aria-label={`Ver detalles de ${product.name}`}
         >
@@ -215,7 +221,10 @@ export function ProductCard({
       ) : (
         <Link 
           href={productUrl}
-          className="flex-1 flex flex-col relative cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary rounded-t-xl active:scale-[0.98] transition-transform duration-100"
+          className={cn(
+            "relative cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary rounded-t-xl active:scale-[0.98] transition-transform duration-100",
+            isList ? "flex flex-row flex-[3]" : "flex-1 flex flex-col"
+          )}
           onClick={handleScrollSave}
           aria-label={`Ir a detalles de ${product.name}`}
         >
@@ -224,8 +233,11 @@ export function ProductCard({
       )}
 
       {/* Price & Action Container - Separated to avoid nesting interactive elements if card was a button */}
-      <div className="p-4 pt-0 mt-auto">
-        <div className="pt-2">
+      <div className={cn(
+        "p-4",
+        isList ? "flex-[1] flex flex-col justify-center border-l border-border min-w-[180px]" : "pt-0 mt-auto"
+      )}>
+        <div className={cn(isList ? "w-full" : "pt-2")}>
           {customAction ? (
             <Button
               asChild

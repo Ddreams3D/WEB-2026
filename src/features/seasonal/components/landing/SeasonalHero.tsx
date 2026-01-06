@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { IsotypeLogo } from '@/components/ui';
-import { ArrowRight, Sparkles, Skull } from 'lucide-react';
+import { ArrowRight, Sparkles, Skull, ZoomIn, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SeasonalThemeConfig } from '@/shared/types/seasonal';
 import { SeasonalAtmosphere } from './SeasonalAtmosphere';
+import { HauntedCylinder } from './HauntedCylinder';
 
 interface SeasonalHeroProps {
     config: SeasonalThemeConfig;
@@ -31,11 +33,77 @@ export function SeasonalHero({
     textEffectTriggered,
     handleExorcise
 }: SeasonalHeroProps) {
+    const [isViewerOpen, setIsViewerOpen] = useState(false);
+    const [currentSlide, setCurrentSlide] = useState(0);
+
+    // Determine which images to show
+    // If heroImages exists and has items, use it. Otherwise use heroImage (as an array of 1).
+    // If neither, fallback to the default unsplash image.
+    // Filter out any empty strings to prevent Image component errors.
+    const heroImages = (config.landing.heroImages && config.landing.heroImages.length > 0
+        ? config.landing.heroImages
+        : (config.landing.heroImage ? [config.landing.heroImage] : ["https://images.unsplash.com/photo-1633419461186-7d40a2e50594?q=80&w=2069&auto=format&fit=crop"]))
+        .filter(src => src && src.trim() !== "");
+
+    const nextSlide = (e?: React.MouseEvent) => {
+        e?.stopPropagation();
+        setCurrentSlide((prev) => (prev + 1) % heroImages.length);
+    };
+
+    const prevSlide = (e?: React.MouseEvent) => {
+        e?.stopPropagation();
+        setCurrentSlide((prev) => (prev - 1 + heroImages.length) % heroImages.length);
+    };
+
+    const currentImage = heroImages[currentSlide];
+
     return (
         <section className={cn(
             "relative min-h-screen supports-[min-height:100dvh]:min-h-[100dvh] flex items-center justify-center overflow-hidden py-12 lg:py-0",
             isHalloween ? "bg-black" : "bg-muted/10"
         )}>
+            {!isHalloween && (
+                <Dialog open={isViewerOpen} onOpenChange={setIsViewerOpen}>
+                    <DialogContent className="max-w-4xl p-0 overflow-hidden bg-transparent border-none shadow-none text-white">
+                        <div className="relative w-full h-[80vh] flex items-center justify-center pointer-events-auto">
+                            <button 
+                                onClick={() => setIsViewerOpen(false)} 
+                                className="absolute -top-12 right-0 z-50 p-2 text-white bg-black/50 rounded-full hover:bg-black/80 transition-colors"
+                            >
+                                <X className="w-6 h-6" />
+                            </button>
+                            
+                            <div className="relative w-full h-full">
+                                <Image
+                                    src={currentImage}
+                                    alt={config.landing.heroTitle}
+                                    fill
+                                    className="object-contain"
+                                    priority
+                                />
+                            </div>
+
+                            {heroImages.length > 1 && (
+                                <>
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); prevSlide(); }}
+                                        className="absolute left-0 top-1/2 -translate-y-1/2 p-2 text-white bg-black/30 hover:bg-black/50 rounded-full transition-colors"
+                                    >
+                                        <ChevronLeft className="w-8 h-8" />
+                                    </button>
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); nextSlide(); }}
+                                        className="absolute right-0 top-1/2 -translate-y-1/2 p-2 text-white bg-black/30 hover:bg-black/50 rounded-full transition-colors"
+                                    >
+                                        <ChevronRight className="w-8 h-8" />
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    </DialogContent>
+                </Dialog>
+            )}
+
             {/* Dynamic Background */}
             <SeasonalAtmosphere 
                 isHalloween={isHalloween}
@@ -111,24 +179,81 @@ export function SeasonalHero({
                 </div>
 
                 {/* Hero Image / Visual */}
-                {!isHalloween && (
-                <div className="relative animate-fade-in-up delay-200 group perspective-1000">
-                    <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-4 border-background/50 transform transition-transform duration-700 hover:rotate-y-6 hover:scale-[1.02] aspect-[4/5] lg:aspect-square">
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent z-10" />
-                        <Image 
-                            src={config.landing.heroImage || "https://images.unsplash.com/photo-1633419461186-7d40a2e50594?q=80&w=2069&auto=format&fit=crop"} 
-                            alt={config.landing.heroTitle}
-                            fill
-                            className="object-cover"
-                            priority
-                        />
-                    </div>
+                <div className={cn("relative animate-fade-in-up delay-200 group perspective-1000 flex justify-center", isHalloween && "items-center")}>
+                    {isHalloween ? (
+                        <HauntedCylinder images={heroImages} />
+                    ) : (
+                        <div 
+                            className="relative z-10 rounded-3xl overflow-hidden transform transition-transform duration-700 hover:rotate-y-6 hover:scale-[1.02] cursor-pointer shadow-2xl border-4 border-background/50 aspect-[4/5] lg:aspect-square"
+                            onClick={() => setIsViewerOpen(true)}
+                        >
+                            <div className="absolute inset-0 z-10 group-hover:opacity-0 transition-opacity duration-500 bg-gradient-to-t from-black/40 to-transparent" />
+                            
+                            {/* Hover Overlay for Viewer */}
+                            <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/30 backdrop-blur-[2px]">
+                                <div className="bg-background/80 text-foreground px-4 py-2 rounded-full flex items-center gap-2 font-medium transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                    <ZoomIn className="w-4 h-4" />
+                                    <span>Ver imagen</span>
+                                </div>
+                            </div>
+
+                            {/* Slider Logic or Single Image */}
+                            {heroImages.length > 0 ? (
+                                <>
+                                    <Image 
+                                        src={currentImage} 
+                                        alt={config.landing.heroTitle}
+                                        fill
+                                        className="object-cover w-full h-full"
+                                        priority
+                                    />
+                                    {heroImages.length > 1 && (
+                                        <>
+                                            <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-between px-2 z-30 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); prevSlide(e); }}
+                                                    className="p-1 bg-black/40 text-white rounded-full hover:bg-black/60 transition-colors"
+                                                >
+                                                    <ChevronLeft className="w-6 h-6" />
+                                                </button>
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); nextSlide(e); }}
+                                                    className="p-1 bg-black/40 text-white rounded-full hover:bg-black/60 transition-colors"
+                                                >
+                                                    <ChevronRight className="w-6 h-6" />
+                                                </button>
+                                            </div>
+                                            <div className="absolute bottom-4 inset-x-0 flex justify-center gap-2 z-30">
+                                                {heroImages.map((_, idx) => (
+                                                    <button
+                                                        key={idx}
+                                                        onClick={(e) => { e.stopPropagation(); setCurrentSlide(idx); }}
+                                                        className={cn(
+                                                            "w-2 h-2 rounded-full transition-all",
+                                                            currentSlide === idx ? "bg-white w-4" : "bg-white/50 hover:bg-white/80"
+                                                        )}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </>
+                                    )}
+                                </>
+                            ) : (
+                                <Image 
+                                    src="https://images.unsplash.com/photo-1633419461186-7d40a2e50594?q=80&w=2069&auto=format&fit=crop"
+                                    alt={config.landing.heroTitle}
+                                    fill
+                                    className="object-cover"
+                                    priority
+                                />
+                            )}
+                        </div>
+                    )}
                     
                     {/* Decorative Elements behind image */}
                     <div className={cn("absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-40 blur-2xl", themeStyles.previewColors[0])} />
                     <div className={cn("absolute -bottom-10 -left-10 w-40 h-40 rounded-full opacity-40 blur-2xl", themeStyles.previewColors[1] || themeStyles.previewColors[0])} />
                 </div>
-                )}
             </div>
         </section>
     );

@@ -12,7 +12,7 @@ interface LandingMainEditorAnnouncementProps {
 
 export function LandingMainEditorAnnouncement({ form, updateAnnouncement }: LandingMainEditorAnnouncementProps) {
     return (
-        <div className="space-y-6 animate-in fade-in-50 slide-in-from-right-2">
+        <div className="space-y-6">
             <div className="space-y-4 border rounded-lg p-4 bg-muted/10">
                 <div className="flex items-center justify-between">
                     <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider flex items-center gap-2">

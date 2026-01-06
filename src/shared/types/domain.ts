@@ -1,8 +1,18 @@
 // Definiciones de dominio para desacoplar tipos
-import { Category, ProductImage, ProductSpecification, ProductOption, ProductTab, ProductDimensions } from './index';
+import { Category, ProductImage, ProductSpecification, ProductOption, ProductDimensions } from './index';
 
 export type { Category };
-export type { ProductImage, ProductSpecification, ProductOption, ProductTab, ProductDimensions };
+export type { ProductImage, ProductSpecification, ProductOption, ProductDimensions };
+
+export interface ProductTab {
+  id: string;
+  label: string;
+  description: string;
+  features: string[];
+  ctaText: string;
+  ctaAction: string;
+  whatsappMessage?: string;
+}
 
 // ==========================================
 // 1. SERVICES (Servicios)
@@ -72,7 +82,6 @@ export interface StoreProduct {
   originalPrice?: number;
   discount?: number;
   currency: string;
-  sku?: string;
   stock?: number;
   minQuantity?: number;
   maxQuantity?: number;

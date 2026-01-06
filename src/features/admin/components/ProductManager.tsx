@@ -20,12 +20,18 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
     isModalOpen,
     viewMode,
     showDeleted,
+    filterActive,
+    sortBy,
+    sortDir,
     confirmation,
     categoryCounts,
     filteredProducts,
     setSearchTerm,
     setViewMode,
     setShowDeleted,
+    setFilterActive,
+    setSortBy,
+    setSortDir,
     setIsModalOpen,
     loadProducts,
     handleAddProduct,
@@ -58,6 +64,12 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
         loadProducts={loadProducts}
         showDeleted={showDeleted}
         setShowDeleted={setShowDeleted}
+        filterActive={filterActive}
+        setFilterActive={setFilterActive}
+        sortBy={sortBy}
+        sortDir={sortDir}
+        setSortBy={setSortBy}
+        setSortDir={setSortDir}
         mode={mode}
         handleAddProduct={handleAddProduct}
       />

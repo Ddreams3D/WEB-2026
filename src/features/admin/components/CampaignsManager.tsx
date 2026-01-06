@@ -47,7 +47,7 @@ export default function CampaignsManager() {
           <Button onClick={() => window.location.reload()} variant="outline" size="sm" className="hover:bg-muted">
             Cancelar
           </Button>
-          <Button onClick={handleSave} disabled={saving} className="min-w-[140px] shadow-md hover:shadow-lg transition-all">
+          <Button onClick={() => handleSave()} disabled={saving} className="min-w-[140px] shadow-md hover:shadow-lg transition-all">
             {saving ? (
               <>
                 <div className="animate-spin mr-2 h-4 w-4 border-2 border-b-transparent rounded-full" />
@@ -81,6 +81,8 @@ export default function CampaignsManager() {
         editingId={editingId}
         themes={themes}
         onClose={() => setEditingId(null)}
+        onSave={handleSave}
+        isSaving={saving}
         updateTheme={updateTheme}
         updateLanding={updateLanding}
         updateAnnouncement={updateAnnouncement}

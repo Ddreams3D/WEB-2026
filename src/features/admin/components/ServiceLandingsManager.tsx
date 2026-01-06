@@ -16,7 +16,8 @@ export default function ServiceLandingsManager() {
         isEditing,
         setIsEditing,
         currentLanding,
-        updateField
+        updateField,
+        updateCurrentLanding
     } = useServiceLandingsManager();
 
     return (
@@ -39,6 +40,7 @@ export default function ServiceLandingsManager() {
                 setIsEditing={setIsEditing}
                 currentLanding={currentLanding}
                 updateField={updateField}
+                updateCurrentLanding={updateCurrentLanding}
                 onSave={handleSave}
             />
         </div>

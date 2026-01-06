@@ -25,6 +25,18 @@ const CACHE_DURATION = 1000 * 30; // 30 seconds cache to balance performance and
 const FIRESTORE_TIMEOUT = 5000; // 5s timeout
 const ENABLE_FIRESTORE_FOR_PUBLIC = true; // Enable for public/build if DB is configured
 
+const generateProductId = (): string => {
+  try {
+    const anyCrypto = (globalThis as any).crypto;
+    const rnd = anyCrypto && typeof anyCrypto.randomUUID === 'function'
+      ? anyCrypto.randomUUID()
+      : `${Date.now().toString(36)}${Math.random().toString(36).slice(2)}`;
+    return `prod-${rnd}`;
+  } catch {
+    return `prod-${Date.now().toString(36)}${Math.random().toString(36).slice(2)}`;
+  }
+};
+
 // In-memory cache
 let productsCache: { data: StoreProduct[], timestamp: number } | null = null;
 let categoriesCache: { data: Category[], timestamp: number } | null = null;
@@ -96,7 +108,6 @@ export const ProductService = {
 
     if (shouldFetch && dbInstance) {
       try {
-        console.log('[ProductService] Fetching from Firestore...');
         // Create a timeout promise
         const timeoutPromise = new Promise((_, reject) => 
           setTimeout(() => reject(new Error('Firestore timeout')), FIRESTORE_TIMEOUT)
@@ -113,13 +124,11 @@ export const ProductService = {
         ]) as QuerySnapshot<DocumentData>;
 
         if (!snapshot.empty) {
-          console.log(`[ProductService] Found ${snapshot.docs.length} products in Firestore`);
           products = snapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => mapToProduct(doc.data()));
           
           // AUTO-REPAIR: Check for missing displayOrder and fix in background
           const productsMissingOrder = products.filter(p => typeof p.displayOrder !== 'number');
           if (productsMissingOrder.length > 0) {
-              console.warn(`[ProductService] Found ${productsMissingOrder.length} products without displayOrder. Triggering auto-repair...`);
               // Non-blocking repair
               this.normalizeDisplayOrders(products).catch(err => console.error('Auto-repair failed:', err));
           }
@@ -140,10 +149,8 @@ export const ProductService = {
     // Only fallback if we didn't check DB, or if DB check failed. 
     // If DB check succeeded and returned 0, we trust it (unless we auto-seeded above).
     if (products.length === 0 && (!shouldFetch || fetchFailed)) {
-      console.log('[ProductService] Falling back to LocalStorage...');
       const localProducts = LocalStorageService.getProducts();
       if (localProducts && localProducts.length > 0) {
-        console.log('Loaded products from LocalStorage');
         products = localProducts;
       }
     }
@@ -322,7 +329,7 @@ export const ProductService = {
       // Override with provided values
       ...product,
       // Force these if not provided or to ensure validity
-      id: product.id || `prod-${Date.now()}`,
+      id: product.id || generateProductId(),
       createdAt: new Date(),
       updatedAt: new Date()
     } as StoreProduct;

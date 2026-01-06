@@ -85,10 +85,13 @@ export function LandingMainPreview({ form, previewMode, setPreviewMode, setIsEdi
                     previewMode === 'desktop' ? "scale-[0.5] w-[200%] h-[200%]" : "scale-[0.5] w-[200%] h-[200%]"
                 )}>
                     {/* Simulated Page Layout */}
-                    <div className={cn(
-                        "flex flex-col min-h-screen bg-background text-foreground pointer-events-none select-none",
-                        "light" // Always force light mode in preview
-                    )}>
+                    <div 
+                        className={cn(
+                            "flex flex-col min-h-screen bg-background text-foreground pointer-events-none select-none",
+                            form.themeMode === 'dark' ? 'dark' : form.themeMode === 'light' ? 'light' : ''
+                        )}
+                        data-theme={form.themeMode === 'light' ? 'standard' : undefined}
+                    >
                         <AnnouncementBar config={form.announcement} />
                         <NavbarMock />
                         <div className="flex-1">

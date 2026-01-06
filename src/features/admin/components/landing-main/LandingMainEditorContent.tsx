@@ -12,7 +12,7 @@ interface LandingMainEditorContentProps {
 
 export function LandingMainEditorContent({ form, updateField }: LandingMainEditorContentProps) {
     return (
-        <div className="space-y-6 animate-in fade-in-50 slide-in-from-left-2">
+        <div className="space-y-6">
             {/* Hero Texts */}
             <div className="space-y-4 border rounded-lg p-4 bg-muted/10">
                 <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-2">

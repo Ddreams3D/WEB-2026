@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Product, ProductImage, ProductTab } from '@/shared/types';
 import { Service } from '@/shared/types/domain';
 import { generateSlug } from '@/lib/utils';
@@ -56,6 +56,13 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
   const [editingBlock, setEditingBlock] = useState<string | null>(null);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [isAddingCategory, setIsAddingCategory] = useState(false);
+  const [sessionId, setSessionId] = useState<string>('');
+  const getDraftKey = useCallback(() => {
+    const base = product?.id ? `product_form_draft_${product.id}` : 'product_form_draft_new';
+    const type = (formData.kind || forcedType || 'product');
+    const sid = sessionId || 'session';
+    return `${base}_${sid}_${type}`;
+  }, [product?.id, formData.kind, forcedType, sessionId]);
 
   // Initialization
   useEffect(() => {
@@ -70,6 +77,25 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
         }
     }
   }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      let sid = sessionStorage.getItem('product_form_session_id');
+      if (!sid) {
+        try {
+          // @ts-ignore
+          sid = window.crypto && typeof window.crypto.randomUUID === 'function'
+            // @ts-ignore
+            ? window.crypto.randomUUID()
+            : `${Date.now().toString(36)}${Math.random().toString(36).slice(2)}`;
+        } catch {
+          sid = `${Date.now().toString(36)}${Math.random().toString(36).slice(2)}`;
+        }
+        sessionStorage.setItem('product_form_session_id', sid);
+      }
+      setSessionId(sid);
+    }
+  }, [product?.id, forcedType]);
 
   // Persistence for Categories and Materials
   useEffect(() => {
@@ -103,14 +129,54 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
       }
     } else {
       const initialKind = forcedType === 'service' ? 'service' : 'product';
+      let tempId = '';
+      try {
+        const rnd = (typeof window !== 'undefined' && (window as any).crypto && typeof (window as any).crypto.randomUUID === 'function')
+          ? (window as any).crypto.randomUUID()
+          : `${Date.now().toString(36)}${Math.random().toString(36).slice(2)}`;
+        tempId = `prod-${rnd}`;
+      } catch {
+        tempId = `prod-${Date.now().toString(36)}${Math.random().toString(36).slice(2)}`;
+      }
+      
       setFormData({
+        id: tempId,
         name: '', description: '', shortDescription: '', categoryName: '', categoryId: 'general',
         price: 0, stock: 999, images: [], isActive: true, isFeatured: false, tags: [], seoKeywords: [],
         specifications: [], tabs: [], tabsTitle: '', materials: [], kind: initialKind
       });
       setSelectedMaterial('PLA+');
     }
-  }, [product, forcedType]);
+    if (typeof window !== 'undefined') {
+      const storedDraft = localStorage.getItem(getDraftKey());
+      if (storedDraft) {
+        try {
+          const parsed = JSON.parse(storedDraft);
+          setFormData(prev => ({ ...prev, ...parsed }));
+          setIsDirty(true);
+        } catch {}
+      }
+    }
+  }, [product, forcedType, getDraftKey]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && isDirty) {
+      try { localStorage.setItem(getDraftKey(), JSON.stringify(formData)); } catch {}
+    }
+  }, [formData, isDirty, getDraftKey]);
+
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+    if (typeof window !== 'undefined') {
+      window.addEventListener('beforeunload', handler);
+      return () => window.removeEventListener('beforeunload', handler);
+    }
+  }, [isDirty]);
 
   // Handlers
   const handleSubmit = async (e?: React.FormEvent) => {
@@ -136,6 +202,7 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
       onClose();
       setIsDirty(false);
       setLastSavedAt(new Date());
+      try { localStorage.removeItem(getDraftKey()); } catch {}
     } catch (error: any) {
       showError('Error al guardar', error.message || 'Error desconocido');
     } finally {
@@ -175,6 +242,38 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
     setIsDirty(true);
   };
 
+  const validateNow = () => {
+    const baseData = { ...formData, slug: formData.slug || generateSlug(formData.name || '') };
+    const dataToValidate = formData.kind === 'product' 
+      ? { ...baseData, materials: selectedMaterial ? [selectedMaterial] : (formData as Product).materials }
+      : baseData;
+    const schema = formData.kind === 'service' ? serviceSchema : productSchema;
+    const result = schema.safeParse(dataToValidate);
+    if (!result.success) {
+      const firstError = result.error.issues[0];
+      showError('Cambios sin guardar', `${firstError.path.join('.')}: ${firstError.message}`);
+      return false;
+    }
+    return true;
+  };
+
+  const handleEsc = async () => {
+    if (isSubmitting) return;
+    if (validateNow()) {
+      await handleSubmit();
+    } else {
+      showError('Advertencia', 'Completa los campos requeridos antes de cerrar con Esc');
+    }
+  };
+
+  const requestClose = () => {
+    if (isDirty) {
+      showError('Cambios sin guardar', 'Guarda los cambios antes de cerrar');
+      return;
+    }
+    onClose();
+  };
+
   return {
     formData,
     setFormData,
@@ -204,6 +303,8 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
     handleSubmit,
     handleChange,
     handleCheckboxChange,
-    handleImageUploaded
+    handleImageUploaded,
+    handleEsc,
+    requestClose
   };
 }

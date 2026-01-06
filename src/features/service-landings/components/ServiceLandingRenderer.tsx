@@ -34,7 +34,11 @@ export default function ServiceLandingRenderer({ config, isPreview = false }: Se
   } as React.CSSProperties;
 
   return (
-    <div className={cn("min-h-screen bg-background overflow-x-hidden text-foreground", themeClass)} style={style}>
+    <div 
+      className={cn("min-h-screen bg-background overflow-x-hidden text-foreground", themeClass)} 
+      style={style}
+      data-theme={themeClass === 'light' ? 'standard' : undefined}
+    >
       
       {/* 1. HERO SECTION */}
       <ServiceHero 

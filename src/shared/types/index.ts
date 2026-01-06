@@ -109,7 +109,6 @@ export interface Product {
   customPriceDisplay?: string;
   discount?: number;
   currency: string;
-  sku?: string;
   categoryId: string;
   category?: Category;
   categoryName?: string;
@@ -146,15 +145,13 @@ export interface Product {
   isDeleted?: boolean;
   deletedAt?: Date;
 }
-
 export interface ProductTab {
   id: string;
   label: string;
   description: string;
-  idealFor: string[];
-  conditions: string[];
+  features: string[];
   ctaText: string;
-  ctaAction?: 'quote' | 'cart' | 'whatsapp';
+  ctaAction: string;
   whatsappMessage?: string;
 }
 

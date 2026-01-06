@@ -31,7 +31,6 @@ function adaptServiceToProduct(service: Service): Product {
     stock: 999, // Servicios "siempre en stock" para permitir cotización
     minQuantity: 1,
     maxQuantity: 100,
-    sku: service.id,
     specifications: service.specifications || [],
     options: [],
     tags: service.tags || [],

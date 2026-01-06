@@ -80,10 +80,15 @@ export function useLandingMainForm() {
     });
   };
 
-  const handleSave = async () => {
+  const handleSave = async (configToSave?: LandingMainConfig) => {
     try {
       setSaving(true);
-      await saveLandingMain(form);
+      const targetConfig = configToSave || form;
+      await saveLandingMain(targetConfig);
+      // Update local state if we saved a passed config
+      if (configToSave) {
+        setForm(configToSave);
+      }
       showSuccess('Landing principal guardada correctamente');
       setIsEditing(false);
     } catch (error: any) {

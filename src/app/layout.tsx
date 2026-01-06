@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import React from 'react';
 import { Inter, Montserrat, Montserrat_Alternates } from 'next/font/google';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import Script from 'next/script';
@@ -111,7 +112,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={`${inter.variable} ${montserrat.variable} ${montserratAlternates.variable}`} suppressHydrationWarning>
+    <html lang="es" className={`${inter.variable} ${montserrat.variable} ${montserratAlternates.variable}`} suppressHydrationWarning data-scroll-behavior="smooth">
       <head>
         <Script id="theme-analytics-init" strategy="beforeInteractive">
           {`
@@ -151,10 +152,12 @@ export default function RootLayout({
         )}
         <LocalBusinessJsonLd />
         <AnalyticsTracker />
-        <Providers>
-          {children}
-          <CookieBanner />
-        </Providers>
+        <React.StrictMode>
+          <Providers>
+            {children}
+            <CookieBanner />
+          </Providers>
+        </React.StrictMode>
       </body>
     </html>
   );

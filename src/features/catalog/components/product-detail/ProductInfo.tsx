@@ -58,14 +58,6 @@ export function ProductInfo({ product, onShare }: ProductInfoProps) {
       )}
 
       <div className="flex flex-wrap gap-4 mt-3">
-        {/* SKU - Ocultar para servicios */}
-        {product.kind === 'product' && product.sku && (
-          <div className="flex items-center text-sm text-muted-foreground">
-            <span className="font-medium mr-2">SKU:</span>
-            {product.sku}
-          </div>
-        )}
-
         {/* Stock Status - Ocultar para servicios */}
         {product.kind !== 'service' && (
           <div className="flex items-center text-sm">

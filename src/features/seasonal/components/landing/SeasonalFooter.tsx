@@ -17,15 +17,11 @@ export function SeasonalFooter({ config, isHalloween }: SeasonalFooterProps) {
             <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-[#020617] via-[#020617]/90 to-transparent z-20 pointer-events-none" />
             
             <div className="container mx-auto px-4 relative z-10">
-                <div className="flex justify-center mb-12">
-                    <FooterLogo className="w-32 opacity-50 hover:opacity-100 transition-opacity" />
-                </div>
-                
                 <h2 className="text-3xl md:text-4xl font-bold text-white mb-8 tracking-tight">
                     {isHalloween ? "¿Te atreves a soñar?" : "¿Listo para sorprender?"}
                 </h2>
                 
-                <div className="flex justify-center mb-16">
+                <div className="flex justify-center mb-12">
                     <Button size="lg" className={cn(
                         "h-12 px-8 text-lg border-0 shadow-lg",
                         isHalloween 
@@ -36,6 +32,10 @@ export function SeasonalFooter({ config, isHalloween }: SeasonalFooterProps) {
                             {isHalloween ? "Crear mi Pesadilla" : "Solicitar Diseño Personalizado"}
                         </Link>
                     </Button>
+                </div>
+
+                <div className="flex justify-center mb-16 mt-16">
+                    <FooterLogo className="w-64 opacity-60 hover:opacity-100 transition-opacity" isHalloween={isHalloween} />
                 </div>
 
                 <div className="flex justify-center gap-6 mb-8 text-sm font-medium">

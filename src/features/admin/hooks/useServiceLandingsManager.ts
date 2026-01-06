@@ -53,23 +53,24 @@ export function useServiceLandingsManager() {
     setIsEditing(true);
   };
 
-  const handleSave = async () => {
-    if (!currentLanding) return;
+  const handleSave = async (landingToSave?: ServiceLandingConfig) => {
+    const targetLanding = landingToSave || currentLanding;
+    if (!targetLanding) return;
     
     try {
       // Optimistic update
-      const exists = landings.find(l => l.id === currentLanding.id);
+      const exists = landings.find(l => l.id === targetLanding.id);
       let newLandings;
       
       if (exists) {
-        newLandings = landings.map(l => l.id === currentLanding.id ? currentLanding : l);
+        newLandings = landings.map(l => l.id === targetLanding.id ? targetLanding : l);
       } else {
-        newLandings = [...landings, currentLanding];
+        newLandings = [...landings, targetLanding];
       }
       setLandings(newLandings);
       
       // Persist to server/file using Client Service (with Auth)
-      await ServiceLandingsService.save(currentLanding);
+      await ServiceLandingsService.save(targetLanding);
       
       setIsEditing(false);
       setCurrentLanding(null);
@@ -86,6 +87,10 @@ export function useServiceLandingsManager() {
     setCurrentLanding({ ...currentLanding, [field]: value });
   };
 
+  const updateCurrentLanding = (landing: ServiceLandingConfig) => {
+    setCurrentLanding(landing);
+  };
+
   return {
     landings,
     searchQuery,
@@ -93,7 +98,8 @@ export function useServiceLandingsManager() {
     isEditing,
     setIsEditing,
     currentLanding,
-    setCurrentLanding,
+    setCurrentLanding, // Already exposed? No, it was in return but not used in component props
+    updateCurrentLanding,
     previewMode,
     setPreviewMode,
     filteredLandings,

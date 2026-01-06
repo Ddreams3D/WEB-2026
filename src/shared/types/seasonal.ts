@@ -20,7 +20,8 @@ export interface SeasonalThemeConfig {
     heroTitle: string;
     heroSubtitle?: string;
     heroDescription: string;
-    heroImage?: string; // Path to image
+    heroImage?: string; // Path to image (Primary)
+    heroImages?: string[]; // Multiple images for slider/carousel
     heroVideo?: string; // Optional background video
     
     // Call to Action

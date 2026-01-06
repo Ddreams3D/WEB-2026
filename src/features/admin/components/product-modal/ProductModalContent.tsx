@@ -44,8 +44,7 @@ export const ProductModalContent: React.FC<ProductModalContentProps> = ({
                             id: `tab-${Date.now()}`, 
                             label: 'Nueva Pestaña', 
                             description: '', 
-                            idealFor: [], 
-                            conditions: [], 
+                            features: [],
                             ctaText: 'Solicitar', 
                             ctaAction: 'cart' 
                         };

@@ -28,13 +28,13 @@ export default function LandingMainPageClient({
   services,
   bubbleImages
 }: LandingMainPageClientProps) {
-  // Always force light mode (ignore config to ensure consistency)
-  const themeClass = 'light';
+  // Determine theme class from config
+  const themeClass = initialConfig?.themeMode === 'dark' ? 'dark' : initialConfig?.themeMode === 'light' ? 'light' : '';
 
   return (
     <div 
       className={cn("min-h-screen bg-background text-foreground overflow-x-hidden selection:bg-primary/20", themeClass)}
-      data-theme="standard" // Force standard theme locally without affecting global state
+      data-theme={themeClass === 'light' ? 'standard' : undefined}
     >
       
       {/* 1. HERO SECTION */}

@@ -84,7 +84,6 @@ export default async function ProductPage({ params }: Props) {
     name: product.name,
     image: (product.images || []).map(img => img.url),
     description: product.description,
-    sku: product.sku,
     brand: {
       '@type': 'Brand',
       name: 'Ddreams 3D'
