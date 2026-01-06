@@ -84,9 +84,41 @@ export const SERVICE_LANDINGS_DATA: ServiceLandingConfig[] = [
       {
         id: 'hero',
         type: 'hero',
-        title: 'Trofeos y Galardones Exclusivos',
+        title: 'Un trofeo no se repite. Se diseña.',
         subtitle: 'Premios que valen la pena ganar',
-        content: 'Olvídate de las copas genéricas. Creamos trofeos únicos que representan la identidad de tu evento.',
+        content: 'Diseñamos y fabricamos trofeos únicos para eventos, competencias y regalos especiales. Cada modelo se crea desde cero, con un propósito, un estilo y una terminación pensada para una persona o evento específico.',
+      },
+      {
+        id: 'focus',
+        type: 'focus',
+        title: 'Nuestro Enfoque',
+        content: `**Cada trofeo nace de una idea.**
+Si puedes imaginarlo, podemos diseñarlo y fabricarlo.
+No usamos moldes genéricos ni catálogos repetidos.
+Rechazamos los trofeos de latón:
+fríos, impersonales, sin carácter.
+**Creamos piezas exclusivas, pensadas para existir una sola vez.**`
+      },
+      {
+        id: 'process-cards',
+        type: 'process',
+        items: [
+          {
+            title: 'Partimos de una idea',
+            description: 'Escuchamos el concepto del cliente y lo traducimos en una propuesta de trofeo pensada para su contexto.',
+            icon: 'Lightbulb'
+          },
+          {
+            title: 'Diseño desde cero',
+            description: 'Modelamos cada trofeo para la persona o evento, cuidando proporciones, estilo y carácter.',
+            icon: 'PenTool'
+          },
+          {
+            title: 'Fabricación personalizada',
+            description: 'Fabricamos la pieza final cuidando material, terminación y detalles que le dan identidad.',
+            icon: 'Hammer'
+          }
+        ]
       }
     ],
     createdAt: new Date().toISOString(),

@@ -7,6 +7,7 @@ export const THEME_CONFIG: Record<Theme, {
   description: string;
   icon: LucideIcon; 
   colorClass: string;
+  badgeClass: string;
   previewColors: string[];
 }> = {
   standard: {
@@ -14,6 +15,7 @@ export const THEME_CONFIG: Record<Theme, {
     description: 'Profesional, tecnológico, confianza. Uso todo el año.',
     icon: Palette,
     colorClass: '',
+    badgeClass: 'bg-[#00BFB3] text-white border-transparent',
     previewColors: ['bg-[#00BFB3]', 'bg-[#2B50AA]']
   },
   halloween: {
@@ -21,6 +23,7 @@ export const THEME_CONFIG: Record<Theme, {
     description: 'Misterio y carácter. Naranja y blanco fantasmal.',
     icon: Ghost,
     colorClass: 'text-orange-500 hover:text-orange-600 hover:bg-orange-50 dark:text-orange-400 dark:hover:bg-orange-900/20',
+    badgeClass: 'bg-orange-500 text-white border-transparent',
     previewColors: ['bg-orange-500', 'bg-white', 'bg-orange-500']
   },
   promo: {
@@ -28,6 +31,7 @@ export const THEME_CONFIG: Record<Theme, {
     description: 'Urgencia y conversión. Alto contraste (Negro y Blanco).',
     icon: ShoppingBag,
     colorClass: 'text-neutral-900 hover:text-black hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-900',
+    badgeClass: 'bg-neutral-900 text-white border-transparent',
     previewColors: ['bg-black', 'bg-white']
   },
   'festive-strong': {
@@ -35,6 +39,7 @@ export const THEME_CONFIG: Record<Theme, {
     description: 'Orgullo y firmeza. Bandera del Perú.',
     icon: Flag,
     colorClass: 'text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-500 dark:hover:bg-red-900/20',
+    badgeClass: 'bg-red-600 text-white border-transparent',
     previewColors: ['bg-red-600', 'bg-white', 'bg-red-600']
   },
   'festive-warm': {
@@ -42,6 +47,7 @@ export const THEME_CONFIG: Record<Theme, {
     description: 'Calidez y celebración. Dorado y blanco.',
     icon: Gift,
     colorClass: 'text-amber-500 hover:text-amber-600 hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-amber-900/20',
+    badgeClass: 'bg-amber-500 text-white border-transparent',
     previewColors: ['bg-amber-500', 'bg-white', 'bg-amber-500']
   },
   'festive-soft': {
@@ -49,6 +55,7 @@ export const THEME_CONFIG: Record<Theme, {
     description: 'Ternura y calma. Rosado suave y blanco cálido.',
     icon: Heart,
     colorClass: 'text-pink-300 hover:text-pink-400 hover:bg-pink-50 dark:text-pink-200 dark:hover:bg-pink-900/20',
+    badgeClass: 'bg-pink-200 text-pink-900 border-pink-300',
     previewColors: ['bg-pink-200', 'bg-rose-50']
   },
   'valentines': {
@@ -56,6 +63,7 @@ export const THEME_CONFIG: Record<Theme, {
     description: 'Pasión y Romance. Rojo intenso y rosado.',
     icon: Heart,
     colorClass: 'text-red-500 hover:text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20',
+    badgeClass: 'bg-red-600 text-white border-transparent',
     previewColors: ['bg-red-600', 'bg-pink-400']
   }
 };

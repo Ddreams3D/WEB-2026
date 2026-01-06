@@ -43,6 +43,8 @@ export function useServiceForm({ service, onSave, onClose }: UseServiceFormProps
 
   const [activeTabId, setActiveTabId] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState('info');
+  const [editingBlock, setEditingBlock] = useState<string | null>(null);
+  const [slugEditable, setSlugEditable] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isImageUploading, setIsImageUploading] = useState(false);
 
@@ -212,6 +214,10 @@ export function useServiceForm({ service, onSave, onClose }: UseServiceFormProps
     setActiveTabId,
     activeSection,
     setActiveSection,
+    editingBlock,
+    setEditingBlock,
+    slugEditable,
+    setSlugEditable,
     isSubmitting,
     isImageUploading,
     setIsImageUploading,

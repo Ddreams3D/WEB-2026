@@ -17,7 +17,7 @@ export default async function PublicLayout({
   ]);
 
   return (
-    <div className="flex min-h-screen flex-col w-full bg-background">
+    <div className="flex min-h-screen flex-col w-full bg-background pb-16 lg:pb-0">
       <AnnouncementBar config={landingConfig?.announcement} seasonalConfig={activeTheme} />
       <Navbar />
       <main className="flex-1 flex flex-col w-full relative">

@@ -2,7 +2,7 @@ export type ServiceLandingTheme = 'light' | 'dark' | 'system';
 
 export interface ServiceLandingSection {
   id: string;
-  type: 'hero' | 'features' | 'gallery' | 'cta' | 'testimonials' | 'faq';
+  type: 'hero' | 'features' | 'gallery' | 'cta' | 'testimonials' | 'faq' | 'focus' | 'process';
   title?: string;
   subtitle?: string;
   content?: string;

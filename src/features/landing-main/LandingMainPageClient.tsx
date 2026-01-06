@@ -1,8 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
-import { usePathname } from 'next/navigation';
-import { useTheme } from '@/contexts/ThemeContext';
+import React from 'react';
 import { LandingMainConfig } from '@/shared/types/landing';
 import { CatalogItem } from '@/shared/types/catalog';
 import { cn } from '@/lib/utils';
@@ -30,21 +28,14 @@ export default function LandingMainPageClient({
   services,
   bubbleImages
 }: LandingMainPageClientProps) {
-  const { setTheme } = useTheme();
-  const pathname = usePathname();
-
-  // Force Standard Theme for this specific landing page
-  useEffect(() => {
-    if (pathname === '/impresion-3d-arequipa') {
-      setTheme('standard');
-    }
-  }, [setTheme, pathname]);
-
-  // Determine theme class override
-  const themeClass = initialConfig?.themeMode === 'dark' ? 'dark' : initialConfig?.themeMode === 'light' ? 'light' : '';
+  // Always force light mode (ignore config to ensure consistency)
+  const themeClass = 'light';
 
   return (
-    <div className={cn("min-h-screen bg-background text-foreground overflow-x-hidden selection:bg-primary/20", themeClass)}>
+    <div 
+      className={cn("min-h-screen bg-background text-foreground overflow-x-hidden selection:bg-primary/20", themeClass)}
+      data-theme="standard" // Force standard theme locally without affecting global state
+    >
       
       {/* 1. HERO SECTION */}
       <HeroSection initialConfig={initialConfig} bubbleImages={bubbleImages} />

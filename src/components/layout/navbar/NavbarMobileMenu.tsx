@@ -1,25 +1,28 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Menu, X, MessageSquare, ShoppingCart, LogOut } from '@/lib/icons';
+import { 
+  LogOut, 
+  User, 
+  FileText, 
+  Users, 
+  ShoppingCart, 
+  ChevronRight,
+  LogIn,
+  UserPlus
+} from 'lucide-react';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 import { ScrollManager } from '@/hooks/useScrollRestoration';
-
-interface NavLink {
-  href: string;
-  label: string;
-  ariaLabel: string;
-}
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
 
 interface NavbarMobileMenuProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  toggleMenu: (e?: React.MouseEvent) => void;
-  links: NavLink[];
   pathname: string;
   user: any;
   logout: () => void;
-  isNavbarSolid: boolean;
   darkMode: boolean;
   itemCount: number;
   setIsCartOpen: (isOpen: boolean) => void;
@@ -28,180 +31,233 @@ interface NavbarMobileMenuProps {
 export const NavbarMobileMenu = ({
   isOpen,
   setIsOpen,
-  toggleMenu,
-  links,
   pathname,
   user,
   logout,
-  isNavbarSolid,
   darkMode,
   itemCount,
   setIsCartOpen
 }: NavbarMobileMenuProps) => {
+  
+  // Prevent body scroll when menu is open
+  if (typeof document !== 'undefined') {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+  }
+
+  const handleLinkClick = (href: string) => {
+    setIsOpen(false);
+    if (typeof window !== 'undefined') {
+      ScrollManager.clear(href);
+    }
+  };
+
   return (
     <>
-      {/* Mobile Menu Button */}
-      <div className="lg:hidden z-[100]">
-        <Button
-          onClick={toggleMenu}
-          variant="ghost"
-          className={cn(
-            "navbar-toggle relative p-3 rounded-lg h-auto touch-manipulation min-w-[48px] min-h-[48px] flex items-center justify-center transition-colors duration-200 cursor-pointer z-[100]",
-            !isNavbarSolid
-              ? 'text-white/90 hover:bg-white/20 active:bg-white/30 hover:text-white'
-              : darkMode
-                ? 'text-neutral-300 hover:bg-neutral-800 active:bg-neutral-700 hover:text-white'
-                : 'text-neutral-600 hover:bg-neutral-100 active:bg-neutral-200 hover:text-neutral-900'
-          )}
-          aria-label={isOpen ? 'Cerrar menú' : 'Abrir menú'}
-          aria-expanded={isOpen}
-          style={{ WebkitTapHighlightColor: 'transparent' }}
-        >
-          {isOpen ? (
-            <X className="w-6 h-6 pointer-events-none" />
-          ) : (
-            <Menu className="w-6 h-6 pointer-events-none" />
-          )}
-        </Button>
-      </div>
-
-      {/* Mobile Menu */}
+      {/* Backdrop */}
       {isOpen && (
         <div 
-          className={cn(
-            "lg:hidden fixed top-[4.5rem] right-4 w-64 max-w-[90vw] z-40 overflow-y-auto backdrop-blur-xl rounded-2xl border border-neutral-200/20 dark:border-neutral-700/20 shadow-2xl transition-all duration-300",
-            darkMode 
-              ? "bg-neutral-950/95" 
-              : "bg-white/95"
-          )}
-          style={{ maxHeight: 'calc(100vh - 6rem)' }}
-        >
-          <div className="px-3 py-4 space-y-2">
-            {/* Mobile Navigation Links */}
-            <div className="space-y-1">
-              {links.map((link) => (
-                <Button
-                  key={link.href}
-                  asChild
-                  variant="ghost"
-                  className={cn(
-                  "w-full justify-center px-4 py-2 rounded-lg text-sm font-medium touch-manipulation min-h-[40px] flex items-center transition-all duration-200 border border-transparent",
-                  pathname === link.href
-                    ? cn("bg-primary/10", "text-primary-600 dark:text-primary-400 shadow-sm border-primary-100 dark:border-primary-900/50")
-                    : 'text-muted-foreground hover:bg-muted dark:hover:bg-muted/80'
-                )}
-                  onClick={() => {
-                    setIsOpen(false);
-                    if (typeof window !== 'undefined') {
-                      ScrollManager.clear(link.href);
-                    }
-                  }}
-                >
-                  <Link
-                    href={link.href}
-                    role="menuitem"
-                    tabIndex={isOpen ? 0 : -1}
-                    aria-label={link.ariaLabel}
-                    style={{ WebkitTapHighlightColor: 'transparent' }}
-                  >
-                    {link.label}
-                  </Link>
-                </Button>
-              ))}
-            </div>
+          className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[90] transition-opacity duration-300"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
 
-            {/* Mobile Quote & Cart & Theme */}
-            <div className="pt-3 border-t border-neutral-200/50 dark:border-neutral-800/50 space-y-2">
-              <Button
-                asChild
-                variant="gradient"
-                className="w-full justify-center min-h-[40px] text-sm shadow-md hover:shadow-lg hover:scale-[1.02] transition-all"
-                onClick={() => setIsOpen(false)}
-              >
-                <Link
-                  href="/contact"
-                  className="flex items-center justify-center gap-2"
-                  tabIndex={isOpen ? 0 : -1}
-                  style={{ WebkitTapHighlightColor: 'transparent' }}
-                >
-                  <MessageSquare className="w-4 h-4 text-white" />
-                  <span>Solicitar Cotización</span>
-                </Link>
-              </Button>
+      {/* Mobile Menu Drawer */}
+      <div 
+        className={cn(
+          "navbar-menu lg:hidden fixed bottom-[calc(4rem+env(safe-area-inset-bottom))] left-0 right-0 z-[100] rounded-t-[2rem] overflow-hidden transition-transform duration-300 ease-out transform",
+          isOpen ? "translate-y-0" : "translate-y-full",
+          darkMode ? "bg-neutral-950" : "bg-white"
+        )}
+        style={{ maxHeight: '85vh' }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Handle Bar (Visual cue for dragging/bottom sheet) */}
+        <div className="w-full flex justify-center pt-3 pb-1" onClick={() => setIsOpen(false)}>
+          <div className="w-12 h-1.5 rounded-full bg-neutral-200 dark:bg-neutral-800" />
+        </div>
 
-              <div className="grid grid-cols-4 gap-2">
-                {/* Mobile Cart Button */}
-                <Button
-                  onClick={() => {
-                    setIsCartOpen(true);
-                    setIsOpen(false);
-                  }}
-                  variant="ghost"
-                  className="col-span-3 justify-center bg-primary-50 dark:bg-primary-900/20 hover:bg-primary-100 dark:hover:bg-primary-900/30 active:bg-primary-200 dark:active:bg-primary-900/40 text-primary-700 dark:text-primary-300 min-h-[40px] text-xs px-2"
-                  tabIndex={isOpen ? 0 : -1}
-                  style={{ WebkitTapHighlightColor: 'transparent' }}
-                >
-                  <ShoppingCart className="w-4 h-4 mr-1.5" />
-                  <span>Carrito ({itemCount})</span>
-                </Button>
-
-                {/* Mobile Theme Toggle */}
-                <div className="col-span-1 flex items-center justify-center bg-neutral-100 dark:bg-neutral-800 rounded-lg">
-                   <ThemeToggle isScrolled={true} />
+        <div className="flex flex-col max-h-[80vh] overflow-y-auto pb-6">
+          
+          {/* 1. Header Section: User Profile */}
+          <div className="px-6 py-6">
+            {user ? (
+              <div className="flex items-center gap-4">
+                <Avatar className="h-14 w-14 border-2 border-primary/20">
+                  <AvatarImage src={user.image} alt={user.username} />
+                  <AvatarFallback className="text-lg bg-primary/10 text-primary font-bold">
+                    {(user.username || 'U')[0].toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-lg leading-tight truncate">
+                    {user.username || 'Usuario'}
+                  </h3>
+                  <p className="text-sm text-muted-foreground truncate">
+                    {user.email}
+                  </p>
                 </div>
               </div>
-            </div>
-
-            {/* Mobile User Section */}
-            <div className="border-t border-neutral-200 dark:border-neutral-700 pt-4">
-              {user ? (
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-3 px-4 py-2">
-                    <div className="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
-                      <span className="text-primary-600 dark:text-primary-400 font-bold text-lg">
-                        {(user.username || 'U')[0].toUpperCase()}
-                      </span>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-neutral-900 dark:text-white">
-                        {user.username || 'Usuario'}
-                      </p>
-                      <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                        {user.email || 'usuario@ejemplo.com'}
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <Button
-                    onClick={() => {
-                      logout();
-                      setIsOpen(false);
-                    }}
-                    variant="ghost"
-                    className="w-full justify-start px-4 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
-                    tabIndex={isOpen ? 0 : -1}
-                  >
-                    <LogOut className="w-4 h-4 mr-2" />
-                    <span>Cerrar Sesión</span>
+            ) : (
+              <div className="flex flex-col gap-3">
+                <h3 className="text-xl font-bold">Bienvenido a Ddreams 3D</h3>
+                <p className="text-sm text-muted-foreground mb-2">
+                  Inicia sesión para gestionar tus pedidos y cotizaciones.
+                </p>
+                <div className="grid grid-cols-2 gap-3">
+                  <Button asChild variant="default" className="w-full">
+                    <Link href="/login" onClick={() => setIsOpen(false)}>
+                      <LogIn className="w-4 h-4 mr-2" />
+                      Entrar
+                    </Link>
+                  </Button>
+                  <Button asChild variant="outline" className="w-full">
+                    <Link href="/register" onClick={() => setIsOpen(false)}>
+                      <UserPlus className="w-4 h-4 mr-2" />
+                      Registro
+                    </Link>
                   </Button>
                 </div>
-              ) : (
-                <Button
-                  asChild
-                  className="hidden w-full"
-                >
-                  <Link
-                    href="/login"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Iniciar Sesión
-                  </Link>
-                </Button>
+              </div>
+            )}
+          </div>
+
+          <Separator className="opacity-50" />
+
+          {/* 2. Menu Items Group */}
+          <div className="p-4 space-y-1">
+            
+            {/* Perfil (Only if logged in) */}
+            {user && (
+              <Link
+                href="/profile"
+                onClick={() => handleLinkClick('/profile')}
+                className={cn(
+                  "flex items-center justify-between p-3 rounded-xl transition-all duration-200 active:scale-[0.98]",
+                  pathname === '/profile' 
+                    ? "bg-primary/10 text-primary" 
+                    : "hover:bg-muted text-foreground"
+                )}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={cn("p-2 rounded-lg", pathname === '/profile' ? "bg-primary/20" : "bg-muted")}>
+                    <User className="w-5 h-5" />
+                  </div>
+                  <span className="font-medium">Mi Perfil</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-muted-foreground" />
+              </Link>
+            )}
+
+            {/* Proceso */}
+            <Link
+              href="/process"
+              onClick={() => handleLinkClick('/process')}
+              className={cn(
+                "flex items-center justify-between p-3 rounded-xl transition-all duration-200 active:scale-[0.98]",
+                pathname === '/process' 
+                  ? "bg-primary/10 text-primary" 
+                  : "hover:bg-muted text-foreground"
               )}
+            >
+              <div className="flex items-center gap-3">
+                <div className={cn("p-2 rounded-lg", pathname === '/process' ? "bg-primary/20" : "bg-muted")}>
+                  <FileText className="w-5 h-5" />
+                </div>
+                <span className="font-medium">Nuestro Proceso</span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            </Link>
+
+            {/* Nosotros */}
+            <Link
+              href="/about"
+              onClick={() => handleLinkClick('/about')}
+              className={cn(
+                "flex items-center justify-between p-3 rounded-xl transition-all duration-200 active:scale-[0.98]",
+                pathname === '/about' 
+                  ? "bg-primary/10 text-primary" 
+                  : "hover:bg-muted text-foreground"
+              )}
+            >
+              <div className="flex items-center gap-3">
+                <div className={cn("p-2 rounded-lg", pathname === '/about' ? "bg-primary/20" : "bg-muted")}>
+                  <Users className="w-5 h-5" />
+                </div>
+                <span className="font-medium">Nosotros</span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            </Link>
+
+            {/* Carrito */}
+            <button
+              onClick={() => {
+                setIsOpen(false);
+                setIsCartOpen(true);
+              }}
+              className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-muted text-foreground transition-all duration-200 active:scale-[0.98]"
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-muted relative">
+                  <ShoppingCart className="w-5 h-5" />
+                  {itemCount > 0 && (
+                    <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 rounded-full text-[10px] text-white flex items-center justify-center font-bold">
+                      {itemCount}
+                    </span>
+                  )}
+                </div>
+                <span className="font-medium">Carrito de Compras</span>
+              </div>
+              <div className="flex items-center gap-2">
+                {itemCount > 0 && (
+                  <Badge variant="secondary" className="text-xs">
+                    {itemCount} {itemCount === 1 ? 'item' : 'items'}
+                  </Badge>
+                )}
+                <ChevronRight className="w-4 h-4 text-muted-foreground" />
+              </div>
+            </button>
+          </div>
+
+          <Separator className="opacity-50" />
+
+          {/* 3. Settings & Footer */}
+          <div className="p-4 space-y-4">
+            
+            {/* Theme Toggle Row */}
+            <div className="flex items-center justify-between p-3 rounded-xl bg-muted/50">
+              <span className="font-medium text-sm text-muted-foreground ml-1">Apariencia</span>
+              <ThemeToggle isScrolled={true} />
+            </div>
+
+            {/* Logout Button */}
+            {user && (
+              <Button
+                variant="destructive"
+                className="w-full justify-center gap-2 rounded-xl h-12 mt-2"
+                onClick={() => {
+                  logout();
+                  setIsOpen(false);
+                }}
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Cerrar Sesión</span>
+              </Button>
+            )}
+            
+            {/* Version / Info */}
+            <div className="text-center pt-4 pb-8">
+              <p className="text-[10px] text-muted-foreground/50">
+                Ddreams 3D v2.0 &copy; {new Date().getFullYear()}
+              </p>
             </div>
           </div>
+
         </div>
-      )}
+      </div>
     </>
   );
-};
+}

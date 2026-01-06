@@ -31,6 +31,7 @@ export function ImageUploadPreview({
                     variant="destructive"
                     size="icon"
                     className="absolute top-2 right-2 h-8 w-8 rounded-full shadow-md hover:bg-red-600 transition-colors"
+                    aria-label="Eliminar imagen"
                 >
                     <X className="h-4 w-4" />
                 </Button>

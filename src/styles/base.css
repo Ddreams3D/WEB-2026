@@ -4,6 +4,7 @@
 html {
   scroll-behavior: smooth;
   height: 100%;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -11,12 +12,21 @@ body {
   overflow-x: hidden;
   max-width: 100vw;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  padding-top: var(--navbar-offset, 0px);
+  transition: padding-top 0.3s ease-in-out;
+}
+
+/* Mobile Inputs Optimization */
+@media screen and (max-width: 768px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
 }
 
 /* =========================================
    ROOT VARIABLES (DEFAULT THEME)
    ========================================= */
-:root {
+:root, .light {
   /* Shadcn/Tailwind Variables (HSL) */
   --background: 210 40% 98%;
   --foreground: 222.2 47.4% 11.2%;
@@ -84,6 +94,8 @@ body {
   --highlight-start: #007EA7;
   --highlight-mid: #0096C7;
   --highlight-end: #007EA7;
+
+  color-scheme: light;
 }
 
 /* --- DEFAULT THEME LOGIC --- */
@@ -112,7 +124,9 @@ body {
    DARK MODE OVERRIDES
    ========================================= */
 .dark {
-  /* Dark Mode Variables (Neutrals) */
+  /* ------------------------------------------------------------------
+     1. CORE LAYOUT LAYERS (Dark)
+     ------------------------------------------------------------------ */
   --background: 222.2 47.4% 11.2%;
   --foreground: 210 40% 98%;
   
@@ -122,6 +136,9 @@ body {
   --popover: 222.2 47.4% 11.2%;
   --popover-foreground: 210 40% 98%;
   
+  /* ------------------------------------------------------------------
+     2. SEMANTIC COLORS (Dark)
+     ------------------------------------------------------------------ */
   --muted: 217.2 32.6% 17.5%;
   --muted-foreground: 215 20.2% 65.1%;
   
@@ -134,7 +151,9 @@ body {
   --border: 217.2 32.6% 17.5%;
   --input: 217.2 32.6% 17.5%;
   
-  /* RGB Values for Tailwind Opacity Support */
+  /* ------------------------------------------------------------------
+     3. LAYOUT HELPERS (RGB)
+     ------------------------------------------------------------------ */
   --foreground-rgb: 248, 250, 252;
   --background-start-rgb: 15, 23, 42;
   --background-end-rgb: 30, 41, 59;

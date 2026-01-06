@@ -12,6 +12,7 @@ import { NavbarLogo } from './navbar/NavbarLogo';
 import { NavbarDesktopLinks } from './navbar/NavbarDesktopLinks';
 import { NavbarActions } from './navbar/NavbarActions';
 import { NavbarMobileMenu } from './navbar/NavbarMobileMenu';
+import { MobileBottomNav } from './navbar/MobileBottomNav';
 
 const NAV_LINKS = [
   { href: '/', label: 'Inicio', ariaLabel: 'Página de inicio' },
@@ -97,62 +98,72 @@ const Navbar: React.FC = () => {
   }, []);
 
   return (
-    <nav
-      style={{ top: 'var(--navbar-offset, 0px)' }}
-      className={cn(
-        "fixed left-0 right-0 z-50 transition-all duration-300 ease-in-out border-b",
-        isNavbarSolid
-          ? "bg-background/95 backdrop-blur-md shadow-sm border-border"
-          : "bg-transparent border-transparent"
-      )}
-      role="navigation"
-      aria-label="Navegación principal"
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center gap-2 h-16 lg:h-20">
-          <NavbarLogo 
-            isNavbarSolid={isNavbarSolid} 
-            darkMode={darkMode} 
-          />
+    <>
+      <nav
+        style={{ top: 'var(--navbar-offset, 0px)' }}
+        className={cn(
+          "fixed left-0 right-0 z-50 transition-all duration-300 ease-in-out border-b",
+          isNavbarSolid
+            ? "bg-background/95 backdrop-blur-md shadow-sm border-border"
+            : "bg-transparent border-transparent"
+        )}
+        role="navigation"
+        aria-label="Navegación principal"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center gap-2 h-16 lg:h-20">
+            <NavbarLogo 
+              isNavbarSolid={isNavbarSolid} 
+              darkMode={darkMode} 
+            />
 
-          <NavbarDesktopLinks 
-            links={NAV_LINKS} 
-            pathname={pathname} 
-            isNavbarSolid={isNavbarSolid} 
-            darkMode={darkMode} 
-          />
+            <NavbarDesktopLinks 
+              links={NAV_LINKS} 
+              pathname={pathname} 
+              isNavbarSolid={isNavbarSolid} 
+              darkMode={darkMode} 
+            />
 
-          <NavbarActions 
-            user={user}
-            isAdmin={isAdmin}
-            logout={logout}
-            isNavbarSolid={isNavbarSolid}
-            darkMode={darkMode}
-            isUserMenuOpen={isUserMenuOpen}
-            setIsUserMenuOpen={setIsUserMenuOpen}
-            itemCount={itemCount}
-            setIsCartOpen={setIsCartOpen}
-          />
-
-          <NavbarMobileMenu 
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-            toggleMenu={toggleMenu}
-            links={NAV_LINKS}
-            pathname={pathname}
-            user={user}
-            logout={logout}
-            isNavbarSolid={isNavbarSolid}
-            darkMode={darkMode}
-            itemCount={itemCount}
-            setIsCartOpen={setIsCartOpen}
-          />
+            <NavbarActions 
+              user={user}
+              isAdmin={isAdmin}
+              logout={logout}
+              isNavbarSolid={isNavbarSolid}
+              darkMode={darkMode}
+              isUserMenuOpen={isUserMenuOpen}
+              setIsUserMenuOpen={setIsUserMenuOpen}
+              itemCount={itemCount}
+              setIsCartOpen={setIsCartOpen}
+            />
+          </div>
         </div>
-      </div>
 
-      {/* Cart Drawer */}
-      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
-    </nav>
+        {/* Cart Drawer */}
+        <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      </nav>
+
+      <NavbarMobileMenu 
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        pathname={pathname}
+        user={user}
+        logout={logout}
+        darkMode={darkMode}
+        itemCount={itemCount}
+        setIsCartOpen={setIsCartOpen}
+      />
+
+      <MobileBottomNav 
+        pathname={pathname}
+        setIsCartOpen={setIsCartOpen}
+        itemCount={itemCount}
+        setIsOpen={setIsOpen}
+        isOpen={isOpen}
+        user={user}
+        isNavbarSolid={isNavbarSolid}
+        darkMode={darkMode}
+      />
+    </>
   );
 };
 

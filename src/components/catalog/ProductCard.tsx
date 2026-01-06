@@ -24,6 +24,7 @@ interface ProductCardProps {
     icon?: React.ReactNode;
   };
   source?: string;
+  layout?: 'grid' | 'list';
 }
 
 export function ProductCard({ 
@@ -32,7 +33,8 @@ export function ProductCard({
   showAddToCart = true, 
   onViewDetails,
   customAction,
-  source
+  source,
+  layout = 'grid'
 }: ProductCardProps) {
   const { addToCart } = useCart();
   const { showSuccess, showError } = useToast();
@@ -81,12 +83,14 @@ export function ProductCard({
     objectPosition: formatImagePosition(imagePosition)
   }), [imagePosition]);
 
+  const isList = layout === 'list';
+
   const renderContent = () => (
     <>
       {/* Product Image */}
       <div className={cn(
-        "relative aspect-[4/3] overflow-hidden",
-        "bg-muted/50"
+        "relative overflow-hidden bg-muted/50",
+        isList ? "w-full sm:w-48 md:w-64 aspect-[4/3] sm:aspect-auto sm:h-full" : "aspect-[4/3]"
       )}>
         <ProductImage
           src={primaryImage?.url}
@@ -97,7 +101,7 @@ export function ProductCard({
             imagePosition
           )}
           style={imageStyle}
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          sizes={isList ? "(max-width: 640px) 100vw, 300px" : "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"}
         />
         {/* Soft Overlay on Hover */}
         <div className={cn(
@@ -192,7 +196,8 @@ export function ProductCard({
 
   return (
     <div className={cn(
-      "group relative border border-border rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 ease-out overflow-hidden flex flex-col h-full",
+      "group relative border border-border rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 ease-out overflow-hidden flex",
+      isList ? "flex-col sm:flex-row h-auto min-h-[180px]" : "flex-col h-full",
       "bg-card text-card-foreground",
       className
     )}>
@@ -206,7 +211,10 @@ export function ProductCard({
       {onViewDetails ? (
         <button 
           onClick={() => onViewDetails(product)}
-          className="flex-1 flex flex-col relative cursor-pointer text-left w-full focus:outline-none focus:ring-2 focus:ring-primary rounded-t-xl active:scale-[0.98] transition-transform duration-100"
+          className={cn(
+            "flex-1 flex relative cursor-pointer text-left w-full focus:outline-none focus:ring-2 focus:ring-primary active:scale-[0.98] transition-transform duration-100",
+            isList ? "flex-col sm:flex-row rounded-l-xl" : "flex-col rounded-t-xl"
+          )}
           type="button"
           aria-label={`Ver detalles de ${product.name}`}
         >
@@ -215,7 +223,10 @@ export function ProductCard({
       ) : (
         <Link 
           href={productUrl}
-          className="flex-1 flex flex-col relative cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary rounded-t-xl active:scale-[0.98] transition-transform duration-100"
+          className={cn(
+            "flex-1 flex relative cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary active:scale-[0.98] transition-transform duration-100",
+            isList ? "flex-col sm:flex-row rounded-l-xl" : "flex-col rounded-t-xl"
+          )}
           onClick={handleScrollSave}
           aria-label={`Ir a detalles de ${product.name}`}
         >
@@ -224,8 +235,11 @@ export function ProductCard({
       )}
 
       {/* Price & Action Container - Separated to avoid nesting interactive elements if card was a button */}
-      <div className="p-4 pt-0 mt-auto">
-        <div className="pt-2">
+      <div className={cn(
+        "p-4 pt-0 mt-auto",
+        isList && "sm:pt-4 sm:w-48 sm:flex-none sm:flex sm:flex-col sm:justify-center sm:border-l sm:border-border sm:bg-muted/5"
+      )}>
+        <div className="pt-2 w-full">
           {customAction ? (
             <Button
               asChild

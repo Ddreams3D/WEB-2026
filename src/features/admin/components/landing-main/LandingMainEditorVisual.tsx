@@ -32,34 +32,15 @@ export function LandingMainEditorVisual({
                 
                 <div className="space-y-3">
                     <Label>Preferencia de Tema</Label>
-                    <Select 
-                        value={form.themeMode || 'system'} 
-                        onValueChange={(val: any) => updateField('themeMode', val)}
-                    >
-                        <SelectTrigger>
-                            <SelectValue placeholder="Seleccionar modo" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="system">
-                                <div className="flex items-center gap-2">
-                                    <Laptop className="w-4 h-4" />
-                                    <span>Automático (Sistema)</span>
-                                </div>
-                            </SelectItem>
-                            <SelectItem value="light">
-                                <div className="flex items-center gap-2">
-                                    <Sun className="w-4 h-4" />
-                                    <span>Siempre Claro</span>
-                                </div>
-                            </SelectItem>
-                            <SelectItem value="dark">
-                                <div className="flex items-center gap-2">
-                                    <Moon className="w-4 h-4" />
-                                    <span>Siempre Oscuro</span>
-                                </div>
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
+                    <div className="flex items-center justify-between p-3 border rounded-md bg-background/50 text-sm">
+                        <div className="flex items-center gap-2">
+                            <Sun className="w-4 h-4 text-orange-500" />
+                            <span className="font-medium">Modo Claro (Bloqueado)</span>
+                        </div>
+                        <span className="text-xs text-muted-foreground italic">
+                            La landing principal siempre usa el tema claro por defecto.
+                        </span>
+                    </div>
                 </div>
             </div>
 

@@ -2,8 +2,15 @@ import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Camera, ExternalLink } from '@/lib/icons';
+import { Camera, ExternalLink, Sun, Moon, Monitor } from 'lucide-react';
 import { SeasonalThemeConfig } from '@/shared/types/seasonal';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface CampaignEditorContentProps {
   theme: SeasonalThemeConfig;
@@ -16,6 +23,41 @@ export function CampaignEditorContent({ theme, updateLanding }: CampaignEditorCo
       <h3 className="font-semibold text-lg flex items-center gap-2">Contenido Landing Page</h3>
       
       <div className="space-y-4">
+          <div className="space-y-2">
+            <Label>Modo de Tema</Label>
+            <Select 
+                value={theme.landing.themeMode || 'system'} 
+                onValueChange={(value) => updateLanding(theme.id, { themeMode: value as any })}
+            >
+                <SelectTrigger>
+                    <SelectValue placeholder="Selecciona un modo" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="light">
+                        <div className="flex items-center gap-2">
+                            <Sun className="w-4 h-4" />
+                            <span>Claro (Light)</span>
+                        </div>
+                    </SelectItem>
+                    <SelectItem value="dark">
+                        <div className="flex items-center gap-2">
+                            <Moon className="w-4 h-4" />
+                            <span>Oscuro (Dark)</span>
+                        </div>
+                    </SelectItem>
+                    <SelectItem value="system">
+                        <div className="flex items-center gap-2">
+                            <Monitor className="w-4 h-4" />
+                            <span>Sistema (Automático)</span>
+                        </div>
+                    </SelectItem>
+                </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">
+                Define si esta campaña debe forzar modo oscuro (ej. Halloween) o claro.
+            </p>
+          </div>
+
           <div className="space-y-2">
              <Label>Título Hero</Label>
              <Input 

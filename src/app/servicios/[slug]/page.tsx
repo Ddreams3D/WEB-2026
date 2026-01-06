@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { SERVICE_LANDINGS_DATA } from '@/shared/data/service-landings-data';
+import { ServiceLandingsService } from '@/services/service-landings.service';
 import ServiceLandingRenderer from '@/features/service-landings/components/ServiceLandingRenderer';
 
 interface PageProps {
@@ -12,7 +12,7 @@ interface PageProps {
 // Generate Metadata for SEO
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const landing = SERVICE_LANDINGS_DATA.find(l => l.slug === slug);
+  const landing = await ServiceLandingsService.getBySlug(slug);
 
   if (!landing) {
     return {
@@ -33,14 +33,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 // Static Params for Static Site Generation (SSG) if we wanted to build them at compile time
 export async function generateStaticParams() {
-  return SERVICE_LANDINGS_DATA.map((landing) => ({
+  const landings = await ServiceLandingsService.getAll();
+  return landings.map((landing) => ({
     slug: landing.slug,
   }));
 }
 
 export default async function ServiceLandingPage({ params }: PageProps) {
   const { slug } = await params;
-  const landing = SERVICE_LANDINGS_DATA.find(l => l.slug === slug);
+  const landing = await ServiceLandingsService.getBySlug(slug);
 
   if (!landing) {
     notFound();

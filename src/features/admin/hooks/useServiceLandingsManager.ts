@@ -1,7 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { toast } from 'sonner';
 import { ServiceLandingConfig, DEFAULT_SERVICE_LANDING } from '@/shared/types/service-landing';
 import { SERVICE_LANDINGS_DATA } from '@/shared/data/service-landings-data';
+import { ServiceLandingsService } from '@/services/service-landings.service';
 
 export function useServiceLandingsManager() {
   const [landings, setLandings] = useState<ServiceLandingConfig[]>(SERVICE_LANDINGS_DATA);
@@ -9,6 +10,23 @@ export function useServiceLandingsManager() {
   const [isEditing, setIsEditing] = useState(false);
   const [currentLanding, setCurrentLanding] = useState<ServiceLandingConfig | null>(null);
   const [previewMode, setPreviewMode] = useState<'desktop' | 'mobile'>('desktop');
+
+  // Load real data on mount
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        // Use Client Service directly to leverage client-side auth
+        const data = await ServiceLandingsService.getAll();
+        if (data && data.length > 0) {
+          setLandings(data);
+        }
+      } catch (error) {
+        console.error("Failed to load service landings:", error);
+        toast.error("Error al cargar datos actualizados");
+      }
+    };
+    loadData();
+  }, []);
 
   const filteredLandings = useMemo(() => {
     return landings.filter(l => 
@@ -35,20 +53,32 @@ export function useServiceLandingsManager() {
     setIsEditing(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!currentLanding) return;
     
-    // Simulating save logic
-    const exists = landings.find(l => l.id === currentLanding.id);
-    if (exists) {
-      setLandings(landings.map(l => l.id === currentLanding.id ? currentLanding : l));
-    } else {
-      setLandings([...landings, currentLanding]);
+    try {
+      // Optimistic update
+      const exists = landings.find(l => l.id === currentLanding.id);
+      let newLandings;
+      
+      if (exists) {
+        newLandings = landings.map(l => l.id === currentLanding.id ? currentLanding : l);
+      } else {
+        newLandings = [...landings, currentLanding];
+      }
+      setLandings(newLandings);
+      
+      // Persist to server/file using Client Service (with Auth)
+      await ServiceLandingsService.save(currentLanding);
+      
+      setIsEditing(false);
+      setCurrentLanding(null);
+      toast.success("Landing guardada correctamente");
+    } catch (error) {
+      console.error("Error saving landing:", error);
+      toast.error("Error al guardar los cambios");
+      // Could revert optimistic update here if needed
     }
-    
-    setIsEditing(false);
-    setCurrentLanding(null);
-    toast.success("Landing guardada correctamente");
   };
 
   const updateField = (field: keyof ServiceLandingConfig, value: any) => {

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 interface Bubble {
@@ -211,8 +212,13 @@ export const RealisticBubbles = ({ productImages = [] }: Props) => {
           >
             {/* Image Content */}
             {bubble.image && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={bubble.image} alt="Producto 3D" className="absolute inset-0 z-0" />
+                <Image 
+                  src={bubble.image} 
+                  alt="Producto 3D flotante" 
+                  fill
+                  className="object-contain p-[12%] opacity-95 drop-shadow-md"
+                  sizes="(max-width: 768px) 150px, 250px"
+                />
             )}
 
             {/* Inner Wobble Effect */}

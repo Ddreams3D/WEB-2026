@@ -6,6 +6,8 @@ import { cn } from '@/lib/utils';
 import { useServiceLanding } from '@/features/service-landings/hooks/useServiceLanding';
 import { ServiceHero } from './sections/ServiceHero';
 import { ServiceFeatures } from './sections/ServiceFeatures';
+import { ServiceFocus } from './sections/ServiceFocus';
+import { ServiceProcess } from './sections/ServiceProcess';
 import { ServiceShowcase } from './sections/ServiceShowcase';
 import { ServiceCTA } from './sections/ServiceCTA';
 import { ServiceFooter } from './sections/ServiceFooter';
@@ -21,7 +23,9 @@ export default function ServiceLandingRenderer({ config, isPreview = false }: Se
     themeClass,
     primaryColor,
     heroSection,
-    featuresSection
+    featuresSection,
+    focusSection,
+    processSection
   } = useServiceLanding(config, isPreview);
 
   // Custom CSS for primary color override
@@ -36,6 +40,18 @@ export default function ServiceLandingRenderer({ config, isPreview = false }: Se
       <ServiceHero 
         config={config} 
         heroSection={heroSection} 
+        primaryColor={primaryColor} 
+      />
+
+      {/* 1.5. FOCUS SECTION (New) */}
+      <ServiceFocus 
+        focusSection={focusSection} 
+        primaryColor={primaryColor} 
+      />
+
+      {/* 1.6. PROCESS SECTION (New Cards) */}
+      <ServiceProcess 
+        processSection={processSection} 
         primaryColor={primaryColor} 
       />
 

@@ -12,6 +12,7 @@ export default function ServiceLandingsManager() {
         setSearchQuery,
         handleCreateNew,
         handleEdit,
+        handleSave,
         isEditing,
         setIsEditing,
         currentLanding,
@@ -38,6 +39,7 @@ export default function ServiceLandingsManager() {
                 setIsEditing={setIsEditing}
                 currentLanding={currentLanding}
                 updateField={updateField}
+                onSave={handleSave}
             />
         </div>
     );

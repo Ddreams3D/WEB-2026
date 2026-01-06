@@ -50,6 +50,8 @@ export function useServiceLanding(config: ServiceLandingConfig, isPreview: boole
   // Extract sections
   const heroSection = config.sections.find(s => s.type === 'hero');
   const featuresSection = config.sections.find(s => s.type === 'features');
+  const focusSection = config.sections.find(s => s.type === 'focus');
+  const processSection = config.sections.find(s => s.type === 'process');
 
   return {
     featuredProducts,
@@ -58,6 +60,8 @@ export function useServiceLanding(config: ServiceLandingConfig, isPreview: boole
     themeClass,
     primaryColor,
     heroSection,
-    featuresSection
+    featuresSection,
+    focusSection,
+    processSection
   };
 }

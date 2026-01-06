@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen flex-col w-full bg-background">
+    <div className="flex min-h-screen flex-col w-full bg-background pb-16 lg:pb-0">
       <Navbar />
       <main className="flex-1 flex flex-col w-full relative pt-20">
         {children}

@@ -16,6 +16,7 @@ export function FooterContactInfo() {
         <a
           href={`${WHATSAPP_REDIRECT}`}
           target="_blank"
+          rel="noopener noreferrer"
           className="text-white/60 hover:text-primary transition-colors duration-200 font-medium flex items-center gap-1"
         >
           <Phone className="w-4 h-4" />

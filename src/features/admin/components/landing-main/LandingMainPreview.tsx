@@ -87,7 +87,7 @@ export function LandingMainPreview({ form, previewMode, setPreviewMode, setIsEdi
                     {/* Simulated Page Layout */}
                     <div className={cn(
                         "flex flex-col min-h-screen bg-background text-foreground pointer-events-none select-none",
-                        form.themeMode === 'dark' ? 'dark' : form.themeMode === 'light' ? 'light' : ''
+                        "light" // Always force light mode in preview
                     )}>
                         <AnnouncementBar config={form.announcement} />
                         <NavbarMock />

@@ -68,9 +68,6 @@ service cloud.firestore {
       allow read: if isOwner(userId) || isAdmin();
       
       // Create: Owner only (Registration)
-      // Must set basic fields.
-      // Allow 'admin' role ONLY if the email is a specific superadmin email (hardcoded for security bootstrap)
-      // or if the role is 'user'.
       allow create: if isOwner(userId) 
                     && (
                       (!request.resource.data.keys().hasAny(['role']) || request.resource.data.role == 'user')
@@ -81,8 +78,6 @@ service cloud.firestore {
                     && isValidTimestamp(request.resource.data, 'createdAt');
 
       // Update: Owner (can edit profile but NOT role or stats) or Admin (can edit everything)
-      // WHITELIST for Owner: Only allow updating specific fields.
-      // EXCEPTION: SuperAdmins can update their own role to 'admin' (bootstrap/recovery)
       allow update: if (isOwner(userId) 
                         && (
                           // Standard User Update
@@ -97,7 +92,7 @@ service cloud.firestore {
                         ))
                     || isAdmin();
       
-      // Delete: Admin only (Soft delete preferred usually, but keeping strict)
+      // Delete: Admin only
       allow delete: if isAdmin();
     }
 
@@ -108,12 +103,10 @@ service cloud.firestore {
       allow read: if true;
       
       // Admin only for writes
-      // Enforce basic schema sanity for admins to prevent corrupt data
       allow create: if isAdmin()
                     && isValidString(request.resource.data, 'name', 3, 100)
                     && isValidNumber(request.resource.data, 'price', 0, 100000);
                     
-      // Apply SAME validation logic for update
       allow update: if isAdmin()
                     && isValidString(request.resource.data, 'name', 3, 100)
                     && isValidNumber(request.resource.data, 'price', 0, 100000);
@@ -153,18 +146,13 @@ service cloud.firestore {
       allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
       
       // Create: Authenticated users.
-      // 1. Must belong to the user (userId == auth.uid)
-      // 2. Initial status must be valid (e.g. 'pending_payment' or 'quote_requested')
-      // 3. Financials must be positive (basic sanity)
       allow create: if isSignedIn() 
                     && request.resource.data.userId == request.auth.uid
                     && isValidNumber(request.resource.data, 'total', 0, 1000000)
                     && isValidTimestamp(request.resource.data, 'createdAt')
                     && (request.resource.data.status == 'pending_payment' || request.resource.data.status == 'quote_requested');
       
-      // Update: 
-      // Admin: Can change everything (status, tracking, etc)
-      // User: Can ONLY cancel if status is 'pending_payment' or 'quote_requested'
+      // Update: Admin or Owner (cancellation only)
       allow update: if isAdmin() 
                     || (isOwner(resource.data.userId) 
                         && (resource.data.status == 'pending_payment' || resource.data.status == 'quote_requested')
@@ -180,14 +168,11 @@ service cloud.firestore {
     match /reviews/{reviewId} {
       allow read: if true;
       
-      // Create: Authenticated user, one review per product/user combination is hard to enforce in rules alone without composite keys.
-      // But we can ensure they own the review.
       allow create: if isSignedIn() 
                     && request.resource.data.userId == request.auth.uid
                     && isValidNumber(request.resource.data, 'rating', 1, 5)
                     && isValidString(request.resource.data, 'comment', 1, 2000);
                     
-      // Update/Delete: Owner or Admin
       allow update: if (isOwner(resource.data.userId) && notUpdating('productId') && notUpdating('userId')) 
                     || isAdmin();
                     
@@ -207,12 +192,7 @@ service cloud.firestore {
     // 9. NOTIFICATIONS
     // ========================================================================
     match /notifications/{notifId} {
-      // Allow read if:
-      // 1. The notification belongs to the user (resource.data.userId == auth.uid)
-      // 2. OR it is a system notification (resource.data.userId == null) AND the requester is an admin
       allow read: if (resource.data.userId == request.auth.uid) || (resource.data.userId == null && isAdmin());
-      
-      // Writes usually by system/admin.
       allow write: if isAdmin(); 
     }
 
@@ -220,7 +200,6 @@ service cloud.firestore {
     // 10. CONTACTS (Formulario de contacto)
     // ========================================================================
     match /contacts/{contactId} {
-      // Anyone can write (public form), nobody can read/edit except admin
       allow create: if true 
                     && isValidString(request.resource.data, 'email', 3, 200)
                     && isValidString(request.resource.data, 'message', 1, 5000);
@@ -228,33 +207,43 @@ service cloud.firestore {
     }
 
     // ========================================================================
-    // 11. LANDINGS CONFIGURATION (Main & Seasonal)
+    // 11. LANDINGS & CONFIGURATION
     // ========================================================================
-    // Configuración Landing Principal
+    
+    // Service Landings (NUEVO)
+    match /service_landings/{landing} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Landing Principal
     match /landing_main/{docId} {
       allow read: if true;
       allow write: if isAdmin();
     }
     
-    // Configuración Campañas Estacionales (Navidad, Cyber, etc.)
+    // Campañas Estacionales
     match /seasonal_themes/{themeId} {
       allow read: if true;
       allow write: if isAdmin();
     }
 
-    // ========================================================================
-    // 12. SEO CONFIGURATION
-    // ========================================================================
+    // SEO
     match /seo_routes/{pathId} {
       allow read: if true;
       allow write: if isAdmin();
     }
+    
+    // Finances
+    match /finances/{record} {
+      allow read, write: if isAdmin();
+    }
 
     // ========================================================================
-    // CATCH-ALL (Seguridad por defecto)
+    // 12. GLOBAL ADMIN CATCH-ALL (Evita errores de permisos futuros)
     // ========================================================================
     match /{document=**} {
-      allow read, write: if false;
+      allow read, write: if isAdmin();
     }
   }
 }

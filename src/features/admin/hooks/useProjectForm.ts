@@ -38,6 +38,41 @@ export function useProjectForm({ project, onSave, onClose }: UseProjectFormProps
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { showError } = useToast();
 
+  // UI State
+  const [activeSection, setActiveSection] = useState('general');
+  const [editingBlock, setEditingBlock] = useState<string | null>(null);
+  const [isImageUploading, setIsImageUploading] = useState(false);
+  const [slugEditable, setSlugEditable] = useState(false);
+
+  // Category Management
+  const [availableCategories, setAvailableCategories] = useState<string[]>(CATEGORIES);
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [isAddingCategory, setIsAddingCategory] = useState(false);
+
+  // Load categories from localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+        const storedCats = localStorage.getItem('project_categories');
+        if (storedCats) {
+            try {
+                const parsed = JSON.parse(storedCats);
+                if (Array.isArray(parsed)) {
+                    setAvailableCategories(parsed);
+                }
+            } catch (e) {
+                console.error('Error parsing project categories:', e);
+            }
+        }
+    }
+  }, []);
+
+  // Save categories to localStorage
+  useEffect(() => {
+    if (availableCategories.length > 0) {
+        localStorage.setItem('project_categories', JSON.stringify(availableCategories));
+    }
+  }, [availableCategories]);
+
   useEffect(() => {
     if (project) {
       setFormData({
@@ -113,12 +148,27 @@ export function useProjectForm({ project, onSave, onClose }: UseProjectFormProps
 
   return {
     formData,
+    setFormData,
     isSubmitting,
+    activeSection,
+    setActiveSection,
+    editingBlock,
+    setEditingBlock,
+    isImageUploading,
+    setIsImageUploading,
+    slugEditable,
+    setSlugEditable,
     handleChange,
     handleGalleryAdd,
     handleGalleryUpdate,
     handleGalleryRemove,
     handleSubmit,
-    CATEGORIES
+    CATEGORIES,
+    availableCategories,
+    setAvailableCategories,
+    newCategoryName,
+    setNewCategoryName,
+    isAddingCategory,
+    setIsAddingCategory
   };
 }

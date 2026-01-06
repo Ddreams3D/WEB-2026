@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Filter, Grid, List } from '@/lib/icons';
+import { Sheet } from '@/components/ui/simple-sheet';
 import { ProductGrid, ProductGridSkeleton } from '@/features/catalog/components/ProductGrid';
 import { ProductFilters as ProductFiltersComponent } from '@/features/catalog/components/ProductFilters';
 import { useCatalog } from '@/contexts/CatalogContext';
@@ -182,16 +183,21 @@ export default function CatalogPageClient() {
             </div>
 
             {/* Mobile Filters Panel */}
-            {showFilters && (
-              <div className="lg:hidden mb-6">
-                <ProductFiltersComponent 
-                  onFiltersChange={handleFiltersChange}
-                  showSearch={true}
-                  isCollapsible={true}
-                  availableProducts={baseProducts}
-                />
-              </div>
-            )}
+            <Sheet
+              isOpen={showFilters}
+              onClose={() => setShowFilters(false)}
+              title="Filtros"
+              className="w-[300px] sm:w-[400px]"
+            >
+                <div className="py-4">
+                  <ProductFiltersComponent 
+                    onFiltersChange={handleFiltersChange}
+                    showSearch={true}
+                    isCollapsible={false}
+                    availableProducts={baseProducts}
+                  />
+                </div>
+            </Sheet>
 
             {/* Product Grid */}
             <div className="min-h-[400px]">
@@ -201,9 +207,10 @@ export default function CatalogPageClient() {
                 <ProductGrid
                   products={displayProducts}
                   emptyMessage="No se encontraron productos con los filtros seleccionados."
+                  viewMode={viewMode}
                   className={viewMode === 'grid' 
                     ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" 
-                    : "grid-cols-1 gap-4"
+                    : "grid-cols-1 sm:grid-cols-1 lg:grid-cols-1 gap-4"
                   }
                 />
               )}

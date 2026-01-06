@@ -88,7 +88,6 @@ export default function ImageUpload({ value, onChange, onRemove, onUploadStatusC
     try {
       updateUploadingState(true);
       setUploadProgress(0);
-      console.log('Starting upload process...');
       
       // 1. Comprimir imagen (Critical for Mobile)
       const compressedBlob = await compressImage(selectedFile);

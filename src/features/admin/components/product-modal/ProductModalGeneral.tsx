@@ -1,12 +1,14 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Plus, Info, Layers, Check, Trash2, Star, ImageIcon } from 'lucide-react';
+import { Plus, Info, Layers, Check, Trash2, Star, ImageIcon, FileText } from 'lucide-react';
 import { EditableBlock } from '../EditableBlock';
 import ImageUpload from '../ImageUpload';
 import { StringListEditor } from '../AdminEditors';
 import { motion } from 'framer-motion';
 import { Product, ProductImage } from '@/shared/types';
 import { Service } from '@/shared/types/domain';
+import { useTheme } from '@/contexts/ThemeContext';
+import { THEME_CONFIG } from '@/config/themes';
 
 interface ProductModalGeneralProps {
   formData: Partial<Product | Service>;
@@ -37,6 +39,8 @@ export const ProductModalGeneral: React.FC<ProductModalGeneralProps> = ({
   isImageUploading,
   handleImageUploaded
 }) => {
+  const { theme } = useTheme();
+
   return (
     <motion.div 
         key="general"
@@ -45,7 +49,27 @@ export const ProductModalGeneral: React.FC<ProductModalGeneralProps> = ({
         exit={{ opacity: 0, x: 20 }}
         className="space-y-4"
     >
-        {/* Description Block */}
+        {/* Full Description Block */}
+        <EditableBlock
+            id="fullDescription"
+            title="Descripción Detallada"
+            icon={FileText}
+            isEditing={editingBlock === 'fullDescription'}
+            onEdit={() => setEditingBlock('fullDescription')}
+            onSave={() => setEditingBlock(null)}
+            onCancel={() => setEditingBlock(null)}
+            preview={<p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{formData.description || 'Sin descripción detallada...'}</p>}
+        >
+            <textarea
+                name="description"
+                value={formData.description || ''}
+                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                className="w-full p-4 bg-muted/50 rounded-xl border-none focus:ring-1 focus:ring-primary min-h-[150px]"
+                placeholder="Descripción completa del producto..."
+            />
+        </EditableBlock>
+
+        {/* Short Description Block */}
         <EditableBlock
             id="description"
             title="Descripción Corta"
@@ -82,9 +106,14 @@ export const ProductModalGeneral: React.FC<ProductModalGeneralProps> = ({
                     </div>
                     <div>
                         <div className="text-xs uppercase text-muted-foreground font-semibold">Tags</div>
-                        <div className="flex flex-wrap gap-1 mt-1">
+                        <div className="flex flex-wrap gap-2 mt-2">
                             {formData.tags?.map(t => (
-                                <span key={t} className="px-2 py-0.5 bg-secondary rounded-md text-xs">{t}</span>
+                                <span 
+                                    key={t} 
+                                    className={`px-3 py-1 border rounded-md text-xs font-medium shadow-sm transition-colors ${THEME_CONFIG[theme].badgeClass}`}
+                                >
+                                    {t}
+                                </span>
                             ))}
                         </div>
                     </div>
@@ -208,7 +237,6 @@ export const ProductModalGeneral: React.FC<ProductModalGeneralProps> = ({
                     onUploadStatusChange={(status) => {
                         // If we needed to lift the state up, we could call a handler here.
                         // Currently isImageUploading is passed down but not a setter.
-                        console.log('Upload status:', status);
                     }}
                 />
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">

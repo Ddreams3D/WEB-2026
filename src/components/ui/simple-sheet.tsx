@@ -15,6 +15,7 @@ interface SheetProps {
   description?: string;
   className?: string;
   underHeader?: boolean;
+  footer?: React.ReactNode;
 }
 
 export function Sheet({ 
@@ -24,7 +25,8 @@ export function Sheet({
   title, 
   description,
   className,
-  underHeader = false
+  underHeader = false,
+  footer
 }: SheetProps) {
   const [mounted, setMounted] = React.useState(false);
 
@@ -77,7 +79,7 @@ export function Sheet({
                 {title && <h2 className="text-lg font-semibold tracking-tight">{title}</h2>}
                 {description && <p className="text-sm text-muted-foreground">{description}</p>}
               </div>
-              <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full">
+              <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full" aria-label="Cerrar panel">
                 <X className="h-5 w-5" />
               </Button>
             </div>
@@ -86,6 +88,13 @@ export function Sheet({
             <div className="flex-1 overflow-y-auto p-6">
               {children}
             </div>
+
+            {/* Footer */}
+            {footer && (
+              <div className="border-t bg-background p-6">
+                {footer}
+              </div>
+            )}
           </motion.div>
         </>
       )}

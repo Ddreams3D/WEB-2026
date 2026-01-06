@@ -16,3 +16,6 @@ export { CookieBanner } from './CookieBanner';
 export { FooterLogo } from './FooterLogo';
 export * from './MainLogo';
 export * from './IsotypeLogo';
+export * from './table';
+export * from './dialog';
+export * from './avatar';

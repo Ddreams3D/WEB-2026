@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { IsotypeLogo } from '@/components/ui';
 import { ArrowRight, Sparkles, Skull } from 'lucide-react';
@@ -112,13 +113,14 @@ export function SeasonalHero({
                 {/* Hero Image / Visual */}
                 {!isHalloween && (
                 <div className="relative animate-fade-in-up delay-200 group perspective-1000">
-                    <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-4 border-background/50 transform transition-transform duration-700 hover:rotate-y-6 hover:scale-[1.02]">
+                    <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-4 border-background/50 transform transition-transform duration-700 hover:rotate-y-6 hover:scale-[1.02] aspect-[4/5] lg:aspect-square">
                         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent z-10" />
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img 
-                            src={config.landing.heroImage} 
+                        <Image 
+                            src={config.landing.heroImage || "https://images.unsplash.com/photo-1633419461186-7d40a2e50594?q=80&w=2069&auto=format&fit=crop"} 
                             alt={config.landing.heroTitle}
-                            className="w-full h-auto object-cover aspect-[4/5] lg:aspect-square"
+                            fill
+                            className="object-cover"
+                            priority
                         />
                     </div>
                     

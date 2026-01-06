@@ -4,6 +4,8 @@ import { ArrowRight, Sparkles } from 'lucide-react';
 import { Button, IsotypeLogo } from '@/components/ui';
 import { ServiceLandingConfig } from '@/shared/types/service-landing';
 
+import Image from 'next/image';
+
 interface ServiceHeroProps {
   config: ServiceLandingConfig;
   heroSection: any;
@@ -75,13 +77,14 @@ export function ServiceHero({ config, heroSection, primaryColor }: ServiceHeroPr
 
           {/* Hero Image */}
           <div className="relative animate-fade-in-up delay-200 group perspective-1000">
-              <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-4 border-background/50 transform transition-transform duration-700 hover:rotate-y-6 hover:scale-[1.02]">
+              <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-4 border-background/50 transform transition-transform duration-700 hover:rotate-y-6 hover:scale-[1.02] aspect-[4/5] lg:aspect-square">
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent z-10" />
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img 
+                  <Image 
                       src={config.heroImage || "https://images.unsplash.com/photo-1633419461186-7d40a2e50594?q=80&w=2069&auto=format&fit=crop"} 
                       alt={config.name}
-                      className="w-full h-auto object-cover aspect-[4/5] lg:aspect-square"
+                      fill
+                      className="object-cover"
+                      priority
                   />
               </div>
               

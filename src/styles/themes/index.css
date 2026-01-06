@@ -4,6 +4,7 @@
   This ensures the main global.css remains clean and themes are isolated.
 */
 
+@import './standard.css';
 @import './halloween.css';
 @import './valentines.css';
 @import './promo.css';

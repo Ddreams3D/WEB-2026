@@ -71,6 +71,19 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
     }
   }, []);
 
+  // Persistence for Categories and Materials
+  useEffect(() => {
+    if (availableCategories.length > 0) {
+        localStorage.setItem('catalog_categories', JSON.stringify(availableCategories));
+    }
+  }, [availableCategories]);
+
+  useEffect(() => {
+    if (availableMaterials.length > 0) {
+        localStorage.setItem('catalog_materials', JSON.stringify(availableMaterials));
+    }
+  }, [availableMaterials]);
+
   useEffect(() => {
     if (product) {
       setFormData({
@@ -168,6 +181,7 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
     availableCategories,
     setAvailableCategories,
     availableMaterials,
+    setAvailableMaterials,
     activeTabId,
     setActiveTabId,
     activeSection,

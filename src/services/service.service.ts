@@ -65,13 +65,11 @@ const deleteImagesFromStorage = async (images: ProductImage[]) => {
   if (!images || images.length === 0 || !storage) return;
   const storageInstance = storage;
 
-  console.log(`[ServiceService] Deleting ${images.length} images from storage...`);
   const deletePromises = images.map(async (img) => {
     if (!img.url) return;
     try {
       const imageRef = ref(storageInstance, img.url);
       await deleteObject(imageRef);
-      console.log(`[ServiceService] Deleted image: ${img.url}`);
     } catch (error) {
       console.warn(`[ServiceService] Failed to delete image ${img.url}:`, error);
     }
@@ -83,10 +81,8 @@ const deleteImagesFromStorage = async (images: ProductImage[]) => {
 export const ServiceService = {
   // Get all services
   async getAllServices(forceRefresh = false, includeDeleted = false): Promise<Service[]> {
-    console.log(`[ServiceService] getAllServices called. forceRefresh=${forceRefresh}, includeDeleted=${includeDeleted}`);
     // Check cache
     if (!forceRefresh && servicesCache && (Date.now() - servicesCache.timestamp < CACHE_DURATION)) {
-      console.log('[ServiceService] Returning cached data');
       const cachedServices = servicesCache.data;
       return includeDeleted ? cachedServices : cachedServices.filter(s => !s.isDeleted);
     }

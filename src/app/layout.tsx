@@ -8,6 +8,7 @@ import { getAppUrl } from '@/lib/url-utils';
 import { CookieBanner } from '@/components/ui';
 import { LocalBusinessJsonLd } from '@/components/seo/LocalBusinessJsonLd';
 import { AnalyticsTracker } from '@/components/analytics/AnalyticsTracker';
+import type { Viewport } from 'next';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -27,6 +28,17 @@ const montserratAlternates = Montserrat_Alternates({
   variable: '--font-montserrat-alternates',
   display: 'swap',
 });
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: 'white' },
+    { media: '(prefers-color-scheme: dark)', color: 'black' },
+  ],
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(getAppUrl()),
@@ -108,7 +120,6 @@ export default function RootLayout({
                 var gaId = '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || ''}';
                 if (gaId && localStorage.getItem('ddreams_exclude_analytics') === 'true') {
                   window['ga-disable-' + gaId] = true;
-                  console.log('Analytics disabled for this session');
                 }
               } catch(e) {}
               try {

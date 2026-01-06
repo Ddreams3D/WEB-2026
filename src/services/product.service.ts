@@ -62,7 +62,6 @@ const deleteImagesFromStorage = async (images: ProductImage[]) => {
   if (!images || images.length === 0 || !storage) return;
   const storageInstance = storage; // Capture non-null storage
 
-  console.log(`[ProductService] Deleting ${images.length} images from storage...`);
   const deletePromises = images.map(async (img) => {
     if (!img.url) return;
     try {
@@ -71,7 +70,6 @@ const deleteImagesFromStorage = async (images: ProductImage[]) => {
       // If using external URLs, this might throw, so we catch errors.
       const imageRef = ref(storageInstance, img.url);
       await deleteObject(imageRef);
-      console.log(`[ProductService] Deleted image: ${img.url}`);
     } catch (error) {
       console.warn(`[ProductService] Failed to delete image ${img.url}:`, error);
     }
@@ -83,10 +81,8 @@ const deleteImagesFromStorage = async (images: ProductImage[]) => {
 export const ProductService = {
   // Get all products
   async getAllProducts(forceRefresh = false, includeDeleted = false): Promise<StoreProduct[]> {
-    console.log(`[ProductService] getAllProducts called. forceRefresh=${forceRefresh}, includeDeleted=${includeDeleted}`);
     // Check cache (memory)
     if (!forceRefresh && productsCache && (Date.now() - productsCache.timestamp < CACHE_DURATION)) {
-      console.log('[ProductService] Returning cached data');
       const cachedProducts = productsCache.data;
       return includeDeleted ? cachedProducts : cachedProducts.filter(p => !p.isDeleted);
     }
