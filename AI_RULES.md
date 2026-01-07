@@ -1,21 +1,70 @@
-# AI Assistant Rules
+# CONSTITUCIÓN DEL PROYECTO (AI RULES)
 
-This file contains strict rules for AI assistants working on this project. These rules must be followed at all times.
+> **META-INSTRUCCIÓN:** Este documento es la LEY SUPREMA para cualquier Agente de IA (Cursor, Trae, Windsurf, etc.) que modifique este código. Ignorar estas reglas conlleva inestabilidad técnica.
 
-## 1. Version Control (Git)
-- **NEVER** push changes to GitHub (or any remote repository) automatically.
-- **ALWAYS** ask for explicit permission from the user before running `git push`.
-- You are allowed to stage (`git add`) and commit (`git commit`) changes locally if it helps organize the work, but `git push` is strictly forbidden without user approval in the current turn.
+## 🏛️ LOS 5 PILARES DE ESTABILIDAD
 
-## 2. File Operations
-- **ALWAYS** prefer editing existing files over creating new ones unless necessary.
-- **NEVER** proactively create documentation files (*.md) unless explicitly requested.
+### 1. Pilar de Integridad Arquitectónica (La Ley Física)
+**Riesgo:** La IA tiende a inventar soluciones "fáciles" que rompen la separación Cliente/Servidor.
+**REGLA:** *"Respeto Absoluto al Puente Híbrido"*
+- **Lecturas:** SIEMPRE vía Firebase Client SDK (`useFirestore`, `getDoc`) en componentes `use client`.
+- **Escrituras:** SIEMPRE vía Server Actions (`'use server'`) para lógica de negocio crítica o admin.
+- **Prohibido:** Importar `firebase-admin` en componentes de cliente o exponer `process.env` secretos al navegador.
 
-## 3. General Behavior
-- Do what has been asked; nothing more, nothing less.
+### 2. Pilar de Coherencia Visual (La Ley del Vocabulario)
+**Riesgo:** Fragmentación de UI. La IA crea componentes duplicados (ej. `NewButton` vs `Button`).
+**REGLA:** *"Mandato de Reutilización"*
+- **Vocabulario:** Consulta `src/services/prompt-vocabulary.service.ts` ANTES de escribir UI.
+- **Componentes:** Si existe en `src/components/ui`, ÚSALO.
+- **Estilos:** Prohibido `style={{}}` (inline styles). Usa Tailwind CSS + `cn()`.
+- **Iconos:** Usa `lucide-react` exclusivamente.
 
-## 4. Persona & Code Quality
-- **Role:** Act as a Senior Expert Developer with a focus on "purist" programming standards.
-- **Quality:** Prioritize clean, maintainable, efficient, and strictly typed code (SOLID principles, best practices).
-- **Proactiveness:** Anticipate potential issues (edge cases, performance bottlenecks) and address them or warn the user.
-- **Explanations:** Provide technical depth appropriate for a senior peer.
+### 3. Pilar de Verdad del Negocio (La Ley del Glosario)
+**Riesgo:** Alucinaciones conceptuales (ej. inventar stock en servicios).
+**REGLA:** *"Supremacía del Glosario"*
+- **Definiciones:** `src/services/glossary.service.ts` es la única verdad.
+- **Lógica:** Si el glosario dice que un "Servicio" no tiene stock, el código NO debe gestionar stock para servicios.
+
+### 4. Pilar de Seguridad y Orden (La Ley del Código)
+**Riesgo:** Deuda técnica y vulnerabilidades silenciosas.
+**REGLA:** *"Tolerancia Cero a Errores"*
+- **Tipado:** Prohibido `any`. Todo debe tener interfaz en `src/shared/types`.
+- **Validación:** Todo input de usuario (Formularios, URLs) debe pasar por un esquema **Zod**.
+- **Limpieza:** Si refactorizas, BORRA el código viejo. No dejes código comentado "por si acaso".
+
+### 5. Pilar de Escalabilidad y Mantenimiento (La Ley del Futuro)
+**Riesgo:** El proyecto funciona hoy, pero es immantenible en 6 meses.
+**REGLA:** *"Documentación Viva y Auditoría"*
+- **Sincronización:** Si cambias la lógica de una Feature, ACTUALIZA `ArchitectureSettings.tsx`. No dejes que la documentación mienta.
+- **Triggers (Alarmas):** Si editas `package.json`, `middleware.ts` o creas una carpeta en `src/features`, OBLIGATORIAMENTE revisa si afecta la Arquitectura.
+- **Complejidad:** Prefiere código aburrido y legible sobre "trucos" inteligentes de una sola línea.
+- **Riesgos:** Revisa siempre la sección "Riesgos y Mitigación" en Arquitectura antes de desplegar cambios críticos.
+
+### 6. Protocolos de Despliegue y Control de Versiones
+**Riesgo:** Subidas accidentales o despliegues no autorizados.
+**REGLA:** *"Confirmación Explícita"*
+- **GitHub:** NUNCA subir cambios al repositorio remoto (push) a menos que el usuario lo solicite explícitamente.
+- **Producción:** Los despliegues a producción deben ser consecuencia de una acción consciente, no un efecto secundario automático.
+
+---
+
+## 🚨 RIESGOS ACTIVOS Y MITIGACIÓN (Live Check)
+
+### A. Riesgo de "Explosión de Factura" (Spam)
+- **Estado:** ⚠️ PARCIALMENTE MITIGADO
+- **Amenaza:** Ataques de bots a formularios públicos (Firebase Writes).
+- **Mitigación Requerida:** Rate Limiting en Server Actions o reCAPTCHA.
+
+### B. Riesgo del "Botón de la Muerte" (Data Loss)
+- **Estado:** 🔴 ALTO RIESGO
+- **Amenaza:** Borrado accidental de datos críticos (Admin Delete).
+- **Mitigación Requerida:** Implementar "Soft Delete" (`deleted: true`) en lugar de destrucción física.
+
+### C. Riesgo de "Silencio Administrativo"
+- **Estado:** ⚠️ MEDIO
+- **Amenaza:** Fallos en Server Actions (Emails, Pagos) que no se reportan al cliente.
+- **Mitigación Requerida:** Logger de servidor (Sentry o colección `system_logs`).
+
+---
+
+*Última actualización: Enero 2026 - Ddreams 3D*

@@ -165,6 +165,11 @@ export const NotificationService = {
 
   async deleteNotification(notificationId: string) {
     if (!db) return;
-    await deleteDoc(doc(db, COLLECTION_NAME, notificationId));
+    // Soft Delete
+    const ref = doc(db, COLLECTION_NAME, notificationId);
+    await updateDoc(ref, { 
+      isDeleted: true,
+      deletedAt: Timestamp.now()
+    });
   }
 };

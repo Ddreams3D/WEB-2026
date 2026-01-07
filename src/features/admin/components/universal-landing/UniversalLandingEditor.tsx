@@ -25,6 +25,7 @@ interface UniversalLandingEditorProps {
   onSave: (data: UnifiedLandingData) => Promise<void>;
   initialData: UnifiedLandingData;
   isSaving?: boolean;
+  automationEnabled?: boolean;
 }
 
 type SectionId = 'general' | 'hero' | 'content' | 'visual' | 'seo';
@@ -34,7 +35,8 @@ export function UniversalLandingEditor({
   onClose,
   onSave,
   initialData,
-  isSaving = false
+  isSaving = false,
+  automationEnabled
 }: UniversalLandingEditorProps) {
   const [data, setData] = useState<UnifiedLandingData>(initialData);
 
@@ -120,7 +122,7 @@ export function UniversalLandingEditor({
 
           <div className="min-h-[400px]">
             <TabsContent value="general" className="mt-0 focus-visible:outline-none">
-               <GeneralSection data={data} updateField={updateField} />
+               <GeneralSection data={data} updateField={updateField} automationEnabled={automationEnabled} />
             </TabsContent>
 
             <TabsContent value="hero" className="mt-0 focus-visible:outline-none">

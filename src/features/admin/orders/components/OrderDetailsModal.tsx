@@ -15,18 +15,18 @@ interface OrderDetailsModalProps {
   order: Order | null;
   isOpen: boolean;
   onClose: () => void;
-  onUpdateStatus: (id: string, status: OrderStatus) => Promise<void>;
-  onEstimateDelivery: (id: string) => Promise<Date>;
-  onSendNotification: (id: string, message: string) => Promise<void>;
+  onUpdateStatus: (orderId: string, status: OrderStatus) => Promise<void>;
+  onEstimateDelivery: (orderId: string) => Promise<void>;
+  onSendNotification: (orderId: string, message: string) => Promise<void>;
 }
 
-export function OrderDetailsModal({ 
-  order, 
-  isOpen, 
-  onClose, 
+export default function OrderDetailsModal({
+  order,
+  isOpen,
+  onClose,
   onUpdateStatus,
   onEstimateDelivery,
-  onSendNotification
+  onSendNotification, // Keeping this prop for compatibility, but we might use server action directly if parent doesn't handle it
 }: OrderDetailsModalProps) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isEstimating, setIsEstimating] = useState(false);

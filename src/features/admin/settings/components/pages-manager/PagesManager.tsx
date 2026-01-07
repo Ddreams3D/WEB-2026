@@ -169,41 +169,41 @@ export function PagesManager() {
 
       {/* TABS NAVIGATION */}
       <Tabs defaultValue="all" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-7 h-auto p-1 mb-6 bg-muted/50">
-          <TabsTrigger value="all" className="flex gap-2 py-2 data-[state=active]:bg-background data-[state=active]:shadow-sm">
+        <TabsList className="flex flex-wrap w-full h-auto p-1 mb-6 bg-muted/50 gap-1">
+          <TabsTrigger value="all" className="flex-1 min-w-[100px] flex gap-2 py-2 data-[state=active]:bg-background data-[state=active]:shadow-sm">
             <LayoutDashboard className="w-4 h-4" />
-            <span className="hidden md:inline">Vista General</span>
-            <span className="md:hidden">Todas</span>
+            <span className="hidden sm:inline">Vista General</span>
+            <span className="sm:hidden">Todas</span>
           </TabsTrigger>
           
-          <TabsTrigger value="store" className="flex gap-2 py-2 data-[state=active]:text-blue-600 data-[state=active]:bg-background data-[state=active]:shadow-sm">
+          <TabsTrigger value="store" className="flex-1 min-w-[100px] flex gap-2 py-2 data-[state=active]:text-blue-600 data-[state=active]:bg-background data-[state=active]:shadow-sm">
             <ShoppingCart className="w-4 h-4" />
-            <span className="hidden md:inline">Tienda</span>
+            <span className="hidden sm:inline">Tienda</span>
           </TabsTrigger>
 
-          <TabsTrigger value="services" className="flex gap-2 py-2 data-[state=active]:text-amber-600 data-[state=active]:bg-background data-[state=active]:shadow-sm">
+          <TabsTrigger value="services" className="flex-1 min-w-[100px] flex gap-2 py-2 data-[state=active]:text-amber-600 data-[state=active]:bg-background data-[state=active]:shadow-sm">
             <Zap className="w-4 h-4" />
-            <span className="hidden md:inline">Servicios</span>
+            <span className="hidden sm:inline">Servicios</span>
           </TabsTrigger>
 
-          <TabsTrigger value="institutional" className="flex gap-2 py-2 data-[state=active]:text-green-600 data-[state=active]:bg-background data-[state=active]:shadow-sm">
+          <TabsTrigger value="institutional" className="flex-1 min-w-[100px] flex gap-2 py-2 data-[state=active]:text-green-600 data-[state=active]:bg-background data-[state=active]:shadow-sm">
             <Globe className="w-4 h-4" />
-            <span className="hidden md:inline">Institucional</span>
+            <span className="hidden sm:inline">Inst.</span>
           </TabsTrigger>
 
-          <TabsTrigger value="client" className="flex gap-2 py-2 data-[state=active]:text-indigo-600 data-[state=active]:bg-background data-[state=active]:shadow-sm">
+          <TabsTrigger value="client" className="flex-1 min-w-[100px] flex gap-2 py-2 data-[state=active]:text-indigo-600 data-[state=active]:bg-background data-[state=active]:shadow-sm">
             <User className="w-4 h-4" />
-            <span className="hidden md:inline">Clientes</span>
+            <span className="hidden sm:inline">Clientes</span>
           </TabsTrigger>
 
-          <TabsTrigger value="admin" className="flex gap-2 py-2 data-[state=active]:text-purple-600 data-[state=active]:bg-background data-[state=active]:shadow-sm">
+          <TabsTrigger value="admin" className="flex-1 min-w-[100px] flex gap-2 py-2 data-[state=active]:text-purple-600 data-[state=active]:bg-background data-[state=active]:shadow-sm">
             <Shield className="w-4 h-4" />
-            <span className="hidden md:inline">Admin</span>
+            <span className="hidden sm:inline">Admin</span>
           </TabsTrigger>
 
-          <TabsTrigger value="system" className="flex gap-2 py-2 data-[state=active]:text-slate-600 data-[state=active]:bg-background data-[state=active]:shadow-sm">
+          <TabsTrigger value="system" className="flex-1 min-w-[100px] flex gap-2 py-2 data-[state=active]:text-slate-600 data-[state=active]:bg-background data-[state=active]:shadow-sm">
             <Database className="w-4 h-4" />
-            <span className="hidden md:inline">Sistema</span>
+            <span className="hidden sm:inline">Sistema</span>
           </TabsTrigger>
         </TabsList>
 

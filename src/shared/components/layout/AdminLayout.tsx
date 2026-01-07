@@ -40,9 +40,11 @@ const navigation = [
   { name: 'Configuración', href: '/admin/configuracion', icon: Settings },
 ];
 
-import { NotificationsDropdown } from '@/features/admin/components/NotificationsDropdown';
-
-import ConnectionStatus from '@/features/admin/components/ConnectionStatus';
+import dynamic from 'next/dynamic';
+import { QuickAccessBar } from '@/features/admin/components/QuickAccessBar';
+const NotificationsDropdown = dynamic(() => import('@/features/admin/components/NotificationsDropdown').then(m => m.NotificationsDropdown), { ssr: false });
+const RealtimeClock = dynamic(() => import('@/features/admin/components/RealtimeClock').then(m => m.RealtimeClock), { ssr: false });
+const ConnectionStatus = dynamic(() => import('@/features/admin/components/ConnectionStatus'), { ssr: false });
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -171,14 +173,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 <Menu className="w-6 h-6" />
               </button>
               
-              {/* Search Bar (Visual only for now) */}
-              <div className="hidden md:flex items-center relative max-w-md w-64">
-                <Search className="absolute left-3 w-4 h-4 text-muted-foreground" />
-                <input 
-                  type="text" 
-                  placeholder="Buscar..." 
-                  className="w-full pl-9 pr-4 py-1.5 text-sm bg-muted/50 border-none rounded-full focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                />
+              {/* Quick Access Bar */}
+              <div className="hidden md:flex items-center">
+                <QuickAccessBar />
               </div>
             </div>
             
@@ -194,12 +191,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
                <div className="h-6 w-px bg-border hidden sm:block"></div>
 
-               <div className="text-sm font-medium text-muted-foreground hidden sm:block">
-                 {new Date().toLocaleDateString('es-ES', {
-                   weekday: 'long',
-                   day: 'numeric',
-                   month: 'long'
-                 })}
+               {/* Realtime Clock */}
+               <div className="hidden sm:block">
+                 <RealtimeClock />
                </div>
              </div>
           </div>

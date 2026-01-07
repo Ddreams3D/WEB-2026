@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
+import { sendEmail } from '@/actions/email.actions';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { orderId, message, type } = body;
+    const { orderId, message, type, email } = body;
 
     if (!orderId || !message) {
       return NextResponse.json(
@@ -12,20 +13,34 @@ export async function POST(request: Request) {
       );
     }
 
-    // In a real production environment, you would integrate with:
-    // - SendGrid / AWS SES / Resend for emails
-    // - Twilio / AWS SNS for SMS
-    
-    console.log(`[API] Sending ${type || 'email'} notification for order ${orderId}`);
-    console.log(`[API] Message: ${message}`);
+    if (type === 'email' && email) {
+        console.log(`[API] Sending email notification for order ${orderId} to ${email}`);
+        
+        const result = await sendEmail({
+            to: email,
+            subject: `Actualización de Pedido #${orderId}`,
+            html: `
+                <h1>Ddreams 3D - Estado de tu Pedido</h1>
+                <p>Hola,</p>
+                <p>Tu pedido <strong>#${orderId}</strong> tiene una actualización:</p>
+                <div style="background-color: #f4f4f4; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                    ${message}
+                </div>
+                <p>Si tienes dudas, contáctanos.</p>
+            `
+        });
 
-    // Simulate external service delay
-    await new Promise(resolve => setTimeout(resolve, 500));
+        if (!result.success) {
+            return NextResponse.json({ error: result.error }, { status: 500 });
+        }
+    } else {
+        console.log(`[API] Mocking ${type} notification for ${orderId} (No email provided or type not email)`);
+    }
 
     return NextResponse.json({ 
       success: true, 
       timestamp: new Date().toISOString(),
-      message: 'Notification queued successfully' 
+      message: 'Notification sent successfully' 
     });
   } catch (error) {
     console.error('Error processing notification request:', error);

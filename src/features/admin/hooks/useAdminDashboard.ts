@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { collection, onSnapshot, query, orderBy, limit } from 'firebase/firestore';
+import { collection, onSnapshot, query, orderBy, limit, getCountFromServer } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { StoreProduct } from '@/shared/types/domain';
+import { useToast } from '@/components/ui/ToastManager';
 
 export interface DashboardStats {
   products: number;
@@ -16,10 +17,11 @@ export interface RecentActivityItem {
   subtitle: string;
   time: string;
   image?: string;
-  type: 'product' | 'service' | 'order'; // Added type for icon selection in UI
+  type: 'product' | 'service' | 'order';
 }
 
 export function useAdminDashboard() {
+  const { showError } = useToast();
   const [stats, setStats] = useState<DashboardStats>({
     products: 0,
     services: 0,
@@ -32,84 +34,80 @@ export function useAdminDashboard() {
   useEffect(() => {
     if (!db) return;
 
-    let unsubs: (() => void)[] = [];
+    let unsubRecent: (() => void) | undefined;
     let isMounted = true;
 
-    const setupListeners = async () => {
+    const fetchData = async () => {
       try {
-        // Products listener
-        const qProducts = query(collection(db!, 'products'), orderBy('createdAt', 'desc'));
+        // 1. Contadores Optimizados (Aggregation Queries)
+        // Evita descargar todos los documentos, solo cuenta usando índices
+        const [productsSnap, servicesSnap, ordersSnap, usersSnap] = await Promise.all([
+          getCountFromServer(collection(db!, 'products')),
+          getCountFromServer(collection(db!, 'services')),
+          getCountFromServer(collection(db!, 'orders')),
+          getCountFromServer(collection(db!, 'users'))
+        ]);
+
+        if (isMounted) {
+          setStats({
+            products: productsSnap.data().count,
+            services: servicesSnap.data().count,
+            orders: ordersSnap.data().count,
+            users: usersSnap.data().count
+          });
+        }
+
+        // 2. Actividad Reciente (Tiempo Real Optimizado)
+        // Solo escuchamos los últimos 5 documentos, no toda la colección
+        const qRecentProducts = query(
+          collection(db!, 'products'), 
+          orderBy('createdAt', 'desc'), 
+          limit(5)
+        );
         
-        const unsubProd = onSnapshot(qProducts, {
+        unsubRecent = onSnapshot(qRecentProducts, {
           next: (snap) => {
             if (!isMounted) return;
-            setStats(prev => ({ ...prev, products: snap.size }));
             
             const recent = snap.docs
-              .slice(0, 5)
               .map(doc => ({ id: doc.id, ...doc.data() } as StoreProduct))
               .map(p => ({
                 id: p.id,
                 title: p.name,
                 subtitle: `Categoría: ${p.categoryName || 'General'}`,
-                time: 'Disponible',
+                time: 'Disponible', // Idealmente usar p.createdAt y formatear fecha relativa
                 image: p.images?.[0]?.url,
                 type: 'product' as const
               }));
+            
             setRecentItems(recent);
+            setLoading(false);
           },
-          error: (error) => console.error("Firestore Error (Products):", error)
+          error: (error) => {
+            console.error("Firestore Error (Recent Activity):", error);
+            if (isMounted) {
+              showError("Error al cargar actividad reciente");
+              setLoading(false);
+            }
+          }
         });
-        if (isMounted) unsubs.push(unsubProd); else unsubProd();
 
-        // Services listener
-        const unsubServ = onSnapshot(collection(db!, 'services'), {
-          next: (snap) => {
-            if (!isMounted) return;
-            setStats(prev => ({ ...prev, services: snap.size }));
-          },
-          error: (error) => console.error("Firestore Error (Services):", error)
-        });
-        if (isMounted) unsubs.push(unsubServ); else unsubServ();
-
-        // Orders listener
-        const unsubOrd = onSnapshot(collection(db!, 'orders'), {
-          next: (snap) => {
-            if (!isMounted) return;
-            setStats(prev => ({ ...prev, orders: snap.size }));
-          },
-          error: (error) => console.error("Firestore Error (Orders):", error)
-        });
-        if (isMounted) unsubs.push(unsubOrd); else unsubOrd();
-
-        // Users listener
-        const unsubUsr = onSnapshot(collection(db!, 'users'), {
-          next: (snap) => {
-            if (!isMounted) return;
-            setStats(prev => ({ ...prev, users: snap.size }));
-          },
-          error: (error) => console.error("Firestore Error (Users):", error)
-        });
-        if (isMounted) unsubs.push(unsubUsr); else unsubUsr();
-
-        if (isMounted) setLoading(false);
       } catch (err) {
-        console.error("Error setting up Firestore listeners:", err);
-        if (isMounted) setLoading(false);
+        console.error("Error fetching dashboard stats:", err);
+        if (isMounted) {
+          showError("Error cargando estadísticas generales");
+          setLoading(false);
+        }
       }
     };
 
-    setupListeners();
+    fetchData();
 
     return () => {
       isMounted = false;
-      unsubs.forEach(unsub => unsub());
+      if (unsubRecent) unsubRecent();
     };
-  }, []);
+  }, [showError]); // Dependencia segura ya que useToast retorna funciones estables
 
-  return {
-    stats,
-    recentItems,
-    loading
-  };
+  return { stats, recentItems, loading };
 }

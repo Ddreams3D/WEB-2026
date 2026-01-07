@@ -164,6 +164,10 @@ export interface PortfolioItem {
   tags: string[];
   isFeatured: boolean;
   createdAt: Date;
+  
+  // Soft Delete
+  isDeleted?: boolean;
+  deletedAt?: Date;
 }
 
 // ==========================================
@@ -266,6 +270,7 @@ export interface Order {
   status: OrderStatus;
   paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
   paymentMethod?: PaymentMethod;
+  paymentProofUrl?: string;
 
   // Shipping
   shippingMethod: 'pickup' | 'delivery';
@@ -310,4 +315,8 @@ export interface AppNotification {
   link?: string;
   createdAt: Date;
   metadata?: Record<string, any>;
+
+  // Soft Delete
+  isDeleted?: boolean;
+  deletedAt?: Date;
 }

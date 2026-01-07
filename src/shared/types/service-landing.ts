@@ -37,6 +37,10 @@ export interface ServiceLandingConfig {
   
   createdAt: string;
   updatedAt: string;
+  
+  // Soft Delete
+  isDeleted?: boolean;
+  deletedAt?: string; // Using string to match other date fields in this type
 }
 
 // Initial state for new landings

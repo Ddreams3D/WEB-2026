@@ -64,7 +64,8 @@ export const UserService = {
         if ((error as any)?.code === 'failed-precondition') {
              console.log('[UserService] Retrying without orderBy...');
              try {
-                const q = query(collection(db, COLLECTION_NAME));
+                // Keep the filter
+                const q = query(collection(db, COLLECTION_NAME), where('isDeleted', '!=', true));
                 const snapshot = await getDocs(q);
                 if (!snapshot.empty) {
                     users = snapshot.docs.map((doc) => mapToUser(doc.data()));

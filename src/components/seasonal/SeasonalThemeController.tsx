@@ -12,28 +12,29 @@ export function SeasonalThemeController() {
   useEffect(() => {
     const checkSeasonalTheme = async () => {
       try {
-        if (pathname === '/impresion-3d-arequipa') {
+        // EXCLUSION RULES:
+        // 1. Service Landings (/services/slug) must keep their own colors (Standard)
+        // 2. Main Services Page (/services) SHOULD follow campaign theme (User request)
+        // Note: Admin panel (/admin/*) follows the global campaign theme.
+        
+        // Only exclude if it is a sub-route of services (e.g. /services/printing), not the index itself
+        const isServiceLanding = pathname.startsWith('/services/') && pathname !== '/services';
+
+        if (isServiceLanding) {
           if (theme !== 'standard') {
+            console.log('[Seasonal] Forzando tema standard en landing de servicio:', pathname);
             setTheme('standard');
           }
           return;
         }
+
+        // Apply seasonal theme to ALL other pages (Home, Catalog, Process, Admin, etc.)
         const activeSeasonalConfig = await resolveActiveTheme();
         
-        if (activeSeasonalConfig) {
-           // Si hay una campaña activa (por fecha o manual), aplicar su tema
-           if (theme !== activeSeasonalConfig.themeId) {
-             console.log(`[Seasonal] Activando tema de campaña: ${activeSeasonalConfig.themeId}`);
-             setTheme(activeSeasonalConfig.themeId);
-           }
-        } else {
-           // Si NO hay campaña activa, revertir al estándar
-           // Esto corrige casos donde un tema estacional quedó guardado en localStorage
-           // pero la fecha ya pasó.
-           if (theme !== 'standard') {
-              console.log('[Seasonal] Sin campaña activa, revirtiendo a Standard');
-              setTheme('standard');
-           }
+        // Always apply the resolved theme
+        if (theme !== activeSeasonalConfig.themeId) {
+           console.log(`[Seasonal] Cambiando tema a: ${activeSeasonalConfig.themeId} en ruta: ${pathname}`);
+           setTheme(activeSeasonalConfig.themeId);
         }
       } catch (error) {
         console.error('Error al resolver tema estacional:', error);
@@ -41,8 +42,7 @@ export function SeasonalThemeController() {
     };
 
     checkSeasonalTheme();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Ejecutar solo al montar para verificar el estado actual
+  }, [pathname, theme, setTheme]); // Re-run on route change or theme change to ensure consistency
 
   return null;
 }

@@ -89,7 +89,8 @@ export default function AnnouncementBar({ config, seasonalConfig }: Announcement
   const showGlobalManual = config?.enabled;
   const seasonalOverride = seasonalConfig?.announcement;
   const showSeasonalOverride = !showGlobalManual && seasonalOverride?.enabled;
-  const showSmartSeasonal = !showGlobalManual && !showSeasonalOverride && seasonalConfig;
+  // Only show smart seasonal bar if it's NOT the standard theme
+  const showSmartSeasonal = !showGlobalManual && !showSeasonalOverride && seasonalConfig && seasonalConfig.id !== 'standard';
 
   // Handle navbar offset logic
   useEffect(() => {

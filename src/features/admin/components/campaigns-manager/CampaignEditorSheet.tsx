@@ -18,6 +18,7 @@ interface CampaignEditorSheetProps {
   updateDateRange?: (themeId: string, index: number, field: 'start' | 'end', subField: 'month' | 'day', value: number) => void;
   addDateRange?: (themeId: string) => void;
   removeDateRange?: (themeId: string, index: number) => void;
+  automationEnabled?: boolean;
 }
 
 export function CampaignEditorSheet({
@@ -26,7 +27,8 @@ export function CampaignEditorSheet({
   onClose,
   onSave,
   isSaving,
-  updateTheme
+  updateTheme,
+  automationEnabled
 }: CampaignEditorSheetProps) {
   const editingTheme = themes.find(t => t.id === editingId);
 
@@ -63,6 +65,7 @@ export function CampaignEditorSheet({
       onSave={handleUniversalSave}
       initialData={initialData}
       isSaving={isSaving}
+      automationEnabled={automationEnabled}
     />
   );
 }

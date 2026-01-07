@@ -7,8 +7,9 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ProductImage } from '@/shared/components/ui/DefaultImage';
-
 import { CartItem } from '@/shared/types';
+
+import { PaymentProofUpload } from '@/features/checkout/components/PaymentProofUpload';
 
 interface OrderCustomerData {
   firstName: string;
@@ -299,6 +300,17 @@ DDreams 3D - Impresión 3D Personalizada
                  'Contacto por WhatsApp'}
               </p>
             </div>
+
+            {/* Subida de Comprobante (Solo Transferencia) */}
+            {orderData.customerData.paymentMethod === 'transfer' && (
+              <div className="mt-6 border-t border-neutral-200 dark:border-neutral-700 pt-6">
+                <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">Validación de Pago</h3>
+                <PaymentProofUpload 
+                    orderId={orderData.id} 
+                    existingProofUrl={(orderData as any).paymentProofUrl} 
+                />
+              </div>
+            )}
           </div>
         </div>
 

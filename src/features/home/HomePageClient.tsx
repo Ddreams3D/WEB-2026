@@ -18,19 +18,34 @@ import { PortfolioItem } from '@/shared/types/domain';
 
 interface HomePageClientProps {
   featuredProjects?: PortfolioItem[];
+  heroTitle?: string;
+  heroDescription?: string;
+  ctaText?: string;
+  ctaLink?: string;
 }
 
-export default function HomePageClient({ featuredProjects }: HomePageClientProps) {
+export default function HomePageClient({ 
+  featuredProjects,
+  heroTitle,
+  heroDescription,
+  ctaText,
+  ctaLink
+}: HomePageClientProps) {
   useEffect(() => {
     trackEvent(AnalyticsEvents.VIEW_HOME, {
       location: AnalyticsLocations.HERO,
       page_type: 'home'
     });
-  }, []);
+  }, [heroTitle, ctaText, ctaLink]);
 
   return (
     <main className="min-h-screen bg-background">
-      <Hero />
+      <Hero 
+        title={heroTitle}
+        description={heroDescription}
+        ctaText={ctaText}
+        ctaLink={ctaLink}
+      />
 
       {/* Stats Section */}
       <LazyStats />
@@ -88,6 +103,7 @@ export default function HomePageClient({ featuredProjects }: HomePageClientProps
         description={ctaData.home.description}
         primaryButtonText={ctaData.home.primaryButtonText}
         primaryButtonLink={ctaData.home.primaryButtonLink}
+        showWhatsapp={false}
       />
     </main>
   );

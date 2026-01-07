@@ -3,8 +3,8 @@ export const ctaData = {
   home: {
     title: '¿Listo para dar vida a tus ideas?',
     description: 'Diseñamos y fabricamos piezas personalizadas en 3D, adaptadas a tu proyecto y uso final.',
-    primaryButtonText: 'Solicitar Cotización',
-    primaryButtonLink: '/contact',
+    primaryButtonText: 'Descubre como podemos ayudarte.',
+    primaryButtonLink: '/services',
   },
   process: {
     title: '¿Tienes un proyecto en mente?',

@@ -91,15 +91,31 @@ export const OrderService = {
 
     if (db) {
       try {
-        const q = query(collection(db, COLLECTION_NAME), orderBy('createdAt', 'desc'));
+        // Filter out soft-deleted orders
+        const q = query(collection(db, COLLECTION_NAME), where('isDeleted', '!=', true), orderBy('createdAt', 'desc'));
         const snapshot = await getDocs(q);
 
         if (!snapshot.empty) {
           orders = snapshot.docs.map((doc) => mapToOrder(doc.data()));
         }
       } catch (error) {
-        console.error('Error fetching orders:', error);
-        throw error;
+        console.error('[OrderService] Error fetching orders:', error);
+        
+        // Fallback: Retry without orderBy if index is missing
+        if ((error as any)?.code === 'failed-precondition') {
+             try {
+                const q = query(collection(db, COLLECTION_NAME), where('isDeleted', '!=', true));
+                const snapshot = await getDocs(q);
+                if (!snapshot.empty) {
+                    orders = snapshot.docs.map((doc) => mapToOrder(doc.data()))
+                        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+                }
+             } catch (retryError) {
+                 throw retryError;
+             }
+        } else {
+            throw error;
+        }
       }
     }
 
@@ -119,7 +135,8 @@ export const OrderService = {
       // Query without orderBy to avoid composite index requirement
       const q = query(
         collection(db, COLLECTION_NAME), 
-        where('userId', '==', userId)
+        where('userId', '==', userId),
+        where('isDeleted', '!=', true)
       );
       const snapshot = await getDocs(q);
       
@@ -265,12 +282,12 @@ export const OrderService = {
   },
 
   // Send Order Notification (via API)
-  async sendOrderNotification(id: string, message: string, type: 'email' | 'sms' = 'email'): Promise<void> {
+  async sendOrderNotification(id: string, message: string, type: 'email' | 'sms' = 'email', targetEmail?: string): Promise<void> {
     try {
       const response = await fetch('/api/notifications', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderId: id, message, type }),
+        body: JSON.stringify({ orderId: id, message, type, email: targetEmail }),
       });
 
       if (!response.ok) {
@@ -278,11 +295,27 @@ export const OrderService = {
       }
 
       // Log the notification in order history/notes
-      await this.addOrderNote(id, `Notificación enviada (${type}): "${message}"`, 'system', false);
+      await this.addOrderNote(id, `Notificación enviada (${type}) a ${targetEmail || 'unknown'}: "${message}"`, 'system', false);
     } catch (error) {
       console.error('Error sending notification:', error);
       // Fallback: log locally if API fails
       await this.addOrderNote(id, `Error enviando notificación (${type}): "${message}"`, 'system', false);
+    }
+  },
+
+  // Delete Order (Soft Delete)
+  async deleteOrder(id: string): Promise<void> {
+    if (!db) return;
+    try {
+      const orderRef = doc(db, COLLECTION_NAME, id);
+      await updateDoc(orderRef, {
+        isDeleted: true,
+        deletedAt: new Date()
+      });
+      ordersCache = null;
+    } catch (error) {
+      console.error('Error deleting order:', error);
+      throw error;
     }
   },
 

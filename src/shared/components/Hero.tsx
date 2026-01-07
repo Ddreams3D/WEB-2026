@@ -16,7 +16,19 @@ const heroContent = {
   image: heroImages.innovation
 };
 
-export default function Hero() {
+export interface HeroProps {
+  title?: string;
+  description?: string;
+  ctaText?: string;
+  ctaLink?: string;
+}
+
+export default function Hero({ 
+  title = heroContent.title, 
+  description = heroContent.description,
+  ctaText = "Descubre como podemos ayudarte.",
+  ctaLink = "/services"
+}: HeroProps) {
   // Animation hooks
   const { ref: heroRef, isVisible } = useIntersectionAnimation({
     threshold: 0,
@@ -45,7 +57,7 @@ export default function Hero() {
         <div className={cn("absolute bottom-0 left-0 w-full h-24 z-20 pointer-events-none", "bg-gradient-to-t from-background to-transparent")} />
         <DefaultImage
           src={heroContent.image}
-          alt={heroContent.title}
+          alt={title}
           fill
           className={cn(
             "object-cover w-full h-full object-center transition-opacity duration-1000",
@@ -62,13 +74,7 @@ export default function Hero() {
               className={cn("text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-4 tracking-tight drop-shadow-lg leading-tight text-white", getAnimClass(0))}
               style={getDelayStyle(0)}
             >
-              Tus ideas. Nuestro arte.
-              <span 
-                className={cn("block mt-2", getAnimClass(200))}
-                style={getDelayStyle(200)}
-              >
-                En 3D.
-              </span>
+              {title}
             </h1>
             
             {/* Semantic Subtitle - Visible for SEO & Users */}
@@ -83,7 +89,7 @@ export default function Hero() {
               className={cn("text-lg sm:text-xl md:text-2xl mb-8 text-white/80 max-w-2xl mx-auto font-light leading-relaxed drop-shadow-md", getAnimClass(400))}
               style={getDelayStyle(400)}
             >
-              {heroContent.description}
+              {description}
             </p>
             <div 
               className={cn("flex flex-col sm:flex-row gap-4 justify-center items-center", getAnimClass(600))}
@@ -96,11 +102,11 @@ export default function Hero() {
                 className="w-full sm:w-auto sm:min-w-[200px] justify-center group"
               >
                 <Link 
-                  href="/contact"
+                  href={ctaLink}
                   className="flex items-center gap-2"
                   aria-label="Comenzar un nuevo proyecto de impresión 3D"
                 >
-                  Comenzar Proyecto
+                  {ctaText}
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
                 </Link>
               </Button>

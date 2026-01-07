@@ -12,7 +12,7 @@ import { Order, OrderStatus } from '@/shared/types/domain';
 import { useOrderTrackingHook } from '@/hooks/useOrderTracking';
 import { useAuth } from '@/contexts/AuthContext';
 import { OrderStatusBadge } from '@/features/orders/components/OrderStatusBadge';
-import { OrderDetailsModal } from '@/features/admin/orders/components/OrderDetailsModal';
+import OrderDetailsModal from '@/features/admin/orders/components/OrderDetailsModal';
 
 interface OrdersViewProps {
   hideHeader?: boolean;
@@ -226,7 +226,7 @@ export function OrdersView({ hideHeader = false }: OrdersViewProps) {
         isOpen={!!selectedOrder} 
         onClose={() => setSelectedOrderId(null)} 
         onUpdateStatus={handleUpdateStatus}
-        onEstimateDelivery={estimateDelivery}
+        onEstimateDelivery={async (id) => { await estimateDelivery(id); }}
         onSendNotification={sendStatusUpdate}
       />
     </div>

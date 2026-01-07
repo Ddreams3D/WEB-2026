@@ -39,3 +39,7 @@ export interface SeasonalThemeConfig {
   // Manual override (useful for testing or forced events)
   isActive?: boolean; 
 }
+
+export interface SeasonalSystemConfig {
+  automationEnabled: boolean;
+}

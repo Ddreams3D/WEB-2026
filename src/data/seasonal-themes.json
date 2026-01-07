@@ -133,5 +133,25 @@
       "featuredTag": "madre",
       "featuredTitle": "Detalles que enamoran"
     }
+  },
+  {
+    "id": "standard",
+    "themeId": "standard",
+    "name": "Estándar (Marca)",
+    "isActive": false,
+    "dateRanges": [],
+    "landing": {
+      "heroTitle": "Tus ideas. Nuestro arte. En 3D.",
+      "heroDescription": "Fabricación de prototipos, trofeos y piezas personalizadas con tecnología 3D.",
+      "ctaText": "Descubre como podemos ayudarte.",
+      "ctaLink": "/services",
+      "featuredTag": "destacado",
+      "themeMode": "light"
+    },
+    "announcement": {
+      "enabled": false,
+      "content": "",
+      "closable": true
+    }
   }
 ]

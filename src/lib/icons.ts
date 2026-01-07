@@ -122,7 +122,8 @@ import {
   Wrench,
   X,
   XCircle,
-  Zap
+  Zap,
+  ZapOff
 } from 'lucide-react';
 
 // Exportacion de iconos utilizados
@@ -247,7 +248,8 @@ export {
   Wrench,
   X,
   XCircle,
-  Zap
+  Zap,
+  ZapOff
 };
 
 // Alias para compatibilidad

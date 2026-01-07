@@ -3,10 +3,12 @@ import { AnnouncementBarConfig } from '@/shared/types/landing';
 import { SeasonalThemeConfig } from '@/shared/types/seasonal';
 import { fetchSeasonalThemesAction, revalidateSeasonalCacheAction } from '@/actions/seasonal-actions';
 import { saveSeasonalThemes } from '@/lib/seasonal-service';
+import { fetchSeasonalConfig, saveSeasonalConfig } from '@/services/seasonal.service';
 import { useToast } from '@/components/ui/ToastManager';
 
 export function useCampaignsManager() {
   const [themes, setThemes] = useState<SeasonalThemeConfig[]>([]);
+  const [automationEnabled, setAutomationEnabled] = useState(true);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -16,11 +18,48 @@ export function useCampaignsManager() {
     async function loadThemes() {
       try {
         setLoading(true);
-        const data = await fetchSeasonalThemesAction();
+        const [themesResponse, config] = await Promise.all([
+          fetchSeasonalThemesAction(),
+          fetchSeasonalConfig()
+        ]);
         
-        // Orden personalizado solicitado: San Valentín -> Madre -> Patrias -> Halloween -> Navidad
-        const ORDER = ['san-valentin', 'dia-de-la-madre', 'fiestas-patrias', 'halloween', 'christmas'];
+        const data = themesResponse.success ? themesResponse.data : [];
+        if (!themesResponse.success) {
+            console.error('Failed to load themes:', themesResponse.error);
+            showError('Error al cargar temas desde el servidor');
+        }
+
+        setAutomationEnabled(config.automationEnabled);
         
+        // Orden personalizado solicitado: San Valentín -> Madre -> Patrias -> Halloween -> Navidad -> Standard
+        const ORDER = ['san-valentin', 'dia-de-la-madre', 'fiestas-patrias', 'halloween', 'christmas', 'standard'];
+        
+        // Ensure standard theme exists
+        const hasStandard = data.some(t => t.id === 'standard');
+        if (!hasStandard) {
+          const standardTheme: SeasonalThemeConfig = {
+            id: 'standard',
+            themeId: 'standard',
+            name: 'Estándar (Marca)',
+            isActive: false,
+            dateRanges: [],
+            landing: {
+              heroTitle: 'Tus ideas. Nuestro arte. En 3D.',
+              heroDescription: 'Fabricación de prototipos, trofeos y piezas personalizadas con tecnología 3D.',
+              ctaText: 'Comenzar Proyecto',
+              ctaLink: '/contact',
+              featuredTag: 'destacado',
+              themeMode: 'light'
+            },
+            announcement: {
+              enabled: false,
+              content: '',
+              closable: true
+            }
+          };
+          data.push(standardTheme);
+        }
+
         const sortedData = [...data].sort((a, b) => {
           const idxA = ORDER.indexOf(a.id);
           const idxB = ORDER.indexOf(b.id);
@@ -68,7 +107,19 @@ export function useCampaignsManager() {
   }
 
   const updateTheme = (themeId: string, updates: Partial<SeasonalThemeConfig>) => {
-    setThemes(prev => prev.map(t => t.id === themeId ? { ...t, ...updates } : t));
+    setThemes(prev => prev.map(t => {
+      // If updating the target theme
+      if (t.id === themeId) {
+        return { ...t, ...updates };
+      }
+      
+      // If we are activating a theme, deactivate all others (mutual exclusion)
+      if (updates.isActive) {
+        return { ...t, isActive: false };
+      }
+      
+      return t;
+    }));
   };
 
   const updateLanding = (themeId: string, updates: Partial<SeasonalThemeConfig['landing']>) => {
@@ -126,13 +177,33 @@ export function useCampaignsManager() {
     }));
   };
 
+  async function toggleAutomation(enabled: boolean) {
+    try {
+      setSaving(true);
+      await saveSeasonalConfig({ automationEnabled: enabled });
+      setAutomationEnabled(enabled);
+      const revalidateResponse = await revalidateSeasonalCacheAction();
+      if (!revalidateResponse.success) {
+        console.warn('Cache revalidation failed:', revalidateResponse.error);
+      }
+      showSuccess(`Automatización ${enabled ? 'activada' : 'desactivada'}`);
+    } catch (error) {
+      console.error('Error updating automation:', error);
+      showError('Error al actualizar configuración');
+    } finally {
+      setSaving(false);
+    }
+  }
+
   return {
     themes,
+    automationEnabled,
     loading,
     saving,
     editingId,
     setEditingId,
     handleSave,
+    toggleAutomation,
     updateTheme,
     updateLanding,
     updateAnnouncement,

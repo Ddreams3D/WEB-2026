@@ -9,13 +9,19 @@ import {
   ShieldCheck as ShieldCheckIcon,
   Check as CheckIcon
 } from '@/lib/icons';
-import { LayoutTemplate } from 'lucide-react';
+import { LayoutTemplate, BookOpen, Languages, Cpu } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAdminSettings } from '@/features/admin/settings/hooks/useAdminSettings';
-import { GeneralSettings } from '@/features/admin/settings/components/GeneralSettings';
-import { StoreSettings } from '@/features/admin/settings/components/StoreSettings';
-import { AnalyticsSettings } from '@/features/admin/settings/components/AnalyticsSettings';
-import { PagesSettings } from '@/features/admin/settings/components/PagesSettings';
+import dynamic from 'next/dynamic';
+const GeneralSettings = dynamic(() => import('@/features/admin/settings/components/GeneralSettings').then(m => m.GeneralSettings), { ssr: false });
+const StoreSettings = dynamic(() => import('@/features/admin/settings/components/StoreSettings').then(m => m.StoreSettings), { ssr: false });
+const AnalyticsSettings = dynamic(() => import('@/features/admin/settings/components/AnalyticsSettings').then(m => m.AnalyticsSettings), { ssr: false });
+const PagesSettings = dynamic(() => import('@/features/admin/settings/components/PagesSettings').then(m => m.PagesSettings), { ssr: false });
+const GlossarySettings = dynamic(() => import('@/features/admin/settings/components/GlossarySettings').then(m => m.GlossarySettings), { ssr: false });
+const PromptVocabularySettings = dynamic(() => import('@/features/admin/settings/components/PromptVocabularySettings').then(m => m.PromptVocabularySettings), { ssr: false });
+const AIRulesManager = dynamic(() => import('@/features/admin/settings/components/ai-rules/AIRulesManager').then(m => m.AIRulesManager), { ssr: false });
+import { Brain } from 'lucide-react';
+const ArchitectureSettings = dynamic(() => import('@/features/admin/settings/components/ArchitectureSettings').then(m => m.ArchitectureSettings), { ssr: false });
 
 export default function Settings() {
   const searchParams = useSearchParams();
@@ -27,7 +33,11 @@ export default function Settings() {
     { id: 'general', label: 'General y Contacto', icon: CogIcon },
     { id: 'store', label: 'Tienda y Pagos', icon: StoreIcon },
     { id: 'pages', label: 'Páginas y Rutas', icon: LayoutTemplate },
-    { id: 'analytics', label: 'Analytics', icon: ShieldCheckIcon }
+    { id: 'analytics', label: 'Analytics', icon: ShieldCheckIcon },
+    { id: 'glossary', label: 'Glosario / Conceptos', icon: BookOpen },
+    { id: 'prompt-lang', label: 'Lenguaje del Proyecto', icon: Languages },
+    { id: 'ai-rules', label: 'Reglas IA', icon: Brain },
+    { id: 'architecture', label: 'Arquitectura del Proyecto', icon: Cpu }
   ];
 
   return (
@@ -99,6 +109,22 @@ export default function Settings() {
 
           {activeTab === 'analytics' && (
             <AnalyticsSettings settings={settings} updateSetting={updateSetting} />
+          )}
+
+          {activeTab === 'glossary' && (
+            <GlossarySettings />
+          )}
+          
+          {activeTab === 'prompt-lang' && (
+            <PromptVocabularySettings />
+          )}
+
+          {activeTab === 'ai-rules' && (
+            <AIRulesManager />
+          )}
+
+          {activeTab === 'architecture' && (
+            <ArchitectureSettings />
           )}
         </div>
       </div>

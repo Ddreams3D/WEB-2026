@@ -384,7 +384,7 @@ export const useOrderTrackingHook = (initialOrders?: Order[]): UseOrderTrackingR
       if (!order) throw new Error('Pedido no encontrado');
 
       // Enviar notificación a través del servicio (API)
-      await OrderService.sendOrderNotification(orderId, message, 'email');
+      await OrderService.sendOrderNotification(orderId, message, 'email', order.userEmail);
       
     } catch (err) {
       const errorMessage = 'Error al enviar actualización de estado';

@@ -1,13 +1,13 @@
 import { Metadata } from 'next';
 import HomePageClient from '@/features/home/HomePageClient';
 import { getCachedFeaturedProjects } from '@/services/data-access.server';
+import { getStandardThemeContent } from '@/lib/seasonal-service';
 import { PHONE_BUSINESS, PHONE_DISPLAY, ADDRESS_BUSINESS, SCHEDULE_BUSINESS } from '@/shared/constants/contactInfo';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { generateSeoMetadata } from '@/services/seo.service';
 
-// Revalidate every hour to check for seasonal changes automatically
-// Note: Data Cache handles projects, this is for the page shell/seasonal theme
-export const revalidate = 3600;
+// Revalidate every minute to ensure admin changes are reflected quickly
+export const revalidate = 60;
 
 const defaultMetadata: Metadata = {
   title: {
@@ -54,11 +54,21 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function HomePage() {
   // Parallel fetching for performance
-  const featuredProjects = await getCachedFeaturedProjects(6);
+  // We fetch Standard Content for texts (FIXED)
+  const [featuredProjects, standardTheme] = await Promise.all([
+    getCachedFeaturedProjects(6),
+    getStandardThemeContent()
+  ]);
 
   return (
     <>
-      <HomePageClient featuredProjects={featuredProjects} />
+      <HomePageClient 
+        featuredProjects={featuredProjects} 
+        heroTitle={standardTheme?.landing?.heroTitle}
+        heroDescription={standardTheme?.landing?.heroDescription}
+        ctaText={standardTheme?.landing?.ctaText}
+        ctaLink={standardTheme?.landing?.ctaLink}
+      />
     </>
   );
 }

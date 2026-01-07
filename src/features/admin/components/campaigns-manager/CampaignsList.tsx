@@ -1,106 +1,219 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Edit, ExternalLink, Calendar as CalendarIcon } from '@/lib/icons';
+import { Switch } from '@/components/ui/switch';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Edit, ExternalLink, Calendar as CalendarIcon, AlertTriangle } from '@/lib/icons';
 import { SeasonalThemeConfig } from '@/shared/types/seasonal';
 import SeasonalLanding from '@/features/seasonal/components/SeasonalLanding';
+import HomePageClient from '@/features/home/HomePageClient';
 import { getThemeStatus } from '../../utils/campaign-utils';
 
 interface CampaignsListProps {
   themes: SeasonalThemeConfig[];
   setEditingId: (id: string | null) => void;
+  updateTheme: (id: string, updates: Partial<SeasonalThemeConfig>) => void;
+  onSave: (theme?: SeasonalThemeConfig) => Promise<void>;
+  automationEnabled?: boolean;
 }
 
-export function CampaignsList({ themes, setEditingId }: CampaignsListProps) {
+export function CampaignsList({ themes, setEditingId, updateTheme, onSave, automationEnabled }: CampaignsListProps) {
+  const [confirmState, setConfirmState] = useState<{
+    isOpen: boolean;
+    themeId: string | null;
+    action: 'activate' | 'deactivate';
+    themeName: string;
+  }>({
+    isOpen: false,
+    themeId: null,
+    action: 'activate',
+    themeName: ''
+  });
+
+  const handleToggle = (theme: SeasonalThemeConfig) => {
+    if (automationEnabled) return;
+    const newStatus = !theme.isActive;
+    setConfirmState({
+      isOpen: true,
+      themeId: theme.id,
+      action: newStatus ? 'activate' : 'deactivate',
+      themeName: theme.name
+    });
+  };
+
+  const confirmToggle = async () => {
+    if (confirmState.themeId) {
+      const theme = themes.find(t => t.id === confirmState.themeId);
+      if (theme) {
+        const isActive = confirmState.action === 'activate';
+        const updatedTheme = { ...theme, isActive };
+        
+        // Update local state
+        updateTheme(confirmState.themeId, { isActive });
+        
+        // Save immediately
+        setConfirmState(prev => ({ ...prev, isOpen: false })); // Close dialog first
+        await onSave(updatedTheme);
+      }
+    } else {
+      setConfirmState(prev => ({ ...prev, isOpen: false }));
+    }
+  };
+
   return (
-    <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-      {themes.map(theme => (
-        <div 
-          key={theme.id} 
-          className="group relative flex flex-col rounded-xl border bg-card text-card-foreground shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
-        >
-          {/* Browser Mockup Frame */}
-          <div className="relative w-full aspect-[16/10] overflow-hidden rounded-t-xl bg-muted border-b">
-              {/* Browser Header */}
-              <div className="absolute top-0 left-0 right-0 h-7 bg-muted/90 backdrop-blur-sm border-b flex items-center px-3 gap-1.5 z-20">
-                  <div className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-400/80" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-green-400/80" />
-                  <div className="ml-2 flex-1 h-4 bg-background/50 rounded text-[9px] flex items-center px-2 text-muted-foreground/60">
-                      ddreams3d.com/campanas/{theme.id}
-                  </div>
-              </div>
-
-              {/* Content Preview */}
-              <div 
-                  className="w-[400%] h-[400%] absolute top-7 left-0 transform scale-[0.25] origin-top-left pointer-events-none select-none bg-background cursor-pointer"
-                  onClick={() => setEditingId(theme.id)}
-              >
-                  <SeasonalLanding config={theme} />
-              </div>
-
-              {/* Hover Overlay */}
-              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3 z-10">
-                  <Button 
-                      size="sm" 
-                      variant="secondary" 
-                      className="font-semibold shadow-lg translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
-                      onClick={() => setEditingId(theme.id)}
-                  >
-                      <Edit className="w-4 h-4 mr-2" />
-                      Editar
-                  </Button>
-                  <a 
-                      href={`/campanas/${theme.id}?preview=true`} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center h-9 w-9 rounded-md bg-secondary text-secondary-foreground shadow-lg translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75 hover:bg-secondary/80"
-                      title="Ver página real"
-                  >
-                      <ExternalLink className="w-4 h-4" />
-                  </a>
-              </div>
-
-              {/* Status Badge */}
-              {theme.isActive && (
-                  <div className="absolute top-10 right-3 z-[10]">
-                      <span className="relative flex h-3 w-3">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-                      </span>
-                  </div>
-              )}
-          </div>
-          
-          {/* Card Content */}
-          <div className="p-5 flex flex-col flex-1 gap-3">
-            <div>
-                <div className="flex justify-between items-start mb-1">
-                    <h3 className="font-bold text-lg leading-tight group-hover:text-primary transition-colors">{theme.name}</h3>
-                    {(() => {
-                      const status = getThemeStatus(theme);
-                      if (status === 'manual') return <Badge variant="default" className="bg-green-500 hover:bg-green-600 text-[10px] px-1.5 h-5">ACTIVO (M)</Badge>;
-                      if (status === 'auto') return <Badge variant="default" className="bg-blue-500 hover:bg-blue-600 text-[10px] px-1.5 h-5">VIGENTE</Badge>;
-                      return <Badge variant="outline" className="text-[10px] px-1.5 h-5 text-muted-foreground">INACTIVO</Badge>;
-                    })()}
+    <>
+      <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+        {themes.map(theme => (
+          <div 
+            key={theme.id} 
+            className="group relative flex flex-col rounded-xl border bg-card text-card-foreground shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+          >
+            {/* Browser Mockup Frame */}
+            <div className="relative w-full aspect-[16/10] overflow-hidden rounded-t-xl bg-muted border-b">
+                {/* Browser Header */}
+                <div className="absolute top-0 left-0 right-0 h-7 bg-muted/90 backdrop-blur-sm border-b flex items-center px-3 gap-1.5 z-20">
+                    <div className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-400/80" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-green-400/80" />
+                    <div className="ml-2 flex-1 h-4 bg-background/50 rounded text-[9px] flex items-center px-2 text-muted-foreground/60">
+                        {theme.id === 'standard' ? 'ddreams3d.com' : `ddreams3d.com/campanas/${theme.id}`}
+                    </div>
                 </div>
-                <p className="text-sm text-muted-foreground line-clamp-1">{theme.landing.heroTitle}</p>
-            </div>
 
-            <div className="mt-auto pt-3 border-t flex justify-between items-center text-xs text-muted-foreground">
-                <div className="flex items-center gap-1.5">
-                  <CalendarIcon className="w-3.5 h-3.5" />
-                  <span>
-                    {theme.dateRanges.length > 0 
-                      ? `${theme.dateRanges[0].start.day}/${theme.dateRanges[0].start.month} - ${theme.dateRanges[0].end.day}/${theme.dateRanges[0].end.month}`
-                      : 'Sin fecha'}
-                  </span>
+                {/* Content Preview */}
+                <div 
+                    className="w-[400%] h-[400%] absolute top-7 left-0 transform scale-[0.25] origin-top-left pointer-events-none select-none bg-background cursor-pointer"
+                    onClick={() => setEditingId(theme.id)}
+                >
+                    {theme.id === 'standard' ? (
+                        <HomePageClient 
+                            heroTitle={theme.landing.heroTitle}
+                            heroDescription={theme.landing.heroDescription}
+                            ctaText={theme.landing.ctaText}
+                            ctaLink={theme.landing.ctaLink}
+                        />
+                    ) : (
+                        <SeasonalLanding config={theme} />
+                    )}
                 </div>
-                <Badge variant="secondary" className="font-normal text-[10px]">{theme.landing.featuredTag || 'Campaña'}</Badge>
+
+                {/* Hover Overlay */}
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3 z-10">
+                    <Button 
+                        size="sm" 
+                        variant="secondary" 
+                        className="font-semibold shadow-lg translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+                        onClick={() => setEditingId(theme.id)}
+                    >
+                        <Edit className="w-4 h-4 mr-2" />
+                        Editar
+                    </Button>
+                    <a 
+                        href={theme.id === 'standard' ? '/' : `/campanas/${theme.id}?preview=true`} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center h-9 w-9 rounded-md bg-secondary text-secondary-foreground shadow-lg translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75 hover:bg-secondary/80"
+                        title="Ver página real"
+                    >
+                        <ExternalLink className="w-4 h-4" />
+                    </a>
+                </div>
+
+                {/* Status Badge */}
+                {theme.isActive && (
+                    <div className="absolute top-10 right-3 z-[10]">
+                        <span className="relative flex h-3 w-3">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                        </span>
+                    </div>
+                )}
+            </div>
+            
+            {/* Card Content */}
+            <div className="p-5 flex flex-col flex-1 gap-3">
+              <div>
+                  <div className="flex justify-between items-start mb-1">
+                      <h3 className="font-bold text-lg leading-tight group-hover:text-primary transition-colors">{theme.name}</h3>
+                      {(() => {
+                        const status = getThemeStatus(theme);
+                        if (status === 'manual') return <Badge variant="default" className="bg-green-500 hover:bg-green-600 text-[10px] px-1.5 h-5">ACTIVO (M)</Badge>;
+                        if (status === 'auto') return <Badge variant="default" className="bg-blue-500 hover:bg-blue-600 text-[10px] px-1.5 h-5">VIGENTE</Badge>;
+                        return <Badge variant="outline" className="text-[10px] px-1.5 h-5 text-muted-foreground">INACTIVO</Badge>;
+                      })()}
+                  </div>
+                  <p className="text-sm text-muted-foreground line-clamp-1">{theme.landing.heroTitle}</p>
+              </div>
+
+              {/* Manual Toggle Row */}
+              <div className="flex items-center justify-between py-2 border-t border-b bg-muted/10 -mx-5 px-5">
+                <span className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+                  Activación Manual
+                  {automationEnabled && (
+                    <span title="Desactivado porque el modo automático está encendido" className="cursor-help text-amber-500">*</span>
+                  )}
+                </span>
+                <Switch 
+                  checked={theme.isActive || false}
+                  onCheckedChange={() => handleToggle(theme)}
+                  className="scale-75 origin-right"
+                  disabled={automationEnabled}
+                />
+              </div>
+
+              <div className="mt-auto pt-3 flex justify-between items-center text-xs text-muted-foreground">
+                  <div className="flex items-center gap-1.5">
+                    <CalendarIcon className="w-3.5 h-3.5" />
+                    <span>
+                      {theme.dateRanges.length > 0 
+                        ? `${theme.dateRanges[0].start.day}/${theme.dateRanges[0].start.month} - ${theme.dateRanges[0].end.day}/${theme.dateRanges[0].end.month}`
+                        : 'Sin fecha'}
+                    </span>
+                  </div>
+                  <Badge variant="secondary" className="font-normal text-[10px]">{theme.landing.featuredTag || 'Campaña'}</Badge>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+
+      <Dialog open={confirmState.isOpen} onOpenChange={(open) => !open && setConfirmState(prev => ({ ...prev, isOpen: false }))}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5 text-yellow-500" />
+              Confirmar Cambio de Estado
+            </DialogTitle>
+            <DialogDescription>
+              {confirmState.action === 'activate' 
+                ? `¿Estás seguro de activar manualmente la campaña "${confirmState.themeName}"?`
+                : `¿Estás seguro de desactivar la campaña "${confirmState.themeName}"?`
+              }
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4 text-sm text-muted-foreground">
+            {confirmState.action === 'activate' ? (
+              <p>
+                Al activar esta campaña manualmente, <strong>anulará cualquier otra campaña programada por fecha</strong> (como Navidad o Halloween).
+                <br /><br />
+                Asegúrate de desactivar otras campañas manuales si existen.
+              </p>
+            ) : (
+              <p>
+                Al desactivar esta campaña, el sistema volverá a usar la programación automática por fechas. Si no hay campañas vigentes, se usará el tema por defecto.
+              </p>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setConfirmState(prev => ({ ...prev, isOpen: false }))}>
+              Cancelar
+            </Button>
+            <Button onClick={confirmToggle}>
+              Confirmar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

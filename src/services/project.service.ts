@@ -90,14 +90,16 @@ export const ProjectService = {
       const docSnap = await getDoc(docRef);
       
       if (docSnap.exists()) {
-        return convertDoc(docSnap);
+        const data = convertDoc(docSnap);
+        if (data.isDeleted) return undefined;
+        return data;
       }
 
       // If not found by ID, try finding by slug
       // Note: This requires scanning all or adding a query. 
       // Since we fetch all often, let's reuse getAllProjects for slug search to minimize indexes for now
       // or add a specific query.
-      const q = query(collection(dbInstance, COLLECTION), where('slug', '==', idOrSlug));
+      const q = query(collection(dbInstance, COLLECTION), where('slug', '==', idOrSlug), where('isDeleted', '!=', true));
       // 'where' needs import. 
       const querySnapshot = await getDocs(q);
       const found = querySnapshot.docs.find(d => d.data().slug === idOrSlug);

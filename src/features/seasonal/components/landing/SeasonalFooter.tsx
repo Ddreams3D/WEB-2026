@@ -28,8 +28,8 @@ export function SeasonalFooter({ config, isHalloween }: SeasonalFooterProps) {
                             ? "bg-orange-700 hover:bg-orange-800 text-white shadow-[0_0_20px_-5px_rgba(249,115,22,0.4)]" 
                             : "bg-rose-600 hover:bg-rose-700 text-white shadow-[0_0_20px_-5px_rgba(225,29,72,0.4)]"
                     )} asChild>
-                        <Link href="/cotizar">
-                            {isHalloween ? "Crear mi Pesadilla" : "Solicitar Diseño Personalizado"}
+                        <Link href="/catalogo-impresion-3d">
+                            {isHalloween ? "Crear mi Pesadilla" : "Ver ideas de regalo"}
                         </Link>
                     </Button>
                 </div>

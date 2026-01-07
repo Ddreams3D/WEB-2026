@@ -87,7 +87,7 @@ export const NavbarMobileMenu = ({
             {user ? (
               <div className="flex items-center gap-4">
                 <Avatar className="h-14 w-14 border-2 border-primary/20">
-                  <AvatarImage src={user.image} alt={user.username} />
+                  {user.image && <AvatarImage src={user.image} alt={user.username} />}
                   <AvatarFallback className="text-lg bg-primary/10 text-primary font-bold">
                     {(user.username || 'U')[0].toUpperCase()}
                   </AvatarFallback>

@@ -44,7 +44,11 @@ export const ServiceLandingsService = {
     // 1. Try to find in DB first (most up to date)
     if (db) {
       try {
-        const q = query(collection(db, COLLECTION), where('slug', '==', slug));
+        const q = query(
+            collection(db, COLLECTION), 
+            where('slug', '==', slug),
+            where('isDeleted', '!=', true)
+        );
         const snapshot = await getDocs(q);
         if (!snapshot.empty) {
           return snapshot.docs[0].data() as ServiceLandingConfig;
@@ -54,12 +58,17 @@ export const ServiceLandingsService = {
            console.warn(`Firestore permission denied (getBySlug: ${slug}). Falling back to static data.`);
         } else {
            console.error('Error fetching landing by slug from Firebase:', error);
+           // Fallback to static if DB fails (unless it was a not found)
         }
       }
     }
 
     // 2. Fallback to static data
-    return SERVICE_LANDINGS_DATA.find(l => l.slug === slug);
+    const staticLanding = SERVICE_LANDINGS_DATA.find(l => l.slug === slug);
+    if (staticLanding && !staticLanding.isDeleted) {
+        return staticLanding;
+    }
+    return undefined;
   },
 
   async save(landing: ServiceLandingConfig): Promise<void> {

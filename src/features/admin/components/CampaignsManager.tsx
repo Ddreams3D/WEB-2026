@@ -1,7 +1,9 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Calendar as CalendarIcon, Save } from '@/lib/icons';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { Calendar as CalendarIcon, Save, Zap, ZapOff } from '@/lib/icons';
 import { useCampaignsManager } from '../hooks/useCampaignsManager';
 import { CampaignsTimeline } from './campaigns-manager/CampaignsTimeline';
 import { CampaignsList } from './campaigns-manager/CampaignsList';
@@ -10,11 +12,13 @@ import { CampaignEditorSheet } from './campaigns-manager/CampaignEditorSheet';
 export default function CampaignsManager() {
   const {
     themes,
+    automationEnabled,
     loading,
     saving,
     editingId,
     setEditingId,
     handleSave,
+    toggleAutomation,
     updateTheme,
     updateLanding,
     updateAnnouncement,
@@ -43,7 +47,29 @@ export default function CampaignsManager() {
             Gestiona la visibilidad y contenido de las campañas estacionales.
           </p>
         </div>
-        <div className="flex gap-2 relative">
+        <div className="flex gap-4 relative items-center">
+          <div className="flex items-center space-x-2 bg-background/80 backdrop-blur-sm p-2 rounded-lg border shadow-sm">
+            <Switch 
+              id="automation-mode" 
+              checked={automationEnabled}
+              onCheckedChange={toggleAutomation}
+              disabled={saving}
+            />
+            <Label htmlFor="automation-mode" className="cursor-pointer flex items-center gap-2 text-sm font-medium">
+              {automationEnabled ? (
+                <>
+                  <Zap className="w-4 h-4 text-amber-500 fill-amber-500" />
+                  <span className="text-amber-700">Automático ON</span>
+                </>
+              ) : (
+                <>
+                  <ZapOff className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-muted-foreground">Automático OFF</span>
+                </>
+              )}
+            </Label>
+          </div>
+
           <Button onClick={() => window.location.reload()} variant="outline" size="sm" className="hover:bg-muted">
             Cancelar
           </Button>
@@ -74,6 +100,9 @@ export default function CampaignsManager() {
       <CampaignsList 
         themes={themes}
         setEditingId={setEditingId}
+        updateTheme={updateTheme}
+        onSave={handleSave}
+        automationEnabled={automationEnabled}
       />
 
       {/* Editor Sheet */}
@@ -89,6 +118,7 @@ export default function CampaignsManager() {
         updateDateRange={updateDateRange}
         addDateRange={addDateRange}
         removeDateRange={removeDateRange}
+        automationEnabled={automationEnabled}
       />
     </div>
   );

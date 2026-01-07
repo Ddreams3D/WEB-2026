@@ -8,9 +8,10 @@ import { UnifiedLandingData } from '../types';
 interface GeneralSectionProps {
   data: UnifiedLandingData;
   updateField: (field: keyof UnifiedLandingData, value: any) => void;
+  automationEnabled?: boolean;
 }
 
-export function GeneralSection({ data, updateField }: GeneralSectionProps) {
+export function GeneralSection({ data, updateField, automationEnabled }: GeneralSectionProps) {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
       {/* Header Estilizado */}
@@ -60,15 +61,18 @@ export function GeneralSection({ data, updateField }: GeneralSectionProps) {
             <div className="space-y-1">
               <Label className="text-base font-medium">Estado de Publicación</Label>
               <p className="text-sm text-muted-foreground">
-                {data.isActive 
-                  ? '✨ La landing está visible para todo el mundo.' 
-                  : '🔒 La landing está oculta (Borrador).'}
+                {automationEnabled 
+                  ? '⚠️ La automatización está activa. Desactívala para controlar manualmente.' 
+                  : (data.isActive 
+                    ? '✨ La landing está visible para todo el mundo.' 
+                    : '🔒 La landing está oculta (Borrador).')}
               </p>
             </div>
             <Switch 
               checked={data.isActive}
               onCheckedChange={(checked) => updateField('isActive', checked)}
               className="data-[state=checked]:bg-primary"
+              disabled={automationEnabled}
             />
           </div>
         )}
@@ -97,7 +101,7 @@ export function GeneralSection({ data, updateField }: GeneralSectionProps) {
           </div>
         )}
 
-        {data.type === 'campaign' && (
+        {data.type === 'campaign' && data.id !== 'standard' && (
           <div className="space-y-4 pt-4 border-t">
             <Label className="text-lg font-semibold text-primary">📅 Fechas de Activación</Label>
             <div className="text-sm text-muted-foreground bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg border border-blue-100 dark:border-blue-900/50">
@@ -106,6 +110,22 @@ export function GeneralSection({ data, updateField }: GeneralSectionProps) {
               <span className="opacity-70 italic">(Componente de fechas simplificado para esta vista unificada)</span>
             </div>
             {/* TODO: Add DateRange picker */}
+          </div>
+        )}
+
+        {data.id === 'standard' && (
+          <div className="bg-card border rounded-xl p-6 shadow-sm flex flex-col items-center text-center gap-4 border-primary/20 bg-primary/5">
+            <div className="p-3 bg-primary/10 rounded-full text-primary">
+              <Sparkles className="w-8 h-8" />
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-lg font-semibold">Tema Estándar (Marca)</h3>
+              <p className="text-muted-foreground max-w-md mx-auto">
+                Este es el tema base de la marca. Se muestra cuando no hay otras campañas activas.
+                <br/>
+                <span className="text-xs opacity-80">Actívalo manualmente para anular cualquier campaña temporal.</span>
+              </p>
+            </div>
           </div>
         )}
 

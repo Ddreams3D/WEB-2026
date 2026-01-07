@@ -1,6 +1,11 @@
 # Ddreams 3D - Next.js
 
-Un proyecto moderno de mapas conceptuales desarrollado con Next.js 15, utilizando App Router y las mejores prácticas de desarrollo.
+> **🤖 CONTEXTO PARA IA (IMPORTANTE):**
+> Si eres un Agente de IA (Cursor, Trae, Windsurf), tu **PRIMERA ACCIÓN** debe ser leer el archivo:
+> 👉 [`AI_RULES.md`](./AI_RULES.md)
+> Este archivo contiene la Constitución del Proyecto, los 5 Pilares de Estabilidad y las Reglas de Negocio innegociables.
+
+Un proyecto moderno de mapas conceptuales desarrollado con Next.js 16, utilizando App Router y las mejores prácticas de desarrollo.
 
 ## Tecnologías Utilizadas
 

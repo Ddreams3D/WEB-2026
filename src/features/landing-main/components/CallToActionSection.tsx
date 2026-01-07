@@ -14,13 +14,8 @@ export const CallToActionSection = () => {
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-4">
            <Button size="lg" className="h-14 px-8 text-lg font-bold rounded-full shadow-xl hover:scale-105 transition-transform bg-slate-900 text-white hover:bg-slate-800" asChild>
-            <Link href="/cotizaciones">
-              Solicitar Cotización Gratis
-            </Link>
-          </Button>
-          <Button size="lg" variant="outline" className="h-14 px-8 text-lg font-bold rounded-full border-slate-300 text-slate-700 hover:bg-white hover:text-slate-900 transition-colors bg-white/50" asChild>
-            <Link href="/contact">
-              Contactar por WhatsApp
+            <Link href="/services">
+              Descubre como podemos ayudarte.
             </Link>
           </Button>
         </div>

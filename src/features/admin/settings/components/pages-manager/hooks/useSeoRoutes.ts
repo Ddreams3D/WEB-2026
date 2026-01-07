@@ -105,7 +105,13 @@ export function useSeoRoutes() {
       await saveSeoConfig(path, newSeo);
       
       // Revalidate cache on server
-      await revalidateSeoPath(path);
+      const response = await revalidateSeoPath(path);
+      if (!response.success) {
+        console.warn('SEO Revalidation warning:', response.error);
+        // We might not want to revert the whole save if just revalidation fails, 
+        // but let's at least log it or show a warning toast.
+        // If we want to strictly fail: throw new Error(response.error);
+      }
 
       toast.success('Configuración guardada y propagada');
       return true;

@@ -1,5 +1,5 @@
 import { SeasonalThemeConfig } from '@/shared/types/seasonal';
-import { fetchThemesFromFirestore, saveThemesToFirestore } from '@/services/seasonal.service';
+import { fetchThemesFromFirestore, saveThemesToFirestore, fetchSeasonalConfig } from '@/services/seasonal.service';
 
 export async function getSeasonalThemes(): Promise<SeasonalThemeConfig[]> {
   // Now uses Firestore with fallback logic encapsulated in the service
@@ -36,17 +36,48 @@ export function isDateInRange(
   }
 }
 
-export async function resolveActiveTheme(overrideDate?: Date): Promise<SeasonalThemeConfig | null> {
-  const themes = await getSeasonalThemes();
+export const STANDARD_THEME: SeasonalThemeConfig = {
+  id: 'standard',
+  themeId: 'standard',
+  name: 'Estándar',
+  isActive: true,
+  dateRanges: [],
+  landing: {
+    heroTitle: "Tus ideas. Nuestro arte. En 3D.",
+    heroDescription: "Fabricación de prototipos, trofeos y piezas personalizadas con tecnología 3D.",
+    ctaText: "Descubre como podemos ayudarte.",
+    ctaLink: "/services",
+    featuredTag: "destacado",
+    themeMode: 'light'
+  }
+};
+
+export async function resolveActiveTheme(overrideDate?: Date): Promise<SeasonalThemeConfig> {
+  const [themes, config] = await Promise.all([
+    getSeasonalThemes(),
+    fetchSeasonalConfig()
+  ]);
   const now = overrideDate || new Date();
 
-  // 1. Check for manual overrides (isActive: true)
-  // If multiple are active manually, the first one wins (or we could add priority logic)
-  const manualOverride = themes.find(t => t.isActive === true);
-  if (manualOverride) return manualOverride;
+  // Find the database version of Standard theme, or fallback to code constant if missing
+  const dbStandard = themes.find(t => t.id === 'standard') || STANDARD_THEME;
 
-  // 2. Check date ranges
-  // We filter all matching themes
+  // 1. Check for manual overrides (isActive: true)
+  // This respects the user's manual activation switch in Admin
+  const manualOverride = themes.find(t => t.isActive === true);
+  if (manualOverride) {
+    console.log('[Seasonal] Tema activado manualmente:', manualOverride.id);
+    return manualOverride;
+  }
+
+  // 2. Check global automation setting
+  if (!config.automationEnabled) {
+    // If automation is OFF, and no manual override, return the DB Standard theme
+    console.log('[Seasonal] Automatización desactivada, usando standard');
+    return dbStandard;
+  }
+
+  // 3. Check date ranges (Only if Automation is ON)
   const matchingThemes = themes.filter(theme => {
     // Validate theme has ranges and critical landing data
     if (!theme.dateRanges || theme.dateRanges.length === 0) return false;
@@ -60,9 +91,15 @@ export async function resolveActiveTheme(overrideDate?: Date): Promise<SeasonalT
     );
   });
 
-  // 3. Resolve conflicts
-  // If multiple themes match the date, we could use a 'priority' field if added,
-  // or just return the first one found in the list.
-  // For now, we return the first match.
-  return matchingThemes.length > 0 ? matchingThemes[0] : null;
+  // 4. Resolve conflicts
+  return matchingThemes.length > 0 ? matchingThemes[0] : dbStandard;
+}
+
+/**
+ * Returns specifically the Standard theme content (from DB or fallback).
+ * Used for Home Page content which should NOT change with seasonal campaigns.
+ */
+export async function getStandardThemeContent(): Promise<SeasonalThemeConfig> {
+  const themes = await getSeasonalThemes();
+  return themes.find(t => t.id === 'standard') || STANDARD_THEME;
 }

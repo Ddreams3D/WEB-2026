@@ -1,6 +1,7 @@
 import { 
   collection, 
   getDocs, 
+  getDoc,
   setDoc, 
   doc, 
   query, 
@@ -9,10 +10,11 @@ import {
   writeBatch
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { SeasonalThemeConfig } from '@/shared/types/seasonal';
+import { SeasonalThemeConfig, SeasonalSystemConfig } from '@/shared/types/seasonal';
 import seasonalThemesData from '@/data/seasonal-themes.json';
 
 const COLLECTION_NAME = 'seasonal_themes';
+const CONFIG_DOC_ID = '_config';
 const FIRESTORE_TIMEOUT = 2000; // 2s timeout
 const ENABLE_FIRESTORE_FOR_PUBLIC = true; // Enabled to allow public/admin read/write
 
@@ -34,6 +36,7 @@ export async function fetchThemesFromFirestore(): Promise<SeasonalThemeConfig[]>
 
   if (!shouldFetch) {
     // Return fallback silently without error logs
+    console.log('[SeasonalService] Firestore disabled or not ready. Using fallback.');
     return FALLBACK_THEMES;
   }
 
@@ -50,14 +53,58 @@ export async function fetchThemesFromFirestore(): Promise<SeasonalThemeConfig[]>
 
     const themes: SeasonalThemeConfig[] = [];
     snapshot.forEach((doc) => {
+      if (doc.id === CONFIG_DOC_ID) return; // Skip config document
       themes.push(doc.data() as SeasonalThemeConfig);
     });
+
+    // Check if "Standard" exists in fetched themes, if not, inject it from fallback or default?
+    // Actually, fallback JSON doesn't have it either. 
+    // If Admin saved it, it should be in Firestore.
 
     return themes;
   } catch (error) {
     console.error('Error fetching themes from Firestore:', error);
     // On error (e.g., offline, permission), fallback to local JSON
     return FALLBACK_THEMES;
+  }
+}
+
+/**
+ * Fetches the system configuration for seasonal themes (e.g., automation toggle).
+ */
+export async function fetchSeasonalConfig(): Promise<SeasonalSystemConfig> {
+  const dbInstance = db;
+  // If db is not ready, default to true (Auto ON)
+  if (!dbInstance) return { automationEnabled: true };
+
+  try {
+    const docRef = doc(dbInstance, COLLECTION_NAME, CONFIG_DOC_ID);
+    const snapshot = await getDoc(docRef);
+    
+    if (snapshot.exists()) {
+      return snapshot.data() as SeasonalSystemConfig;
+    }
+    // Default config if not exists
+    return { automationEnabled: true };
+  } catch (error) {
+    console.error('Error fetching seasonal config:', error);
+    return { automationEnabled: true };
+  }
+}
+
+/**
+ * Saves the system configuration for seasonal themes.
+ */
+export async function saveSeasonalConfig(config: SeasonalSystemConfig): Promise<void> {
+  const dbInstance = db;
+  if (!dbInstance) throw new Error('Firestore is not configured.');
+
+  try {
+    const docRef = doc(dbInstance, COLLECTION_NAME, CONFIG_DOC_ID);
+    await setDoc(docRef, config);
+  } catch (error) {
+    console.error('Error saving seasonal config:', error);
+    throw error;
   }
 }
 
