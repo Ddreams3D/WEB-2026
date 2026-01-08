@@ -42,7 +42,22 @@ export function useServiceLanding(config: ServiceLandingConfig, isPreview: boole
   }, [config.featuredTag, isPreview]);
 
   // Determine theme class override
-  const themeClass = config.themeMode === 'dark' ? 'dark' : config.themeMode === 'light' ? 'light' : '';
+  const [systemTheme, setSystemTheme] = useState<'dark' | 'light'>('light');
+
+  useEffect(() => {
+    // Check system preference initially
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    setSystemTheme(mediaQuery.matches ? 'dark' : 'light');
+
+    // Listen for changes
+    const handler = (e: MediaQueryListEvent) => setSystemTheme(e.matches ? 'dark' : 'light');
+    mediaQuery.addEventListener('change', handler);
+    return () => mediaQuery.removeEventListener('change', handler);
+  }, []);
+
+  const themeClass = config.themeMode === 'system' 
+    ? systemTheme 
+    : (config.themeMode === 'dark' ? 'dark' : 'light');
 
   // Get Primary Color from config or default
   const primaryColor = config.primaryColor || '#e11d48';

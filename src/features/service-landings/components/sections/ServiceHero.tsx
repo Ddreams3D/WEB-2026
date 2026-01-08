@@ -23,10 +23,23 @@ export function ServiceHero({ config, heroSection, primaryColor }: ServiceHeroPr
           <div className="absolute rounded-full opacity-10 blur-[100px] w-[500px] h-[500px] -top-[10%] -right-[10%] bg-[var(--primary-color)]" />
           <div className="absolute rounded-full opacity-10 blur-[100px] w-[500px] h-[500px] -bottom-[10%] -left-[10%] bg-[var(--primary-color)]" />
           
-          {/* Grid Pattern */}
-          <div className="absolute inset-0 opacity-[0.03]" 
-              style={{ backgroundImage: 'radial-gradient(circle, currentColor 1px, transparent 1px)', backgroundSize: '40px 40px' }} 
-          />
+          {/* Pattern Overlay */}
+          {config.id === 'organic-modeling' ? (
+              // Organic Topography Pattern
+              <div className="absolute inset-0 opacity-[0.06] pointer-events-none"
+                  style={{
+                      backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0 C 20 10 40 10 60 0 M0 20 C 20 30 40 30 60 20 M0 40 C 20 50 40 50 60 40' stroke='currentColor' fill='none' stroke-width='0.5'/%3E%3Cpath d='M11 18 C 30 25 50 25 70 18 M11 38 C 30 45 50 45 70 38' stroke='currentColor' fill='none' stroke-width='0.5' transform='rotate(90 50 50)'/%3E%3Cpath d='M0,50 Q25,25 50,50 T100,50' stroke='currentColor' fill='none' stroke-width='0.5' opacity='0.5' /%3E%3C/svg%3E"), url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22 opacity=%220.5%22/%3E%3C/svg%3E')`,
+                      backgroundSize: '300px 300px, 200px 200px',
+                      maskImage: 'linear-gradient(to bottom, black, transparent)',
+                      WebkitMaskImage: 'linear-gradient(to bottom, black, transparent)'
+                  }}
+              />
+          ) : (
+              // Standard Grid Pattern
+              <div className="absolute inset-0 opacity-[0.03]" 
+                  style={{ backgroundImage: 'radial-gradient(circle, currentColor 1px, transparent 1px)', backgroundSize: '40px 40px' }} 
+              />
+          )}
       </div>
 
       {/* Left Column: Text Content */}

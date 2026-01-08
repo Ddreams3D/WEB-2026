@@ -23,7 +23,14 @@ export const ServiceLandingsService = {
       dbLandings.forEach(dbLanding => {
         const index = mergedLandings.findIndex(l => l.id === dbLanding.id);
         if (index >= 0) {
-          mergedLandings[index] = dbLanding;
+          // Merge DB data but keep local styling/config if needed
+          const localData = mergedLandings[index];
+          mergedLandings[index] = {
+            ...dbLanding,
+            // Ensure local code config for colors takes precedence if defined
+            // This ensures design updates in code are reflected even if DB exists
+            primaryColor: localData.primaryColor ?? dbLanding.primaryColor,
+          };
         } else {
           mergedLandings.push(dbLanding);
         }
@@ -53,9 +60,17 @@ export const ServiceLandingsService = {
         
         if (!snapshot.empty) {
           const data = snapshot.docs[0].data() as ServiceLandingConfig;
+          
+          // Apply local overrides (like color) to ensure code updates are reflected
+          const localData = SERVICE_LANDINGS_DATA.find(l => l.id === data.id);
+          const finalData = localData ? {
+             ...data,
+             primaryColor: localData.primaryColor ?? data.primaryColor
+          } : data;
+
           // Filter soft-deleted in memory
-          if (!data.isDeleted) {
-            return data;
+          if (!finalData.isDeleted) {
+            return finalData;
           }
         }
       } catch (error: any) {

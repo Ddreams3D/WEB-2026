@@ -95,7 +95,10 @@ export function ImageComparison({
 
       {/* Foreground Image (Left Side - e.g. Real Object) - Clipped */}
       <div 
-        className="absolute inset-0 w-full h-full transition-[clip-path] duration-300 ease-out"
+        className={cn(
+          "absolute inset-0 w-full h-full ease-out",
+          isDragging ? "transition-none" : "transition-[clip-path] duration-300"
+        )}
         style={{ 
             clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` 
         }}
@@ -115,7 +118,10 @@ export function ImageComparison({
 
       {/* Slider Handle */}
       <div 
-        className="absolute top-0 bottom-0 w-1 bg-white cursor-ew-resize z-20 shadow-[0_0_10px_rgba(0,0,0,0.5)] transition-[left] duration-300 ease-out"
+        className={cn(
+          "absolute top-0 bottom-0 w-1 bg-white cursor-ew-resize z-20 shadow-[0_0_10px_rgba(0,0,0,0.5)] ease-out",
+          isDragging ? "transition-none" : "transition-[left] duration-300"
+        )}
         style={{ 
             left: `${sliderPosition}%`,
             backgroundColor: primaryColor 

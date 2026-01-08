@@ -124,8 +124,8 @@ const INITIAL_GLOSSARY: GlossaryItem[] = [
   // --- SERVICIOS ---
   {
     id: 'srv-landing-service',
-    term: 'Landing de Servicio',
-    definition: 'Página permanente (/services/modelado-3d) que describe un pilar del negocio. A diferencia de las campañas, estas páginas son estables, tienen su propia identidad visual y NO cambian de color con los temas estacionales (para mantener seriedad profesional).',
+    term: 'Landing de Servicio (Standalone)',
+    definition: 'Página especializada (/servicios/slug) con arquitectura "Standalone". Tiene su propio Layout (sin Navbar/Footer globales) y su propio Renderizador. Permite personalización extrema de diseño (Vibes) sin romper la estética de la web principal.',
     category: 'services',
     lastUpdated: new Date().toISOString()
   },
@@ -134,6 +134,29 @@ const INITIAL_GLOSSARY: GlossaryItem[] = [
     term: 'Cotización (Quote)',
     definition: 'Solicitud de presupuesto para trabajos a medida que no tienen precio fijo (ej. impresión de un archivo STL propio). Requiere subir archivos y especificar parámetros técnicos.',
     category: 'services',
+    lastUpdated: new Date().toISOString()
+  },
+  {
+    id: 'srv-vibe-config',
+    term: 'Vibe / Atmósfera',
+    definition: 'Regla de diseño que permite a una Landing de Servicio sobrescribir variables CSS globales (colores de texto, fondos). Ejemplo: "Modelado Orgánico" usa tonos cálidos (Stone/Terracota) y patrones de ruido, ignorando el tema "Cool Gray" tecnológico por defecto.',
+    category: 'services',
+    lastUpdated: new Date().toISOString()
+  },
+
+  // --- REGLAS DE NEGOCIO & CÓDIGO ---
+  {
+    id: 'rule-config-precedence',
+    term: 'Regla de Precedencia (Code > DB)',
+    definition: 'Principio de desarrollo: Para elementos críticos de diseño (Colores, Logos), la configuración definida en el CÓDIGO local (service-landings-data.ts) siempre tiene prioridad sobre la Base de Datos. Esto garantiza que las actualizaciones de diseño se apliquen instantáneamente.',
+    category: 'tech',
+    lastUpdated: new Date().toISOString()
+  },
+  {
+    id: 'rule-adaptive-logo',
+    term: 'Isotipo Adaptativo',
+    definition: 'Versión inteligente del logo "D" que ajusta sus bordes, sombras y espaciado automáticamente según el fondo. Es crítico para mantener la legibilidad de la marca (la "D" blanca) sobre fondos claros o complejos en las Landings de Servicio.',
+    category: 'ui',
     lastUpdated: new Date().toISOString()
   },
 
