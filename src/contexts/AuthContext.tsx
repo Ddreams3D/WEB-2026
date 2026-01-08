@@ -36,13 +36,10 @@ const AUTH_USER_KEY = 'ddreams_auth_user';
 let globalLastSync = 0;
 let globalIsSyncing = false;
 
-const setAdminCookie = () => {
-  document.cookie = "ddreams_admin_session=true; path=/; max-age=86400; SameSite=Strict";
-};
-
-const removeAdminCookie = () => {
-  document.cookie = "ddreams_admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-};
+// [SECURITY PATCH] 
+// Las funciones setAdminCookie y removeAdminCookie han sido eliminadas.
+// La gestión de cookies de administración ahora es EXCLUSIVA del servidor (HttpOnly).
+// El cliente NO debe tener capacidad de manipular estas credenciales.
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -76,17 +73,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             console.warn('[AuthContext] Mock token detected in production. Clearing session.');
             localStorage.removeItem(AUTH_TOKEN_KEY);
             localStorage.removeItem(AUTH_USER_KEY);
-            removeAdminCookie();
             setUserIfChanged(null);
           }
         } else {
           localStorage.removeItem(AUTH_TOKEN_KEY);
           localStorage.removeItem(AUTH_USER_KEY);
-          removeAdminCookie();
           setUser(null);
         }
       } else {
-        removeAdminCookie();
         setUser(null);
       }
     } catch (error) {
@@ -174,9 +168,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             localStorage.setItem(AUTH_TOKEN_KEY, await firebaseUser.getIdToken());
             
             if (userData.role === 'admin' || isSuperAdmin(userData.email)) {
-              setAdminCookie();
-            } else {
-              removeAdminCookie();
+               // Admin check handled server-side
             }
           } catch (error) {
             console.error('Error syncing user:', error);
@@ -193,7 +185,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             if (user) { 
               localStorage.removeItem(AUTH_TOKEN_KEY);
               localStorage.removeItem(AUTH_USER_KEY);
-              removeAdminCookie();
               setUserIfChanged(null);
             }
           }

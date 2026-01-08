@@ -12,7 +12,7 @@ interface UseAdminProtectionProps {
 export function useAdminProtection({ 
   requiredRole = 'admin', 
   redirectOnFail = true,
-  redirectPath = '/login?redirect=/admin' 
+  redirectPath = '/admin/login' 
 }: UseAdminProtectionProps = {}) {
   const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
@@ -38,36 +38,42 @@ export function useAdminProtection({
       // 2. Wait for Auth to be ready
       if (authLoading) return;
 
-      // 3. Check if user is logged in
-      if (!user) {
-        if (mounted) {
-          if (redirectOnFail) router.push(redirectPath);
-          setChecking(false);
+      // 3. Try Firebase Auth (Client Side)
+      if (user) {
+        try {
+          const isAdmin = await AdminService.checkIsAdmin(user.id, user.email);
+          if (mounted && isAdmin) {
+            setHasAccess(true);
+            setChecking(false);
+            return;
+          }
+        } catch (error) {
+          console.warn('Firebase admin check failed, trying server session...', error);
         }
-        return;
       }
 
-      // 4. Verify Admin Status via AdminService (Firestore + Hardcoded)
+      // 4. Try Server Session (Cookie/Master Password)
       try {
-        const isAdmin = await AdminService.checkIsAdmin(user.id, user.email);
-
-        if (mounted) {
-          if (!isAdmin) {
-            setHasAccess(false);
-          } else {
-            // If strictly 'admin' role is required, we assume checkIsAdmin covers it.
-            // AdminService.checkIsAdmin returns true for admins.
-            // If we needed 'moderator', we'd need to expand AdminService.
-            setHasAccess(true);
+        const response = await fetch('/api/admin/check');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.authenticated) {
+            if (mounted) {
+              setHasAccess(true);
+              setChecking(false);
+            }
+            return;
           }
-          setChecking(false);
         }
       } catch (error) {
-        console.error('Error verifying admin access:', error);
-        if (mounted) {
-          setHasAccess(false);
-          setChecking(false);
-        }
+        console.warn('Server session check failed', error);
+      }
+
+      // 5. Access Denied
+      if (mounted) {
+        if (redirectOnFail) router.push(redirectPath);
+        setHasAccess(false);
+        setChecking(false);
       }
     };
 

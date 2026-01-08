@@ -48,22 +48,78 @@
 
 ---
 
-## 🚨 RIESGOS ACTIVOS Y MITIGACIÓN (Live Check)
+### 3. Estructura de Rutas y Route Groups
+- **Regla:** Usar Route Groups (paréntesis) para aislar layouts y contextos.
+- **Implementación:**
+  - `(protected)/admin`: Contiene lógica protegida que requiere sesión.
+  - `(dashboard)`: Sub-grupo para el panel principal, aislando el layout de navegación del login.
+  - **Beneficio:** Permite tener un `layout.tsx` específico para el dashboard (sidebar, header) que no afecta a la página de Login.
 
-### A. Riesgo de "Explosión de Factura" (Spam)
-- **Estado:** ⚠️ PARCIALMENTE MITIGADO
-- **Amenaza:** Ataques de bots a formularios públicos (Firebase Writes).
-- **Mitigación Requerida:** Rate Limiting en Server Actions o reCAPTCHA.
+### 4. Seguridad y Autenticación (Híbrida)
+- **Cliente (Firebase):** Solo lecturas públicas (Catálogo, Blog).
+- **Servidor (Admin):**
+  - **Librería:** `jose` para firma y verificación de JWT.
+  - **Transporte:** Cookies `HttpOnly` + `Secure`. **PROHIBIDO** usar `localStorage` o cookies accesibles por JS para tokens de admin.
+  - **Validación:** Middleware y Server Actions verifican `verifyAdminSession()`.
 
-### B. Riesgo del "Botón de la Muerte" (Data Loss)
-- **Estado:** 🔴 ALTO RIESGO
-- **Amenaza:** Borrado accidental de datos críticos (Admin Delete).
-- **Mitigación Requerida:** Implementar "Soft Delete" (`deleted: true`) en lugar de destrucción física.
+## 🚨 RIESGOS ACTIVOS (Live Check)
 
-### C. Riesgo de "Silencio Administrativo"
-- **Estado:** ⚠️ MEDIO
-- **Amenaza:** Fallos en Server Actions (Emails, Pagos) que no se reportan al cliente.
-- **Mitigación Requerida:** Logger de servidor (Sentry o colección `system_logs`).
+> **Estado del Sistema:** ✅ Estable. Se mitigaron vulnerabilidades de autenticación crítica (Cookie/JWT).
+> *Última auditoría: Enero 2026*
+
+## 📜 HISTORIAL DE SOLUCIONES Y LECCIONES (Archivo)
+
+### 6. Build Crash por Definiciones Duplicadas [MITIGADO - Enero 2026]
+- **Problema:** `ArchitectureSettings.tsx` contenía definiciones locales de componentes (`NavTab`, `SectionLabel`) que causaban errores de "duplicate identifier" y bloqueaban el build.
+- **Solución:**
+  - Se modularizaron los componentes UI a `ArchitectureUI.tsx`.
+  - Se eliminó código muerto (`SectionLabel` no usado).
+  - Se limpiaron imports no utilizados.
+
+### 5. Vulnerabilidad de Sesión Cliente (Cookie) [MITIGADO - Enero 2026]
+- **Problema:** `AuthContext` manipulaba cookies de admin (`ddreams_admin_session`) en el cliente (`document.cookie`), exponiendo la sesión a XSS.
+- **Solución:**
+  - Se eliminó toda escritura de cookies del lado del cliente.
+  - Se implementó `httpOnly` cookies estrictas desde el servidor (`/api/admin/login`).
+  - Se añadió firma criptográfica JWT (`jose`) para garantizar integridad.
+
+### 4. Critical: Providers No Cargaban [MITIGADO - Enero 2026]
+- **Problema:** La aplicación no cargaba Auth, Cart ni Theme porque faltaba el wrapper `<Providers>` en `layout.tsx`.
+- **Solución:** Se envolvió `{children}` con `<Providers>` en el layout raíz.
+
+### 3. API Pública sin Rate Limiting [MITIGADO - Enero 2026]
+- **Problema:** El endpoint `api/orders/estimate` era público y vulnerable a abuso (DoS).
+- **Solución:** Se implementó `RateLimiter` (Token Bucket) en `src/lib/rate-limit.ts`. Límite: 5 peticiones cada 10s por IP.
+
+### 2. Server Actions No Protegidos [MITIGADO - Enero 2026]
+- **Problema:** Las Server Actions (`service-landings`, `seasonal`, `ai-rules`) no verificaban autenticación, permitiendo ejecución arbitraria.
+- **Solución:**
+  - Se implementó `verifyAdminSession()` en `src/lib/auth-admin.ts` verificando la cookie `ddreams_admin_session`.
+  - Se aplicó la verificación al inicio de `saveServiceLandingAction`, `updateSeasonalThemesAction` y `getLocalAIRules`.
+
+### 1. Riesgo "Explosion de Factura" (Spam) [MITIGADO - Enero 2026]
+- **Problema:** Ataques de bots a formularios públicos saturaban las escrituras de Firebase.
+- **Solución:**
+  - Se centralizó la lógica de email en `src/lib/email-service.ts`.
+  - Se implementó `auth-admin.ts` para verificar tokens en el servidor.
+  - Se protegió la API `notifications` con verificación de administrador.
+  - Validación Zod estricta en todos los inputs.
+
+### 2. Riesgo "Botón de la Muerte" (Data Loss) [MITIGADO - Enero 2026]
+- **Problema:** Borrado físico inmediato permitía errores catastróficos por parte de admins.
+- **Solución:**
+  - Implementación de **Soft Delete** (`isDeleted: true`) en `ProjectService`, `UserService` y `OrderService`.
+  - Los datos solo se ocultan, requiriendo una acción explícita `permanentDelete` para su eliminación real.
+
+### 3. Riesgo "Silencio Administrativo" [MITIGADO - Enero 2026]
+- **Problema:** Fallos en Server Actions (pagos, emails) no se reportaban, dificultando el debug.
+- **Solución:**
+  - Creación de `src/lib/logger.ts` conectado a Firestore (`system_logs`) y consola de Vercel.
+  - Integración en flujos críticos como `submitPaymentProofAction`.
+
+### 4. Riesgo "Puertas Traseras" (Inyección) [MITIGADO - Previo]
+- **Problema:** Datos no validados entrando a la BD.
+- **Solución:** Validación Zod obligatoria en todos los Server Actions.
 
 ---
 

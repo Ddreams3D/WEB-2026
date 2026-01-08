@@ -34,9 +34,9 @@ export const HeroSection = ({ initialConfig, bubbleImages }: HeroSectionProps) =
 
       <div className="container mx-auto px-4 relative z-10 flex items-center justify-start h-full">
         
-        {/* Brand Logo - Top Right */}
+        {/* Floating Logo (Mobile & Desktop) */}
         <div className="absolute top-4 right-4 md:top-8 md:right-8 z-50" style={{ animation: 'float 6s ease-in-out infinite' }}>
-          <MainLogo variant="white" className="w-32 md:w-48 h-auto" />
+          <MainLogo variant="white" className="w-32 md:w-48 h-auto" ignoreTheme />
         </div>
 
         {/* Text Content */}

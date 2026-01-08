@@ -1,38 +1,49 @@
-'use server';
+import { z } from 'zod';
+import { EmailService, SendEmailSchema, SendEmailInput } from '@/lib/email-service';
+import { verifyAdminSession } from '@/lib/auth-admin';
 
-import { resend, EMAIL_FROM } from '@/lib/email';
+// Re-export schema for client usage if needed
+export { SendEmailSchema };
 
-interface SendEmailParams {
-  to: string | string[];
-  subject: string;
-  html: string;
-  text?: string;
-}
+const OrderNotificationSchema = z.object({
+  orderId: z.string().min(1, "ID de pedido requerido"),
+  message: z.string().min(1, "El mensaje no puede estar vacío"),
+  userEmail: z.string().email("Email de usuario inválido"),
+});
 
-export async function sendEmail({ to, subject, html, text }: SendEmailParams) {
-  try {
-    const data = await resend.emails.send({
-      from: EMAIL_FROM,
-      to,
-      subject,
-      html,
-      text: text || html.replace(/<[^>]*>?/gm, ''), // Simple strip tags for text fallback
-    });
-
-    if (data.error) {
-      console.error('Error sending email via Resend:', data.error);
-      return { success: false, error: data.error };
-    }
-
-    return { success: true, data };
-  } catch (error) {
-    console.error('Unexpected error sending email:', error);
-    return { success: false, error: 'Internal Server Error' };
+/**
+ * Server Action para enviar emails.
+ * @security Protected by Admin Session
+ */
+export async function sendEmail(input: SendEmailInput) {
+  const isAdmin = await verifyAdminSession();
+  if (!isAdmin) {
+    throw new Error('Unauthorized: Admin access required to send emails directly.');
   }
+  // Delegar al servicio seguro
+  return EmailService.send(input);
 }
 
 export async function sendOrderNotification(orderId: string, message: string, userEmail: string) {
-  return sendEmail({
+  const isAdmin = await verifyAdminSession();
+  if (!isAdmin) {
+    return {
+      success: false,
+      error: 'Unauthorized: Admin access required to send notifications.'
+    };
+  }
+
+  // 1. Validación Zod para esta acción específica
+  const validation = OrderNotificationSchema.safeParse({ orderId, message, userEmail });
+
+  if (!validation.success) {
+    return {
+      success: false,
+      error: validation.error.issues[0].message
+    };
+  }
+
+  return EmailService.send({
     to: userEmail,
     subject: `Actualización sobre tu pedido #${orderId} - Ddreams 3D`,
     html: `

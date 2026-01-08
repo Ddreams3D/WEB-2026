@@ -77,7 +77,7 @@ export function AIRulesSyncCard() {
       </CardHeader>
       <CardContent>
         <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-          ¡Ojo! El archivo <strong>'AI_RULES.md'</strong> es solo papel. La IA real lee sus reglas de la base de datos (Firestore). 
+          ¡Ojo! El archivo <strong>&apos;AI_RULES.md&apos;</strong> es solo papel. La IA real lee sus reglas de la base de datos (Firestore). 
           Si editas el archivo de texto, debes sincronizarlo aquí para que la IA se entere.
         </p>
         

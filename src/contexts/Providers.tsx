@@ -15,25 +15,36 @@ interface ProvidersProps {
   children: React.ReactNode;
 }
 
-export function Providers({ children }: ProvidersProps) {
+export function CoreProviders({ children }: ProvidersProps) {
+  return (
+    <ToastProvider>
+      <AuthProvider>
+        <OrderTrackingProvider>
+          <QuoteProvider>
+              <FavoritesProvider>
+                <CartProvider>
+                  <NotificationProvider>
+                    {children}
+                  </NotificationProvider>
+                </CartProvider>
+              </FavoritesProvider>
+            </QuoteProvider>
+        </OrderTrackingProvider>
+      </AuthProvider>
+    </ToastProvider>
+  );
+}
+
+export function MainAppProviders({ children }: ProvidersProps) {
   return (
     <ThemeProvider>
       <SeasonalThemeController />
-      <ToastProvider>
-        <AuthProvider>
-          <OrderTrackingProvider>
-            <QuoteProvider>
-                <FavoritesProvider>
-                  <CartProvider>
-                    <NotificationProvider>
-                      {children}
-                    </NotificationProvider>
-                  </CartProvider>
-                </FavoritesProvider>
-              </QuoteProvider>
-          </OrderTrackingProvider>
-        </AuthProvider>
-      </ToastProvider>
+      <CoreProviders>
+        {children}
+      </CoreProviders>
     </ThemeProvider>
   );
 }
+
+// Deprecated: Use MainAppProviders instead
+export { MainAppProviders as Providers };

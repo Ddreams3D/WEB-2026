@@ -19,6 +19,34 @@ export const GLOSSARY_CATEGORIES: Record<string, string> = {
 const INITIAL_GLOSSARY: GlossaryItem[] = [
   // --- NÚCLEO (CORE) ---
   {
+    id: 'core-landing-main',
+    term: 'Landing Principal',
+    definition: 'Página de aterrizaje estratégica (ej. "/impresion-3d-arequipa"). NO es la Home. Es una "Landing Satélite" que vive fuera de la Web Principal para maximizar conversión SEO local.',
+    category: 'core',
+    lastUpdated: new Date().toISOString()
+  },
+  {
+    id: 'core-web-main',
+    term: 'Web Principal',
+    definition: 'La "Nave Madre". Incluye la Home ("/"), el Catálogo, el Admin y el área de clientes. EXCLUYE explícitamente todas las Landings (ya sean de campaña, servicio o la Landing Principal).',
+    category: 'core',
+    lastUpdated: new Date().toISOString()
+  },
+  {
+    id: 'core-home-public',
+    term: 'Home (Inicio)',
+    definition: 'La ruta raíz pública ("/"). Es la portada de la Web Principal. A diferencia de las Landings, la Home SÍ es parte integral de la plataforma y comparte su navegación y contexto.',
+    category: 'core',
+    lastUpdated: new Date().toISOString()
+  },
+  {
+    id: 'core-admin-dashboard',
+    term: 'Admin (Dashboard)',
+    definition: 'El panel de control privado ("/admin"). Es el centro de mando del usuario administrador para gestionar productos, pedidos y configuraciones.',
+    category: 'admin',
+    lastUpdated: new Date().toISOString()
+  },
+  {
     id: 'core-theme',
     term: 'Tema (Theme)',
     definition: 'Conjunto de variables visuales (paleta de colores, tipografías, bordes) que definen la estética global de la web. Puede ser "Estándar" (identidad corporativa permanente) o "Estacional" (temporal, ej. Navidad). Afecta a toda la web excepto a las Landings de Servicio.',
@@ -41,6 +69,13 @@ const INITIAL_GLOSSARY: GlossaryItem[] = [
   },
 
   // --- MARKETING ---
+  {
+    id: 'mkt-landings-specific',
+    term: 'Landings (Específicas)',
+    definition: 'Páginas satélites diseñadas con un único objetivo de conversión (ej. "/impresion-3d-arequipa"). A diferencia de la Web Principal, aquí se limita la navegación para que el usuario se enfoque solo en esa oferta.',
+    category: 'marketing',
+    lastUpdated: new Date().toISOString()
+  },
   {
     id: 'mkt-landing-campaign',
     term: 'Landing de Campaña',

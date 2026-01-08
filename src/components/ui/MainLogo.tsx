@@ -6,9 +6,10 @@ import { useTheme } from '@/contexts/ThemeContext';
 interface MainLogoProps {
   className?: string;
   variant?: 'white' | 'black';
+  ignoreTheme?: boolean;
 }
 
-export const MainLogo = ({ className, variant = 'white' }: MainLogoProps) => {
+export const MainLogo = ({ className, variant = 'white', ignoreTheme = false }: MainLogoProps) => {
   const { theme } = useTheme();
   
   // Colores según variante
@@ -17,7 +18,7 @@ export const MainLogo = ({ className, variant = 'white' }: MainLogoProps) => {
   const separatorOpacity = variant === 'white' ? '0.3' : '0.5'; // Separador más visible en negro
   
   // Colores constantes y temáticos
-  const isValentines = theme === 'valentines';
+  const isValentines = !ignoreTheme && theme === 'valentines';
   const highlightColor = isValentines ? '#E11D48' : '#60EBD4'; // Rose-600 para San Valentín, Turquesa por defecto
   const isotopeLeftColor = '#FEFEFE'; // Blanco constante
   

@@ -211,6 +211,10 @@ export interface User {
     push: boolean;
     marketing: boolean;
   };
+
+  // Soft Delete
+  isDeleted?: boolean;
+  deletedAt?: Date;
 }
 
 // ==========================================
@@ -298,6 +302,10 @@ export interface Order {
 
   // Admin Notes
   adminNotes?: string;
+
+  // Soft Delete
+  isDeleted?: boolean;
+  deletedAt?: Date;
 }
 
 // ==========================================

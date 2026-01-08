@@ -5,9 +5,9 @@ import { Upload, X, CheckCircle, AlertCircle, Loader2 } from '@/lib/icons';
 import { Button } from '@/components/ui/button';
 import { storage, db } from '@/lib/firebase';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { doc, updateDoc } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/components/ui/ToastManager';
+import { submitPaymentProofAction } from '@/actions/order.actions';
 
 interface PaymentProofUploadProps {
   orderId: string;
@@ -65,27 +65,20 @@ export function PaymentProofUpload({ orderId, onUploadSuccess, existingProofUrl 
             const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
             setUploadedUrl(downloadURL);
             
-            // Update Firestore Order if possible (Client-side)
-            // Note: This requires Firestore Rules to allow update on this field for the user/public
-            if (db) {
-                try {
-                    const orderRef = doc(db, 'orders', orderId);
-                    await updateDoc(orderRef, {
-                        paymentProofUrl: downloadURL,
-                        paymentStatus: 'paid', // Optimistic update or keep pending? better keep pending until admin verifies.
-                        // Actually, maybe update history too?
-                        // Let's just update the URL for now.
-                        updatedAt: new Date()
-                    });
-                } catch (dbError) {
-                    console.warn('Could not update order in DB directly (might be permission issue):', dbError);
-                    // Fallback: We still show success UI and maybe notify via other means if critical
-                }
-            }
+            // Server Action Call (Secure & Validated)
+            const result = await submitPaymentProofAction({
+              orderId,
+              proofUrl: downloadURL
+            });
 
-            showSuccess('Comprobante subido', 'Tu comprobante se ha enviado correctamente.');
-            if (onUploadSuccess) onUploadSuccess(downloadURL);
-            setFile(null);
+            if (!result.success) {
+              console.error('Server Action Error:', result.error);
+              showError('Advertencia', 'El archivo se subió, pero hubo un error actualizando el pedido. Contacta a soporte.');
+            } else {
+              showSuccess('Comprobante registrado', 'Tu comprobante se ha enviado y está en revisión.');
+              if (onUploadSuccess) onUploadSuccess(downloadURL);
+              setFile(null);
+            }
           } catch (error) {
             console.error('Post-upload error:', error);
           } finally {

@@ -44,14 +44,19 @@ export const ServiceLandingsService = {
     // 1. Try to find in DB first (most up to date)
     if (db) {
       try {
+        // Query by slug only (uses default single-field index)
         const q = query(
             collection(db, COLLECTION), 
-            where('slug', '==', slug),
-            where('isDeleted', '!=', true)
+            where('slug', '==', slug)
         );
         const snapshot = await getDocs(q);
+        
         if (!snapshot.empty) {
-          return snapshot.docs[0].data() as ServiceLandingConfig;
+          const data = snapshot.docs[0].data() as ServiceLandingConfig;
+          // Filter soft-deleted in memory
+          if (!data.isDeleted) {
+            return data;
+          }
         }
       } catch (error: any) {
         if (error?.code === 'permission-denied') {

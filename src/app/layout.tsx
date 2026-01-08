@@ -113,36 +113,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={`${inter.variable} ${montserrat.variable} ${montserratAlternates.variable}`} suppressHydrationWarning data-scroll-behavior="smooth">
-      <head>
-        <Script id="theme-analytics-init" strategy="beforeInteractive">
-          {`
-            (function() {
-              try {
-                var gaId = '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || ''}';
-                if (gaId && localStorage.getItem('ddreams_exclude_analytics') === 'true') {
-                  window['ga-disable-' + gaId] = true;
-                }
-              } catch(e) {}
-              try {
-                var darkMode = localStorage.getItem('darkMode');
-                if (darkMode && JSON.parse(darkMode)) {
-                  document.documentElement.classList.add('dark');
-                }
-                
-                // Cargar tema inmediatamente para evitar parpadeo (excepto en /impresion-3d-arequipa)
-                var theme = localStorage.getItem('theme');
-                var path = (typeof location !== 'undefined' && location.pathname) || '';
-                if (theme && path !== '/impresion-3d-arequipa') {
-                  document.documentElement.setAttribute('data-theme', theme);
-                } else {
-                  // Asegurar tema estándar desde el inicio en esa landing
-                  document.documentElement.setAttribute('data-theme', 'standard');
-                }
-              } catch (e) {}
-            })()
-          `}
-        </Script>
-      </head>
       <body 
         className="antialiased text-foreground dark:text-white"
         suppressHydrationWarning
@@ -151,11 +121,9 @@ export default function RootLayout({
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />
         )}
         <LocalBusinessJsonLd />
-        <AnalyticsTracker />
         <React.StrictMode>
           <Providers>
             {children}
-            <CookieBanner />
           </Providers>
         </React.StrictMode>
       </body>

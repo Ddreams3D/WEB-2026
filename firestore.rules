@@ -201,6 +201,7 @@ service cloud.firestore {
     // ========================================================================
     match /contacts/{contactId} {
       allow create: if true 
+                    && request.resource.data.keys().hasOnly(['email', 'message', 'name', 'subject', 'phone', 'createdAt', 'read'])
                     && isValidString(request.resource.data, 'email', 3, 200)
                     && isValidString(request.resource.data, 'message', 1, 5000);
       allow read, update, delete: if isAdmin();

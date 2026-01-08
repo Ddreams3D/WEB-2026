@@ -54,7 +54,7 @@ const convertDoc = (doc: QueryDocumentSnapshot<DocumentData> | DocumentData): Po
 };
 
 export const ProjectService = {
-  async getAllProjects(): Promise<PortfolioItem[]> {
+  async getAllProjects(includeDeleted = false): Promise<PortfolioItem[]> {
     const dbInstance = db;
     if (!dbInstance) {
         console.warn('Firestore not configured, returning static projects.');
@@ -69,7 +69,12 @@ export const ProjectService = {
         return staticProjects as unknown as PortfolioItem[];
       }
 
-      const projects = snapshot.docs.map(convertDoc);
+      let projects = snapshot.docs.map(convertDoc);
+      
+      if (!includeDeleted) {
+        projects = projects.filter(p => !p.isDeleted);
+      }
+
       // Sort in memory to avoid index issues
       return projects.sort((a, b) => b.projectDate.getTime() - a.projectDate.getTime());
     } catch (error) {
@@ -96,15 +101,17 @@ export const ProjectService = {
       }
 
       // If not found by ID, try finding by slug
-      // Note: This requires scanning all or adding a query. 
-      // Since we fetch all often, let's reuse getAllProjects for slug search to minimize indexes for now
-      // or add a specific query.
-      const q = query(collection(dbInstance, COLLECTION), where('slug', '==', idOrSlug), where('isDeleted', '!=', true));
-      // 'where' needs import. 
+      // Note: We query by slug only and filter isDeleted in memory to avoid index requirements
+      const q = query(collection(dbInstance, COLLECTION), where('slug', '==', idOrSlug));
       const querySnapshot = await getDocs(q);
-      const found = querySnapshot.docs.find(d => d.data().slug === idOrSlug);
       
-      if (found) return convertDoc(found);
+      // Find first non-deleted matching slug
+      const foundDoc = querySnapshot.docs.find(d => {
+          const data = d.data();
+          return data.slug === idOrSlug && !data.isDeleted;
+      });
+      
+      if (foundDoc) return convertDoc(foundDoc);
 
       // Fallback to static
       return (staticProjects as unknown as PortfolioItem[]).find(p => p.id === idOrSlug || p.slug === idOrSlug);
@@ -137,7 +144,7 @@ export const ProjectService = {
       
       // If we find projects in DB, return them
       if (!snapshot.empty) {
-        const projects = snapshot.docs.map(convertDoc);
+        const projects = snapshot.docs.map(convertDoc).filter(p => !p.isDeleted);
         return projects.sort((a, b) => b.projectDate.getTime() - a.projectDate.getTime());
       }
 
@@ -180,7 +187,7 @@ export const ProjectService = {
       const snapshot = await getDocs(q);
       
       if (!snapshot.empty) {
-        const projects = snapshot.docs.map(convertDoc);
+        const projects = snapshot.docs.map(convertDoc).filter(p => !p.isDeleted);
         return projects.sort((a, b) => b.projectDate.getTime() - a.projectDate.getTime());
       }
 
@@ -227,6 +234,26 @@ export const ProjectService = {
   },
 
   async deleteProject(id: string): Promise<void> {
+    const dbInstance = db;
+    if (!dbInstance) throw new Error('Firestore is not configured.');
+    const docRef = doc(dbInstance, COLLECTION, id);
+    await updateDoc(docRef, {
+      isDeleted: true,
+      deletedAt: Timestamp.now()
+    });
+  },
+
+  async restoreProject(id: string): Promise<void> {
+    const dbInstance = db;
+    if (!dbInstance) throw new Error('Firestore is not configured.');
+    const docRef = doc(dbInstance, COLLECTION, id);
+    await updateDoc(docRef, {
+      isDeleted: false,
+      deletedAt: null // or deleteField() if imported
+    });
+  },
+
+  async permanentDeleteProject(id: string): Promise<void> {
     const dbInstance = db;
     if (!dbInstance) throw new Error('Firestore is not configured.');
     await deleteDoc(doc(dbInstance, COLLECTION, id));

@@ -1,8 +1,14 @@
 'use server';
 
 import { revalidatePath, revalidateTag } from 'next/cache';
+import { verifyAdminSession } from '@/lib/auth-admin';
 
 export async function revalidateCatalog() {
+  const isAdmin = await verifyAdminSession();
+  if (!isAdmin) {
+    return { success: false, error: 'Unauthorized' };
+  }
+
   try {
     // Invalidate Data Cache tags
     revalidateTag('products', 'default');

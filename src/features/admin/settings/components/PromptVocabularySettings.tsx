@@ -103,7 +103,7 @@ export function PromptVocabularySettings() {
             Lenguaje del Proyecto
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl">
-            Diccionario técnico para que la IA entienda tus "palabras clave" y alias al generar código.
+            Diccionario técnico para que la IA entienda tus &quot;palabras clave&quot; y alias al generar código.
           </p>
         </div>
         
@@ -243,7 +243,7 @@ export function PromptVocabularySettings() {
       {ordered.length === 0 ? (
         <div className="text-center py-20 text-muted-foreground bg-muted/5 rounded-3xl border border-dashed border-muted-foreground/20">
           <Search className="w-16 h-16 mx-auto mb-4 opacity-10" />
-          <p className="text-lg">No encontramos nada para "{searchQuery}"</p>
+          <p className="text-lg">No encontramos nada para &quot;{searchQuery}&quot;</p>
           <Button variant="link" onClick={() => setSearchQuery('')} className="mt-2 text-primary">
             Limpiar búsqueda
           </Button>

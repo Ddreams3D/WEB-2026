@@ -6,7 +6,7 @@ export const LandingFooter = () => {
     <footer className="py-12 bg-[#020617] text-center relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-30">
         <div className="flex items-center justify-center mb-8 opacity-100 transition-opacity">
-          <MainLogo variant="white" className="w-[200px] sm:w-[280px] h-auto" />
+          <MainLogo variant="white" className="w-[200px] sm:w-[280px] h-auto" ignoreTheme />
         </div>
         <p className="text-slate-400 text-sm mb-6 max-w-md mx-auto font-medium">
           Diseñamos emociones, imprimimos futuro en Arequipa.

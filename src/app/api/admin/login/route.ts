@@ -1,19 +1,49 @@
 import { NextResponse } from 'next/server';
+import { signAdminSession } from '@/lib/auth-admin';
+import { rateLimit } from '@/lib/rate-limit';
+
+const limiter = rateLimit({
+  interval: 60 * 1000, // 60 seconds
+  uniqueTokenPerInterval: 500, // Max 500 users per second
+});
 
 export async function POST(request: Request) {
   try {
+    // Rate Limiting: 5 intentos por minuto por IP
+    const ip = request.headers.get('x-forwarded-for') || 'anonymous';
+    const isAllowed = await limiter.check(5, ip);
+    
+    if (!isAllowed) {
+      return NextResponse.json(
+        { success: false, message: 'Demasiados intentos. Intenta de nuevo en un minuto.' },
+        { status: 429 }
+      );
+    }
+
     const body = await request.json();
     const { password } = body;
 
-    // Validación en el servidor (Seguro: el usuario no puede ver esto)
-    const adminPassword = process.env.ADMIN_PASSWORD || 'ddreams2026';
+    // Validación estricta: Solo acepta variable de entorno
+    // Si no hay variable configurada, nadie puede entrar (Fail Safe)
+    const adminPassword = process.env.ADMIN_PASSWORD;
+    
+    if (!adminPassword) {
+      console.error('CRITICAL: ADMIN_PASSWORD environment variable is not set.');
+      return NextResponse.json(
+        { success: false, message: 'Configuración de servidor incompleta' },
+        { status: 500 }
+      );
+    }
     
     if (password === adminPassword) {
       
       const response = NextResponse.json({ success: true });
       
-      // Establecer cookie segura desde el servidor (HttpOnly evita acceso desde JS)
-      response.cookies.set('ddreams_admin_session', 'true', {
+      // Generar Token JWT firmado criptográficamente
+      const token = await signAdminSession();
+
+      // Establecer cookie segura
+      response.cookies.set('ddreams_admin_session', token, {
         httpOnly: true, // No accesible desde document.cookie
         secure: process.env.NODE_ENV === 'production', // Solo HTTPS en producción
         sameSite: 'lax', // Permite navegación normal
@@ -30,6 +60,7 @@ export async function POST(request: Request) {
     );
 
   } catch (error) {
+    console.error('Login error:', error);
     return NextResponse.json(
       { success: false, message: 'Error interno' },
       { status: 500 }

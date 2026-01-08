@@ -16,7 +16,7 @@ import {
   DocumentData,
   QueryDocumentSnapshot
 } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db, auth } from '@/lib/firebase';
 import { Order, OrderStatus, OrderHistoryEntry } from '@/shared/types/domain';
 
 const COLLECTION_NAME = 'orders';
@@ -91,31 +91,21 @@ export const OrderService = {
 
     if (db) {
       try {
-        // Filter out soft-deleted orders
-        const q = query(collection(db, COLLECTION_NAME), where('isDeleted', '!=', true), orderBy('createdAt', 'desc'));
+        // Fetch orders filtering out soft-deleted ones
+        // NOTE: We do not use orderBy('createdAt', 'desc') in the query to avoid 
+        // requiring a composite index (createdAt + isDeleted).
+        // Instead, we sort in memory which is performant for the expected dataset size.
+        const q = query(collection(db, COLLECTION_NAME), where('isDeleted', '!=', true));
         const snapshot = await getDocs(q);
 
         if (!snapshot.empty) {
-          orders = snapshot.docs.map((doc) => mapToOrder(doc.data()));
+          orders = snapshot.docs
+            .map((doc) => mapToOrder(doc.data()))
+            .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
         }
       } catch (error) {
         console.error('[OrderService] Error fetching orders:', error);
-        
-        // Fallback: Retry without orderBy if index is missing
-        if ((error as any)?.code === 'failed-precondition') {
-             try {
-                const q = query(collection(db, COLLECTION_NAME), where('isDeleted', '!=', true));
-                const snapshot = await getDocs(q);
-                if (!snapshot.empty) {
-                    orders = snapshot.docs.map((doc) => mapToOrder(doc.data()))
-                        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-                }
-             } catch (retryError) {
-                 throw retryError;
-             }
-        } else {
-            throw error;
-        }
+        throw error;
       }
     }
 
@@ -132,17 +122,17 @@ export const OrderService = {
     if (!db) return [];
 
     try {
-      // Query without orderBy to avoid composite index requirement
+      // Query only by userId to avoid composite index requirement (userId + isDeleted)
       const q = query(
         collection(db, COLLECTION_NAME), 
-        where('userId', '==', userId),
-        where('isDeleted', '!=', true)
+        where('userId', '==', userId)
       );
       const snapshot = await getDocs(q);
       
-      // Sort in memory instead
+      // Filter isDeleted and Sort in memory instead
       return snapshot.docs
         .map((doc) => mapToOrder(doc.data()))
+        .filter((order) => !order.isDeleted)
         .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
     } catch (error) {
       console.error('Error fetching user orders:', error);

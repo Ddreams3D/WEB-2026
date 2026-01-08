@@ -1,8 +1,33 @@
 import { NextResponse } from 'next/server';
 import { sendEmail } from '@/actions/email.actions';
+import { verifyIdToken } from '@/lib/auth-admin';
+import { AdminService } from '@/services/admin.service';
 
 export async function POST(request: Request) {
   try {
+    // 1. Security Check: Verify Admin Token
+    const authHeader = request.headers.get('Authorization');
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.split('Bearer ')[1] : null;
+
+    if (!token) {
+      console.warn('[API/Notifications] Unauthorized access attempt (No token)');
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const user = await verifyIdToken(token);
+    if (!user) {
+      console.warn('[API/Notifications] Invalid token');
+      return NextResponse.json({ error: 'Invalid token' }, { status: 403 });
+    }
+
+    // Check if user is Admin
+    const isAdmin = await AdminService.checkIsAdmin(user.localId, user.email);
+    if (!isAdmin) {
+      console.warn(`[API/Notifications] User ${user.email} is not admin`);
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    // 2. Process Notification
     const body = await request.json();
     const { orderId, message, type, email } = body;
 

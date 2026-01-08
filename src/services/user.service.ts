@@ -40,10 +40,11 @@ const mapToUser = (data: DocumentData): User => {
 
 export const UserService = {
   // Get all users
-  async getAllUsers(forceRefresh = false): Promise<User[]> {
+  async getAllUsers(forceRefresh = false, includeDeleted = false): Promise<User[]> {
     // Check cache
     if (!forceRefresh && usersCache && (Date.now() - usersCache.timestamp < CACHE_DURATION)) {
-      return usersCache.data;
+      const cachedUsers = usersCache.data;
+      return includeDeleted ? cachedUsers : cachedUsers.filter(u => !u.isDeleted);
     }
 
     let users: User[] = [];
@@ -65,7 +66,7 @@ export const UserService = {
              console.log('[UserService] Retrying without orderBy...');
              try {
                 // Keep the filter
-                const q = query(collection(db, COLLECTION_NAME), where('isDeleted', '!=', true));
+                const q = query(collection(db, COLLECTION_NAME));
                 const snapshot = await getDocs(q);
                 if (!snapshot.empty) {
                     users = snapshot.docs.map((doc) => mapToUser(doc.data()));
@@ -92,7 +93,7 @@ export const UserService = {
       timestamp: Date.now()
     };
     
-    return users;
+    return includeDeleted ? users : users.filter(u => !u.isDeleted);
   },
 
   // Get user by ID
@@ -164,15 +165,51 @@ export const UserService = {
     }
   },
 
-  // Delete user (Admin action)
+  // Soft Delete user
   async deleteUser(id: string): Promise<void> {
+    if (!db) return;
+
+    try {
+      const userRef = doc(db, COLLECTION_NAME, id);
+      await updateDoc(userRef, {
+        isDeleted: true,
+        deletedAt: new Date(),
+        status: 'inactive' // Optional: Mark as inactive too
+      });
+      usersCache = null;
+    } catch (error) {
+      console.error('Error soft deleting user:', error);
+      throw error;
+    }
+  },
+
+  // Restore user
+  async restoreUser(id: string): Promise<void> {
+    if (!db) return;
+
+    try {
+      const userRef = doc(db, COLLECTION_NAME, id);
+      await updateDoc(userRef, {
+        isDeleted: false,
+        deletedAt: null, // or deleteField()
+        status: 'active' // Optional: Reactivate
+      });
+      usersCache = null;
+    } catch (error) {
+      console.error('Error restoring user:', error);
+      throw error;
+    }
+  },
+
+  // Permanent Delete user (Admin action)
+  async permanentDeleteUser(id: string): Promise<void> {
     if (!db) return;
 
     try {
       await deleteDoc(doc(db, COLLECTION_NAME, id));
       usersCache = null;
     } catch (error) {
-      console.error('Error deleting user:', error);
+      console.error('Error permanently deleting user:', error);
       throw error;
     }
   },

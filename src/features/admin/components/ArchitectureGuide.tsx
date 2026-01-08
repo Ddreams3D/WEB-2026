@@ -83,7 +83,7 @@ export function ArchitectureGuide() {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <p className="text-sm text-muted-foreground">
-                      Tu web no es una página "estática" antigua. Usa <strong>Next.js 14</strong>, una tecnología moderna que permite:
+                      Tu web no es una página &quot;estática&quot; antigua. Usa <strong>Next.js 14</strong>, una tecnología moderna que permite:
                     </p>
                     <ul className="list-disc list-inside text-sm text-muted-foreground space-y-2">
                       <li><strong>Velocidad:</strong> Carga solo lo necesario para cada página.</li>
@@ -104,7 +104,7 @@ export function ArchitectureGuide() {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <p className="text-sm text-muted-foreground">
-                      Tu web está construida con "Componentes". En lugar de escribir todo en un solo archivo gigante, dividimos la web en piezas reutilizables:
+                      Tu web está construida con &quot;Componentes&quot;. En lugar de escribir todo en un solo archivo gigante, dividimos la web en piezas reutilizables:
                     </p>
                     <div className="flex flex-wrap gap-2">
                       <Badge variant="secondary">Botones</Badge>
@@ -137,7 +137,7 @@ export function ArchitectureGuide() {
                     </p>
                     <ul className="list-disc list-inside text-sm text-muted-foreground space-y-2">
                       <li><strong>Funcionamiento:</strong> Antes de que la IA escriba nada, el sistema lee tu vocabulario aprobado.</li>
-                      <li><strong>Traducción Automática:</strong> Si tú escribes "cliente", pero tu lenguaje dice que debes usar "Aliado", la IA lo corregirá internamente.</li>
+                      <li><strong>Traducción Automática:</strong> Si tú escribes &quot;cliente&quot;, pero tu lenguaje dice que debes usar &quot;Aliado&quot;, la IA lo corregirá internamente.</li>
                       <li><strong>Ubicación:</strong> Se guarda en Firestore y se carga en milisegundos cada vez que generas un prompt.</li>
                     </ul>
                   </CardContent>
@@ -158,8 +158,8 @@ export function ArchitectureGuide() {
                     <div className="p-3 bg-muted/50 rounded-lg text-xs space-y-2">
                       <p><strong>El Flujo Secreto:</strong></p>
                       <ol className="list-decimal list-inside space-y-1">
-                        <li>Tú pides: "Crea un post sobre zapatos".</li>
-                        <li>El sistema busca tus reglas (ej: "Tono formal", "No usar emojis").</li>
+                        <li>Tú pides: &quot;Crea un post sobre zapatos&quot;.</li>
+                        <li>El sistema busca tus reglas (ej: &quot;Tono formal&quot;, &quot;No usar emojis&quot;).</li>
                         <li>El sistema combina: Tu pedido + Reglas + Vocabulario.</li>
                         <li>La IA recibe el paquete completo y genera el resultado perfecto.</li>
                       </ol>
@@ -185,7 +185,7 @@ export function ArchitectureGuide() {
                       No usas un servidor tradicional. Usas <strong>Firestore</strong> de Google.
                     </p>
                     <ul className="list-disc list-inside text-sm text-muted-foreground space-y-2">
-                      <li><strong>NoSQL:</strong> Los datos se guardan como "Documentos" (parecidos a JSON), no en tablas rígidas de Excel.</li>
+                      <li><strong>NoSQL:</strong> Los datos se guardan como &quot;Documentos&quot; (parecidos a JSON), no en tablas rígidas de Excel.</li>
                       <li><strong>Tiempo Real:</strong> Si cambias algo en el admin, los usuarios lo ven casi al instante.</li>
                       <li><strong>Escalable:</strong> Crece automáticamente si tienes mil o un millón de usuarios.</li>
                     </ul>
@@ -259,8 +259,8 @@ export function ArchitectureGuide() {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <p className="text-sm text-muted-foreground">
-                      Tu web vive en la "nube". No hay una computadora física que tengas que reiniciar.
-                      Cuando un usuario entra, la nube "despierta" los recursos necesarios para atenderlo y luego se duerme. Esto ahorra muchísimo dinero y energía.
+                      Tu web vive en la &quot;nube&quot;. No hay una computadora física que tengas que reiniciar.
+                      Cuando un usuario entra, la nube &quot;despierta&quot; los recursos necesarios para atenderlo y luego se duerme. Esto ahorra muchísimo dinero y energía.
                     </p>
                   </CardContent>
                 </Card>
