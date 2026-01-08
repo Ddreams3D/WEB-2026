@@ -12,6 +12,8 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ data, updateField }: HeroSectionProps) {
+  const isService = data.type === 'service';
+
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
       {/* Header */}
@@ -103,22 +105,73 @@ export function HeroSection({ data, updateField }: HeroSectionProps) {
           <div className="bg-card border rounded-xl p-5 shadow-sm h-full flex flex-col">
             <Label className="text-base font-medium flex items-center gap-2 mb-4">
                <ImageIcon className="w-4 h-4 text-primary" />
-               Imagen de Fondo
+               {isService ? 'Imágenes del Hero (Comparación)' : 'Imagen de Fondo'}
             </Label>
             
             <div className="flex-1 border-2 border-dashed rounded-xl p-4 flex flex-col items-center justify-center gap-4 bg-muted/5 hover:bg-muted/10 transition-colors relative overflow-hidden group min-h-[300px]">
-              <div className="w-full relative z-10">
-                <ImageUpload
-                  value={data.heroImage}
-                  onChange={(url) => updateField('heroImage', url)}
-                  onRemove={() => updateField('heroImage', '')}
-                  defaultName={`hero-${data.slug || 'landing'}`}
-                  storagePath="images/landings"
-                />
+              <div className="w-full relative z-10 space-y-6">
+                {isService ? (
+                  <>
+                    <div className="space-y-2">
+                      <Label className="text-xs text-muted-foreground uppercase tracking-wider">
+                        Imagen 1 (Escultura Real)
+                      </Label>
+                      <ImageUpload
+                        value={data.heroImage}
+                        onChange={(url) => updateField('heroImage', url)}
+                        onRemove={() => updateField('heroImage', '')}
+                        defaultName={`hero-real-${data.slug || 'service'}`}
+                        storagePath={`images/landings/services/${data.slug || 'service'}/hero`}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-xs text-muted-foreground uppercase tracking-wider">
+                        Imagen 2 (Modelo 3D)
+                      </Label>
+                      <ImageUpload
+                        value={data.heroImageComparison}
+                        onChange={(url) => updateField('heroImageComparison', url)}
+                        onRemove={() => updateField('heroImageComparison', '')}
+                        defaultName={`hero-3d-${data.slug || 'service'}`}
+                        storagePath={`images/landings/services/${data.slug || 'service'}/hero`}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <ImageUpload
+                    value={data.heroImage}
+                    onChange={(url) => updateField('heroImage', url)}
+                    onRemove={() => updateField('heroImage', '')}
+                    defaultName={`hero-${data.slug || 'landing'}`}
+                    storagePath="images/landings"
+                  />
+                )}
               </div>
               <div className="text-center space-y-1">
-                <p className="text-xs text-muted-foreground font-medium">Dimensiones Recomendadas</p>
-                <p className="text-[10px] text-muted-foreground/70 bg-muted px-2 py-1 rounded-full inline-block">1920 x 1080 px</p>
+                {isService ? (
+                  <>
+                    <p className="text-xs text-muted-foreground font-medium">Encuadre Recomendado</p>
+                    <div className="flex flex-wrap gap-2 justify-center">
+                      <p className="text-[10px] text-muted-foreground/70 bg-muted px-2 py-1 rounded-full">3:4 o 4:5 Vertical</p>
+                      <p className="text-[10px] text-muted-foreground/70 bg-muted px-2 py-1 rounded-full">Min: 1080w x 1350h</p>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground/70 mt-1">
+                      Ideal: <strong>1200 Ancho x 1600 Alto</strong>.
+                    </p>
+                    <p className="text-[10px] text-amber-500/90 mt-2 font-medium">
+                      ⚠️ Importante: Usa el MISMO fondo en ambas fotos (o ambas transparentes) para que el efecto funcione.
+                    </p>
+                    <p className="text-[10px] text-muted-foreground/70 mt-1">
+                      Formatos: <strong>WebP</strong> (Mejor) o <strong>JPG</strong>. Evita PNG si no hay transparencia.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-xs text-muted-foreground font-medium">Dimensiones Recomendadas</p>
+                    <p className="text-[10px] text-muted-foreground/70 bg-muted px-2 py-1 rounded-full inline-block">1920 x 1080 px</p>
+                  </>
+                )}
               </div>
             </div>
           </div>

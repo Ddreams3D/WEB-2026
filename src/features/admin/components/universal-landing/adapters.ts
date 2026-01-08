@@ -108,11 +108,13 @@ export function serviceToUnified(service: ServiceLandingConfig): UnifiedLandingD
     
     heroTitle: heroSection?.title || 'Nuevo Servicio',
     heroSubtitle: heroSection?.subtitle,
-    heroDescription: heroSection?.subtitle, // Mapped to subtitle as description doesn't exist
+    heroDescription: heroSection?.content, // Correctly mapped to content (long description)
     heroImage: service.heroImage || heroSection?.image,
+    heroImageComparison: service.heroImageComparison,
     
-    ctaText: heroSection?.content, // Mapping content to ctaText based on usage
+    ctaText: 'Explorar Servicio', // Default CTA text as it's not in service schema yet
     ctaLink: '', 
+
 
     
     themeMode: service.themeMode,
@@ -137,8 +139,8 @@ export function unifiedToService(data: UnifiedLandingData): ServiceLandingConfig
     sections[heroIndex] = {
       ...sections[heroIndex],
       title: data.heroTitle,
-      subtitle: data.heroDescription, // Map unified description to service subtitle
-      content: data.ctaText, // Map unified ctaText to service content
+      subtitle: data.heroSubtitle,
+      content: data.heroDescription,
       image: data.heroImage // Sync hero image
     };
   }
@@ -151,6 +153,7 @@ export function unifiedToService(data: UnifiedLandingData): ServiceLandingConfig
     themeMode: data.themeMode,
     primaryColor: data.primaryColor,
     heroImage: data.heroImage,
+    heroImageComparison: data.heroImageComparison,
     sections: sections,
     metaTitle: data.metaTitle || '',
     metaDescription: data.metaDescription || ''

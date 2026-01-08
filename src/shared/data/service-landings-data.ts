@@ -10,8 +10,9 @@ export const SERVICE_LANDINGS_DATA: ServiceLandingConfig[] = [
     themeMode: 'system',
     metaTitle: 'Modelado 3D de Personajes y Figuras Orgánicas | Esculpido Digital en Arequipa',
     metaDescription: 'Servicio profesional de esculpido digital y modelado 3D orgánico en Arequipa. Creamos personajes, criaturas y figuras complejas con alto nivel de detalle para impresión 3D.',
-    primaryColor: '#e11d48', // Rose-600 like default
-    heroImage: 'https://images.unsplash.com/photo-1615840287214-7ff58ee0489b?auto=format&fit=crop&q=80',
+    primaryColor: '#475569', // Slate-600 for "Plomo/Modeling" look
+    heroImage: 'https://placehold.co/800x800/e2e8f0/475569.png?text=Escultura+Real', // Placeholder Real
+    heroImageComparison: 'https://placehold.co/800x800/475569/e2e8f0.png?text=Modelo+3D', // Placeholder 3D
     featuredTag: 'organico',
     sections: [
       {

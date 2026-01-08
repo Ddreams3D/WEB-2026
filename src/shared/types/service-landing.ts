@@ -30,6 +30,7 @@ export interface ServiceLandingConfig {
   // Visual Identity
   primaryColor?: string; // Optional override
   heroImage?: string;
+  heroImageComparison?: string; // Optional second image for before/after slider
   featuredTag?: string; // Tag to filter products
   
   // Content Sections (Modular approach)

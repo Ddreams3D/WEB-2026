@@ -36,6 +36,7 @@ const ServiceLandingConfigSchema = z.object({
   metaDescription: z.string(),
   primaryColor: z.string().optional(),
   heroImage: z.string().optional(),
+  heroImageComparison: z.string().optional(),
   featuredTag: z.string().optional(),
   sections: z.array(ServiceLandingSectionSchema),
   createdAt: z.string(),

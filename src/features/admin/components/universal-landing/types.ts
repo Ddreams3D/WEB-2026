@@ -19,6 +19,7 @@ export interface UnifiedLandingData {
   heroSubtitle?: string;
   heroDescription?: string;
   heroImage?: string;
+  heroImageComparison?: string;
   heroImages?: string[]; // Campaign supports multiple
   heroVideo?: string;
   
