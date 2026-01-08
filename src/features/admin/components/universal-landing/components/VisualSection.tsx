@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -69,8 +70,14 @@ export function VisualSection({ data, updateField }: VisualSectionProps) {
             <div className="grid grid-cols-4 sm:grid-cols-5 gap-3">
               {data.bubbles?.map((bubble, idx) => (
                 <div key={idx} className="relative aspect-square bg-muted rounded-xl overflow-hidden group border hover:border-primary/50 transition-colors">
-                  <img src={bubble} alt="" className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <Image 
+                    src={bubble} 
+                    alt="Decorative bubble" 
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 25vw, 20vw"
+                  />
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10">
                     <Button variant="destructive" size="icon" className="h-6 w-6 rounded-full">×</Button>
                   </div>
                 </div>

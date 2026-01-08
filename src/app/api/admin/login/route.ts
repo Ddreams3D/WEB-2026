@@ -9,9 +9,9 @@ const limiter = rateLimit({
 
 export async function POST(request: Request) {
   try {
-    // Rate Limiting: 5 intentos por minuto por IP
+    // Rate Limiting: 10 intentos por minuto por IP (aumentado para evitar bloqueos tempranos)
     const ip = request.headers.get('x-forwarded-for') || 'anonymous';
-    const isAllowed = await limiter.check(5, ip);
+    const isAllowed = await limiter.check(10, ip);
     
     if (!isAllowed) {
       return NextResponse.json(
@@ -28,9 +28,9 @@ export async function POST(request: Request) {
     const adminPassword = process.env.ADMIN_PASSWORD;
     
     if (!adminPassword) {
-      console.error('CRITICAL: ADMIN_PASSWORD environment variable is not set.');
+      console.error('CRITICAL: ADMIN_PASSWORD environment variable is not set in Netlify/Environment.');
       return NextResponse.json(
-        { success: false, message: 'Configuración de servidor incompleta' },
+        { success: false, message: 'Error de configuración del servidor: Falta ADMIN_PASSWORD.' },
         { status: 500 }
       );
     }

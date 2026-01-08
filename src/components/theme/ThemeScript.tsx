@@ -1,10 +1,11 @@
 import React from 'react';
-import Script from 'next/script';
 
 export function ThemeScript() {
   return (
-    <Script id="theme-analytics-init" strategy="beforeInteractive">
-      {`
+    <script
+      id="theme-analytics-init"
+      dangerouslySetInnerHTML={{
+        __html: `
         (function() {
           try {
             var gaId = '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || ''}';
@@ -24,7 +25,7 @@ export function ThemeScript() {
             }
           } catch (e) {}
         })()
-      `}
-    </Script>
+      `}}
+    />
   );
 }
