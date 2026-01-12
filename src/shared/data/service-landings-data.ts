@@ -79,7 +79,7 @@ export const SERVICE_LANDINGS_DATA: ServiceLandingConfig[] = [
     themeMode: 'system',
     metaTitle: 'Trofeos Personalizados y Reconocimientos en Impresión 3D',
     metaDescription: 'Diseño y fabricación de trofeos personalizados. Premios únicos para torneos, eventos corporativos y competiciones gaming.',
-    primaryColor: '#d97706', // Amber-600
+    primaryColor: '#CA8A04', // Yellow-600 (Gold) - Trophy & Premium
     heroImage: 'https://images.unsplash.com/photo-1530541930197-ff16ac917b0e?auto=format&fit=crop&q=80',
     sections: [
       {

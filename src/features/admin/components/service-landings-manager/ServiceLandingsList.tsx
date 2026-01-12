@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Edit, 
   ExternalLink, 
@@ -8,8 +8,10 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import ServiceLandingRenderer from '@/features/service-landings/components/ServiceLandingRenderer';
 import { ServiceLandingConfig } from '@/shared/types/service-landing';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Eye } from '@/lib/icons';
+import DefaultImage from '@/shared/components/ui/DefaultImage';
 
 interface ServiceLandingsListProps {
     filteredLandings: ServiceLandingConfig[];
@@ -22,7 +24,27 @@ export function ServiceLandingsList({
     handleEdit,
     handleCreateNew
 }: ServiceLandingsListProps) {
+  const [livePreview, setLivePreview] = useState<{
+    open: boolean;
+    url: string;
+    title: string;
+  }>({
+    open: false,
+    url: '',
+    title: ''
+  });
+
+  const openLivePreview = (landing: ServiceLandingConfig) => {
+    const url = `/servicios/${landing.slug}`;
+    setLivePreview({
+      open: true,
+      url,
+      title: landing.name
+    });
+  };
+
   return (
+    <>
     <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         {filteredLandings.map((landing) => (
             <div 
@@ -42,11 +64,32 @@ export function ServiceLandingsList({
                     </div>
 
                     {/* Content Preview */}
-                    <div 
-                        className="w-[400%] h-[400%] absolute top-7 left-0 transform scale-[0.25] origin-top-left pointer-events-none select-none bg-background cursor-pointer"
-                        onClick={() => handleEdit(landing)}
-                    >
-                        <ServiceLandingRenderer config={landing} isPreview={true} />
+                    <div className="absolute top-7 left-0 right-0 bottom-0 bg-background">
+                      <DefaultImage
+                        src={landing.heroImage || landing.heroImageComparison}
+                        alt={landing.metaTitle || landing.name}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1536px) 50vw, 25vw"
+                        className="h-full w-full object-cover group-hover:scale-[1.03] transition-transform duration-700"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                      <div className="absolute inset-x-0 bottom-0 p-4">
+                        <div className="flex items-end justify-between gap-3">
+                          <div className="min-w-0">
+                            <div className="text-[10px] text-white/80 font-semibold uppercase tracking-wider truncate">
+                              {landing.sections?.[0]?.subtitle || landing.name}
+                            </div>
+                            <div className="text-white font-bold text-sm leading-snug line-clamp-2">
+                              {landing.sections?.[0]?.title || landing.metaTitle || landing.name}
+                            </div>
+                          </div>
+                          {landing.featuredTag && (
+                            <Badge className="bg-white/15 text-white border-white/20 backdrop-blur-sm">
+                              {landing.featuredTag}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
                     </div>
 
                     {/* Hover Overlay */}
@@ -59,6 +102,15 @@ export function ServiceLandingsList({
                         >
                             <Edit className="w-4 h-4 mr-2" />
                             Editar
+                        </Button>
+                        <Button
+                            size="sm"
+                            variant="secondary"
+                            className="font-semibold shadow-lg translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75"
+                            onClick={() => openLivePreview(landing)}
+                        >
+                            <Eye className="w-4 h-4 mr-2" />
+                            Vista
                         </Button>
                         <a 
                             href={`/servicios/${landing.slug}`} 
@@ -140,5 +192,32 @@ export function ServiceLandingsList({
             </div>
         )}
     </div>
+    <Dialog
+      open={livePreview.open}
+      onOpenChange={(open) => setLivePreview(prev => ({ ...prev, open }))}
+    >
+      <DialogContent className="max-w-6xl w-[95vw] h-[85vh] p-0 overflow-hidden">
+        <div className="h-10 bg-muted/90 border-b flex items-center justify-between px-3 gap-3">
+          <div className="text-xs text-muted-foreground truncate">
+            {livePreview.title} — {livePreview.url}
+          </div>
+          <a
+            href={livePreview.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground"
+          >
+            <ExternalLink className="w-4 h-4" />
+            Abrir
+          </a>
+        </div>
+        <iframe
+          title={livePreview.title || 'Vista en vivo'}
+          src={livePreview.url}
+          className="w-full h-[calc(85vh-40px)] bg-background"
+        />
+      </DialogContent>
+    </Dialog>
+    </>
   );
 }

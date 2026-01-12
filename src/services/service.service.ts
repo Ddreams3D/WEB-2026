@@ -94,7 +94,6 @@ export const ServiceService = {
 
     if (shouldFetch && dbInstance) {
       try {
-        console.log('[ServiceService] Fetching from Firestore...');
         const timeoutPromise = new Promise((_, reject) => 
           setTimeout(() => reject(new Error('Firestore timeout')), FIRESTORE_TIMEOUT)
         );
@@ -107,7 +106,6 @@ export const ServiceService = {
         ]) as QuerySnapshot<DocumentData>;
 
         if (!snapshot.empty) {
-          console.log(`[ServiceService] Found ${snapshot.docs.length} services in Firestore`);
           services = snapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => mapToService(doc.data()));
 
           // AUTO-REPAIR: Check for missing displayOrder and fix in background
@@ -118,7 +116,6 @@ export const ServiceService = {
               this.normalizeDisplayOrders(services).catch((err: unknown) => console.error('Auto-repair failed:', err));
           }
         } else {
-           console.log('No services found in Firestore. Using fallback data...');
            // Auto-seeding disabled to prevent permission errors in build/production environments
            // await this.seedServices();
            services = servicesFallbackData.map(mapToService);
@@ -131,7 +128,6 @@ export const ServiceService = {
 
     // Fallback to LocalStorage
     if (services.length === 0 && (!shouldFetch || fetchFailed)) {
-      console.log('[ServiceService] Falling back to LocalStorage...');
       const localServices = LocalStorageService.getServices();
       if (localServices && localServices.length > 0) {
         services = localServices;
@@ -140,7 +136,6 @@ export const ServiceService = {
 
     // Fallback to static data
     if (services.length === 0) {
-      console.log('Using static fallback data for services');
       services = servicesFallbackData.map(mapToService);
       LocalStorageService.saveServices(services);
     }
@@ -189,15 +184,12 @@ export const ServiceService = {
     const dbInstance = db;
     if (!dbInstance) throw new Error('Firestore is not configured.');
 
-    console.log('[ServiceService] Saving service to Firestore:', service.id);
-
     try {
       const firestoreData = mapToFirestore(service);
       
       const docRef = doc(dbInstance, COLLECTION_NAME, service.id);
       await setDoc(docRef, firestoreData);
 
-      console.log('[ServiceService] Service saved successfully');
       servicesCache = null;
     } catch (error) {
       console.error('[ServiceService] Error saving service:', error);

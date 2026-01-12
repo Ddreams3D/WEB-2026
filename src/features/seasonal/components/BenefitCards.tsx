@@ -3,7 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Heart, Gift, Truck, Zap, Ghost, Skull, Moon } from 'lucide-react';
 
 interface BenefitProps {
-  icon: React.ElementType;
+  icon: React.ComponentType<{ className?: string }>;
   title: string;
   description: string;
   delay?: number;

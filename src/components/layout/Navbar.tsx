@@ -86,12 +86,20 @@ const Navbar: React.FC = () => {
       }
     };
 
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setIsOpen(false);
+      }
+    };
+
     window.addEventListener('scroll', handleScroll);
+    window.addEventListener('resize', handleResize);
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('click', handleClickOutside);
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
       document.removeEventListener('keydown', handleKeyDown);
       document.removeEventListener('click', handleClickOutside);
     };
@@ -147,6 +155,7 @@ const Navbar: React.FC = () => {
         setIsOpen={setIsOpen}
         pathname={pathname}
         user={user}
+        isAdmin={isAdmin}
         logout={logout}
         darkMode={darkMode}
         itemCount={itemCount}

@@ -46,6 +46,34 @@ export default function ServiceLandingRenderer({ config, isPreview = false }: Se
     // (style as any)['--background'] = '60 5% 98%'; // Very subtle warm off-white
   }
 
+  // Special overrides for Trophies landing to match "Premium/Gold" vibe
+  if (config.id === 'trophies') {
+    // Premium Dark Vibe (Slate/Gold) - Forces Dark Mode look while keeping system config
+    // We override CSS variables to simulate dark mode on this specific page
+    
+    // Backgrounds (Slate 950)
+    (style as any)['--background'] = '222.2 84% 4.9%';
+    (style as any)['--card'] = '222.2 84% 4.9%';
+    (style as any)['--popover'] = '222.2 84% 4.9%';
+    
+    // Foregrounds (Slate 50)
+    (style as any)['--foreground'] = '210 40% 98%';
+    (style as any)['--card-foreground'] = '210 40% 98%';
+    (style as any)['--popover-foreground'] = '210 40% 98%';
+    
+    // Secondary/Muted elements (Slate 900/800)
+    (style as any)['--secondary'] = '217.2 32.6% 17.5%';
+    (style as any)['--secondary-foreground'] = '210 40% 98%';
+    (style as any)['--muted'] = '217.2 32.6% 17.5%';
+    (style as any)['--muted-foreground'] = '215 20.2% 65.1%'; // Lighter gray for readability on dark
+    (style as any)['--accent'] = '217.2 32.6% 17.5%';
+    (style as any)['--accent-foreground'] = '210 40% 98%';
+    
+    // Borders (Slate 800)
+    (style as any)['--border'] = '217.2 32.6% 17.5%';
+    (style as any)['--input'] = '217.2 32.6% 17.5%';
+  }
+
   return (
     <div 
       className={cn("min-h-screen bg-background overflow-x-hidden text-foreground", themeClass)} 

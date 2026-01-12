@@ -3,27 +3,6 @@ import { Monitor, Smartphone, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { LandingMainConfig } from '@/shared/types/landing';
-import LandingMainPageClient from '@/features/landing-main/LandingMainPageClient';
-import AnnouncementBar from '@/shared/components/layout/AnnouncementBar';
-
-// Mock Navbar for Preview
-const NavbarMock = () => (
-  <div className="h-16 border-b bg-background/80 backdrop-blur-md flex items-center justify-between px-6 sticky top-0 z-40 w-full">
-    <div className="flex items-center gap-2">
-       <div className="w-8 h-8 bg-primary rounded-lg" />
-       <div className="w-24 h-5 bg-muted rounded hidden sm:block" />
-    </div>
-    <div className="hidden md:flex gap-6">
-       <div className="w-16 h-4 bg-muted rounded" />
-       <div className="w-16 h-4 bg-muted rounded" />
-       <div className="w-16 h-4 bg-muted rounded" />
-    </div>
-    <div className="flex gap-2">
-       <div className="w-8 h-8 bg-muted rounded-full" />
-       <div className="w-8 h-8 bg-muted rounded-full" />
-    </div>
-  </div>
-);
 
 interface LandingMainPreviewProps {
     form: LandingMainConfig;
@@ -80,41 +59,22 @@ export function LandingMainPreview({ form, previewMode, setPreviewMode, setIsEdi
                 "relative bg-background transition-all duration-500 mx-auto border-x border-border/50 mt-9",
                 previewMode === 'mobile' ? "w-[375px] h-[600px]" : "w-full h-[600px]"
             )}>
-                <div className={cn(
-                    "origin-top-left absolute top-0 left-0 w-full",
-                    previewMode === 'desktop' ? "scale-[0.5] w-[200%] h-[200%]" : "scale-[0.5] w-[200%] h-[200%]"
-                )}>
-                    {/* Simulated Page Layout */}
-                    <div 
-                        className={cn(
-                            "flex flex-col min-h-screen bg-background text-foreground pointer-events-none select-none",
-                            form.themeMode === 'dark' ? 'dark' : form.themeMode === 'light' ? 'light' : ''
-                        )}
-                        data-theme={form.themeMode === 'light' ? 'standard' : undefined}
-                    >
-                        <AnnouncementBar config={form.announcement} />
-                        <NavbarMock />
-                        <div className="flex-1">
-                            <LandingMainPageClient 
-                                initialConfig={form}
-                                featuredProducts={[]}
-                                services={[]}
-                                bubbleImages={form.bubbleImages || []}
-                            />
-                        </div>
-                    </div>
-                </div>
-                
-                    {/* Interactive Overlay */}
-                    <div 
-                    className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center cursor-pointer backdrop-blur-[1px]"
-                    onClick={() => setIsEditing(true)}
-                >
-                    <Button size="lg" className="shadow-2xl scale-110 font-bold">
-                        <Edit className="w-5 h-5 mr-2" />
-                        Editar Contenido
-                    </Button>
-                </div>
+                <iframe
+                    title="Vista en vivo - Landing Principal"
+                    src="/"
+                    className="origin-top-left absolute top-0 left-0 w-[200%] h-[200%] scale-[0.5] bg-background"
+                />
+            </div>
+
+            {/* Interactive Overlay */}
+            <div 
+                className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center cursor-pointer backdrop-blur-[1px]"
+                onClick={() => setIsEditing(true)}
+            >
+                <Button size="lg" className="shadow-2xl scale-110 font-bold">
+                    <Edit className="w-5 h-5 mr-2" />
+                    Editar Contenido
+                </Button>
             </div>
         </div>
     </div>

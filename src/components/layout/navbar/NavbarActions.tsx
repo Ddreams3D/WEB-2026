@@ -75,7 +75,8 @@ export const NavbarActions = ({
         asChild
         variant="gradient"
         className={cn(
-          "w-[200px] justify-start gap-2 hover:scale-105 shadow-md",
+          "justify-center gap-2 hover:scale-105 shadow-md transition-all duration-300",
+          "w-10 px-0 lg:w-auto lg:px-4 xl:w-[200px] xl:justify-start",
           !isNavbarSolid && "shadow-lg"
         )}
       >
@@ -86,7 +87,8 @@ export const NavbarActions = ({
           onClick={() => trackEvent(AnalyticsEvents.REQUEST_QUOTE_CLICK, { location: AnalyticsLocations.NAVBAR })}
         >
           <MessageSquare className="w-5 h-5" />
-          <span>Solicitar Cotización</span>
+          <span className="hidden xl:inline">Solicitar Cotización</span>
+          <span className="hidden lg:inline xl:hidden">Cotizar</span>
         </Link>
       </Button>
 

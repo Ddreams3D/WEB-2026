@@ -8,6 +8,8 @@ import { ArrowRight, Sparkles, Skull, ZoomIn, X, ChevronLeft, ChevronRight } fro
 import { cn } from '@/lib/utils';
 import { SeasonalThemeConfig } from '@/shared/types/seasonal';
 import { SeasonalAtmosphere } from './SeasonalAtmosphere';
+import { HeartbeatLine } from './HeartbeatLine';
+import { ChristmasTree3D } from './ChristmasTree3D';
 import { HauntedCylinder } from './HauntedCylinder';
 
 interface SeasonalHeroProps {
@@ -15,6 +17,7 @@ interface SeasonalHeroProps {
     isHalloween: boolean;
     isValentines: boolean;
     isMothersDay: boolean;
+    isChristmas: boolean;
     mounted: boolean;
     themeStyles: any;
     logoColor: string;
@@ -27,6 +30,7 @@ export function SeasonalHero({
     isHalloween,
     isValentines,
     isMothersDay,
+    isChristmas,
     mounted,
     themeStyles,
     logoColor,
@@ -60,7 +64,7 @@ export function SeasonalHero({
     return (
         <section className={cn(
             "relative min-h-screen supports-[min-height:100dvh]:min-h-[100dvh] flex items-center justify-center overflow-hidden py-12 lg:py-0",
-            isHalloween ? "bg-black" : "bg-muted/10"
+            isHalloween ? "bg-black" : isChristmas ? "bg-gradient-to-b from-[#0f172a] to-[#1e293b]" : "bg-muted/10"
         )}>
             {!isHalloween && (
                 <Dialog open={isViewerOpen} onOpenChange={setIsViewerOpen}>
@@ -109,6 +113,7 @@ export function SeasonalHero({
                 isHalloween={isHalloween}
                 isValentines={isValentines}
                 isMothersDay={isMothersDay}
+                isChristmas={isChristmas}
                 mounted={mounted}
                 themeStyles={themeStyles}
                 onExorcise={handleExorcise}
@@ -143,7 +148,7 @@ export function SeasonalHero({
                     
                     <h1 className={cn(
                         "text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-[1.1] text-foreground",
-                        isHalloween && "text-white drop-shadow-[0_0_10px_rgba(255,165,0,0.5)]"
+                        (isHalloween || isChristmas) && "text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]"
                     )}>
                         {config.landing.heroTitle.split(' ').map((word, i) => (
                             <span 
@@ -159,7 +164,9 @@ export function SeasonalHero({
                         ))}
                     </h1>
                     
-                    <p className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                    <p className={cn("text-lg md:text-xl text-muted-foreground max-w-xl mx-auto lg:mx-0 leading-relaxed",
+                        isChristmas && "text-slate-200"
+                    )}>
                         {config.landing.heroDescription}
                     </p>
 
@@ -181,9 +188,11 @@ export function SeasonalHero({
                 {/* Hero Image / Visual */}
                 <div className={cn("relative animate-fade-in-up delay-200 group perspective-1000 flex justify-center", isHalloween && "items-center")}>
                     {isHalloween ? (
-                        <HauntedCylinder images={heroImages} />
-                    ) : (
-                        <div 
+                <HauntedCylinder images={heroImages} />
+            ) : isChristmas ? (
+                <ChristmasTree3D images={heroImages} logoColor={logoColor} />
+            ) : (
+                <div 
                             className="relative z-10 rounded-3xl overflow-hidden transform transition-transform duration-700 hover:rotate-y-6 hover:scale-[1.02] cursor-pointer shadow-2xl border-4 border-background/50 aspect-[4/5] lg:aspect-square"
                             onClick={() => setIsViewerOpen(true)}
                         >
@@ -253,6 +262,23 @@ export function SeasonalHero({
                     {/* Decorative Elements behind image */}
                     <div className={cn("absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-40 blur-2xl", themeStyles.previewColors[0])} />
                     <div className={cn("absolute -bottom-10 -left-10 w-40 h-40 rounded-full opacity-40 blur-2xl", themeStyles.previewColors[1] || themeStyles.previewColors[0])} />
+
+                    {/* Heartbeat Animation for Valentines - Centered on Image */}
+                    {isValentines && (
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] z-20 pointer-events-none opacity-80 mix-blend-screen">
+                             <HeartbeatLine color="#e11d48">
+                                <div className="w-24 h-24 rounded-full bg-rose-500/20 backdrop-blur-sm border border-rose-500/50 flex items-center justify-center shadow-[0_0_15px_rgba(225,29,72,0.3)] animate-pulse-scale-1 -mt-8 transition-all duration-500">
+                                    <span className="text-rose-200 text-xs font-bold">Foto 1</span>
+                                </div>
+                                <div className="w-28 h-28 rounded-full bg-rose-500/20 backdrop-blur-sm border border-rose-500/50 flex items-center justify-center shadow-[0_0_15px_rgba(225,29,72,0.3)] animate-pulse-scale-2 -mt-8 transition-all duration-500">
+                                    <span className="text-rose-200 text-xs font-bold">Foto 2</span>
+                                </div>
+                                <div className="w-24 h-24 rounded-full bg-rose-500/20 backdrop-blur-sm border border-rose-500/50 flex items-center justify-center shadow-[0_0_15px_rgba(225,29,72,0.3)] animate-pulse-scale-3 -mt-8 transition-all duration-500">
+                                    <span className="text-rose-200 text-xs font-bold">Foto 3</span>
+                                </div>
+                             </HeartbeatLine>
+                        </div>
+                    )}
                 </div>
             </div>
         </section>

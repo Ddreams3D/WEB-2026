@@ -1,11 +1,10 @@
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
 import SeasonalLanding from '@/features/seasonal/components/SeasonalLanding';
 import OutOfSeasonLanding from '@/features/seasonal/components/OutOfSeasonLanding';
 import { getSeasonalThemes, isDateInRange } from '@/lib/seasonal-service';
-import { SeasonalThemeConfig } from '@/shared/types/seasonal';
 import { getAppUrl } from '@/lib/url-utils';
 import { JsonLd } from '@/components/seo/JsonLd';
+import Link from 'next/link';
 
 interface PageProps {
   params: Promise<{
@@ -26,6 +25,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!theme) {
     return {
       title: 'Campaña No Encontrada | Ddreams 3D',
+      robots: {
+        index: false,
+        follow: false,
+      },
     };
   }
 
@@ -82,7 +85,21 @@ export default async function CampaignPage({ params, searchParams }: PageProps) 
   const theme = themes.find(t => t.id === slug);
 
   if (!theme) {
-    notFound();
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center px-6 py-16">
+        <div className="max-w-xl w-full text-center space-y-3">
+          <h1 className="text-2xl font-bold">Campaña no disponible</h1>
+          <p className="text-muted-foreground">
+            Esta URL no corresponde a una campaña activa o fue retirada.
+          </p>
+          <div className="pt-2">
+            <Link href="/" className="inline-flex items-center justify-center h-10 px-4 rounded-md bg-primary text-primary-foreground hover:bg-primary/90">
+              Ir al inicio
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   // Check if theme is active
@@ -126,6 +143,49 @@ export default async function CampaignPage({ params, searchParams }: PageProps) 
     }
   };
 
+  let specialJsonLd: Record<string, any> | null = null;
+  try {
+    const ranges = theme.dateRanges || [];
+    const currentYear = now.getFullYear();
+    const projectedRanges = ranges.map(r => ({
+      startDate: new Date(currentYear, r.start.month - 1, r.start.day),
+      endDate: new Date(currentYear, r.end.month - 1, r.end.day),
+    }));
+    const pickRange = () => {
+      const active = projectedRanges.find(r => now >= r.startDate && now <= r.endDate);
+      if (active) return active;
+      const upcoming = projectedRanges
+        .filter(r => r.startDate > now)
+        .sort((a, b) => a.startDate.getTime() - b.startDate.getTime())[0];
+      if (upcoming) return upcoming;
+      const past = projectedRanges
+        .filter(r => r.endDate < now)
+        .sort((a, b) => b.endDate.getTime() - a.endDate.getTime())[0];
+      return past || projectedRanges[0];
+    };
+    const range = pickRange();
+    if (range) {
+      specialJsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'SpecialAnnouncement',
+        name: theme.name,
+        description: theme.landing.heroTitle,
+        text: theme.landing.heroDescription,
+        url: `${baseUrl}/campanas/${theme.id}`,
+        startDate: range.startDate.toISOString(),
+        endDate: range.endDate.toISOString(),
+        datePosted: range.startDate.toISOString(),
+        expires: range.endDate.toISOString(),
+        category: 'https://schema.org/SpecialAnnouncement',
+        publisher: {
+          '@type': 'Organization',
+          name: 'Ddreams 3D',
+          url: baseUrl
+        }
+      };
+    }
+  } catch {}
+
   if (!isActive) {
     // Find next start date
     // Sort dates, find first one in future
@@ -153,6 +213,7 @@ export default async function CampaignPage({ params, searchParams }: PageProps) 
     return (
       <>
         <JsonLd data={jsonLd} />
+        {specialJsonLd && <JsonLd data={specialJsonLd} />}
         <OutOfSeasonLanding themeName={theme.name} nextStartDate={nextDate} />
       </>
     );
@@ -161,6 +222,7 @@ export default async function CampaignPage({ params, searchParams }: PageProps) 
   return (
     <>
       <JsonLd data={jsonLd} />
+      {specialJsonLd && <JsonLd data={specialJsonLd} />}
       <SeasonalLanding config={theme} />
     </>
   );

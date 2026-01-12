@@ -252,7 +252,6 @@ export const ProductService = {
 
   // Soft Delete product (Moves to Trash)
   async deleteProduct(id: string): Promise<boolean> {
-    console.log(`[ProductService] Soft deleting product ${id}`);
     // Use updateProduct to handle both DB and LocalStorage logic
     const result = await this.updateProduct(id, { 
       isDeleted: true, 
@@ -264,7 +263,6 @@ export const ProductService = {
 
   // Restore product from Trash
   async restoreProduct(id: string): Promise<boolean> {
-    console.log(`[ProductService] Restoring product ${id}`);
     const result = await this.updateProduct(id, { 
       isDeleted: false, 
       isActive: false, // Keep inactive for safety until manually activated
@@ -275,7 +273,6 @@ export const ProductService = {
 
   // Permanent Delete product (Destroys data and images)
   async permanentDeleteProduct(id: string): Promise<boolean> {
-    console.log(`[ProductService] Permanently deleting product ${id}`);
     const dbInstance = db;
     if (!dbInstance) {
        // Mock behavior if no DB

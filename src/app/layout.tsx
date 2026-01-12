@@ -42,7 +42,10 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(getAppUrl()),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://ddreams3d.com'),
+  alternates: {
+    canonical: './',
+  },
   title: {
     default: 'Ddreams 3D - Servicios profesionales de impresión 3D',
     template: '%s | Ddreams 3D',
@@ -117,6 +120,23 @@ export default function RootLayout({
         className="antialiased text-foreground dark:text-white"
         suppressHydrationWarning
       >
+        <Script
+          id="analytics-exclusion-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+            (function () {
+              try {
+                var gaId = '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || ''}';
+                if (!gaId) return;
+                if (localStorage.getItem('ddreams_exclude_analytics') === 'true') {
+                  window['ga-disable-' + gaId] = true;
+                }
+              } catch (e) {}
+            })();
+          `,
+          }}
+        />
         {process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID && (
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />
         )}

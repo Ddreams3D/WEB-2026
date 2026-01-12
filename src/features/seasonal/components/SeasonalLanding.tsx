@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { SeasonalThemeConfig } from '@/shared/types/seasonal';
 import { cn } from '@/lib/utils';
 import { useSeasonalLanding } from '@/features/seasonal/hooks/useSeasonalLanding';
@@ -23,6 +22,7 @@ export default function SeasonalLanding({ config }: SeasonalLandingProps) {
     isValentines,
     isMothersDay,
     isHalloween,
+    isChristmas,
     logoColor,
     handleExorcise,
     getDeadline
@@ -41,6 +41,7 @@ export default function SeasonalLanding({ config }: SeasonalLandingProps) {
         isHalloween={isHalloween}
         isValentines={isValentines}
         isMothersDay={isMothersDay}
+        isChristmas={isChristmas}
         mounted={mounted}
         themeStyles={themeStyles}
         logoColor={logoColor}

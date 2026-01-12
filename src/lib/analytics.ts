@@ -237,6 +237,14 @@ export const trackEvent = (
     const isClient = typeof window !== 'undefined';
     if (!isClient) return;
 
+    // 0. Check for Admin Exclusion (Device Block)
+    if (localStorage.getItem('ddreams_exclude_analytics') === 'true') {
+      if (CONFIG.IS_DEV) {
+           console.debug(`[Analytics] 🛡️ Event blocked by Admin Exclusion: ${eventName}`);
+      }
+      return;
+    }
+
     // 1. Context Enrichment
     const currentPath = window.location.pathname;
     const rawParams = {

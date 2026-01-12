@@ -19,14 +19,15 @@ interface NavbarDesktopLinksProps {
 
 export const NavbarDesktopLinks = ({ links, pathname, isNavbarSolid, darkMode }: NavbarDesktopLinksProps) => {
   return (
-    <div className="hidden lg:flex items-center space-x-1">
+    <div className="hidden lg:flex items-center lg:space-x-0.5 xl:space-x-1">
       {links.map((link) => (
         <Button
           key={link.href}
           asChild
           variant="ghost"
           className={cn(
-            "text-sm font-medium transition-all duration-300",
+            "font-medium transition-all duration-300",
+            "text-xs lg:text-sm lg:px-2 xl:px-4",
             pathname === link.href
               ? cn(
                   "shadow-sm hover:shadow-md",

@@ -148,6 +148,7 @@ export const INVISIBLE_DATA = {
 };
 
 export const HISTORY_DATA = [
+  { title: "Refactorización Árbol 3D", desc: "Modularización de componentes y Product Cards estáticas.", date: "12 Ene 2026" },
   { title: "Admin Security Hardening", desc: "Migración a Cookies HttpOnly y firma JWT. Eliminada vulnerabilidad XSS en AuthContext.", date: "08 Ene 2026" },
   { title: "Critical: Providers Missing", desc: "Restaurado Providers wrapper en layout.tsx.", date: "08 Ene 2026" },
   { title: "API Rate Limiting", desc: "Token Bucket (5 req/10s) en api/orders/estimate.", date: "08 Ene 2026" },

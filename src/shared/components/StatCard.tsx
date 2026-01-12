@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import { useCounterAnimation, getAnimationClasses } from '@/shared/hooks/useIntersectionAnimation';
 
 interface StatCardProps {
-  icon: React.ElementType;
+  icon: React.ComponentType<{ className?: string }>;
   endValue: number;
   label: string;
   suffix?: string;

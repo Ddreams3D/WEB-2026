@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 interface EditableBlockProps {
   id: string;
   title: string;
-  icon: React.ElementType;
+  icon: React.ComponentType<{ className?: string }>;
   isEditing: boolean;
   onEdit: () => void;
   onSave: () => void;

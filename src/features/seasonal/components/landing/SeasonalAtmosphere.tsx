@@ -8,6 +8,7 @@ interface SeasonalAtmosphereProps {
     isHalloween: boolean;
     isValentines: boolean;
     isMothersDay: boolean;
+    isChristmas: boolean;
     mounted: boolean;
     themeStyles: any;
     onExorcise: () => void;
@@ -17,12 +18,33 @@ export function SeasonalAtmosphere({
     isHalloween,
     isValentines,
     isMothersDay,
+    isChristmas,
     mounted,
     themeStyles,
     onExorcise
 }: SeasonalAtmosphereProps) {
     return (
         <div className="absolute inset-0 pointer-events-none">
+            {/* Christmas Snow */}
+            {isChristmas && mounted && (
+                 <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+                    {[...Array(50)].map((_, i) => (
+                        <div
+                            key={i}
+                            className="absolute bg-white rounded-full opacity-70 animate-fall"
+                            style={{
+                                left: `${Math.random() * 100}%`,
+                                top: `-${Math.random() * 20}%`,
+                                width: `${Math.random() * 4 + 2}px`,
+                                height: `${Math.random() * 4 + 2}px`,
+                                animationDuration: `${Math.random() * 5 + 5}s`,
+                                animationDelay: `${Math.random() * 5}s`
+                            }}
+                        />
+                    ))}
+                </div>
+            )}
+
             {/* Halloween Atmosphere: Fog & Eyes */}
             {isHalloween && (
                 <>
@@ -40,8 +62,8 @@ export function SeasonalAtmosphere({
                 </>
             )}
 
-            {/* Gradient Orbs - Balanced 50/50 - Hidden for Halloween */}
-            {!isHalloween && (
+            {/* Gradient Orbs - Balanced 50/50 - Hidden for Halloween and Christmas */}
+            {!isHalloween && !isChristmas && (
             <>
             <div className={cn(
                 "absolute rounded-full opacity-25 animate-pulse-slow mix-blend-screen",
