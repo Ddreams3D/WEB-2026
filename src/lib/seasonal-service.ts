@@ -1,6 +1,9 @@
 import { SeasonalThemeConfig } from '@/shared/types/seasonal';
 import { fetchThemesFromFirestore, saveThemesToFirestore, fetchSeasonalConfig } from '@/services/seasonal.service';
 
+// Re-export fetchSeasonalConfig for use in other components
+export { fetchSeasonalConfig };
+
 export async function getSeasonalThemes(): Promise<SeasonalThemeConfig[]> {
   // Now uses Firestore with fallback logic encapsulated in the service
   return await fetchThemesFromFirestore();

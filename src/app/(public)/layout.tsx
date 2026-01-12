@@ -1,5 +1,5 @@
 import Navbar from '@/components/layout/Navbar';
-import Footer from '@/shared/components/layout/Footer';
+import FooterServerWrapper from '@/shared/components/layout/FooterServerWrapper';
 import WhatsAppFloatingButton from '@/shared/components/layout/WhatsAppFloatingButton';
 import PageTransition from '@/shared/components/ui/PageTransition';
 import { fetchLandingMain } from '@/services/landing.service';
@@ -30,7 +30,7 @@ export default async function PublicLayout({
         <main className="flex-1 flex flex-col w-full relative">
           <PageTransition>{children}</PageTransition>
         </main>
-        <Footer />
+        <FooterServerWrapper />
         <WhatsAppFloatingButton />
         <CookieBanner />
       </div>
