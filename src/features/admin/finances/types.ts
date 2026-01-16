@@ -63,6 +63,7 @@ export interface InboxItem {
   rawText: string;
   status: 'pending' | 'processed';
   createdAt: number;
+  context?: 'personal' | 'company';
 }
 
 export const FINANCE_CATEGORIES = {

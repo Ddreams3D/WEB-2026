@@ -5,12 +5,11 @@ export const FinanceParser = {
     const cleanText = text.trim();
     
     // Regex for "g 50.5 taxi" or "i 100 adelanto"
-    // ^(g|i)     -> Starts with g or i (case insensitive)
-    // \s+        -> One or more spaces
-    // (\d+...)   -> The amount (integer or decimal)
-    // \s+        -> One or more spaces
-    // (.+)       -> The description (rest of the string)
-    const regex = /^(g|i)\s+(\d+(?:\.\d{1,2})?)\s+(.+)$/i;
+    // Supports prefixes:
+    // g/i  -> Generic (Expense/Income)
+    // ge/ie -> Empresa
+    // gp/ip -> Personal
+    const regex = /^(g|i|ge|gp|ie|ip)\s+(\d+(?:\.\d{1,2})?)\s+(.+)$/i;
     
     const match = cleanText.match(regex);
     
@@ -18,10 +17,26 @@ export const FinanceParser = {
       return null;
     }
 
-    const [, typeChar, amountStr, description] = match;
+    const [, cmd, amountStr, description] = match;
     const amount = parseFloat(amountStr);
-    const type = typeChar.toLowerCase() === 'g' ? 'expense' : 'income';
+    const lowerCmd = cmd.toLowerCase();
     
+    let type: 'expense' | 'income' = 'expense';
+    let context: 'personal' | 'company' | undefined = undefined;
+
+    // Determine Type
+    if (lowerCmd.startsWith('i')) {
+      type = 'income';
+    }
+
+    // Determine Context
+    if (lowerCmd.endsWith('p')) {
+      context = 'personal';
+    } else if (lowerCmd.endsWith('e')) {
+      context = 'company';
+    }
+    // If just 'g' or 'i', context remains undefined (or treat as default/company downstream)
+
     // Deterministic ID: chatId_messageId
     const id = `${chatId}_${messageId}`;
 
@@ -34,7 +49,8 @@ export const FinanceParser = {
       date: new Date().toISOString(),
       rawText: cleanText,
       status: 'pending',
-      createdAt: Date.now()
+      createdAt: Date.now(),
+      context
     };
   },
 
@@ -42,15 +58,22 @@ export const FinanceParser = {
     return `
 🤖 *Ddreams 3D Bot*
 
-Comandos válidos:
-• Gasto: \`g [monto] [concepto]\`
-• Ingreso: \`i [monto] [concepto]\`
+Usa el teclado para seleccionar una acción o escribe:
 
-Ejemplos:
-✅ \`g 15.50 taxi cliente\`
-✅ \`i 500 adelanto proyecto\`
+🏢 *Empresa*
+• Gasto: \`ge [monto] [desc]\`
+• Ingreso: \`ie [monto] [desc]\`
 
-❌ \`gasto 50 taxi\` (Usa solo 'g')
-    `.trim();
+👤 *Personal*
+• Gasto: \`gp [monto] [desc]\`
+• Ingreso: \`ip [monto] [desc]\`
+
+⚡ *Rápido*
+• Gasto: \`g ...\`
+• Ingreso: \`i ...\`
+
+Ejemplo:
+✅ \`ge 50 taxi cliente\`
+`.trim();
   }
 };
