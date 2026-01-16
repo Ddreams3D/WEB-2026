@@ -311,7 +311,7 @@ export interface Order {
 // ==========================================
 // 6. NOTIFICATIONS (Notificaciones)
 // ==========================================
-export type NotificationType = 'info' | 'success' | 'warning' | 'error' | 'order' | 'system';
+export type NotificationType = 'info' | 'success' | 'warning' | 'error' | 'order' | 'system' | 'inbox';
 
 export interface AppNotification {
   id: string;
@@ -322,7 +322,8 @@ export interface AppNotification {
   read: boolean;
   link?: string;
   createdAt: Date;
-  metadata?: Record<string, any>;
+  actionRequired?: boolean; // If true, opens a modal or specific UI
+  metadata?: Record<string, any>; // For inbox items (inboxId, etc.)
 
   // Soft Delete
   isDeleted?: boolean;

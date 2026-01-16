@@ -76,7 +76,7 @@ const isReservedCategory = (name: string | undefined) => {
 interface FinanceModalProps {
   isOpen: boolean;
   onClose: () => void;
-  record?: FinanceRecord | null;
+  record?: Partial<FinanceRecord> | null;
   onSave: (record: Partial<FinanceRecord>) => void;
 }
 

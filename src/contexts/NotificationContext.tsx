@@ -36,6 +36,55 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   const [userNotifications, setUserNotifications] = useState<AppNotification[]>([]);
   const [systemNotifications, setSystemNotifications] = useState<AppNotification[]>([]);
   const [localNotifications, setLocalNotifications] = useState<AppNotification[]>([]);
+  const [inboxNotifications, setInboxNotifications] = useState<AppNotification[]>([]);
+
+  // --- INBOX POLLING SYSTEM ---
+  useEffect(() => {
+    if (!user) return;
+    
+    // Only check inbox if user is admin
+    const isAdmin = user.role === 'admin' || isSuperAdmin(user.email);
+    if (!isAdmin) return;
+
+    // Dynamically import InboxService to avoid circular deps or server issues
+    const checkInbox = async () => {
+      try {
+        const { InboxService } = await import('@/features/admin/finances/services/InboxService');
+        const inboxItems = await InboxService.getInbox();
+        
+        if (inboxItems.length > 0) {
+          // Convert inbox items to notifications
+          // We filter out items that are already processed locally (handled by InboxService/FinanceView logic, 
+          // but here we just show what is in the cloud inbox)
+          
+          const notis: AppNotification[] = inboxItems.map(item => ({
+            id: `inbox-${item.id}`,
+            userId: user.id,
+            title: item.type === 'expense' ? 'Nuevo Gasto (Bot)' : 'Nuevo Ingreso (Bot)',
+            message: `${item.currency} ${item.amount} - ${item.description}`,
+            type: 'inbox',
+            read: false,
+            createdAt: new Date(item.createdAt),
+            link: undefined, // Action handled by modal
+            actionRequired: true,
+            metadata: item
+          }));
+          
+          setInboxNotifications(notis);
+        } else {
+            setInboxNotifications([]);
+        }
+      } catch (error) {
+        console.error('Error checking inbox:', error);
+      }
+    };
+
+    // Check immediately and then every 30 seconds
+    checkInbox();
+    const interval = setInterval(checkInbox, 30000);
+
+    return () => clearInterval(interval);
+  }, [user]);
 
   // --- LOCAL EDUCATIONAL NOTIFICATIONS SYSTEM ---
   useEffect(() => {
@@ -134,7 +183,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   // Merge and Sort
   useEffect(() => {
     // Combine arrays
-    const combined = [...userNotifications, ...systemNotifications, ...localNotifications];
+    const combined = [...userNotifications, ...systemNotifications, ...localNotifications, ...inboxNotifications];
     
     // Remove duplicates (just in case, though IDs should be unique unless system and user overlap)
     const unique = Array.from(new Map(combined.map(item => [item.id, item])).values());
@@ -144,7 +193,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
 
     setNotifications(unique);
     setLoading(false);
-  }, [userNotifications, systemNotifications, localNotifications]);
+  }, [userNotifications, systemNotifications, localNotifications, inboxNotifications]);
 
   const unreadCount = useMemo(() => {
     return notifications.filter(n => !n.read).length;

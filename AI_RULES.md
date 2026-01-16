@@ -121,6 +121,12 @@
 - **Problema:** Datos no validados entrando a la BD.
 - **Solución:** Validación Zod obligatoria en todos los Server Actions.
 
+### 7. Integración Bot de Finanzas (Inbox Telegram) [NUEVO - Enero 2026]
+- **Contexto:** Se conectó un bot de Telegram para registrar movimientos financieros con comandos cortos (`g 50 taxi`, `i 100 adelanto`).
+- **Decisión Arquitectónica:** El bot NUNCA escribe directamente en el libro mayor de finanzas. Solo crea elementos `InboxItem` en `finances/bot_inbox.json` (Firebase Storage).
+- **Flujo:** Telegram → Webhook protegido (`x-telegram-bot-api-secret-token` + `TELEGRAM_ADMIN_ID`) → `InboxService.appendItem` → Notificación tipo `inbox` → Aprobación manual en `/admin/finanzas` → `FinanceRecord` con `originInboxId`.
+- **Mitigación de Riesgo:** Incluso si el bot fuera abusado, los datos quedan en un Inbox moderado. Se requiere aprobación explícita del admin antes de impactar indicadores financieros.
+
 ---
 
 *Última actualización: Enero 2026 - Ddreams 3D*

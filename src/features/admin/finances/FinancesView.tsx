@@ -1,21 +1,36 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Plus, List, BarChart3, TrendingUp, TrendingDown, Landmark, PieChart } from 'lucide-react';
+import { Plus, List, BarChart3, TrendingUp, TrendingDown, Landmark, PieChart, Inbox } from 'lucide-react';
 import { useFinances } from './hooks/useFinances';
 import { FinanceTable } from './components/FinanceTable';
 import { FinanceStats } from './components/FinanceStats';
 import { FinanceSummary } from './components/FinanceSummary';
 import { FinanceSyncButton } from './components/FinanceSyncButton';
 import { FinanceModal } from './FinanceModal';
+import { InboxModal } from './components/InboxModal';
 import { FinanceRecord } from './types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 export function FinancesView() {
   const { records, allRecords, importRecords, loading, addRecord, updateRecord, deleteRecord, stats } = useFinances();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isInboxOpen, setIsInboxOpen] = useState(false);
   const [editingRecord, setEditingRecord] = useState<FinanceRecord | null>(null);
+  
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  // Check for URL param to open inbox
+  useEffect(() => {
+    if (searchParams.get('inbox') === 'open') {
+      setIsInboxOpen(true);
+      // Clean up URL without refresh
+      router.replace('/admin/finanzas');
+    }
+  }, [searchParams, router]);
 
   // Filter records for each tab
   const incomeRecords = useMemo(() => 
@@ -57,6 +72,12 @@ export function FinancesView() {
     }
     setIsModalOpen(false);
   };
+  
+  // Handler for saving from Inbox
+  const handleSaveFromInbox = (data: Partial<FinanceRecord>) => {
+    addRecord(data as any);
+    // Don't close modal here, it's handled by InboxModal internal flow or user closing it
+  };
 
   if (loading) {
     return <div className="p-8 text-center">Cargando datos financieros...</div>;
@@ -74,6 +95,14 @@ export function FinancesView() {
           </p>
         </div>
         <div className="flex gap-3">
+          <Button 
+            variant="outline" 
+            onClick={() => setIsInboxOpen(true)}
+            className="gap-2 border-dashed border-primary/50 hover:border-primary text-primary hover:bg-primary/5"
+          >
+            <Inbox className="w-4 h-4" /> Inbox (Bot)
+          </Button>
+
           <FinanceSyncButton 
             records={allRecords} 
             onSyncComplete={importRecords} 
@@ -104,10 +133,8 @@ export function FinancesView() {
         </div>
 
         <TabsContent value="incomes" className="mt-0">
-          <div className="bg-card rounded-xl shadow-sm border border-border p-6">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-semibold">Ingresos</h2>
-            </div>
+          <div className="grid gap-6">
+            <FinanceStats stats={stats} />
             <FinanceTable 
               records={incomeRecords} 
               onEdit={handleEdit} 
@@ -115,12 +142,10 @@ export function FinancesView() {
             />
           </div>
         </TabsContent>
-
+        
         <TabsContent value="expenses" className="mt-0">
-          <div className="bg-card rounded-xl shadow-sm border border-border p-6">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-semibold">Gastos</h2>
-            </div>
+          <div className="grid gap-6">
+            <FinanceStats stats={stats} />
             <FinanceTable 
               records={expenseRecords} 
               onEdit={handleEdit} 
@@ -130,10 +155,16 @@ export function FinancesView() {
         </TabsContent>
 
         <TabsContent value="financing" className="mt-0">
-          <div className="bg-card rounded-xl shadow-sm border border-border p-6">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-semibold">Financiamiento (Préstamos y Deudas)</h2>
-            </div>
+          <div className="grid gap-6">
+             <div className="bg-muted/30 p-4 rounded-lg border border-dashed mb-4">
+               <h3 className="font-semibold flex items-center gap-2">
+                 <Landmark className="w-4 h-4 text-primary" />
+                 Gestión de Deudas y Préstamos
+               </h3>
+               <p className="text-sm text-muted-foreground mt-1">
+                 Aquí se registran movimientos de capital externo (préstamos recibidos o pagados) que no afectan directamente la utilidad operativa, pero sí el flujo de caja.
+               </p>
+             </div>
             <FinanceTable 
               records={financingRecords} 
               onEdit={handleEdit} 
@@ -142,17 +173,22 @@ export function FinancesView() {
           </div>
         </TabsContent>
 
-        <TabsContent value="summary" className="mt-0 space-y-6">
-          <FinanceStats stats={stats} />
-          <FinanceSummary records={records} />
+        <TabsContent value="summary" className="mt-0">
+          <FinanceSummary records={allRecords} />
         </TabsContent>
       </Tabs>
 
-      <FinanceModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+      <FinanceModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
         record={editingRecord}
         onSave={handleSave}
+      />
+      
+      <InboxModal
+        isOpen={isInboxOpen}
+        onClose={() => setIsInboxOpen(false)}
+        onSave={handleSaveFromInbox}
       />
     </div>
   );

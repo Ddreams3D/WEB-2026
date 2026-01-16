@@ -148,11 +148,44 @@ export const INVISIBLE_DATA = {
 };
 
 export const HISTORY_DATA = [
-  { title: "Refactorización Árbol 3D", desc: "Modularización de componentes y Product Cards estáticas.", date: "12 Ene 2026" },
-  { title: "Admin Security Hardening", desc: "Migración a Cookies HttpOnly y firma JWT. Eliminada vulnerabilidad XSS en AuthContext.", date: "08 Ene 2026" },
-  { title: "Critical: Providers Missing", desc: "Restaurado Providers wrapper en layout.tsx.", date: "08 Ene 2026" },
-  { title: "API Rate Limiting", desc: "Token Bucket (5 req/10s) en api/orders/estimate.", date: "08 Ene 2026" },
-  { title: "Server Actions Protegidos", desc: "Verificación de ddreams_admin_session en acciones críticas.", date: "08 Ene 2026" },
-  { title: "Explosión de Factura (Spam)", desc: "Validación Zod estricta y centralización de email.", date: "07 Ene 2026" },
-  { title: "Botón de la Muerte", desc: "Soft Delete implementado.", date: "05 Ene 2026" }
+  { 
+    title: "Refactorización Árbol 3D", 
+    desc: "Modularización de componentes y Product Cards estáticas.", 
+    date: "12 Ene 2026" 
+  },
+  { 
+    title: "Admin Security Hardening", 
+    desc: "Migración a Cookies HttpOnly y firma JWT. Eliminada vulnerabilidad XSS en AuthContext.", 
+    date: "08 Ene 2026" 
+  },
+  { 
+    title: "Critical: Providers Missing", 
+    desc: "Restaurado Providers wrapper en layout.tsx.", 
+    date: "08 Ene 2026" 
+  },
+  { 
+    title: "API Rate Limiting", 
+    desc: "Token Bucket (5 req/10s) en api/orders/estimate.", 
+    date: "08 Ene 2026" 
+  },
+  { 
+    title: "Server Actions Protegidos", 
+    desc: "Verificación de ddreams_admin_session en acciones críticas.", 
+    date: "08 Ene 2026" 
+  },
+  { 
+    title: "Explosión de Factura (Spam)", 
+    desc: "Validación Zod estricta y centralización de email.", 
+    date: "07 Ene 2026" 
+  },
+  { 
+    title: "Botón de la Muerte", 
+    desc: "Soft Delete implementado.", 
+    date: "05 Ene 2026" 
+  },
+  { 
+    title: "Inbox Finanzas (Bot Telegram)", 
+    desc: "Nuevo flujo bot → inbox → aprobación manual en Finanzas. El bot no escribe directo en el libro mayor, solo propone movimientos para revisión.", 
+    date: "16 Ene 2026" 
+  }
 ];

@@ -12,21 +12,23 @@ const DEFAULT_ITEM: FinanceItem = {
 
 const DEFAULT_FORM: Partial<FinanceRecord> = {
   type: 'income',
-  date: new Date().toISOString().split('T')[0], // YYYY-MM-DD
+  date: new Date().toISOString().split('T')[0],
   currency: 'PEN',
   status: 'paid',
   items: [],
   amount: 0
 };
 
-export function useFinanceForm(initialData?: FinanceRecord | null) {
+export function useFinanceForm(initialData?: Partial<FinanceRecord> | null) {
   const [formData, setFormData] = useState<Partial<FinanceRecord>>(DEFAULT_FORM);
 
   useEffect(() => {
     if (initialData) {
+      const isoDate = initialData.date || new Date().toISOString();
       setFormData({
+        ...DEFAULT_FORM,
         ...initialData,
-        date: initialData.date.split('T')[0] // Ensure date format for input
+        date: isoDate.split('T')[0]
       });
     } else {
       setFormData({

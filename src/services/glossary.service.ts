@@ -175,6 +175,20 @@ const INITIAL_GLOSSARY: GlossaryItem[] = [
     category: 'users',
     lastUpdated: new Date().toISOString()
   },
+  {
+    id: 'admin-finance-bot-inbox',
+    term: 'Inbox de Finanzas (Bot)',
+    definition: 'Bandeja de entrada moderada donde llegan movimientos financieros enviados por el bot de Telegram. No es el libro mayor de finanzas: cada item debe ser aprobado manualmente en /admin/finanzas antes de impactar los balances.',
+    category: 'admin',
+    lastUpdated: new Date().toISOString()
+  },
+  {
+    id: 'tech-origin-inbox-id',
+    term: 'originInboxId',
+    definition: 'Identificador de trazabilidad que enlaza un registro financiero (FinanceRecord) con el mensaje original del bot de Telegram. Permite auditar qué movimiento provino de qué mensaje y evitar duplicados.',
+    category: 'tech',
+    lastUpdated: new Date().toISOString()
+  },
 
   // --- TECNOLOGÍA & DATOS ---
   {

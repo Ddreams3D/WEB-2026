@@ -48,6 +48,21 @@ export interface FinanceRecord {
   // Sync Metadata
   _deleted?: boolean;
   _synced?: boolean;
+
+  // Bot Integration
+  originInboxId?: string; // Deterministic ID from Telegram (chatId_messageId)
+}
+
+export interface InboxItem {
+  id: string; // chatId_messageId
+  type: 'expense' | 'income';
+  amount: number;
+  description: string;
+  currency: 'PEN' | 'USD';
+  date: string; // ISO string
+  rawText: string;
+  status: 'pending' | 'processed';
+  createdAt: number;
 }
 
 export const FINANCE_CATEGORIES = {
