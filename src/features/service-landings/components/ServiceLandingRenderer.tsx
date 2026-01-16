@@ -116,12 +116,14 @@ export default function ServiceLandingRenderer({ config, isPreview = false }: Se
       {/* 4. FINAL CTA */}
       <ServiceCTA 
         primaryColor={primaryColor} 
+        config={config}
         isPreview={isPreview} 
       />
 
       {/* 5. MINIMAL FOOTER */}
       <ServiceFooter 
         primaryColor={primaryColor} 
+        config={config}
         isPreview={isPreview} 
       />
     </div>

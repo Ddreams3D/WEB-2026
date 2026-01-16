@@ -1,12 +1,15 @@
 import React from 'react';
+import Link from 'next/link';
 import { IsotypeLogo } from '@/components/ui';
+import { ServiceLandingConfig } from '@/shared/types/service-landing';
 
 interface ServiceFooterProps {
   primaryColor: string;
+  config: ServiceLandingConfig;
   isPreview?: boolean;
 }
 
-export function ServiceFooter({ primaryColor, isPreview = false }: ServiceFooterProps) {
+export function ServiceFooter({ primaryColor, config, isPreview = false }: ServiceFooterProps) {
   if (isPreview) return null;
 
   return (
@@ -22,10 +25,35 @@ export function ServiceFooter({ primaryColor, isPreview = false }: ServiceFooter
 
           <div className="flex justify-center gap-6 mb-8 text-sm font-medium">
               {['Instagram', 'TikTok', 'WhatsApp'].map((social) => (
-                  <a key={social} href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                  <a
+                    key={social}
+                    href="#"
+                    className="text-muted-foreground hover:text-[color:var(--primary-color)] transition-colors"
+                  >
                       {social}
                   </a>
               ))}
+          </div>
+
+          <div className="flex flex-col sm:flex-row justify-center gap-4 text-xs sm:text-sm text-muted-foreground">
+            <Link
+              href="/services"
+              className="flex items-center gap-2 hover:text-[color:var(--primary-color)] transition-colors"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-current" />
+              <span className="text-[0.7rem] sm:text-[0.75rem] tracking-[0.08em] uppercase font-medium">
+                Ver todos los servicios
+              </span>
+            </Link>
+            <Link
+              href="/"
+              className="flex items-center gap-2 hover:text-[color:var(--primary-color)] transition-colors"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-current" />
+              <span className="text-[0.7rem] sm:text-[0.75rem] tracking-[0.08em] uppercase font-medium">
+                Ir a la web principal
+              </span>
+            </Link>
           </div>
       </div>
     </footer>

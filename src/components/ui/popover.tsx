@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from "react";
+import { createPortal } from "react-dom";
 import { cn } from "../../lib/utils";
 import { Button } from "./button";
 
@@ -128,74 +129,106 @@ const PopoverContent: React.FC<PopoverContentProps> = ({
   const { open, triggerRef } = React.useContext(PopoverContext);
   const [position, setPosition] = React.useState<{ top: number, left?: number, right?: number }>({ top: 0, left: 0 });
   const contentRef = React.useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
-    if (open && triggerRef.current && contentRef.current) {
-      const triggerRect = triggerRef.current.getBoundingClientRect();
-      const contentRect = contentRef.current.getBoundingClientRect();
-      
-      let top = 0;
-      let left: number | undefined = 0;
-      let right: number | undefined = undefined;
+    setMounted(true);
+  }, []);
 
-      // Calculate position based on side
-      switch (side) {
-        case "top":
-          top = triggerRect.top - contentRect.height - sideOffset;
-          break;
-        case "bottom":
-          top = triggerRect.bottom + sideOffset;
-          break;
-        case "left":
-          left = triggerRect.left - contentRect.width - sideOffset;
-          top = triggerRect.top;
-          break;
-        case "right":
-          left = triggerRect.right + sideOffset;
-          top = triggerRect.top;
-          break;
-      }
+  React.useLayoutEffect(() => {
+    if (open && triggerRef.current && mounted) {
+      const updatePosition = () => {
+        if (!triggerRef.current || !contentRef.current) return;
+        
+        const triggerRect = triggerRef.current.getBoundingClientRect();
+        const contentRect = contentRef.current.getBoundingClientRect();
+        
+        let top = 0;
+        let left: number | undefined = 0;
+        let right: number | undefined = undefined;
 
-      // Calculate position based on align
-      if (side === "top" || side === "bottom") {
-        switch (align) {
-          case "start":
-            left = triggerRect.left;
+        // Calculate position based on side
+        switch (side) {
+          case "top":
+            top = triggerRect.top - contentRect.height - sideOffset;
             break;
-          case "center":
-            left = triggerRect.left + (triggerRect.width - contentRect.width) / 2;
+          case "bottom":
+            top = triggerRect.bottom + sideOffset;
             break;
-          case "end":
-            // Use right positioning to avoid dependency on content width measurement for horizontal alignment
-            // right is distance from viewport right edge
-            right = window.innerWidth - triggerRect.right;
-            left = undefined;
-            break;
-        }
-      } else {
-        switch (align) {
-          case "start":
+          case "left":
+            left = triggerRect.left - contentRect.width - sideOffset;
             top = triggerRect.top;
             break;
-          case "center":
-            top = triggerRect.top + (triggerRect.height - contentRect.height) / 2;
-            break;
-          case "end":
-            top = triggerRect.bottom - contentRect.height;
+          case "right":
+            left = triggerRect.right + sideOffset;
+            top = triggerRect.top;
             break;
         }
-      }
 
-      setPosition({ top, left, right });
+        // Calculate position based on align
+        if (side === "top" || side === "bottom") {
+          switch (align) {
+            case "start":
+              left = triggerRect.left;
+              break;
+            case "center":
+              left = triggerRect.left + (triggerRect.width - contentRect.width) / 2;
+              break;
+            case "end":
+              right = window.innerWidth - triggerRect.right;
+              left = undefined;
+              break;
+          }
+        } else {
+          switch (align) {
+            case "start":
+              top = triggerRect.top;
+              break;
+            case "center":
+              top = triggerRect.top + (triggerRect.height - contentRect.height) / 2;
+              break;
+            case "end":
+              top = triggerRect.bottom - contentRect.height;
+              break;
+          }
+        }
+
+        // Adjust for viewport boundaries
+        const padding = 10;
+        if (left !== undefined) {
+          if (left < padding) left = padding;
+          if (left + contentRect.width > window.innerWidth - padding) {
+            left = window.innerWidth - contentRect.width - padding;
+          }
+        }
+        if (top < padding) top = padding;
+        if (top + contentRect.height > window.innerHeight - padding) {
+          top = window.innerHeight - contentRect.height - padding;
+        }
+
+        setPosition({ top, left, right });
+      };
+
+      // Initial update
+      // We need to wait for the element to be rendered in the portal to measure it correctly
+      requestAnimationFrame(updatePosition);
+
+      window.addEventListener('resize', updatePosition);
+      window.addEventListener('scroll', updatePosition, true);
+
+      return () => {
+        window.removeEventListener('resize', updatePosition);
+        window.removeEventListener('scroll', updatePosition, true);
+      };
     }
-  }, [open, side, align, sideOffset, triggerRef]);
+  }, [open, side, align, sideOffset, triggerRef, mounted]);
 
-  if (!open) return null;
+  if (!open || !mounted) return null;
 
-  return (
+  return createPortal(
     <>
       {/* Backdrop */}
-      <div className="fixed inset-0 z-40" />
+      <div className="fixed inset-0 z-40 bg-transparent" />
       
       {/* Content */}
       <div
@@ -203,18 +236,20 @@ const PopoverContent: React.FC<PopoverContentProps> = ({
         data-popover-content
         className={cn(
           "fixed z-50 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none",
-          "bg-white border-gray-200 text-gray-900",
           className
         )}
         style={{
           top: position.top,
           left: position.left,
           right: position.right,
+          // Hide until positioned to avoid flash
+          opacity: position.top === 0 && position.left === 0 && !position.right ? 0 : 1,
         }}
       >
         {children}
       </div>
-    </>
+    </>,
+    document.body
   );
 };
 

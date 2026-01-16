@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { ScrollToTopButton } from './footer/ScrollToTopButton';
@@ -19,6 +18,7 @@ import {
   Music2 
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { IsotypeLogo } from '@/components/ui';
 import {
   WHATSAPP_REDIRECT,
   PHONE_DISPLAY,
@@ -60,12 +60,8 @@ const Footer = ({ services = [], campaigns = [] }: FooterProps) => {
           {/* SECCIÓN 1: Identidad Centrada */}
           <div className="flex flex-col items-center gap-8 text-center max-w-3xl mx-auto">
             <div className="flex justify-center">
-              <Image
-                src="/logo/isotipo_DD_blanco_V2.svg"
-                alt="isotipo"
-                width={80}
-                height={32}
-                className="object-contain"
+              <IsotypeLogo 
+                className="w-28 h-auto opacity-90 hover:opacity-100 transition-opacity" 
               />
             </div>
             

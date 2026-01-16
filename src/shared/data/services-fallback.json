@@ -5,8 +5,8 @@
     "displayOrder": 1,
     "slug": "modelado-3d-personalizado",
     "name": "Modelado 3D Personalizado (Orgánico)",
-    "description": "Servicio de modelado 3D orgánico y artístico para personajes, objetos personalizados y piezas visuales. Creamos modelos únicos a partir de ideas, bocetos, imágenes de referencia o conceptos generados con IA, enfocándonos en formas orgánicas, estética y personalidad del diseño.",
-    "shortDescription": "Modelado 3D orgánico y artístico para personajes, objetos personalizados y piezas visuales",
+    "description": "Modelado 3D personalizado, hecho a medida. Cuéntanos tu idea y la desarrollamos contigo paso a paso.",
+    "shortDescription": "Modelado 3D personalizado, hecho a medida.",
     "price": 0,
     "customPriceDisplay": "Cotización personalizada",
     "currency": "PEN",
@@ -53,7 +53,7 @@
         "conditions": ["Cotización según complejidad del modelo", "Entregables digitales (STL / OBJ)", "Revisiones incluidas según acuerdo"],
         "ctaText": "Empezar mi diseño",
         "ctaAction": "whatsapp",
-        "whatsappMessage": "Hola, quiero desarrollar un modelado 3D orgánico personalizado para un proyecto personal.\n\nQué deseas modelar (personaje, figura, objeto, etc.)\nReferencias visuales o bocetos (si tienes)\nTamaño aproximado\nNivel de detalle esperado"
+        "whatsappMessage": "Hola, quiero un modelo 3D orgánico personalizado para mí o como regalo.\n\nPara quién es el modelo (para ti, regalo, grupo/equipo)\nMotivo o contexto (cumpleaños, logro, decoración, etc.)\nQué quieres que representemos (persona, personaje, animal, objeto, etc.)\nEstilo deseado (realista, caricatura, minimalista, no estoy seguro)\nTamaño aproximado del modelo (en cm)\nSolo archivo 3D o archivo + impresión física\nCantidad de unidades\nSi tienes referencias visuales (fotos, links, bocetos)\nColores o acabado que te gustaría\nPlazo ideal de entrega\nPresupuesto aproximado (opcional)"
       },
       {
         "id": "b2b",
@@ -63,7 +63,7 @@
         "conditions": ["Cotización según alcance creativo", "Archivos optimizados para impresión o visualización", "Acuerdos de confidencialidad (NDA) disponibles"],
         "ctaText": "Solicitar diseño 3D",
         "ctaAction": "whatsapp",
-        "whatsappMessage": "Hola, quiero solicitar un servicio de modelado 3D orgánico para un proyecto profesional.\n\nEmpresa o marca\nTipo de modelo requerido\nUso del modelo (marketing, producto, visualización, etc.)\nCantidad de modelos\nFecha estimada de entrega"
+        "whatsappMessage": "Hola, quiero solicitar un modelo 3D orgánico para mi marca o evento.\n\nNombre de la marca o evento\nTipo de proyecto (trofeos, mascota de marca, figura para vitrina, etc.)\nRol del modelo (premio principal, regalo, exhibición, etc.)\nQué debe transmitir la figura (valores, tono, estilo)\nElementos obligatorios (logo, texto, colores de marca, otros)\nCantidad estimada de unidades y tamaño aproximado (en cm)\nEntregables que necesitas (solo archivo 3D o archivo + impresión)\nFecha del evento y fecha límite para aprobar el modelo\nPresupuesto estimado o rango\nQuién tomará la decisión final"
       }
     ],
     "isActive": true,

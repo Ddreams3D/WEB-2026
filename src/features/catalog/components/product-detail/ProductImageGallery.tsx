@@ -46,7 +46,7 @@ export function ProductImageGallery({
     <div className="space-y-4 lg:sticky lg:top-24">
       <div 
         className={cn(
-          "relative aspect-[4/3] overflow-hidden rounded-2xl border border-border shadow-sm cursor-zoom-in group",
+          "relative w-full max-w-md mx-auto aspect-[4/3] overflow-hidden rounded-2xl border border-border shadow-sm cursor-zoom-in group",
           "bg-muted/30"
         )}
         onClick={onOpenModal}
@@ -67,7 +67,7 @@ export function ProductImageGallery({
         </div>
       </div>
       {images && images.length > 1 && (
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-4 gap-2 max-w-md mx-auto">
           {images.map((image) => (
             <div 
               key={image.id} 

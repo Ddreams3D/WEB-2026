@@ -238,11 +238,18 @@ export function ServiceHero({ config, heroSection, primaryColor }: ServiceHeroPr
                           <ArrowRight className="ml-2 h-4 w-4" />
                       </Link>
                   </Button>
-                  <Button variant="outline" size="lg" className="h-12 px-8 text-base rounded-full w-full sm:w-auto" asChild>
+                  {!(config.slug === 'modelado-3d-personalizado' || config.id === 'organic-modeling') && (
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="h-12 px-8 text-base rounded-full w-full sm:w-auto"
+                      asChild
+                    >
                       <Link href="/contacto">
                           Solicitar Presupuesto
                       </Link>
-                  </Button>
+                    </Button>
+                  )}
               </div>
           </div>
       </div>

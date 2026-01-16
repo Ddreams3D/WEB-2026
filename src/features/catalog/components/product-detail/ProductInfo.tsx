@@ -12,11 +12,35 @@ interface ProductInfoProps {
 export function ProductInfo({ product, onShare }: ProductInfoProps) {
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
+      <div className="mb-3">
         <Badge variant="outline" className="text-sm font-medium px-3 py-1 border-primary/20 text-primary bg-primary/5">
           {product.categoryName}
         </Badge>
-        <div className="flex items-center gap-3">
+      </div>
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div className="flex-1 min-w-0">
+          <h1 className="text-3xl lg:text-4xl font-extrabold text-foreground mb-2 lg:mb-3 tracking-tight leading-tight">
+            {product.name}
+          </h1>
+          {product.kind === 'service' && product.slug === 'modelado-3d-personalizado' ? (
+            <h2 className="text-lg lg:text-xl font-medium text-muted-foreground mb-3 lg:mb-4 leading-relaxed">
+              <span className="block">Modelado 3D personalizado, hecho a medida.</span>
+              <span className="block">Cuéntanos tu idea y la desarrollamos contigo paso a paso.</span>
+            </h2>
+          ) : (
+            product.shortDescription && (
+              <h2 className="text-lg lg:text-xl font-medium text-muted-foreground mb-3 lg:mb-4 leading-relaxed">
+                {product.shortDescription}
+              </h2>
+            )
+          )}
+          {product.kind === 'product' && (
+            <p className="text-muted-foreground text-base lg:text-lg flex items-center gap-2">
+              Vendido por <span className="font-semibold text-primary underline decoration-primary/30 underline-offset-4">Ddreams 3D</span>
+            </p>
+          )}
+        </div>
+        <div className="flex items-center flex-wrap gap-3 lg:self-start">
           <Button 
             onClick={onShare}
             variant="outline" 
@@ -42,20 +66,6 @@ export function ProductInfo({ product, onShare }: ProductInfoProps) {
           </div>
         </div>
       </div>
-      <h1 className="text-3xl lg:text-4xl font-extrabold text-foreground mb-3 tracking-tight leading-tight">
-        {product.name}
-      </h1>
-      {/* Subtítulo reforzado */}
-      {product.shortDescription && (
-        <h2 className="text-lg lg:text-xl font-medium text-muted-foreground mb-4 leading-relaxed">
-          {product.shortDescription}
-        </h2>
-      )}
-      {product.kind === 'product' && (
-        <p className="text-muted-foreground text-base lg:text-lg flex items-center gap-2">
-          Vendido por <span className="font-semibold text-primary underline decoration-primary/30 underline-offset-4">Ddreams 3D</span>
-        </p>
-      )}
 
       <div className="flex flex-wrap gap-4 mt-3">
         {/* Stock Status - Ocultar para servicios */}

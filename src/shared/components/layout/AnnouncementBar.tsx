@@ -6,15 +6,12 @@ import { SeasonalThemeConfig } from '@/shared/types/seasonal';
 import Link from 'next/link';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Theme } from '@/contexts/ThemeContext';
 
 interface AnnouncementBarProps {
   config?: AnnouncementBarConfig;
   seasonalConfig?: SeasonalThemeConfig | null;
 }
 
-// Configuration Map for Automatic Seasonal Styles
-// Maps themeId (from seasonalConfig) to specific visual styles and default copy
 const SEASONAL_STYLES: Record<string, {
   bgClass: string;
   icon: string;
@@ -80,41 +77,58 @@ const DEFAULT_SEASONAL_STYLE = {
 
 export default function AnnouncementBar({ config, seasonalConfig }: AnnouncementBarProps) {
   const [isVisible, setIsVisible] = useState(true);
+  const [mounted, setMounted] = useState(false);
   const barRef = useRef<HTMLDivElement>(null);
 
-  // Priority Logic:
-  // 1. Manual Global Config (if enabled) - Panic Button
-  // 2. Seasonal Config Specific Override (if exists) - Campaign Specific Bar
-  // 3. Smart Fallback (Hardcoded styles) - Automatic Defaults
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const showGlobalManual = config?.enabled;
   const seasonalOverride = seasonalConfig?.announcement;
   const showSeasonalOverride = !showGlobalManual && seasonalOverride?.enabled;
-  // Only show smart seasonal bar if it's NOT the standard theme
   const showSmartSeasonal = !showGlobalManual && !showSeasonalOverride && seasonalConfig && seasonalConfig.id !== 'standard';
 
-  // Handle navbar offset logic
   useEffect(() => {
+    if (!mounted) return;
+    
     const updateOffset = () => {
-      if (isVisible && (showGlobalManual || showSeasonalOverride || showSmartSeasonal) && barRef.current) {
+      const shouldShow = isVisible && (showGlobalManual || showSeasonalOverride || showSmartSeasonal);
+      
+      if (shouldShow && barRef.current) {
         const height = barRef.current.offsetHeight;
-        document.documentElement.style.setProperty('--navbar-offset', `${height}px`);
+        const safeOffset = height > 0 ? height : 0;
+        document.documentElement.style.setProperty('--navbar-offset', `${safeOffset}px`);
       } else {
         document.documentElement.style.setProperty('--navbar-offset', '0px');
       }
     };
 
-    updateOffset();
+    const timeoutId = setTimeout(updateOffset, 100);
+    
+    const resizeObserver = new ResizeObserver(() => {
+        updateOffset();
+    });
+
+    if (barRef.current) {
+        resizeObserver.observe(barRef.current);
+    }
+
     window.addEventListener('resize', updateOffset);
+
     return () => {
        document.documentElement.style.setProperty('--navbar-offset', '0px');
        window.removeEventListener('resize', updateOffset);
+       resizeObserver.disconnect();
+       clearTimeout(timeoutId);
     };
-  }, [isVisible, showGlobalManual, showSeasonalOverride, showSmartSeasonal]);
+  }, [isVisible, showGlobalManual, showSeasonalOverride, showSmartSeasonal, mounted]);
+
+  if (!mounted) return null;
 
   if (!isVisible) return null;
   if (!showGlobalManual && !showSeasonalOverride && !showSmartSeasonal) return null;
 
-  // RENDER 1: GLOBAL MANUAL CONFIGURATION (Highest Priority)
   if (showGlobalManual && config) {
       const bgColor = config.bgColor || 'bg-primary';
       const textColor = config.textColor || 'text-primary-foreground';

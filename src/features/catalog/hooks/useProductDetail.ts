@@ -203,14 +203,50 @@ export function useProductDetail(initialProduct: Product | Service) {
     } else {
       const currentTab = product.tabs?.find(t => t.id === activeTab);
       
-      if (currentTab?.ctaAction === 'whatsapp' && currentTab.whatsappMessage) {
+      // Override de mensajes de WhatsApp para servicios específicos (ej. modelado orgánico)
+      let overrideWhatsappMessage = currentTab?.whatsappMessage;
+
+      if (product.kind === 'service' && product.slug === 'modelado-3d-personalizado' && currentTab) {
+        if (currentTab.id === 'b2c') {
+          overrideWhatsappMessage =
+            'Hola, quiero un modelo 3D orgánico personalizado para mí o como regalo.\n\n' +
+            'Para quién es el modelo (para ti, regalo, grupo/equipo)\n' +
+            'Motivo o contexto (cumpleaños, logro, decoración, etc.)\n' +
+            'Qué quieres que representemos (persona, personaje, animal, objeto, etc.)\n' +
+            'Estilo deseado (realista, caricatura, minimalista, no estoy seguro)\n' +
+            'Tamaño aproximado del modelo (en cm)\n' +
+            'Solo archivo 3D o archivo + impresión física\n' +
+            'Cantidad de unidades\n' +
+            'Si tienes referencias visuales (fotos, links, bocetos)\n' +
+            'Colores o acabado que te gustaría\n' +
+            'Plazo ideal de entrega\n' +
+            'Presupuesto aproximado (opcional)';
+        }
+
+        if (currentTab.id === 'b2b') {
+          overrideWhatsappMessage =
+            'Hola, quiero solicitar un modelo 3D orgánico para mi marca o evento.\n\n' +
+            'Nombre de la marca o evento\n' +
+            'Tipo de proyecto (trofeos, mascota de marca, figura para vitrina, etc.)\n' +
+            'Rol del modelo (premio principal, regalo, exhibición, etc.)\n' +
+            'Qué debe transmitir la figura (valores, tono, estilo)\n' +
+            'Elementos obligatorios (logo, texto, colores de marca, otros)\n' +
+            'Cantidad estimada de unidades y tamaño aproximado (en cm)\n' +
+            'Entregables que necesitas (solo archivo 3D o archivo + impresión)\n' +
+            'Fecha del evento y fecha límite para aprobar el modelo\n' +
+            'Presupuesto estimado o rango\n' +
+            'Quién tomará la decisión final';
+        }
+      }
+
+      if (currentTab?.ctaAction === 'whatsapp' && overrideWhatsappMessage) {
          trackEvent(AnalyticsEvents.WHATSAPP_CLICK, {
           location: product.kind === 'service' ? AnalyticsLocations.SERVICE_PAGE : AnalyticsLocations.PRODUCT_PAGE,
           name: product.name,
           tab: currentTab.label
         });
         
-        const message = encodeURIComponent(currentTab.whatsappMessage);
+        const message = encodeURIComponent(overrideWhatsappMessage);
         window.open(`${WHATSAPP_REDIRECT}?text=${message}`, '_blank');
         return;
       }

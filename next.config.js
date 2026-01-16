@@ -75,6 +75,11 @@ const nextConfig = {
   // Configuración de redirecciones para SEO (Migración de rutas antiguas)
   async redirects() {
     return [
+      {
+        source: '/catalogo-impresion-3d/general/premio-estilo-oscar-impreso-en-3d-reconocimiento-personalizado',
+        destination: '/catalogo-impresion-3d/general/premio-oscar-impreso-3d',
+        permanent: true,
+      },
       // 1. Redirección principal de marketplace a catálogo
       {
         source: '/marketplace',

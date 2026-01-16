@@ -2,6 +2,15 @@ import { RouteItem } from './types';
 
 export const ACTIVE_REDIRECTS: RouteItem[] = [
   { 
+    path: '/catalogo-impresion-3d/general/premio-estilo-oscar-impreso-en-3d-reconocimiento-personalizado', 
+    name: 'Premio Oscar Legacy', 
+    type: 'Redirect', 
+    category: 'Tienda', 
+    status: 'redirect', 
+    redirectTarget: '/catalogo-impresion-3d/general/premio-oscar-impreso-3d',
+    description: 'Redirección SEO para preservar posicionamiento del producto Oscar antiguo'
+  },
+  { 
     path: '/marketplace', 
     name: 'Legacy Marketplace', 
     type: 'Redirect', 

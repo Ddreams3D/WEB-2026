@@ -88,6 +88,11 @@ export const metadata: Metadata = {
       'Expertos en impresión 3D, modelado y prototipado rápido. Transformamos tus ideas en realidad con tecnología de vanguardia.',
     images: ['/logo-ddreams-3d.jpg'],
   },
+  icons: {
+    icon: '/logo/isotipo_DD_negro_V2.svg',
+    shortcut: '/logo/isotipo_DD_negro_V2.svg',
+    apple: '/logo/isotipo_DD_negro_V2.svg',
+  },
   robots: {
     index: true,
     follow: true,
@@ -98,14 +103,6 @@ export const metadata: Metadata = {
       'max-image-preview': 'large',
       'max-snippet': -1,
     },
-  },
-  icons: {
-    icon: [
-      { url: '/logo/isotipo_DD_negro_V2.svg' },
-    ],
-    apple: [
-      { url: '/logo/isotipo_DD_negro_V2.svg' },
-    ],
   },
 };
 
@@ -120,6 +117,7 @@ export default function RootLayout({
         className="antialiased text-foreground dark:text-white"
         suppressHydrationWarning
       >
+        {/* Script para excluir analytics si es necesario */}
         <Script
           id="analytics-exclusion-init"
           strategy="beforeInteractive"

@@ -21,7 +21,7 @@ export default async function PublicLayout({
   ]);
 
   return (
-    <MainAppProviders>
+    <>
       <ThemeScript />
       <AnalyticsTracker />
       <div className="flex min-h-screen flex-col w-full bg-background pb-16 lg:pb-0">
@@ -34,6 +34,6 @@ export default async function PublicLayout({
         <WhatsAppFloatingButton />
         <CookieBanner />
       </div>
-    </MainAppProviders>
+    </>
   );
 }

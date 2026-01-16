@@ -12,23 +12,7 @@ export function SeasonalThemeController() {
   useEffect(() => {
     const checkSeasonalTheme = async () => {
       try {
-        // EXCLUSION RULES:
-        // 1. Service Landings (/services/slug) must keep their own colors (Standard)
-        // 2. Main Services Page (/services) SHOULD follow campaign theme (User request)
-        // Note: Admin panel (/admin/*) follows the global campaign theme.
-        
-        // Only exclude if it is a sub-route of services (e.g. /services/printing), not the index itself
-        const isServiceLanding = pathname.startsWith('/services/') && pathname !== '/services';
-
-        if (isServiceLanding) {
-          if (theme !== 'standard') {
-            console.log('[Seasonal] Forzando tema standard en landing de servicio:', pathname);
-            setTheme('standard');
-          }
-          return;
-        }
-
-        // Apply seasonal theme to ALL other pages (Home, Catalog, Process, Admin, etc.)
+        // Apply seasonal theme to ALL pages including Service Landings, Home, Catalog, Process, Admin, etc.
         const activeSeasonalConfig = await resolveActiveTheme();
         
         // Always apply the resolved theme

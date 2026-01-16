@@ -22,6 +22,7 @@ export default function robots(): MetadataRoute.Robots {
         '/cart/',
         '/logout/',
         '/seed-data/',
+        '/_next/static/media/',
       ],
     },
     sitemap: `${baseUrl}/sitemap.xml`,
