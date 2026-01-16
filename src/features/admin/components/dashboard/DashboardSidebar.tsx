@@ -1,12 +1,13 @@
 import Link from 'next/link';
-import { ShoppingBag, Package, Briefcase, CreditCard, ArrowRight, Activity, FolderOpen, DollarSign } from 'lucide-react';
+import { ShoppingBag, Package, Briefcase, CreditCard, ArrowRight, Activity, FolderOpen, DollarSign, Wallet } from 'lucide-react';
 
 export function DashboardSidebar() {
   const quickAccess = [
     { name: 'Gestionar Catálogo', href: '/admin/productos', icon: ShoppingBag, desc: 'Administrar productos' },
     { name: 'Gestionar Servicios', href: '/admin/servicios', icon: Package, desc: 'Catálogo de servicios' },
     { name: 'Destacados', href: '/admin/projects', icon: Briefcase, desc: 'Portafolio de trabajos' },
-    { name: 'Finanzas', href: '/admin/finanzas', icon: DollarSign, desc: 'Control de ingresos/gastos' },
+    { name: 'Finanzas Ddreams 3D', href: '/admin/finanzas', icon: DollarSign, desc: 'Ingresos y gastos de Ddreams 3D' },
+    { name: 'Finanzas Personales', href: '/admin/finanzas-personales', icon: Wallet, desc: 'Flujo de caja personal' },
     { name: 'Gestión (Pedidos/Usuarios)', href: '/admin/gestion', icon: CreditCard, desc: 'Ventas y Usuarios' },
     { name: 'Archivos Cloud', href: '/admin/storage', icon: FolderOpen, desc: 'Almacenamiento' },
   ];

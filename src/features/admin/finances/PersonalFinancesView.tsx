@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
-import { Plus, List, BarChart3, TrendingUp, TrendingDown, Landmark, PieChart } from 'lucide-react';
+import { Plus, TrendingUp, TrendingDown, Landmark, PieChart } from 'lucide-react';
 import { useFinances } from './hooks/useFinances';
 import { FinanceTable } from './components/FinanceTable';
 import { FinanceStats } from './components/FinanceStats';
@@ -12,26 +12,33 @@ import { FinanceModal } from './FinanceModal';
 import { FinanceRecord } from './types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-export function FinancesView() {
-  const { records, allRecords, importRecords, loading, addRecord, updateRecord, deleteRecord, stats } = useFinances();
+export function PersonalFinancesView() {
+  const { records, allRecords, importRecords, loading, addRecord, updateRecord, deleteRecord, stats } = useFinances(
+    'personal_finance_records',
+    [],
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingRecord, setEditingRecord] = useState<FinanceRecord | null>(null);
 
-  // Filter records for each tab
-  const incomeRecords = useMemo(() => 
-    records.filter(r => r.type === 'income' && r.category !== 'Préstamos'),
-  [records]);
+  const incomeRecords = useMemo(
+    () => records.filter((r) => r.type === 'income' && r.category !== 'Préstamos'),
+    [records],
+  );
 
-  const expenseRecords = useMemo(() => 
-    records.filter(r => r.type === 'expense' && r.category !== 'Préstamos / Deudas'),
-  [records]);
+  const expenseRecords = useMemo(
+    () => records.filter((r) => r.type === 'expense' && r.category !== 'Préstamos / Deudas'),
+    [records],
+  );
 
-  const financingRecords = useMemo(() => 
-    records.filter(r => 
-      (r.type === 'income' && r.category === 'Préstamos') ||
-      (r.type === 'expense' && r.category === 'Préstamos / Deudas')
-    ),
-  [records]);
+  const financingRecords = useMemo(
+    () =>
+      records.filter(
+        (r) =>
+          (r.type === 'income' && r.category === 'Préstamos') ||
+          (r.type === 'expense' && r.category === 'Préstamos / Deudas'),
+      ),
+    [records],
+  );
 
   const handleCreate = () => {
     setEditingRecord(null);
@@ -44,7 +51,7 @@ export function FinancesView() {
   };
 
   const handleDelete = (id: string) => {
-    if (confirm('¿Estás seguro de que quieres eliminar este registro? Esta acción afectará los cálculos financieros.')) {
+    if (confirm('¿Seguro que deseas eliminar este registro personal? Esta acción afectará tus cálculos personales.')) {
       deleteRecord(id);
     }
   };
@@ -59,7 +66,7 @@ export function FinancesView() {
   };
 
   if (loading) {
-    return <div className="p-8 text-center">Cargando datos financieros...</div>;
+    return <div className="p-8 text-center">Cargando finanzas personales...</div>;
   }
 
   return (
@@ -67,17 +74,17 @@ export function FinancesView() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground tracking-tight">
-            Finanzas Ddreams 3D
+            Finanzas Personales
           </h1>
           <p className="text-muted-foreground mt-1">
-            Control de ingresos, gastos y flujo de caja del negocio
+            Control de ingresos, gastos y flujo de caja personal
           </p>
         </div>
         <div className="flex gap-3">
           <FinanceSyncButton 
             records={allRecords} 
             onSyncComplete={importRecords} 
-            storageKey="finance_records" 
+            storageKey="personal_finance_records" 
           />
           <Button onClick={handleCreate} className="gap-2 shadow-lg hover:shadow-xl transition-all">
             <Plus className="w-4 h-4" /> Nuevo Registro
@@ -108,11 +115,7 @@ export function FinancesView() {
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-semibold">Ingresos</h2>
             </div>
-            <FinanceTable 
-              records={incomeRecords} 
-              onEdit={handleEdit} 
-              onDelete={handleDelete} 
-            />
+            <FinanceTable records={incomeRecords} onEdit={handleEdit} onDelete={handleDelete} />
           </div>
         </TabsContent>
 
@@ -121,11 +124,7 @@ export function FinancesView() {
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-semibold">Gastos</h2>
             </div>
-            <FinanceTable 
-              records={expenseRecords} 
-              onEdit={handleEdit} 
-              onDelete={handleDelete} 
-            />
+            <FinanceTable records={expenseRecords} onEdit={handleEdit} onDelete={handleDelete} />
           </div>
         </TabsContent>
 
@@ -134,11 +133,7 @@ export function FinancesView() {
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-semibold">Financiamiento (Préstamos y Deudas)</h2>
             </div>
-            <FinanceTable 
-              records={financingRecords} 
-              onEdit={handleEdit} 
-              onDelete={handleDelete} 
-            />
+            <FinanceTable records={financingRecords} onEdit={handleEdit} onDelete={handleDelete} />
           </div>
         </TabsContent>
 
@@ -148,9 +143,9 @@ export function FinancesView() {
         </TabsContent>
       </Tabs>
 
-      <FinanceModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+      <FinanceModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
         record={editingRecord}
         onSave={handleSave}
       />

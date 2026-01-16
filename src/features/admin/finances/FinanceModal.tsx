@@ -9,6 +9,70 @@ import { Calendar, CheckCircle2, ChevronDown, ChevronUp, CreditCard, Layers, Pie
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
+const CATEGORIES_STORAGE_KEY = 'finance_categories_config_v1';
+const RESERVED_EXPENSE_CATEGORY = 'Retiros del dueño / Finanzas personales';
+const RESERVED_INCOME_CATEGORY = 'Ingreso desde Ddreams 3D';
+
+type CategoriesConfig = typeof FINANCE_CATEGORIES;
+
+const ensureReservedCategories = (config: CategoriesConfig): CategoriesConfig => {
+  const incomeSet = new Set(config.income);
+  incomeSet.add(RESERVED_INCOME_CATEGORY);
+
+  const production = Array.isArray(config.expense.production) ? config.expense.production : [];
+  const fixed = Array.isArray(config.expense.fixed) ? config.expense.fixed : [];
+  const variable = Array.isArray(config.expense.variable) ? config.expense.variable : [];
+
+  const fixedSet = new Set(fixed);
+  fixedSet.add(RESERVED_EXPENSE_CATEGORY);
+
+  return {
+    income: Array.from(incomeSet),
+    expense: {
+      production: [...production],
+      fixed: Array.from(fixedSet),
+      variable: [...variable],
+    },
+  };
+};
+
+const mergeCategoriesWithDefaults = (stored: any): CategoriesConfig => {
+  const base = ensureReservedCategories(FINANCE_CATEGORIES);
+
+  if (!stored || typeof stored !== 'object') {
+    return base;
+  }
+
+  const storedIncome = Array.isArray(stored.income) ? stored.income : base.income;
+  const storedExpense = stored.expense && typeof stored.expense === 'object' ? stored.expense : {};
+
+  const production = Array.isArray(storedExpense.production)
+    ? storedExpense.production
+    : base.expense.production;
+
+  const fixed = Array.isArray(storedExpense.fixed)
+    ? storedExpense.fixed
+    : base.expense.fixed;
+
+  const variable = Array.isArray(storedExpense.variable)
+    ? storedExpense.variable
+    : base.expense.variable;
+
+  return ensureReservedCategories({
+    income: storedIncome,
+    expense: {
+      production,
+      fixed,
+      variable,
+    },
+  });
+};
+
+const isReservedCategory = (name: string | undefined) => {
+  if (!name) return false;
+  return name === RESERVED_EXPENSE_CATEGORY || name === RESERVED_INCOME_CATEGORY;
+};
+
 interface FinanceModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -19,6 +83,41 @@ interface FinanceModalProps {
 export function FinanceModal({ isOpen, onClose, record, onSave }: FinanceModalProps) {
   const { formData, updateField, addItem, updateItem, removeItem } = useFinanceForm(record);
   const [showDetails, setShowDetails] = React.useState(false);
+  const [categoriesConfig, setCategoriesConfig] = React.useState<CategoriesConfig>(
+    ensureReservedCategories(FINANCE_CATEGORIES),
+  );
+  const [newCategoryName, setNewCategoryName] = React.useState('');
+
+  React.useEffect(() => {
+    try {
+      if (typeof window === 'undefined') {
+        return;
+      }
+      const stored = localStorage.getItem(CATEGORIES_STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        const merged = mergeCategoriesWithDefaults(parsed);
+        setCategoriesConfig(merged);
+      } else {
+        const initial = ensureReservedCategories(FINANCE_CATEGORIES);
+        setCategoriesConfig(initial);
+        localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(initial));
+      }
+    } catch {
+      const fallback = ensureReservedCategories(FINANCE_CATEGORIES);
+      setCategoriesConfig(fallback);
+    }
+  }, []);
+
+  const saveCategories = (next: CategoriesConfig) => {
+    setCategoriesConfig(next);
+    try {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(next));
+      }
+    } catch {
+    }
+  };
 
   const handleSave = () => {
     if (!formData.title || !formData.amount) {
@@ -46,10 +145,97 @@ export function FinanceModal({ isOpen, onClose, record, onSave }: FinanceModalPr
 
   // Calculate available categories based on type and expenseType
   const categories = React.useMemo(() => {
-    if (isIncome) return FINANCE_CATEGORIES.income;
-    if (formData.expenseType) return FINANCE_CATEGORIES.expense[formData.expenseType] || [];
+    if (isIncome) {
+      return categoriesConfig.income;
+    }
+    if (formData.expenseType) {
+      const list = categoriesConfig.expense[formData.expenseType];
+      return list || [];
+    }
     return [];
-  }, [isIncome, formData.expenseType]);
+  }, [isIncome, formData.expenseType, categoriesConfig]);
+
+  const handleAddCategory = () => {
+    const value = newCategoryName.trim();
+    if (!value) {
+      return;
+    }
+
+    if (isIncome) {
+      if (categoriesConfig.income.includes(value)) {
+        return;
+      }
+      const next = ensureReservedCategories({
+        income: [...categoriesConfig.income, value],
+        expense: categoriesConfig.expense,
+      });
+      saveCategories(next);
+      setNewCategoryName('');
+      updateField('category', value);
+      return;
+    }
+
+    if (!formData.expenseType) {
+      return;
+    }
+
+    const currentList = categoriesConfig.expense[formData.expenseType] || [];
+    if (currentList.includes(value)) {
+      return;
+    }
+
+    const nextExpense = {
+      ...categoriesConfig.expense,
+      [formData.expenseType]: [...currentList, value],
+    };
+
+    const next = ensureReservedCategories({
+      income: categoriesConfig.income,
+      expense: nextExpense,
+    });
+
+    saveCategories(next);
+    setNewCategoryName('');
+    updateField('category', value);
+  };
+
+  const handleRemoveSelectedCategory = () => {
+    const selected = formData.category;
+    if (!selected || isReservedCategory(selected)) {
+      return;
+    }
+
+    if (isIncome) {
+      const nextIncome = categoriesConfig.income.filter((c) => c !== selected);
+      const next = ensureReservedCategories({
+        income: nextIncome,
+        expense: categoriesConfig.expense,
+      });
+      saveCategories(next);
+      updateField('category', '');
+      return;
+    }
+
+    if (!formData.expenseType) {
+      return;
+    }
+
+    const currentList = categoriesConfig.expense[formData.expenseType] || [];
+    const nextList = currentList.filter((c) => c !== selected);
+
+    const nextExpense = {
+      ...categoriesConfig.expense,
+      [formData.expenseType]: nextList,
+    };
+
+    const next = ensureReservedCategories({
+      income: categoriesConfig.income,
+      expense: nextExpense,
+    });
+
+    saveCategories(next);
+    updateField('category', '');
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -199,6 +385,34 @@ export function FinanceModal({ isOpen, onClose, record, onSave }: FinanceModalPr
                     ))}
                   </SelectContent>
                 </Select>
+                <div className="flex items-center gap-2 mt-2">
+                  <input
+                    type="text"
+                    value={newCategoryName}
+                    onChange={(e) => setNewCategoryName(e.target.value)}
+                    placeholder="Nueva categoría"
+                    className="flex-1 px-2 py-1.5 rounded-lg border border-border bg-background text-xs"
+                  />
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={handleAddCategory}
+                    className="text-xs"
+                  >
+                    Añadir
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="ghost"
+                    onClick={handleRemoveSelectedCategory}
+                    disabled={!formData.category || isReservedCategory(formData.category)}
+                    className="text-[11px] text-destructive"
+                  >
+                    Quitar seleccionada
+                  </Button>
+                </div>
              </div>
 
              <div className="space-y-1.5">

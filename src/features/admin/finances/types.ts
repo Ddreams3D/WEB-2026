@@ -44,6 +44,10 @@ export interface FinanceRecord {
   // New Fields for Tracking
   expenseType?: 'production' | 'fixed' | 'variable';
   paymentPhase?: 'deposit' | 'final' | 'full';
+
+  // Sync Metadata
+  _deleted?: boolean;
+  _synced?: boolean;
 }
 
 export const FINANCE_CATEGORIES = {
@@ -53,7 +57,8 @@ export const FINANCE_CATEGORIES = {
     'Venta de Productos',
     'Consultoría',
     'Préstamos',
-    'Otros Ingresos'
+    'Otros Ingresos',
+    'Ingreso desde Ddreams 3D'
   ],
   expense: {
     production: [
@@ -69,7 +74,8 @@ export const FINANCE_CATEGORIES = {
       'Luz / Agua',
       'Software / Suscripciones',
       'Sueldos Fijos',
-      'Préstamos / Deudas'
+      'Préstamos / Deudas',
+      'Retiros del dueño / Finanzas personales'
     ],
     variable: [
       'Publicidad (Ads)',

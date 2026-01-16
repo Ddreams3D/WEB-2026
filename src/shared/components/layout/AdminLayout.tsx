@@ -15,7 +15,8 @@ import {
   Briefcase,
   ChevronLeft,
   ChevronRight,
-  LogOut
+  LogOut,
+  Wallet,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -47,7 +48,8 @@ const navigation = [
   { name: 'Servicios', href: '/admin/servicios', icon: Package },
   { name: 'Destacados', href: '/admin/projects', icon: Briefcase },
   { name: 'Marketing & Contenido', href: '/admin/contenido', icon: Sparkles },
-  { name: 'Finanzas', href: '/admin/finanzas', icon: DollarSign },
+  { name: 'Finanzas Ddreams 3D', href: '/admin/finanzas', icon: DollarSign },
+  { name: 'Finanzas Personales', href: '/admin/finanzas-personales', icon: Wallet },
   { name: 'Gestión', href: '/admin/gestion', icon: Users },
   { name: 'Configuración', href: '/admin/configuracion', icon: Settings },
 ];
