@@ -23,8 +23,21 @@ export function ServiceModalGeneral({
           <CardTitle className="text-lg">Información General</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-            <div className="space-y-2">
-                <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Descripción Corta</label>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Descripción Principal</label>
+            <textarea
+              name="description"
+              value={formData.description || ''}
+              onChange={handleChange}
+              rows={4}
+              className="w-full px-4 py-2 bg-background border border-input rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all resize-none"
+              placeholder="Descripción completa del servicio..."
+            />
+            <p className="text-xs text-muted-foreground">Esta es la descripción principal que aparece en el detalle del servicio.</p>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Descripción Corta</label>
                 <textarea
                     name="shortDescription"
                     value={formData.shortDescription || ''}

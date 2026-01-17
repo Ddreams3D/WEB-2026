@@ -32,7 +32,7 @@ interface OrganicUniversalForm {
 
 type OrganicStage = 'segmentation' | 'idea' | 'context' | 'details' | 'contact' | 'confirm';
 
-function buildOrganicUniversalMessage(form: OrganicUniversalForm) {
+function buildOrganicUniversalMessage(form: OrganicUniversalForm, copy: OrganicFormCopy, slug?: string) {
   const projectTypeLabelMap: Record<string, string> = {
     'figura-personalizada': 'Figura o personaje personalizado',
     'regalo-unico': 'Regalo único y especial',
@@ -44,14 +44,43 @@ function buildOrganicUniversalMessage(form: OrganicUniversalForm) {
     'no-definido-otro': 'No definido / Otro',
   };
 
-  let message = 'Hola, quiero cotizar un proyecto de modelado 3D personalizado.\n\n';
+  const getLabelForId = (id: string, options: { id: string; label: string }[]) => {
+    return options?.find((o) => o.id === id)?.label;
+  };
+
+  // Safety check to prevent crash if copy is undefined
+  const safeCopy = copy || ({} as OrganicFormCopy);
+
+  let intro = 'Hola, quiero cotizar un proyecto de modelado 3D personalizado.';
+  if (slug === 'merchandising-3d-personalizado') {
+    intro = 'Hola, quiero cotizar merchandising 3D personalizado.';
+  } else if (slug === 'trofeos-medallas-3d-personalizados') {
+    intro = 'Hola, quiero cotizar trofeos o medallas personalizadas.';
+  } else if (slug === 'maquetas-didacticas-material-educativo-3d') {
+    intro = 'Hola, quiero cotizar material didáctico o maquetas educativas.';
+  } else if (slug === 'proyectos-anatomicos-3d-personalizados') {
+    intro = 'Hola, quiero cotizar uno o varios modelos anatómicos 3D personalizados.';
+  }
+
+  let message = `${intro}\n\n`;
   message += 'Tipo de proyecto\n';
   if (form.projectType) {
-    const projectLabel = projectTypeLabelMap[form.projectType] || form.projectType;
+    // Try to find label in dynamic copy first, then fallback to map or raw ID
+    const dynamicLabel =
+      getLabelForId(form.projectType, safeCopy.ideaOptionsB2C || []) ||
+      getLabelForId(form.projectType, safeCopy.ideaOptionsB2B || []);
+    
+    const projectLabel = dynamicLabel || projectTypeLabelMap[form.projectType] || form.projectType;
     message += `• ${projectLabel}\n`;
   }
   message += '\nUso o contexto\n';
-  if (form.usageContext) message += `• ${form.usageContext}\n`;
+  if (form.usageContext) {
+     const dynamicContextLabel =
+      getLabelForId(form.usageContext, safeCopy.contextOptionsB2C || []) ||
+      getLabelForId(form.usageContext, safeCopy.contextOptionsB2B || []);
+      
+    message += `• ${dynamicContextLabel || form.usageContext}\n`;
+  }
   message += '\nDetalles del proyecto\n';
   if (form.projectDetails) message += `• Descripción: ${form.projectDetails}\n`;
   if (form.style) message += `• Estilo: ${form.style}\n`;
@@ -70,7 +99,7 @@ function buildOrganicUniversalMessage(form: OrganicUniversalForm) {
   return message;
 }
 
-function buildOrganicUiSummary(form: OrganicUniversalForm) {
+function buildOrganicUiSummary(form: OrganicUniversalForm, copy: OrganicFormCopy) {
   const chips: string[] = [];
   const projectTypeLabelMap: Record<string, string> = {
     'figura-personalizada': 'Figura o personaje personalizado',
@@ -83,12 +112,27 @@ function buildOrganicUiSummary(form: OrganicUniversalForm) {
     'no-definido-otro': 'No definido / Otro',
   };
 
+  const getLabelForId = (id: string, options: { id: string; label: string }[]) => {
+    return options?.find((o) => o.id === id)?.label;
+  };
+
+  // Safety check
+  const safeCopy = copy || ({} as OrganicFormCopy);
+
   if (form.projectType) {
-    chips.push(projectTypeLabelMap[form.projectType] || form.projectType);
+    const dynamicLabel =
+      getLabelForId(form.projectType, safeCopy.ideaOptionsB2C || []) ||
+      getLabelForId(form.projectType, safeCopy.ideaOptionsB2B || []);
+      
+    chips.push(dynamicLabel || projectTypeLabelMap[form.projectType] || form.projectType);
   }
 
   if (form.usageContext) {
-    chips.push(form.usageContext);
+     const dynamicContextLabel =
+      getLabelForId(form.usageContext, safeCopy.contextOptionsB2C || []) ||
+      getLabelForId(form.usageContext, safeCopy.contextOptionsB2B || []);
+      
+    chips.push(dynamicContextLabel || form.usageContext);
   }
 
   if (form.style) {
@@ -141,7 +185,7 @@ export function OrganicModelingServiceForm({ productSlug }: { productSlug: strin
     let active = true;
 
     const loadCopy = async () => {
-      const data = await fetchOrganicFormCopy();
+      const data = await fetchOrganicFormCopy(productSlug);
       if (!active) return;
       setCopy(data);
     };
@@ -151,9 +195,7 @@ export function OrganicModelingServiceForm({ productSlug }: { productSlug: strin
     return () => {
       active = false;
     };
-  }, []);
-
-  if (productSlug !== 'modelado-3d-personalizado') return null;
+  }, [productSlug]);
 
   const handleSegmentationSelect = (segment: 'b2c' | 'b2b') => {
     // Resetear form para evitar que queden datos "basura" de la otra rama
@@ -179,7 +221,7 @@ export function OrganicModelingServiceForm({ productSlug }: { productSlug: strin
   };
 
   const handleSubmit = () => {
-    const message = buildOrganicUniversalMessage(form);
+    const message = buildOrganicUniversalMessage(form, copy, productSlug);
     const encoded = encodeURIComponent(message);
     
     // Clean phone number (remove non-digits)
@@ -193,6 +235,7 @@ export function OrganicModelingServiceForm({ productSlug }: { productSlug: strin
       location: AnalyticsLocations.SERVICE_FORM,
       page_type: 'service',
       form_id: 'organic_modeling',
+      service_slug: productSlug,
       client_type: form.contactType,
       client_segment: form.clientSegment,
     });
@@ -207,6 +250,7 @@ export function OrganicModelingServiceForm({ productSlug }: { productSlug: strin
       location: AnalyticsLocations.SERVICE_FORM,
       page_type: 'service',
       form_id: 'organic_modeling',
+      service_slug: productSlug,
       client_type: form.contactType,
       client_segment: form.clientSegment,
     });
@@ -251,7 +295,7 @@ export function OrganicModelingServiceForm({ productSlug }: { productSlug: strin
     setProjectDetailsRows(nextRows);
   };
 
-  const uiSummary = buildOrganicUiSummary(form);
+  const uiSummary = buildOrganicUiSummary(form, copy);
 
   return (
     <section id="cotizar" className="space-y-6 rounded-2xl border border-border bg-card/60 p-5 lg:p-6 shadow-sm transition-all duration-300">

@@ -22,7 +22,7 @@ export function ProductInfo({ product, onShare }: ProductInfoProps) {
           <h1 className="text-3xl lg:text-4xl font-extrabold text-foreground mb-2 lg:mb-3 tracking-tight leading-tight">
             {product.name}
           </h1>
-          {product.kind === 'service' && product.slug === 'modelado-3d-personalizado'
+          {product.kind === 'service' && (product.slug === 'modelado-3d-personalizado' || product.slug === 'merchandising-3d-personalizado' || product.slug === 'trofeos-medallas-3d-personalizados' || product.slug === 'maquetas-didacticas-material-educativo-3d' || product.slug === 'proyectos-anatomicos-3d-personalizados')
             ? (product.description || product.shortDescription) && (
                 <h2 className="text-lg lg:text-xl font-medium text-muted-foreground mb-3 lg:mb-4 leading-relaxed">
                   {product.description || product.shortDescription}

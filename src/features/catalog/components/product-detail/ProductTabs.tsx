@@ -11,7 +11,15 @@ interface ProductTabsProps {
 }
 
 export function ProductTabs({ product, activeTab, setActiveTab }: ProductTabsProps) {
-  if (!product.tabs) return null;
+  if (!product.tabs || product.tabs.length === 0) return null;
+
+  const tabsWithContent = product.tabs.filter(tab => {
+    const hasDescription = typeof tab.description === 'string' && tab.description.trim().length > 0;
+    const hasFeatures = Array.isArray(tab.features) && tab.features.length > 0;
+    return hasDescription || hasFeatures;
+  });
+
+  if (tabsWithContent.length === 0) return null;
 
   return (
     <div className="space-y-6">
@@ -24,7 +32,7 @@ export function ProductTabs({ product, activeTab, setActiveTab }: ProductTabsPro
 
       {/* Selector de Tabs */}
       <div className="flex space-x-3 rounded-xl bg-transparent p-1">
-        {product.tabs.map((tab) => (
+        {tabsWithContent.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
@@ -41,7 +49,11 @@ export function ProductTabs({ product, activeTab, setActiveTab }: ProductTabsPro
       </div>
 
       {/* Contenido de Tabs */}
-      {product.tabs.map((tab) => (
+      {tabsWithContent.map((tab) => {
+        const hasDescription = typeof tab.description === 'string' && tab.description.trim().length > 0;
+        const hasFeatures = Array.isArray(tab.features) && tab.features.length > 0;
+
+        return (
         <div
           key={tab.id}
           className={cn(
@@ -49,27 +61,31 @@ export function ProductTabs({ product, activeTab, setActiveTab }: ProductTabsPro
             activeTab === tab.id ? "block" : "hidden"
           )}
         >
-          <div className="prose prose-lg dark:prose-invert max-w-none text-muted-foreground leading-relaxed">
-            <p className="whitespace-pre-line">{tab.description}</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-primary/5 rounded-xl p-5 border border-primary/10 md:col-span-2">
-              <h3 className="font-semibold text-primary mb-3 flex items-center gap-2">
-                <Star className="w-4 h-4" /> Características
-              </h3>
-              <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
-                {tab.features?.map((item, idx) => (
-                  <li key={idx} className="flex items-start gap-2 text-sm text-primary/80">
-                    <span className="mt-1.5 w-1 h-1 rounded-full bg-primary flex-shrink-0" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
+          {hasDescription && (
+            <div className="prose prose-lg dark:prose-invert max-w-none text-muted-foreground leading-relaxed">
+              <p className="whitespace-pre-line">{tab.description}</p>
             </div>
-          </div>
+          )}
+
+          {hasFeatures && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-primary/5 rounded-xl p-5 border border-primary/10 md:col-span-2">
+                <h3 className="font-semibold text-primary mb-3 flex items-center gap-2">
+                  <Star className="w-4 h-4" /> Características
+                </h3>
+                <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
+                  {tab.features?.map((item, idx) => (
+                    <li key={idx} className="flex items-start gap-2 text-sm text-primary/80">
+                      <span className="mt-1.5 w-1 h-1 rounded-full bg-primary flex-shrink-0" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
         </div>
-      ))}
+      )})}
     </div>
   );
 }

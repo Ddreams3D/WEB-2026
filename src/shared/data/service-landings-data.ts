@@ -63,9 +63,31 @@ export const SERVICE_LANDINGS_DATA: ServiceLandingConfig[] = [
       {
         id: 'hero',
         type: 'hero',
-        title: 'Merchandising Corporativo 3D',
-        subtitle: 'Regalos empresariales que dejan huella',
-        content: 'Destaca tu marca con productos personalizados impresos en 3D que tus clientes querrán conservar.',
+        title: '',
+        subtitle: '',
+        content: '',
+      },
+      {
+        id: 'features',
+        type: 'features',
+        title: '',
+        items: [
+          {
+            title: '',
+            description: '',
+            icon: ''
+          },
+          {
+            title: '',
+            description: '',
+            icon: ''
+          },
+          {
+            title: '',
+            description: '',
+            icon: ''
+          }
+        ]
       }
     ],
     createdAt: new Date().toISOString(),

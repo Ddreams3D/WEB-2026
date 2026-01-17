@@ -224,10 +224,10 @@
     "displayOrder": 4,
     "slug": "merchandising-3d-personalizado",
     "name": "Merchandising 3D Personalizado",
-    "description": "Servicio de diseño y fabricación de merchandising personalizado, ideal para regalos, productos únicos y piezas promocionales desarrolladas desde cero. Creamos objetos personalizados a partir de una idea, referencia o concepto, con diseño exclusivo y fabricación mediante impresión 3D.",
-    "shortDescription": "Diseño, modelado y fabricación de productos personalizados para marcas y empresas",
+    "description": "",
+    "shortDescription": "",
     "price": 0,
-    "customPriceDisplay": "Cotización según diseño y tamaño",
+    "customPriceDisplay": "",
     "currency": "PEN",
     "categoryId": "arte-diseno",
     "categoryName": "Arte y Diseño",
@@ -280,30 +280,30 @@
       }
     ],
     "specifications": [
-      { "name": "Enfoque", "value": "Diseño y modelado de productos personalizados, Fabricación mediante impresión 3D, Producción seriada por lotes" },
-      { "name": "Materiales", "value": "PLA, Resina (según diseño y acabado requerido)" }
+      { "name": "Enfoque", "value": "" },
+      { "name": "Materiales", "value": "" }
     ],
-    "tabsTitle": "ESTE SERVICIO SE ADAPTA SEGÚN EL TIPO DE CLIENTE",
+    "tabsTitle": "",
     "tabs": [
       {
         "id": "b2c",
         "label": "General / Personas (B2C)",
-        "description": "Servicio de diseño y fabricación de merchandising personalizado, ideal para regalos, productos únicos y piezas promocionales desarrolladas desde cero.\nCreamos objetos personalizados a partir de una idea, referencia o concepto, con diseño exclusivo y fabricación mediante impresión 3D, permitiendo alto nivel de personalización y producción bajo pedido.",
-        "idealFor": ["Regalos personalizados", "Productos únicos desarrollados desde cero", "Piezas promocionales de pequeña escala"],
-        "conditions": ["Cotización según diseño y tamaño", "Fabricación bajo pedido", "Personalización de forma, texto y detalles"],
-        "ctaText": "Crear merchandising",
+        "description": "",
+        "idealFor": [],
+        "conditions": [],
+        "ctaText": "",
         "ctaAction": "whatsapp",
-        "whatsappMessage": "Hola, quiero crear merchandising 3D personalizado para uso personal o como regalo.\n\nTipo de producto\nCantidad aproximada\nEstilo o colores\nFecha aproximada"
+        "whatsappMessage": ""
       },
       {
         "id": "b2b",
         "label": "Empresas / B2B",
-        "description": "Servicio profesional de merchandising personalizado para empresas, enfocado en el diseño, modelado y fabricación de productos corporativos mediante impresión 3D.\nDesarrollamos llaveros, productos promocionales, piezas de marca y objetos personalizados desde cero, alineados a la identidad visual y objetivos de cada empresa.\n\nLa impresión 3D permite producir series pequeñas y medianas, optimizar costos y adaptar cada diseño a campañas, eventos o activaciones de marca.\n\nProducción seriada disponible tras validación del diseño.",
-        "idealFor": ["Merchandising corporativo personalizado", "Llaveros y productos promocionales", "Regalos empresariales y activaciones de marca", "Eventos, ferias y campañas comerciales"],
-        "conditions": ["Cotización según diseño, cantidad y acabados", "Producción por lotes", "Diseño exclusivo por proyecto"],
-        "ctaText": "Solicitar productos promocionales",
+        "description": "",
+        "idealFor": [],
+        "conditions": [],
+        "ctaText": "",
         "ctaAction": "whatsapp",
-        "whatsappMessage": "Hola, quiero solicitar merchandising 3D personalizado para una marca o empresa.\n\nEmpresa o marca\nTipo de producto\nCantidad\nSi incluye logo o branding\nFecha del evento o entrega"
+        "whatsappMessage": ""
       }
     ],
     "isActive": true,

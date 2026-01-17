@@ -55,6 +55,16 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
     handlePrevImage
   } = useProductDetail(initialProduct);
 
+  const isServiceDetail = product.kind === 'service';
+
+  let backHref = '/catalogo-impresion-3d';
+  let backLabel = 'Volver al Catálogo';
+
+  if (fromSource === 'services' || isServiceDetail) {
+    backHref = '/services';
+    backLabel = 'Volver a Servicios';
+  }
+
   // Keyboard navigation for modal
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -68,10 +78,23 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isModalOpen, handleNextImage, handlePrevImage, setIsModalOpen]);
 
-  const backHref = fromSource === 'services' ? '/services' : '/catalogo-impresion-3d';
-  const backLabel = fromSource === 'services' ? 'Volver a Servicios' : 'Volver al Catálogo';
-
   if (product.kind === 'service') {
+    const isWizardService =
+      product.slug === 'modelado-3d-personalizado' ||
+      product.slug === 'merchandising-3d-personalizado' ||
+      product.slug === 'trofeos-medallas-3d-personalizados' ||
+      product.slug === 'maquetas-didacticas-material-educativo-3d' ||
+      product.slug === 'proyectos-anatomicos-3d-personalizados';
+    const landingSlug =
+      product.slug === 'merchandising-3d-personalizado'
+        ? 'merchandising-corporativo-3d'
+        : product.slug === 'trofeos-medallas-3d-personalizados'
+        ? 'trofeos-personalizados-3d'
+        : product.slug === 'maquetas-didacticas-material-educativo-3d'
+        ? 'maquetas-3d'
+        : product.slug === 'proyectos-anatomicos-3d-personalizados'
+        ? 'modelos-anatomicos-3d'
+        : product.slug;
     return (
       <div className="container mx-auto px-4 pt-24 pb-12 lg:pt-32 lg:pb-20 max-w-7xl font-sans text-foreground">
         <Button
@@ -105,10 +128,10 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
           </div>
 
           <div className="space-y-10">
-            {product.slug === 'modelado-3d-personalizado' && (
+            {isWizardService && (
               <div className="space-y-3">
                 <Link
-                  href="/servicios/modelado-3d-personalizado"
+                  href={`/servicios/${landingSlug}`}
                   className="inline-flex items-center text-xs font-medium text-primary hover:text-primary/80 hover:underline underline-offset-4"
                 >
                   <ArrowLeft className="w-3 h-3 mr-1" />
@@ -116,7 +139,15 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
                 </Link>
                 <div className="space-y-2">
                   <p className="text-base lg:text-lg font-semibold text-foreground">
-                    Configura tu proyecto de modelado 3D
+                    {product.slug === 'modelado-3d-personalizado'
+                      ? 'Configura tu proyecto de modelado 3D'
+                      : product.slug === 'merchandising-3d-personalizado'
+                      ? 'Configura tu proyecto de merchandising 3D'
+                      : product.slug === 'maquetas-didacticas-material-educativo-3d'
+                      ? 'Configura tu proyecto educativo o maqueta didáctica'
+                      : product.slug === 'proyectos-anatomicos-3d-personalizados'
+                      ? 'Configura tu proyecto anatómico 3D'
+                      : 'Configura tu trofeo o medalla 3D'}
                   </p>
                   <p className="text-xs lg:text-sm text-muted-foreground">
                     Cuéntanos tu idea en pasos simples y la cotizamos.
@@ -125,7 +156,7 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
               </div>
             )}
 
-            {product.slug === 'modelado-3d-personalizado' ? (
+            {isWizardService ? (
               <OrganicModelingServiceForm productSlug={product.slug} />
             ) : (
               <section id="cotizar" className="space-y-6 rounded-2xl border border-border bg-card/60 p-5 lg:p-6 shadow-sm">
@@ -143,22 +174,24 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
               </section>
             )}
 
-            {product.slug !== 'modelado-3d-personalizado' && (
+            {!isWizardService && (
               <ProductPrice
                 product={product}
                 currentPrice={currentPrice}
               />
             )}
 
-            <ProductOptions
-              product={product}
-              selectedOptions={selectedOptions}
-              customInputs={customInputs}
-              handleOptionChange={handleOptionChange}
-              setCustomInputs={setCustomInputs}
-            />
+            {!isWizardService && (
+              <ProductOptions
+                product={product}
+                selectedOptions={selectedOptions}
+                customInputs={customInputs}
+                handleOptionChange={handleOptionChange}
+                setCustomInputs={setCustomInputs}
+              />
+            )}
 
-            {product.slug !== 'modelado-3d-personalizado' && (
+            {!isWizardService && (
               <ProductSpecifications product={product} />
             )}
 

@@ -26,14 +26,9 @@ const FIRESTORE_TIMEOUT = 5000; // 5s timeout for Admin/Explicit fetches
 // In-memory cache
 let servicesCache: { data: Service[], timestamp: number } | null = null;
 
-/**
- * Helper to convert Firestore data or JSON to Service object.
- * Handles Date/Timestamp conversion.
- */
 const mapToService = (data: DocumentData): Service => {
-  return {
+  const base: Service = {
     ...data,
-    // Ensure kind is 'service'
     kind: 'service',
     isService: true,
     createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate() : new Date(data.createdAt),
@@ -45,6 +40,79 @@ const mapToService = (data: DocumentData): Service => {
       updatedAt: img.updatedAt instanceof Timestamp ? img.updatedAt.toDate() : new Date(img.updatedAt),
     })) || []
   } as Service;
+
+  if (base.slug === 'merchandising-3d-personalizado') {
+    const specs =
+      base.specifications && base.specifications.length > 0
+        ? base.specifications
+        : [
+            {
+              name: 'Enfoque',
+              value:
+                'Diseño y fabricación de merchandising 3D personalizado para regalos, campañas y activaciones de marca.'
+            },
+            {
+              name: 'Materiales',
+              value:
+                'PLA y resina 3D, seleccionados según el tipo de pieza y acabado requerido.'
+            }
+          ];
+
+    const tabs =
+      base.tabs && base.tabs.length > 0
+        ? base.tabs
+        : [
+            {
+              id: 'b2c',
+              label: 'General / Personas (B2C)',
+              description:
+                'Servicio de diseño y fabricación de merchandising 3D personalizado, ideal para regalos únicos, detalles especiales y piezas creativas desarrolladas desde cero. Te ayudamos a convertir tu idea en un objeto físico que puedas regalar, coleccionar o usar como pieza decorativa.',
+              features: [
+                'Desarrollo de ideas a partir de referencias o conceptos simples',
+                'Personalización de forma, colores y detalles',
+                'Producción bajo pedido en cantidades pequeñas o unitarias'
+              ],
+              ctaText: 'Crear merchandising 3D',
+              ctaAction: 'whatsapp',
+              whatsappMessage:
+                'Hola, quiero crear merchandising 3D personalizado para uso personal o como regalo.\n\nTipo de producto que tienes en mente\nCantidad aproximada que necesitas\nColores o estilo que te gustaría\nFecha aproximada en la que lo necesitas\nSi tienes fotos o referencias, las puedo enviar luego.'
+            },
+            {
+              id: 'b2b',
+              label: 'Empresas / B2B',
+              description:
+                'Servicio de merchandising 3D corporativo para marcas y empresas. Diseñamos y fabricamos productos promocionales, llaveros, piezas de branding y elementos especiales para eventos, ferias o campañas, alineados a la identidad visual de tu marca.',
+              features: [
+                'Desarrollo de piezas con logo y elementos de identidad de marca',
+                'Producción por lotes para eventos, campañas o equipos',
+                'Opciones de acabado y presentación para uso corporativo'
+              ],
+              ctaText: 'Solicitar productos promocionales',
+              ctaAction: 'whatsapp',
+              whatsappMessage:
+                'Hola, quiero solicitar merchandising 3D personalizado para una marca o empresa.\n\nNombre de la empresa o marca\nTipo de producto o pieza que necesitas\nCantidad aproximada (ej. 20, 50, 100+)\nSi incluirá logo o elementos de branding\nFecha del evento o fecha ideal de entrega'
+            }
+          ];
+
+    return {
+      ...base,
+      description:
+        base.description ||
+        'Diseño, modelado y fabricación de merchandising 3D personalizado para personas y empresas, desde ideas simples hasta piezas listas para producción.',
+      shortDescription:
+        base.shortDescription ||
+        'Merchandising 3D personalizado para regalos, campañas y marca.',
+      customPriceDisplay:
+        base.customPriceDisplay || 'Cotización según diseño, cantidad y acabado',
+      specifications: specs,
+      tabsTitle:
+        base.tabsTitle ||
+        'ESTE SERVICIO SE ADAPTA SEGÚN EL TIPO DE CLIENTE',
+      tabs
+    };
+  }
+
+  return base;
 };
 
 const mapToFirestore = (data: Service): DocumentData => {

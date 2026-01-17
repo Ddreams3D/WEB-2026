@@ -14,24 +14,15 @@ export function ServiceModalDetails({
   handleChange,
   updateSpecs
 }: ServiceModalDetailsProps) {
-  const isOrganicService = formData.slug === 'modelado-3d-personalizado';
+  const isOrganicService =
+    formData.slug === 'modelado-3d-personalizado' ||
+    formData.slug === 'merchandising-3d-personalizado' ||
+    formData.slug === 'trofeos-medallas-3d-personalizados' ||
+    formData.slug === 'maquetas-didacticas-material-educativo-3d' ||
+    formData.slug === 'proyectos-anatomicos-3d-personalizados';
 
   return (
     <div className="space-y-6">
-      <div className="space-y-2">
-        <label className="text-sm font-medium">Descripción principal</label>
-        <p className="text-xs text-muted-foreground mb-1">
-          Este texto se usa como descripción principal del servicio.
-        </p>
-        <textarea
-          name="description"
-          value={formData.description || ''}
-          onChange={handleChange}
-          rows={6}
-          className="w-full px-4 py-2 border rounded-lg dark:bg-neutral-700 font-mono text-sm"
-        />
-      </div>
-
       {!isOrganicService && (
         <div className="space-y-2">
           <label className="text-sm font-medium">Especificaciones Técnicas</label>

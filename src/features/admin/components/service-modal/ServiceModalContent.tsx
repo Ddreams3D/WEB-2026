@@ -31,9 +31,9 @@ const buildRawConfigText = (copy: OrganicFormCopy) => {
   const instructions = [
     'Instrucciones de edición (lee antes de modificar):',
     '',
-    '- Puedes añadir, editar o eliminar opciones dentro de los arrays ideaOptionsB2C, ideaOptionsB2B, contextOptionsB2C y contextOptionsB2B, así como cambiar cualquier texto de los pasos existentes.',
-    '- No se pueden crear pasos nuevos desde aquí: la estructura del formulario se define en el código, este texto solo controla el contenido.',
-    '- Ten cuidado al modificar los identificadores (id) de las opciones; los usamos para mantener la estructura interna.',
+    '- Puedes añadir, editar o eliminar opciones dentro de los arrays ideaOptionsB2C, ideaOptionsB2B, contextOptionsB2C y contextOptionsB2B.',
+    '- IMPORTANTE: Ahora puedes crear nuevos IDs para tus opciones. El sistema usará automáticamente el "label" que definas aquí para los correos y resúmenes.',
+    '- No se pueden crear pasos nuevos (pantallas) desde aquí: la estructura del flujo (Segmentación -> Idea -> Contexto...) es fija.',
     '',
     '--- JSON DEL FORMULARIO (no borres esta línea) ---',
     '',
@@ -51,7 +51,12 @@ export function ServiceModalContent({
   updateTab,
   removeTab
 }: ServiceModalContentProps) {
-  const isOrganicService = formData.slug === 'modelado-3d-personalizado';
+  const isWizardService =
+    formData.slug === 'modelado-3d-personalizado' ||
+    formData.slug === 'merchandising-3d-personalizado' ||
+    formData.slug === 'trofeos-medallas-3d-personalizados' ||
+    formData.slug === 'maquetas-didacticas-material-educativo-3d' ||
+    formData.slug === 'proyectos-anatomicos-3d-personalizados';
   const [organicCopy, setOrganicCopy] = useState<OrganicFormCopy>(DEFAULT_ORGANIC_FORM_COPY);
   const [loadingCopy, setLoadingCopy] = useState(false);
   const [savingCopy, setSavingCopy] = useState(false);
@@ -108,13 +113,13 @@ export function ServiceModalContent({
   };
 
   useEffect(() => {
-    if (!isOrganicService) return;
+    if (!isWizardService) return;
 
     let active = true;
     const load = async () => {
       try {
         setLoadingCopy(true);
-        const data = await fetchOrganicFormCopy();
+        const data = await fetchOrganicFormCopy(formData.slug);
         if (!active) return;
         setOrganicCopy(data);
       } catch (error: any) {
@@ -133,7 +138,7 @@ export function ServiceModalContent({
     return () => {
       active = false;
     };
-  }, [isOrganicService, showError]);
+  }, [isWizardService, formData.slug, showError]);
 
   useEffect(() => {
     setRawConfig(buildRawConfigText(organicCopy));
@@ -176,7 +181,7 @@ export function ServiceModalContent({
   const handleSaveOrganicCopy = async () => {
     try {
       setSavingCopy(true);
-      await saveOrganicFormCopy(organicCopy);
+      await saveOrganicFormCopy(organicCopy, formData.slug);
       showSuccess('Formulario actualizado', 'Los textos del formulario se han guardado correctamente.');
     } catch (error: any) {
       showError('Error al guardar', error?.message || 'No se pudieron guardar los cambios.');
@@ -185,7 +190,7 @@ export function ServiceModalContent({
     }
   };
 
-  if (isOrganicService) {
+  if (isWizardService) {
     return (
       <div className="space-y-6">
         <div className="space-y-1.5">

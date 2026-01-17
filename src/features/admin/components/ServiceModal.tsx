@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import type { LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Plus, Info, FileText, Layers, Tag, Save, ArrowLeft, LayoutGrid, Box, Check, Eye, Image as ImageIcon } from 'lucide-react';
 import { Service } from '@/shared/types/domain';
@@ -47,17 +48,31 @@ export default function ServiceModal({ isOpen, onClose, onSave, service }: Servi
     updateTags
   } = useServiceForm({ service, onSave, onClose });
 
-  // --- RENDER HELPERS ---
+  const currentSlug = formData.slug || service?.slug;
   const isOrganicService =
-    (formData.slug || service?.slug) === 'modelado-3d-personalizado';
+    currentSlug === 'modelado-3d-personalizado' ||
+    currentSlug === 'merchandising-3d-personalizado' ||
+    currentSlug === 'trofeos-medallas-3d-personalizados' ||
+    currentSlug === 'maquetas-didacticas-material-educativo-3d' ||
+    currentSlug === 'proyectos-anatomicos-3d-personalizados';
 
-  const sections = [
+  type Section = {
+    id: string;
+    label: string;
+    icon: LucideIcon;
+  };
+
+  const allSections: Section[] = [
     { id: 'info', label: 'Info Básica', icon: LayoutGrid },
     { id: 'details', label: 'Detalles', icon: Box },
     { id: 'content', label: 'Contenido', icon: FileText },
     { id: 'images', label: 'Imágenes', icon: ImageIcon },
     { id: 'seo', label: 'SEO', icon: Tag },
   ];
+
+  const sections = isOrganicService
+    ? allSections.filter(section => section.id !== 'details')
+    : allSections;
 
   // Helper to construct preview service from formData
   const previewService: Service = {

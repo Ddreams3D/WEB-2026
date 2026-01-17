@@ -20,7 +20,7 @@ export function InboxModal({ isOpen, onClose, onSave, mode = 'all' }: InboxModal
   const [items, setItems] = useState<InboxItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState<string | null>(null);
-  
+
   // State for the approval flow
   const [selectedItem, setSelectedItem] = useState<InboxItem | null>(null);
   const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
@@ -30,26 +30,26 @@ export function InboxModal({ isOpen, onClose, onSave, mode = 'all' }: InboxModal
   // Load items when modal opens
   useEffect(() => {
     if (isOpen) {
-      loadInbox();
-    }
-  }, [isOpen]);
+      const load = async () => {
+        setLoading(true);
+        try {
+          const data = await InboxService.getInbox();
+          const filtered = data.filter((item) => {
+            if (mode === 'personal') return item.context === 'personal';
+            if (mode === 'business') return item.context !== 'personal';
+            return true;
+          });
+          setItems(filtered.sort((a, b) => b.createdAt - a.createdAt));
+        } catch (error) {
+          console.error('Failed to load inbox', error);
+        } finally {
+          setLoading(false);
+        }
+      };
 
-  const loadInbox = async () => {
-    setLoading(true);
-    try {
-      const data = await InboxService.getInbox();
-      const filtered = data.filter((item) => {
-        if (mode === 'personal') return item.context === 'personal';
-        if (mode === 'business') return item.context !== 'personal';
-        return true;
-      });
-      setItems(filtered.sort((a, b) => b.createdAt - a.createdAt));
-    } catch (error) {
-      console.error('Failed to load inbox', error);
-    } finally {
-      setLoading(false);
+      load();
     }
-  };
+  }, [isOpen, mode]);
 
   const handleApproveClick = (item: InboxItem) => {
     setSelectedItem(item);
