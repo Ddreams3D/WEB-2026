@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, createContext, useContext } from 'react';
+import React, { useState, createContext, useContext, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -17,6 +17,8 @@ import {
   ChevronRight,
   LogOut,
   Wallet,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -65,10 +67,30 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [adminDarkMode, setAdminDarkMode] = useState(false);
   const pathname = usePathname();
   const { user, logout } = useAuth();
 
   const toggleFullscreen = () => setIsFullscreen(!isFullscreen);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const stored = localStorage.getItem('adminDarkMode');
+      if (stored !== null) {
+        setAdminDarkMode(JSON.parse(stored));
+      }
+    } catch {
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      localStorage.setItem('adminDarkMode', JSON.stringify(adminDarkMode));
+    } catch {
+    }
+  }, [adminDarkMode]);
 
   // Determine if we should show the connection status badge
   const showConnectionStatus = 
@@ -221,7 +243,30 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   return (
     <AdminLayoutContext.Provider value={{ isFullscreen, setFullscreen: setIsFullscreen, toggleFullscreen }}>
-      <div className="min-h-screen bg-muted/5 flex">
+      <div
+        className="min-h-screen flex bg-background text-foreground"
+        style={adminDarkMode ? {
+          // Dark admin palette (inspirado en landing "trophies")
+          // Fondos
+          ['--background' as any]: '222.2 84% 4.9%',
+          ['--card' as any]: '222.2 84% 4.9%',
+          ['--popover' as any]: '222.2 84% 4.9%',
+          // Textos
+          ['--foreground' as any]: '210 40% 98%',
+          ['--card-foreground' as any]: '210 40% 98%',
+          ['--popover-foreground' as any]: '210 40% 98%',
+          // Elementos secundarios / muted
+          ['--secondary' as any]: '217.2 32.6% 17.5%',
+          ['--secondary-foreground' as any]: '210 40% 98%',
+          ['--muted' as any]: '217.2 32.6% 17.5%',
+          ['--muted-foreground' as any]: '215 20.2% 65.1%',
+          ['--accent' as any]: '217.2 32.6% 17.5%',
+          ['--accent-foreground' as any]: '210 40% 98%',
+          // Bordes / inputs
+          ['--border' as any]: '217.2 32.6% 17.5%',
+          ['--input' as any]: '217.2 32.6% 17.5%',
+        } : undefined}
+      >
         {/* Mobile sidebar overlay */}
         {!isFullscreen && sidebarOpen && (
           <div 
@@ -281,6 +326,19 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 </div>
                 
                 <div className="flex items-center space-x-3 sm:space-x-4">
+                  <button
+                    type="button"
+                    onClick={() => setAdminDarkMode(!adminDarkMode)}
+                    className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-muted transition-colors"
+                    aria-label={adminDarkMode ? 'Cambiar a modo claro (solo admin)' : 'Cambiar a modo oscuro (solo admin)'}
+                    title={adminDarkMode ? 'Cambiar a modo claro (solo admin)' : 'Cambiar a modo oscuro (solo admin)'}
+                  >
+                    {adminDarkMode ? (
+                      <Sun className="w-4 h-4" />
+                    ) : (
+                      <Moon className="w-4 h-4" />
+                    )}
+                  </button>
                   {showConnectionStatus && (
                     <div className="hidden md:block mr-2">
                       <ConnectionStatus />

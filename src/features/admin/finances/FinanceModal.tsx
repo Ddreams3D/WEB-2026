@@ -5,7 +5,7 @@ import { Button, Dialog, DialogContent, Select, SelectContent, SelectItem, Selec
 import { FinanceRecord, FINANCE_CATEGORIES, PAYMENT_METHODS } from './types';
 import { useFinanceForm } from './hooks/useFinanceForm';
 import { FinanceModalItems } from '@/features/admin/finances/components/FinanceModalItems';
-import { Calendar, CheckCircle2, ChevronDown, ChevronUp, CreditCard, Layers, PieChart, Tag, TrendingDown, TrendingUp, X } from 'lucide-react';
+import { Calendar, CheckCircle2, ChevronDown, ChevronUp, CreditCard, Layers, PieChart, Tag, TrendingDown, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -71,6 +71,12 @@ const mergeCategoriesWithDefaults = (stored: any): CategoriesConfig => {
 const isReservedCategory = (name: string | undefined) => {
   if (!name) return false;
   return name === RESERVED_EXPENSE_CATEGORY || name === RESERVED_INCOME_CATEGORY;
+};
+
+const STATUS_LABELS: Record<string, string> = {
+  paid: 'Pagado / Completado',
+  pending: 'Pendiente',
+  cancelled: 'Anulado',
 };
 
 interface FinanceModalProps {
@@ -240,52 +246,61 @@ export function FinanceModal({ isOpen, onClose, record, onSave }: FinanceModalPr
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl p-0 overflow-hidden gap-0 bg-card border-none shadow-2xl">
-        {/* Header Background */}
+      <DialogContent className="max-w-3xl p-0 gap-0 bg-card border-none shadow-2xl max-h-[90vh] overflow-y-auto">
         <div className={cn(
           "h-2 w-full",
           isIncome ? "bg-emerald-500" : "bg-rose-500"
         )} />
         
-        <div className="p-6 space-y-8 max-h-[90vh] overflow-y-auto">
-          {/* Header & Title Section */}
-          <div className="flex justify-between items-start">
+        <div className="p-5 sm:p-6 space-y-6 sm:space-y-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="space-y-1">
-              <h2 className="text-lg font-semibold text-muted-foreground">
-                {record ? 'Editar Transacción' : 'Nueva Transacción'}
+              <h2 className="text-lg sm:text-xl font-semibold text-foreground break-words">
+                {record ? 'Editar transacción' : 'Nueva transacción'}
               </h2>
+              <p className="text-xs text-muted-foreground">
+                Completa los datos principales y luego los detalles opcionales.
+              </p>
             </div>
-            <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full hover:bg-muted">
-              <X className="w-5 h-5" />
-            </Button>
+            <div className="flex items-center gap-2">
+              <span className={cn(
+                "px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wide",
+                isIncome ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-rose-50 text-rose-700 border border-rose-200"
+              )}>
+                {isIncome ? 'Ingreso' : 'Gasto'}
+              </span>
+            </div>
           </div>
 
-          {/* Main Input Area - Hero Style */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6 bg-muted/30 rounded-2xl p-4 sm:p-5">
             <div className="relative group">
               <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 block pl-1">
                 Concepto / Título
               </label>
-              <input 
-                type="text"
-                placeholder="Ej. Pago de servicio..."
-                className="w-full text-2xl font-bold bg-transparent border-b-2 border-border focus:border-primary focus:outline-none py-2 px-1 placeholder:text-muted-foreground/30 transition-colors"
-                value={formData.title}
-                onChange={(e) => updateField('title', e.target.value)}
-                autoFocus={!record}
-              />
+              <div className="flex items-start gap-3 rounded-2xl bg-background/80 border border-border/60 px-3.5 py-3 focus-within:border-primary/60 focus-within:ring-1 focus-within:ring-primary/20 transition-all">
+                <div className="mt-1 text-muted-foreground">
+                  <Tag className="w-4 h-4" />
+                </div>
+                <textarea
+                  rows={2}
+                  placeholder="Ej. Pago de servicio de hosting para cliente..."
+                  className="w-full bg-transparent text-base sm:text-lg font-medium leading-relaxed resize-none outline-none placeholder:text-muted-foreground/50 break-words"
+                  value={formData.title || ''}
+                  onChange={(e) => updateField('title', e.target.value)}
+                  autoFocus={!record}
+                />
+              </div>
             </div>
 
-            <div className="flex gap-4">
-              {/* Type Selector */}
-              <div className="flex-1 grid grid-cols-2 gap-2 bg-muted/30 p-1 rounded-xl">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <div className="flex-1 grid grid-cols-2 gap-2 bg-background/60 p-1.5 rounded-xl border border-border/60">
                 <button
                   onClick={() => updateField('type', 'income')}
                   className={cn(
-                    "flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all",
+                    "flex items-center justify-center gap-2 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all",
                     formData.type === 'income' 
                       ? "bg-emerald-500 text-white shadow-sm" 
-                      : "text-muted-foreground hover:bg-background/50"
+                      : "text-muted-foreground hover:bg-muted/60"
                   )}
                 >
                   <TrendingUp className="w-4 h-4" /> Ingreso
@@ -293,26 +308,25 @@ export function FinanceModal({ isOpen, onClose, record, onSave }: FinanceModalPr
                 <button
                   onClick={() => updateField('type', 'expense')}
                   className={cn(
-                    "flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all",
+                    "flex items-center justify-center gap-2 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all",
                     formData.type === 'expense' 
                       ? "bg-rose-500 text-white shadow-sm" 
-                      : "text-muted-foreground hover:bg-background/50"
+                      : "text-muted-foreground hover:bg-muted/60"
                   )}
                 >
                   <TrendingDown className="w-4 h-4" /> Gasto
                 </button>
               </div>
 
-              {/* Amount Input */}
               <div className="flex-1 relative">
-                 <div className="absolute top-2 left-3 text-muted-foreground font-medium">
+                 <div className="absolute top-2 left-3 text-muted-foreground font-medium text-sm">
                     {formData.currency === 'PEN' ? 'S/.' : '$'}
                  </div>
                  <input 
                     type="number"
                     min="0"
                     step="0.01"
-                    className="w-full h-full bg-muted/30 rounded-xl text-right pr-4 pl-10 text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                    className="w-full h-[52px] bg-background/60 rounded-xl text-right pr-4 pl-12 text-xl sm:text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                     value={formData.amount}
                     onChange={(e) => updateField('amount', parseFloat(e.target.value) || 0)}
                  />
@@ -320,147 +334,150 @@ export function FinanceModal({ isOpen, onClose, record, onSave }: FinanceModalPr
             </div>
           </div>
 
-          {/* Context Grid */}
-          <div className="grid grid-cols-2 gap-4">
-             {/* Dynamic Field: Payment Phase (Income) or Expense Type (Expense) */}
-             {isIncome ? (
-               <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-                     <Layers className="w-3 h-3" /> Fase de Cobro
-                  </label>
-                  <Select 
-                    value={formData.paymentPhase || 'full'} 
-                    onValueChange={(val) => updateField('paymentPhase', val)}
-                  >
-                    <SelectTrigger className="w-full rounded-xl bg-muted/30 border-transparent h-[42px]">
-                      <SelectValue placeholder="Seleccionar..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="deposit">Adelanto (50%)</SelectItem>
-                      <SelectItem value="final">Cancelación (Saldo)</SelectItem>
-                      <SelectItem value="full">Pago Completo</SelectItem>
-                    </SelectContent>
-                  </Select>
-               </div>
-             ) : (
-               <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-                     <PieChart className="w-3 h-3" /> Tipo de Gasto
-                  </label>
-                  <Select 
-                    value={formData.expenseType} 
-                    onValueChange={(val) => {
-                      updateField('expenseType', val);
-                      updateField('category', ''); // Reset category when type changes
-                    }}
-                  >
-                    <SelectTrigger className="w-full rounded-xl bg-muted/30 border-transparent h-[42px]">
-                      <SelectValue placeholder="Seleccionar..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="production">Producción</SelectItem>
-                      <SelectItem value="fixed">Fijo</SelectItem>
-                      <SelectItem value="variable">Variable</SelectItem>
-                    </SelectContent>
-                  </Select>
-               </div>
-             )}
-
-             <div className="space-y-1.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+            {/* Dynamic Field: Payment Phase (Income) or Expense Type (Expense) */}
+            {isIncome ? (
+              <div className="space-y-1.5">
                 <label className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-                   <Tag className="w-3 h-3" /> Categoría
+                  <Layers className="w-3 h-3" /> Fase de Cobro
                 </label>
                 <Select 
-                  value={formData.category} 
-                  onValueChange={(val) => updateField('category', val)}
+                  value={formData.paymentPhase || 'full'} 
+                  onValueChange={(val) => updateField('paymentPhase', val)}
                 >
-                  <SelectTrigger 
-                    className="w-full rounded-xl bg-muted/30 border-transparent h-[42px]"
-                    disabled={!isIncome && !formData.expenseType}
-                  >
-                    <SelectValue placeholder={!isIncome && !formData.expenseType ? "Seleccione tipo primero" : "Seleccionar..."} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((cat) => (
-                      <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <div className="flex items-center gap-2 mt-2">
-                  <input
-                    type="text"
-                    value={newCategoryName}
-                    onChange={(e) => setNewCategoryName(e.target.value)}
-                    placeholder="Nueva categoría"
-                    className="flex-1 px-2 py-1.5 rounded-lg border border-border bg-background text-xs"
-                    disabled={!isIncome && !formData.expenseType}
-                  />
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="outline"
-                    onClick={handleAddCategory}
-                    className="text-xs"
-                    disabled={!isIncome && !formData.expenseType}
-                  >
-                    Añadir
-                  </Button>
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="ghost"
-                    onClick={handleRemoveSelectedCategory}
-                    disabled={!formData.category || isReservedCategory(formData.category)}
-                    className="text-[11px] text-destructive"
-                  >
-                    Quitar seleccionada
-                  </Button>
-                </div>
-             </div>
-
-             <div className="space-y-1.5">
-                <label className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-                   <Calendar className="w-3 h-3" /> Fecha
-                </label>
-                <input 
-                  type="date" 
-                  className="w-full p-2.5 rounded-xl bg-muted/30 border-transparent focus:bg-background focus:border-primary/20 text-sm font-medium transition-all outline-none"
-                  value={formData.date?.split('T')[0]}
-                  onChange={(e) => updateField('date', e.target.value)}
-                />
-             </div>
-
-             <div className="space-y-1.5">
-                <label className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-                   <CreditCard className="w-3 h-3" /> Medio de Pago
-                </label>
-                <Select value={formData.paymentMethod} onValueChange={(val) => updateField('paymentMethod', val)}>
                   <SelectTrigger className="w-full rounded-xl bg-muted/30 border-transparent h-[42px]">
                     <SelectValue placeholder="Seleccionar..." />
                   </SelectTrigger>
                   <SelectContent>
-                    {PAYMENT_METHODS.map((method) => (
-                      <SelectItem key={method.value} value={method.value}>{method.label}</SelectItem>
-                    ))}
+                    <SelectItem value="deposit">Adelanto (50%)</SelectItem>
+                    <SelectItem value="final">Cancelación (Saldo)</SelectItem>
+                    <SelectItem value="full">Pago Completo</SelectItem>
                   </SelectContent>
                 </Select>
-             </div>
-
-             <div className="space-y-1.5">
+              </div>
+            ) : (
+              <div className="space-y-1.5">
                 <label className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-                   <CheckCircle2 className="w-3 h-3" /> Estado
+                  <PieChart className="w-3 h-3" /> Tipo de Gasto
                 </label>
-                <Select value={formData.status} onValueChange={(val) => updateField('status', val)}>
+                <Select 
+                  value={formData.expenseType} 
+                  onValueChange={(val) => {
+                    updateField('expenseType', val);
+                    updateField('category', ''); // Reset category when type changes
+                  }}
+                >
                   <SelectTrigger className="w-full rounded-xl bg-muted/30 border-transparent h-[42px]">
-                    <SelectValue />
+                    <SelectValue placeholder="Seleccionar..." />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="paid">Pagado / Completado</SelectItem>
-                    <SelectItem value="pending">Pendiente</SelectItem>
-                    <SelectItem value="cancelled">Anulado</SelectItem>
+                    <SelectItem value="production">Producción</SelectItem>
+                    <SelectItem value="fixed">Fijo</SelectItem>
+                    <SelectItem value="variable">Variable</SelectItem>
                   </SelectContent>
                 </Select>
-             </div>
+              </div>
+            )}
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+                <Calendar className="w-3 h-3" /> Fecha
+              </label>
+              <input 
+                type="date" 
+                className="w-full p-2.5 rounded-xl bg-muted/30 border-transparent focus:bg-background focus:border-primary/20 text-sm font-medium transition-all outline-none"
+                value={formData.date?.split('T')[0]}
+                onChange={(e) => updateField('date', e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+                <Tag className="w-3 h-3" /> Categoría
+              </label>
+              <Select 
+                value={formData.category} 
+                onValueChange={(val) => updateField('category', val)}
+              >
+                <SelectTrigger 
+                  className="w-full rounded-xl bg-muted/30 border-transparent h-[42px] text-xs sm:text-sm"
+                  disabled={!isIncome && !formData.expenseType}
+                >
+                  <SelectValue placeholder={!isIncome && !formData.expenseType ? "Seleccione tipo primero" : "Seleccionar..."} />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat} value={cat} className="whitespace-normal break-words text-xs sm:text-sm">
+                      {cat}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <div className="flex items-center gap-2 mt-2">
+                <input
+                  type="text"
+                  value={newCategoryName}
+                  onChange={(e) => setNewCategoryName(e.target.value)}
+                  placeholder="Nueva categoría"
+                  className="flex-1 px-2 py-1.5 rounded-lg border border-border bg-background text-xs"
+                  disabled={!isIncome && !formData.expenseType}
+                />
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={handleAddCategory}
+                  className="text-xs"
+                  disabled={!isIncome && !formData.expenseType}
+                >
+                  Añadir
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  onClick={handleRemoveSelectedCategory}
+                  disabled={!formData.category || isReservedCategory(formData.category)}
+                  className="text-[11px] text-destructive"
+                >
+                  Quitar seleccionada
+                </Button>
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+                <CreditCard className="w-3 h-3" /> Medio de Pago
+              </label>
+              <Select value={formData.paymentMethod} onValueChange={(val) => updateField('paymentMethod', val)}>
+                <SelectTrigger className="w-full rounded-xl bg-muted/30 border-transparent h-[42px]">
+                  <SelectValue placeholder="Seleccionar..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {PAYMENT_METHODS.map((method) => (
+                    <SelectItem key={method.value} value={method.value}>{method.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-1.5 sm:col-span-2">
+              <label className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+                <CheckCircle2 className="w-3 h-3" /> Estado
+              </label>
+              <Select value={formData.status} onValueChange={(val) => updateField('status', val)}>
+                <SelectTrigger className="w-full rounded-xl bg-muted/30 border-transparent h-[42px] text-xs sm:text-sm">
+                  <span className="truncate">
+                    {formData.status ? (STATUS_LABELS[formData.status] ?? formData.status) : 'Seleccionar...'}
+                  </span>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="paid">Pagado / Completado</SelectItem>
+                  <SelectItem value="pending">Pendiente</SelectItem>
+                  <SelectItem value="cancelled">Anulado</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           {/* Toggle Details */}

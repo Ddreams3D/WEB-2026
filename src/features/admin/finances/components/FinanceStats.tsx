@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowUpRight, ArrowDownRight, DollarSign, Wallet } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, Wallet } from 'lucide-react';
 
 interface FinanceStatsProps {
   stats: {
@@ -66,7 +66,9 @@ export function FinanceStats({ stats }: FinanceStatsProps) {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Por Cobrar</CardTitle>
-          <DollarSign className="h-4 w-4 text-yellow-500" />
+          <span className="h-5 w-5 rounded-full border border-yellow-500 text-[10px] flex items-center justify-center text-yellow-600 font-semibold">
+            S/.
+          </span>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-yellow-600">{formatMoney(stats.pendingIncome)}</div>
@@ -79,7 +81,9 @@ export function FinanceStats({ stats }: FinanceStatsProps) {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Por Pagar</CardTitle>
-          <DollarSign className="h-4 w-4 text-orange-500" />
+          <span className="h-5 w-5 rounded-full border border-orange-500 text-[10px] flex items-center justify-center text-orange-600 font-semibold">
+            S/.
+          </span>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-orange-600">{formatMoney(stats.pendingExpense || 0)}</div>

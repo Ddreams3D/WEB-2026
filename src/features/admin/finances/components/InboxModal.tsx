@@ -233,9 +233,7 @@ export function InboxModal({ isOpen, onClose, onSave, mode = 'all' }: InboxModal
             title: selectedItem.description,
             currency: selectedItem.currency,
             date: new Date(selectedItem.date).toISOString(),
-            category: selectedItem.context === 'personal' 
-              ? (selectedItem.type === 'expense' ? 'Retiros del dueño / Finanzas personales' : 'Préstamos')
-              : '',
+            category: '',
             paymentMethod: 'cash',
             status: 'paid',
             source: 'manual',
