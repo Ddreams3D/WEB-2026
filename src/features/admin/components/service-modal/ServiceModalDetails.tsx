@@ -14,12 +14,14 @@ export function ServiceModalDetails({
   handleChange,
   updateSpecs
 }: ServiceModalDetailsProps) {
+  const isOrganicService = formData.slug === 'modelado-3d-personalizado';
+
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <label className="text-sm font-medium">Descripción Principal (Fallback)</label>
+        <label className="text-sm font-medium">Descripción principal</label>
         <p className="text-xs text-muted-foreground mb-1">
-          Esta descripción se muestra si no hay pestañas configuradas.
+          Este texto se usa como descripción principal del servicio.
         </p>
         <textarea
           name="description"
@@ -30,15 +32,17 @@ export function ServiceModalDetails({
         />
       </div>
 
-      <div className="space-y-2">
-        <label className="text-sm font-medium">Especificaciones Técnicas</label>
-        <div className="p-4 border rounded-lg dark:border-neutral-700">
-          <SpecificationsEditor 
-            specs={formData.specifications || []} 
-            onChange={updateSpecs} 
-          />
+      {!isOrganicService && (
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Especificaciones Técnicas</label>
+          <div className="p-4 border rounded-lg dark:border-neutral-700">
+            <SpecificationsEditor
+              specs={formData.specifications || []}
+              onChange={updateSpecs}
+            />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

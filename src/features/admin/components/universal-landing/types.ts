@@ -43,6 +43,7 @@ export interface UnifiedLandingData {
   
   // Service Specifics
   sections?: ServiceLandingSection[];
+  featuredTag?: string;
   metaTitle?: string;
   metaDescription?: string;
   

@@ -1,6 +1,6 @@
 import { ref, uploadString, getDownloadURL } from 'firebase/storage';
 import { storage } from '@/lib/firebase';
-import { FinanceRecord } from '../types';
+import { FinanceRecord, MonthlyBudgets, MonthlyBudgetItem } from '../types';
 
 export const SyncService = {
   /**
@@ -54,6 +54,52 @@ export const SyncService = {
     return mergedRecords;
   },
 
+  async syncMonthlyBudgets(
+    localBudgets: MonthlyBudgets,
+    backupFileName: string
+  ): Promise<MonthlyBudgets> {
+    if (!storage) throw new Error('Firebase Storage not initialized');
+
+    const storageRef = ref(storage, `finances/${backupFileName}`);
+    let cloudBudgets: MonthlyBudgets = {};
+
+    try {
+      const url = await getDownloadURL(storageRef);
+      const response = await fetch(url);
+      if (response.ok) {
+        const json = await response.json();
+        if (json && typeof json === 'object') {
+          cloudBudgets = json as MonthlyBudgets;
+        }
+      }
+    } catch (error: any) {
+      if (error.code === 'storage/object-not-found') {
+        console.log('No cloud budget backup found. Creating new one.');
+        cloudBudgets = {};
+      } else {
+        console.error('Error fetching cloud budget backup:', error);
+        throw error;
+      }
+    }
+
+    const mergedBudgets = this.mergeBudgets(localBudgets, cloudBudgets);
+
+    try {
+      const jsonString = JSON.stringify(mergedBudgets);
+      await uploadString(storageRef, jsonString, 'raw', {
+        contentType: 'application/json',
+        customMetadata: {
+          lastSync: new Date().toISOString()
+        }
+      });
+    } catch (error) {
+      console.error('Error uploading merged budget backup:', error);
+      throw error;
+    }
+
+    return mergedBudgets;
+  },
+
   /**
    * Merges two arrays of records based on ID and updatedAt timestamp.
    * Latest version always wins.
@@ -86,5 +132,26 @@ export const SyncService = {
     });
 
     return Array.from(map.values()).sort((a, b) => b.date.localeCompare(a.date));
+  },
+
+  mergeBudgets(local: MonthlyBudgets, cloud: MonthlyBudgets): MonthlyBudgets {
+    const result: MonthlyBudgets = { ...cloud };
+
+    Object.entries(local).forEach(([key, localItems]) => {
+      const cloudItems = cloud[key] ?? [];
+      const byId = new Map<string, MonthlyBudgetItem>();
+
+      cloudItems.forEach((item) => {
+        byId.set(item.id, item);
+      });
+
+      localItems.forEach((item) => {
+        byId.set(item.id, item);
+      });
+
+      result[key] = Array.from(byId.values());
+    });
+
+    return result;
   }
 };

@@ -112,7 +112,7 @@ export function serviceToUnified(service: ServiceLandingConfig): UnifiedLandingD
     heroImage: service.heroImage || heroSection?.image,
     heroImageComparison: service.heroImageComparison,
     
-    ctaText: 'Explorar Servicio', // Default CTA text as it's not in service schema yet
+    ctaText: 'Explorar Servicio',
     ctaLink: '', 
 
 
@@ -121,6 +121,7 @@ export function serviceToUnified(service: ServiceLandingConfig): UnifiedLandingD
     primaryColor: service.primaryColor,
     
     sections: service.sections,
+    featuredTag: service.featuredTag,
     metaTitle: service.metaTitle,
     metaDescription: service.metaDescription,
     
@@ -154,7 +155,8 @@ export function unifiedToService(data: UnifiedLandingData): ServiceLandingConfig
     primaryColor: data.primaryColor,
     heroImage: data.heroImage,
     heroImageComparison: data.heroImageComparison,
-    sections: sections,
+    sections,
+    featuredTag: data.featuredTag,
     metaTitle: data.metaTitle || '',
     metaDescription: data.metaDescription || ''
   };

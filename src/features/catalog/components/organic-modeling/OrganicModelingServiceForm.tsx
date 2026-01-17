@@ -1,9 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Input, Textarea } from '@/components/ui';
 import { ArrowLeft, MessageSquare } from 'lucide-react';
 import { registerOrganicLead } from '@/actions/organic-leads.actions';
 import { WHATSAPP_REDIRECT } from '@/shared/constants/contactInfo';
 import { CountrySelector } from './CountrySelector';
+import {
+  DEFAULT_ORGANIC_FORM_COPY,
+  OrganicFormCopy,
+} from '@/shared/types/organic-form';
+import { fetchOrganicFormCopy } from '@/services/organic-form.service';
+import { trackEvent, AnalyticsEvents, AnalyticsLocations } from '@/lib/analytics';
 
 interface OrganicUniversalForm {
   projectType: string;
@@ -128,6 +134,24 @@ export function OrganicModelingServiceForm({ productSlug }: { productSlug: strin
   const [projectDetailsRows, setProjectDetailsRows] = useState(3);
   const [countryCode, setCountryCode] = useState('+51');
   const [isManualCountry, setIsManualCountry] = useState(false);
+  const [copy, setCopy] = useState<OrganicFormCopy>(DEFAULT_ORGANIC_FORM_COPY);
+  const [hasStarted, setHasStarted] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+
+    const loadCopy = async () => {
+      const data = await fetchOrganicFormCopy();
+      if (!active) return;
+      setCopy(data);
+    };
+
+    loadCopy();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   if (productSlug !== 'modelado-3d-personalizado') return null;
 
@@ -140,6 +164,17 @@ export function OrganicModelingServiceForm({ productSlug }: { productSlug: strin
       projectType: '', // Resetear para que no se guarde una opción inválida
       usageContext: '', // Resetear contexto
     });
+
+    if (!hasStarted) {
+      trackEvent(AnalyticsEvents.FORM_START, {
+        location: AnalyticsLocations.SERVICE_FORM,
+        page_type: 'service',
+        form_id: 'organic_modeling',
+        client_segment: segment,
+      });
+      setHasStarted(true);
+    }
+
     setStage('idea');
   };
 
@@ -154,11 +189,28 @@ export function OrganicModelingServiceForm({ productSlug }: { productSlug: strin
     
     const fullPhone = `${cleanCountryCode}${cleanPhone}`;
     
+    trackEvent(AnalyticsEvents.FORM_SUBMIT, {
+      location: AnalyticsLocations.SERVICE_FORM,
+      page_type: 'service',
+      form_id: 'organic_modeling',
+      client_type: form.contactType,
+      client_segment: form.clientSegment,
+    });
+
     registerOrganicLead({
       ...form,
       phone: fullPhone, 
       serviceSlug: productSlug,
     });
+
+    trackEvent(AnalyticsEvents.WHATSAPP_CLICK, {
+      location: AnalyticsLocations.SERVICE_FORM,
+      page_type: 'service',
+      form_id: 'organic_modeling',
+      client_type: form.contactType,
+      client_segment: form.clientSegment,
+    });
+
     window.open(`${WHATSAPP_REDIRECT}?text=${encoded}`, '_blank');
   };
 
@@ -207,10 +259,10 @@ export function OrganicModelingServiceForm({ productSlug }: { productSlug: strin
         {stage === 'segmentation' && (
           <div className="space-y-5 rounded-2xl bg-background/60 border border-border/70 p-4 md:p-6 animate-fade-in-up">
             <h3 className="text-base font-medium text-foreground">
-              ¿Para qué lo necesitas principalmente?
+              {copy.segmentationTitle}
             </h3>
             <p className="text-xs text-muted-foreground">
-              Esto nos ayuda a entender mejor el enfoque del proyecto.
+              {copy.segmentationSubtitle}
             </p>
             <div className="grid grid-cols-1 gap-3">
               <Button
@@ -263,120 +315,86 @@ export function OrganicModelingServiceForm({ productSlug }: { productSlug: strin
                 <ArrowLeft className="h-4 w-4" />
               </Button>
               <h3 className="text-base font-medium text-foreground">
-                ¿Qué tienes en mente?
+                {copy.ideaTitle}
               </h3>
             </div>
             <div className="grid grid-cols-1 gap-3">
-              {form.clientSegment === 'b2b' ? (
-                <>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    className={`w-full h-auto py-4 px-5 text-sm justify-start text-left whitespace-normal leading-snug rounded-2xl border transition-all
-                      ${form.projectType === 'mascota-marca'
-                        ? 'bg-gradient-to-br from-primary/10 via-card to-card dark:from-primary/20 dark:via-muted/60 dark:to-muted/40 border-primary/60 shadow-md'
-                        : 'bg-card/90 dark:bg-muted/40 border-border/60 hover:bg-card dark:hover:bg-muted/60 hover:border-primary/40'
-                      }`}
-                    onClick={() => handleIdeaSelect('mascota-marca')}
-                  >
-                    <span className="font-semibold block w-full mb-0.5">Mascota o personaje para marca</span>
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    className={`w-full h-auto py-4 px-5 text-sm justify-start text-left whitespace-normal leading-snug rounded-2xl border transition-all
-                      ${form.projectType === 'escultura-proyecto'
-                        ? 'bg-gradient-to-br from-primary/10 via-card to-card dark:from-primary/20 dark:via-muted/60 dark:to-muted/40 border-primary/60 shadow-md'
-                        : 'bg-card/90 dark:bg-muted/40 border-border/60 hover:bg-card dark:hover:bg-muted/60 hover:border-primary/40'
-                      }`}
-                    onClick={() => handleIdeaSelect('escultura-proyecto')}
-                  >
-                    <span className="font-semibold block w-full mb-0.5">Escultura o pieza artística para proyecto</span>
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    className={`w-full h-auto py-4 px-5 text-sm justify-start text-left whitespace-normal leading-snug rounded-2xl border transition-all
-                      ${form.projectType === 'figura-produccion'
-                        ? 'bg-gradient-to-br from-primary/10 via-card to-card dark:from-primary/20 dark:via-muted/60 dark:to-muted/40 border-primary/60 shadow-md'
-                        : 'bg-card/90 dark:bg-muted/40 border-border/60 hover:bg-card dark:hover:bg-muted/60 hover:border-primary/40'
-                      }`}
-                    onClick={() => handleIdeaSelect('figura-produccion')}
-                  >
-                    <span className="font-semibold block w-full mb-0.5">Figura orgánica para producción o fabricación</span>
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    className={`w-full h-auto py-4 px-5 text-sm justify-start text-left whitespace-normal leading-snug rounded-2xl border transition-all
-                      ${form.projectType === 'elemento-evento'
-                        ? 'bg-gradient-to-br from-primary/10 via-card to-card dark:from-primary/20 dark:via-muted/60 dark:to-muted/40 border-primary/60 shadow-md'
-                        : 'bg-card/90 dark:bg-muted/40 border-border/60 hover:bg-card dark:hover:bg-muted/60 hover:border-primary/40'
-                      }`}
-                    onClick={() => handleIdeaSelect('elemento-evento')}
-                  >
-                    <span className="font-semibold block w-full mb-0.5">Elemento visual para evento o presentación</span>
-                  </Button>
-                  <div className="flex justify-center mt-2">
-                    <div className="inline-flex flex-col items-center gap-0.5 group">
+              {form.clientSegment === 'b2b'
+                ? (copy.ideaOptionsB2B || DEFAULT_ORGANIC_FORM_COPY.ideaOptionsB2B).map(
+                    (option) => (
                       <Button
+                        key={option.id}
                         type="button"
-                        variant="outline"
-                        size="sm"
-                        className="mt-1 h-8 px-4 text-[11px] rounded-full border-border/70 text-muted-foreground bg-background/60 hover:bg-accent/50 hover:border-primary/50"
-                        onClick={() => {
-                          setForm({ ...form, projectType: 'no-definido-otro' });
-                          setStage('context');
-                          setShowCustomContext(false);
-                        }}
+                        variant="ghost"
+                        className={`w-full h-auto py-4 px-5 text-sm justify-start text-left whitespace-normal leading-snug rounded-2xl border transition-all
+                          ${form.projectType === option.id
+                            ? 'bg-gradient-to-br from-primary/10 via-card to-card dark:from-primary/20 dark:via-muted/60 dark:to-muted/40 border-primary/60 shadow-md'
+                            : 'bg-card/90 dark:bg-muted/40 border-border/60 hover:bg-card dark:hover:bg-muted/60 hover:border-primary/40'
+                          }`}
+                        onClick={() => handleIdeaSelect(option.id)}
                       >
-                        No lo tengo definido
+                        <span className="font-semibold block w-full mb-0.5">
+                          {option.label}
+                        </span>
+                        {option.helper && (
+                          <div className="w-full flex justify-end">
+                            <span className="block w-[220px] text-xs text-muted-foreground font-normal min-h-[1.1rem] pl-3 border-l border-muted-foreground/30">
+                              {option.helper}
+                            </span>
+                          </div>
+                        )}
                       </Button>
-                      <span className="text-[10px] text-muted-foreground/80 opacity-0 group-hover:opacity-100 transition-opacity">
-                        Lo definimos en la siguiente etapa
-                      </span>
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    className={`w-full h-auto py-4 px-5 text-sm justify-start text-left whitespace-normal leading-snug rounded-2xl border transition-all
-                      ${form.projectType === 'figura-personalizada'
-                        ? 'bg-gradient-to-br from-primary/10 via-card to-card dark:from-primary/20 dark:via-muted/60 dark:to-muted/40 border-primary/60 shadow-md'
-                        : 'bg-card/90 dark:bg-muted/40 border-border/60 hover:bg-card dark:hover:bg-muted/60 hover:border-primary/40'
-                      }`}
-                    onClick={() => handleIdeaSelect('figura-personalizada')}
-                  >
-                    <span className="font-semibold block w-full mb-0.5">Figura o personaje personalizado</span>
-                    <div className="w-full flex justify-end">
-                      <span className="block w-[220px] text-xs text-muted-foreground font-normal min-h-[1.1rem] pl-3 border-l border-muted-foreground/30">
-                        Para colección, regalo o hobby
-                      </span>
-                    </div>
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    className={`w-full h-auto py-4 px-5 text-sm justify-start text-left whitespace-normal leading-snug rounded-2xl border transition-all
-                      ${form.projectType === 'regalo-unico'
-                        ? 'bg-gradient-to-br from-primary/10 via-card to-card dark:from-primary/20 dark:via-muted/60 dark:to-muted/40 border-primary/60 shadow-md'
-                        : 'bg-card/90 dark:bg-muted/40 border-border/60 hover:bg-card dark:hover:bg-muted/60 hover:border-primary/40'
-                      }`}
-                    onClick={() => handleIdeaSelect('regalo-unico')}
-                  >
-                    <span className="font-semibold block w-full mb-0.5">Regalo único y especial</span>
-                    <div className="w-full flex justify-end">
-                      <span className="block w-[220px] text-xs text-muted-foreground font-normal min-h-[1.1rem] pl-3 border-l border-muted-foreground/30">
-                        Sorprende a alguien con algo irrepetible
-                      </span>
-                    </div>
-                  </Button>
-                </>
-              )}
+                    )
+                  )
+                : (copy.ideaOptionsB2C || DEFAULT_ORGANIC_FORM_COPY.ideaOptionsB2C).map(
+                    (option) => (
+                      <Button
+                        key={option.id}
+                        type="button"
+                        variant="ghost"
+                        className={`w-full h-auto py-4 px-5 text-sm justify-start text-left whitespace-normal leading-snug rounded-2xl border transition-all
+                          ${form.projectType === option.id
+                            ? 'bg-gradient-to-br from-primary/10 via-card to-card dark:from-primary/20 dark:via-muted/60 dark:to-muted/40 border-primary/60 shadow-md'
+                            : 'bg-card/90 dark:bg-muted/40 border-border/60 hover:bg-card dark:hover:bg-muted/60 hover:border-primary/40'
+                          }`}
+                        onClick={() => handleIdeaSelect(option.id)}
+                      >
+                        <span className="font-semibold block w-full mb-0.5">
+                          {option.label}
+                        </span>
+                        {option.helper && (
+                          <div className="w-full flex justify-end">
+                            <span className="block w-[220px] text-xs text-muted-foreground font-normal min-h-[1.1rem] pl-3 border-l border-muted-foreground/30">
+                              {option.helper}
+                            </span>
+                          </div>
+                        )}
+                      </Button>
+                    )
+                  )}
             </div>
+            {form.clientSegment === 'b2b' && (
+              <div className="flex justify-center mt-2">
+                <div className="inline-flex flex-col items-center gap-0.5 group">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="mt-1 h-8 px-4 text-[11px] rounded-full border-border/70 text-muted-foreground bg-background/60 hover:bg-accent/50 hover:border-primary/50"
+                    onClick={() => {
+                      setForm({ ...form, projectType: 'no-definido-otro' });
+                      setStage('context');
+                      setShowCustomContext(false);
+                    }}
+                  >
+                    No lo tengo definido
+                  </Button>
+                  <span className="text-[10px] text-muted-foreground/80 opacity-0 group-hover:opacity-100 transition-opacity">
+                    Lo definimos en la siguiente etapa
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -395,163 +413,38 @@ export function OrganicModelingServiceForm({ productSlug }: { productSlug: strin
                 <ArrowLeft className="h-4 w-4" />
               </Button>
               <h3 className="text-base font-medium text-foreground">
-                ¿Para qué lo quieres?
+                {copy.contextTitle}
               </h3>
             </div>
             <p className="text-xs text-muted-foreground">
-              Cuéntanos el contexto de uso para ajustar mejor la propuesta.
+              {copy.contextSubtitle}
             </p>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {form.clientSegment === 'b2c' ? (
-                <>
-                  <div className="group flex flex-col items-start gap-1">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      className={`w-full h-auto py-4 px-4 text-sm justify-center text-center whitespace-normal leading-relaxed rounded-2xl border transition-all
-                        ${form.usageContext === 'Regalo'
-                          ? 'bg-gradient-to-br from-primary/10 via-card to-card dark:from-primary/20 dark:via-muted/60 dark:to-muted/40 border-primary/60 shadow-md'
-                          : 'bg-card/90 dark:bg-muted/40 border-border/60 hover:bg-card dark:hover:bg-muted/60 hover:border-primary/40'
-                        }`}
-                      onClick={() => handleContextSelect('Regalo')}
-                    >
-                      Regalo
-                    </Button>
+              {(form.clientSegment === 'b2c'
+                ? copy.contextOptionsB2C || DEFAULT_ORGANIC_FORM_COPY.contextOptionsB2C
+                : copy.contextOptionsB2B || DEFAULT_ORGANIC_FORM_COPY.contextOptionsB2B
+              ).map((option) => (
+                <div key={option.id} className="group flex flex-col items-start gap-1">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className={`w-full h-auto py-4 px-4 text-sm justify-center text-center whitespace-normal leading-relaxed rounded-2xl border transition-all
+                      ${form.usageContext === option.id
+                        ? 'bg-gradient-to-br from-primary/10 via-card to-card dark:from-primary/20 dark:via-muted/60 dark:to-muted/40 border-primary/60 shadow-md'
+                        : 'bg-card/90 dark:bg-muted/40 border-border/60 hover:bg-card dark:hover:bg-muted/60 hover:border-primary/40'
+                      }`}
+                    onClick={() => handleContextSelect(option.id)}
+                  >
+                    {option.label}
+                  </Button>
+                  {option.helper && (
                     <span className="text-[11px] text-muted-foreground/80 opacity-0 group-hover:opacity-100 transition-opacity min-h-[1.1rem]">
-                      Una pieza con intención emocional
+                      {option.helper}
                     </span>
-                  </div>
-
-                  <div className="group flex flex-col items-start gap-1">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      className={`w-full h-auto py-4 px-4 text-sm justify-center text-center whitespace-normal leading-relaxed rounded-2xl border transition-all
-                        ${form.usageContext === 'Colección'
-                          ? 'bg-gradient-to-br from-primary/10 via-card to-card dark:from-primary/20 dark:via-muted/60 dark:to-muted/40 border-primary/60 shadow-md'
-                          : 'bg-card/90 dark:bg-muted/40 border-border/60 hover:bg-card dark:hover:bg-muted/60 hover:border-primary/40'
-                        }`}
-                      onClick={() => handleContextSelect('Colección')}
-                    >
-                      Colección
-                    </Button>
-                    <span className="text-[11px] text-muted-foreground/80 opacity-0 group-hover:opacity-100 transition-opacity min-h-[1.1rem]">
-                      Para ti, tu hobby o algo que amas
-                    </span>
-                  </div>
-
-                  <div className="group flex flex-col items-start gap-1">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      className={`w-full h-auto py-4 px-4 text-sm justify-center text-center whitespace-normal leading-relaxed rounded-2xl border transition-all
-                        ${form.usageContext === 'Decoración'
-                          ? 'bg-gradient-to-br from-primary/10 via-card to-card dark:from-primary/20 dark:via-muted/60 dark:to-muted/40 border-primary/60 shadow-md'
-                          : 'bg-card/90 dark:bg-muted/40 border-border/60 hover:bg-card dark:hover:bg-muted/60 hover:border-primary/40'
-                        }`}
-                      onClick={() => handleContextSelect('Decoración')}
-                    >
-                      Decoración
-                    </Button>
-                    <span className="text-[11px] text-muted-foreground/80 opacity-0 group-hover:opacity-100 transition-opacity min-h-[1.1rem]">
-                      Para ambientar un espacio
-                    </span>
-                  </div>
-
-                  <div className="group flex flex-col items-start gap-1">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      className={`w-full h-auto py-4 px-4 text-sm justify-center text-center whitespace-normal leading-relaxed rounded-2xl border transition-all
-                        ${form.usageContext === 'Recuerdo / homenaje'
-                          ? 'bg-gradient-to-br from-primary/10 via-card to-card dark:from-primary/20 dark:via-muted/60 dark:to-muted/40 border-primary/60 shadow-md'
-                          : 'bg-card/90 dark:bg-muted/40 border-border/60 hover:bg-card dark:hover:bg-muted/60 hover:border-primary/40'
-                        }`}
-                      onClick={() => handleContextSelect('Recuerdo / homenaje')}
-                    >
-                      Recuerdo / homenaje
-                    </Button>
-                    <span className="text-[11px] text-muted-foreground/80 opacity-0 group-hover:opacity-100 transition-opacity min-h-[1.1rem]">
-                      Conmemorar algo especial
-                    </span>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="group flex flex-col items-start gap-1">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      className={`w-full h-auto py-4 px-4 text-sm justify-center text-center whitespace-normal leading-relaxed rounded-2xl border transition-all
-                        ${form.usageContext === 'Marca / identidad'
-                          ? 'bg-gradient-to-br from-primary/10 via-card to-card dark:from-primary/20 dark:via-muted/60 dark:to-muted/40 border-primary/60 shadow-md'
-                          : 'bg-card/90 dark:bg-muted/40 border-border/60 hover:bg-card dark:hover:bg-muted/60 hover:border-primary/40'
-                        }`}
-                      onClick={() => handleContextSelect('Marca / identidad')}
-                    >
-                      Marca / identidad
-                    </Button>
-                    <span className="text-[11px] text-muted-foreground/80 opacity-0 group-hover:opacity-100 transition-opacity min-h-[1.1rem]">
-                      Reforzar branding visual
-                    </span>
-                  </div>
-
-                  <div className="group flex flex-col items-start gap-1">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      className={`w-full h-auto py-4 px-4 text-sm justify-center text-center whitespace-normal leading-relaxed rounded-2xl border transition-all
-                        ${form.usageContext === 'Evento / activación'
-                          ? 'bg-gradient-to-br from-primary/10 via-card to-card dark:from-primary/20 dark:via-muted/60 dark:to-muted/40 border-primary/60 shadow-md'
-                          : 'bg-card/90 dark:bg-muted/40 border-border/60 hover:bg-card dark:hover:bg-muted/60 hover:border-primary/40'
-                        }`}
-                      onClick={() => handleContextSelect('Evento / activación')}
-                    >
-                      Evento / activación
-                    </Button>
-                    <span className="text-[11px] text-muted-foreground/80 opacity-0 group-hover:opacity-100 transition-opacity min-h-[1.1rem]">
-                      Experiencias en vivo
-                    </span>
-                  </div>
-
-                  <div className="group flex flex-col items-start gap-1">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      className={`w-full h-auto py-4 px-4 text-sm justify-center text-center whitespace-normal leading-relaxed rounded-2xl border transition-all
-                        ${form.usageContext === 'Producto / merchandising'
-                          ? 'bg-gradient-to-br from-primary/10 via-card to-card dark:from-primary/20 dark:via-muted/60 dark:to-muted/40 border-primary/60 shadow-md'
-                          : 'bg-card/90 dark:bg-muted/40 border-border/60 hover:bg-card dark:hover:bg-muted/60 hover:border-primary/40'
-                        }`}
-                      onClick={() => handleContextSelect('Producto / merchandising')}
-                    >
-                      Producto / merchandising
-                    </Button>
-                    <span className="text-[11px] text-muted-foreground/80 opacity-0 group-hover:opacity-100 transition-opacity min-h-[1.1rem]">
-                      Artículos promocionales
-                    </span>
-                  </div>
-
-                  <div className="group flex flex-col items-start gap-1">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      className={`w-full h-auto py-4 px-4 text-sm justify-center text-center whitespace-normal leading-relaxed rounded-2xl border transition-all
-                        ${form.usageContext === 'Institución'
-                          ? 'bg-gradient-to-br from-primary/10 via-card to-card dark:from-primary/20 dark:via-muted/60 dark:to-muted/40 border-primary/60 shadow-md'
-                          : 'bg-card/90 dark:bg-muted/40 border-border/60 hover:bg-card dark:hover:bg-muted/60 hover:border-primary/40'
-                        }`}
-                      onClick={() => handleContextSelect('Institución')}
-                    >
-                      Institución
-                    </Button>
-                    <span className="text-[11px] text-muted-foreground/80 opacity-0 group-hover:opacity-100 transition-opacity min-h-[1.1rem]">
-                      Trofeos o reconocimientos
-                    </span>
-                  </div>
-                </>
-              )}
+                  )}
+                </div>
+              ))}
             </div>
             
             <div className="flex justify-center">
@@ -608,11 +501,11 @@ export function OrganicModelingServiceForm({ productSlug }: { productSlug: strin
                 <ArrowLeft className="h-4 w-4" />
               </Button>
               <h3 className="text-base font-medium text-foreground">
-                Cuéntanos tu idea
+                {copy.detailsTitle}
               </h3>
             </div>
             <p className="text-xs text-muted-foreground">
-              Con lo que ya nos contaste, aquí solo afinamos un poco más la idea.
+              {copy.detailsSubtitle}
             </p>
             
             <div className="flex justify-center">
@@ -656,12 +549,12 @@ export function OrganicModelingServiceForm({ productSlug }: { productSlug: strin
                 <ArrowLeft className="h-4 w-4" />
               </Button>
               <h3 className="text-base font-medium text-foreground">
-                ¿Cómo te contactamos?
+                {copy.contactTitle}
               </h3>
             </div>
             <div className="flex justify-center">
               <p className="text-xs text-muted-foreground w-full max-w-xs">
-                Solo unos datos para poder escribirte y continuar la conversación.
+                {copy.contactSubtitle}
               </p>
             </div>
 
@@ -763,13 +656,13 @@ export function OrganicModelingServiceForm({ productSlug }: { productSlug: strin
                 <ArrowLeft className="h-4 w-4" />
               </Button>
               <h3 className="text-base font-medium text-foreground">
-                Todo listo
+                {copy.confirmTitle}
               </h3>
             </div>
 
             <div className="space-y-2 text-sm text-muted-foreground text-center">
               <p>
-                Ya tenemos una buena idea de lo que necesitas.
+                {copy.confirmIntro}
               </p>
             </div>
 
@@ -801,7 +694,7 @@ export function OrganicModelingServiceForm({ productSlug }: { productSlug: strin
             </details>
 
             <p className="text-xs md:text-sm text-muted-foreground text-center">
-              Al continuar, seguimos la conversación por WhatsApp con el resumen de tu proyecto.
+              {copy.confirmFooter}
             </p>
 
             <div className="pt-2">
@@ -812,10 +705,10 @@ export function OrganicModelingServiceForm({ productSlug }: { productSlug: strin
                 onClick={handleSubmit}
               >
                 <MessageSquare className="w-5 h-5 mr-2" />
-                Iniciar conversación en WhatsApp
+                {copy.whatsappButtonLabel}
               </Button>
               <p className="text-[10px] text-center text-muted-foreground mt-3">
-                Sin compromiso. Solo charlamos sobre tu idea.
+                {copy.whatsappDisclaimer}
               </p>
             </div>
           </div>

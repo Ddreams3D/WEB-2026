@@ -109,6 +109,22 @@ export function ContentSection({ data, updateField }: ContentSectionProps) {
       </div>
 
       <div className="space-y-6">
+        <div className="bg-card border rounded-xl p-5 shadow-sm space-y-4">
+          <div className="flex items-center justify-between">
+            <Label className="text-base font-medium">Colección destacada</Label>
+          </div>
+          <div className="space-y-2">
+            <Input
+              value={data.featuredTag || ''}
+              onChange={(e) => updateField('featuredTag', e.target.value)}
+              placeholder="Ej: organico, merch, trofeos"
+            />
+            <p className="text-xs text-muted-foreground">
+              Se usa para filtrar los productos de la sección “Proyectos Destacados”.
+            </p>
+          </div>
+        </div>
+
         {sections.filter(s => s.type !== 'hero').length === 0 && (
              <div className="p-12 text-center border-2 border-dashed rounded-2xl bg-muted/10 hover:bg-muted/20 transition-colors group">
                 <div className="w-20 h-20 mx-auto bg-background rounded-full shadow-sm flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
@@ -171,14 +187,11 @@ export function ContentSection({ data, updateField }: ContentSectionProps) {
                                     <SelectTrigger>
                                         <SelectValue />
                                     </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="features">Características</SelectItem>
-                                        <SelectItem value="gallery">Galería</SelectItem>
-                                        <SelectItem value="testimonials">Testimonios</SelectItem>
-                                        <SelectItem value="faq">Preguntas Frecuentes</SelectItem>
-                                        <SelectItem value="process">Proceso</SelectItem>
-                                        <SelectItem value="cta">Llamada a la Acción</SelectItem>
-                                    </SelectContent>
+                                <SelectContent>
+                                    <SelectItem value="features">Características</SelectItem>
+                                    <SelectItem value="focus">Enfoque</SelectItem>
+                                    <SelectItem value="process">Proceso</SelectItem>
+                                </SelectContent>
                                 </Select>
                             </div>
                             <div className="space-y-2">

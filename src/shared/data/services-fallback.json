@@ -38,34 +38,9 @@
         "updatedAt": "2024-03-01T00:00:00.000Z"
       }
     ],
-    "specifications": [
-      { "name": "Enfoque", "value": "Modelado Orgánico, Escultura Digital, Ajuste Visual" },
-      { "name": "Entregables", "value": "Archivos STL / OBJ, Versiones optimizadas" },
-      { "name": "Software", "value": "Blender, Flujos asistidos con IA" }
-    ],
-    "tabsTitle": "ESTE SERVICIO SE ADAPTA SEGÚN EL TIPO DE CLIENTE",
-    "tabs": [
-      {
-        "id": "b2c",
-        "label": "General / Personas (B2C)",
-        "description": "Servicio de modelado 3D orgánico orientado a proyectos creativos y personales. Creamos modelos únicos a partir de ideas, bocetos, imágenes de referencia o conceptos generados con IA, enfocándonos en formas orgánicas, estética y personalidad del diseño.\nIdeal para figuras, personajes, regalos personalizados y piezas visuales listas para impresión 3D o exhibición, sin necesidad de conocimientos técnicos previos.",
-        "idealFor": ["Figuras y personajes personalizados", "Regalos únicos y piezas decorativas", "Modelos para impresión 3D artística", "Modificación de archivos STL existentes"],
-        "conditions": ["Cotización según complejidad del modelo", "Entregables digitales (STL / OBJ)", "Revisiones incluidas según acuerdo"],
-        "ctaText": "Empezar mi diseño",
-        "ctaAction": "whatsapp",
-        "whatsappMessage": "Hola, quiero un modelo 3D orgánico personalizado para mí o como regalo.\n\nPara quién es el modelo (para ti, regalo, grupo/equipo)\nMotivo o contexto (cumpleaños, logro, decoración, etc.)\nQué quieres que representemos (persona, personaje, animal, objeto, etc.)\nEstilo deseado (realista, caricatura, minimalista, no estoy seguro)\nTamaño aproximado del modelo (en cm)\nSolo archivo 3D o archivo + impresión física\nCantidad de unidades\nSi tienes referencias visuales (fotos, links, bocetos)\nColores o acabado que te gustaría\nPlazo ideal de entrega\nPresupuesto aproximado (opcional)"
-      },
-      {
-        "id": "b2b",
-        "label": "Empresas / B2B",
-        "description": "Servicio profesional de modelado 3D orgánico y visual enfocado en marcas, estudios creativos y proyectos comerciales que requieren modelos con alto impacto visual.\nDesarrollamos personajes, objetos y piezas orgánicas para marketing, exhibición, branding, impresión 3D artística o contenido visual, apoyándonos en flujos híbridos que incluyen IA + escultura digital.",
-        "idealFor": ["Personajes de marca y mascots", "Piezas visuales para campañas o eventos", "Modelos orgánicos para impresión 3D artística", "Contenido visual y presentaciones de producto"],
-        "conditions": ["Cotización según alcance creativo", "Archivos optimizados para impresión o visualización", "Acuerdos de confidencialidad (NDA) disponibles"],
-        "ctaText": "Solicitar diseño 3D",
-        "ctaAction": "whatsapp",
-        "whatsappMessage": "Hola, quiero solicitar un modelo 3D orgánico para mi marca o evento.\n\nNombre de la marca o evento\nTipo de proyecto (trofeos, mascota de marca, figura para vitrina, etc.)\nRol del modelo (premio principal, regalo, exhibición, etc.)\nQué debe transmitir la figura (valores, tono, estilo)\nElementos obligatorios (logo, texto, colores de marca, otros)\nCantidad estimada de unidades y tamaño aproximado (en cm)\nEntregables que necesitas (solo archivo 3D o archivo + impresión)\nFecha del evento y fecha límite para aprobar el modelo\nPresupuesto estimado o rango\nQuién tomará la decisión final"
-      }
-    ],
+    "specifications": [],
+    "tabsTitle": "",
+    "tabs": [],
     "isActive": true,
     "isFeatured": true,
     "rating": 5.0,

@@ -54,17 +54,26 @@ export interface FinanceRecord {
 }
 
 export interface InboxItem {
-  id: string; // chatId_messageId
+  id: string;
   type: 'expense' | 'income';
   amount: number;
   description: string;
   currency: 'PEN' | 'USD';
-  date: string; // ISO string
+  date: string;
   rawText: string;
   status: 'pending' | 'processed';
   createdAt: number;
   context?: 'personal' | 'company';
 }
+
+export type MonthlyBudgetItem = {
+  id: string;
+  label: string;
+  amount: number;
+  linkedCategory?: string;
+};
+
+export type MonthlyBudgets = Record<string, MonthlyBudgetItem[]>;
 
 export const FINANCE_CATEGORIES = {
   income: [

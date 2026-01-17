@@ -71,33 +71,35 @@ export function HeroSection({ data, updateField }: HeroSectionProps) {
               </div>
            </div>
 
-           <div className="bg-gradient-to-br from-card to-muted/20 border rounded-xl p-5 shadow-sm space-y-4">
-              <Label className="text-base font-medium flex items-center gap-2 text-primary">
+           {!isService && (
+             <div className="bg-gradient-to-br from-card to-muted/20 border rounded-xl p-5 shadow-sm space-y-4">
+               <Label className="text-base font-medium flex items-center gap-2 text-primary">
                  <MousePointerClick className="w-4 h-4" />
                  Llamada a la Acción (Botón)
-              </Label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="text-xs text-muted-foreground uppercase tracking-wider">Texto del Botón</Label>
-                  <Input 
-                    value={data.ctaText || ''} 
-                    onChange={(e) => updateField('ctaText', e.target.value)}
-                    placeholder="Ej: Ver Catálogo"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-xs text-muted-foreground uppercase tracking-wider flex items-center gap-1">
-                    <LinkIcon className="w-3 h-3" /> Enlace
-                  </Label>
-                  <Input 
-                    value={data.ctaLink || ''} 
-                    onChange={(e) => updateField('ctaLink', e.target.value)}
-                    placeholder="/catalogo"
-                    className="font-mono text-sm"
-                  />
-                </div>
-              </div>
-           </div>
+               </Label>
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                 <div className="space-y-2">
+                   <Label className="text-xs text-muted-foreground uppercase tracking-wider">Texto del Botón</Label>
+                   <Input 
+                     value={data.ctaText || ''} 
+                     onChange={(e) => updateField('ctaText', e.target.value)}
+                     placeholder="Ej: Ver Catálogo"
+                   />
+                 </div>
+                 <div className="space-y-2">
+                   <Label className="text-xs text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+                     <LinkIcon className="w-3 h-3" /> Enlace
+                   </Label>
+                   <Input 
+                     value={data.ctaLink || ''} 
+                     onChange={(e) => updateField('ctaLink', e.target.value)}
+                     placeholder="/catalogo"
+                     className="font-mono text-sm"
+                   />
+                 </div>
+               </div>
+             </div>
+           )}
         </div>
 
         {/* Right Column: Image */}

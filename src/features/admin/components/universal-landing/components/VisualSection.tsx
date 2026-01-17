@@ -57,6 +57,32 @@ export function VisualSection({ data, updateField }: VisualSectionProps) {
           </div>
         </div>
 
+        {data.type === 'service' && (
+          <div className="bg-card border rounded-xl p-5 shadow-sm space-y-4">
+            <div className="flex items-center justify-between">
+              <Label className="text-base font-medium">Color principal del servicio</Label>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4 items-center">
+              <div className="flex items-center gap-3">
+                <Input
+                  type="color"
+                  value={data.primaryColor || '#e11d48'}
+                  onChange={(e) => updateField('primaryColor', e.target.value)}
+                  className="w-16 h-10 p-1 cursor-pointer"
+                />
+              </div>
+              <div className="flex-1">
+                <Input
+                  value={data.primaryColor || ''}
+                  onChange={(e) => updateField('primaryColor', e.target.value)}
+                  placeholder="#c2410c"
+                  className="font-mono text-sm"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
         {data.type === 'main' && (
           <div className="bg-card border rounded-xl p-5 shadow-sm space-y-4">
             <div className="flex items-center justify-between">
@@ -92,36 +118,38 @@ export function VisualSection({ data, updateField }: VisualSectionProps) {
           </div>
         )}
 
-        <div className="bg-gradient-to-br from-card to-orange-500/5 border rounded-xl p-5 shadow-sm space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="space-y-1">
-               <Label className="text-base font-medium flex items-center gap-2">
-                <Megaphone className="w-4 h-4 text-orange-500" />
-                Barra de Anuncios
-              </Label>
-              <p className="text-sm text-muted-foreground">Muestra un mensaje importante en la parte superior.</p>
-            </div>
-            <Switch 
-              checked={data.announcement?.enabled || false}
-              onCheckedChange={(checked) => updateField('announcement', { ...data.announcement, enabled: checked })}
-              className="data-[state=checked]:bg-orange-500"
-            />
-          </div>
-          
-          {data.announcement?.enabled && (
-            <div className="animate-in fade-in slide-in-from-top-2 pt-2">
-              <div className="relative">
-                <Input 
-                  value={data.announcement.content || ''} 
-                  onChange={(e) => updateField('announcement', { ...data.announcement, content: e.target.value })}
-                  placeholder="Ej: ¡Envío gratis en compras mayores a $50!"
-                  className="pl-10 border-orange-200 focus-visible:ring-orange-500/20"
-                />
-                <Megaphone className="w-4 h-4 text-orange-500 absolute left-3 top-1/2 -translate-y-1/2" />
+        {data.type !== 'service' && (
+          <div className="bg-gradient-to-br from-card to-orange-500/5 border rounded-xl p-5 shadow-sm space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <Label className="text-base font-medium flex items-center gap-2">
+                  <Megaphone className="w-4 h-4 text-orange-500" />
+                  Barra de Anuncios
+                </Label>
+                <p className="text-sm text-muted-foreground">Muestra un mensaje importante en la parte superior.</p>
               </div>
+              <Switch 
+                checked={data.announcement?.enabled || false}
+                onCheckedChange={(checked) => updateField('announcement', { ...data.announcement, enabled: checked })}
+                className="data-[state=checked]:bg-orange-500"
+              />
             </div>
-          )}
-        </div>
+            
+            {data.announcement?.enabled && (
+              <div className="animate-in fade-in slide-in-from-top-2 pt-2">
+                <div className="relative">
+                  <Input 
+                    value={data.announcement.content || ''} 
+                    onChange={(e) => updateField('announcement', { ...data.announcement, content: e.target.value })}
+                    placeholder="Ej: ¡Envío gratis en compras mayores a $50!"
+                    className="pl-10 border-orange-200 focus-visible:ring-orange-500/20"
+                  />
+                  <Megaphone className="w-4 h-4 text-orange-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

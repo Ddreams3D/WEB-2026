@@ -11,7 +11,7 @@ import { FinanceSummary } from './components/FinanceSummary';
 import { FinanceSyncButton } from './components/FinanceSyncButton';
 import { FinanceModal } from './FinanceModal';
 import { InboxModal } from './components/InboxModal';
-import { FinanceRecord } from './types';
+import { FinanceRecord, MonthlyBudgets, MonthlyBudgetItem } from './types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const PERSONAL_BUDGET_STORAGE_KEY = 'personal_finance_monthly_budget';
@@ -29,15 +29,6 @@ const MONTH_LABELS = [
   'Noviembre',
   'Diciembre',
 ];
-
-type MonthlyBudgetItem = {
-  id: string;
-  label: string;
-  amount: number;
-  linkedCategory?: string;
-};
-
-type MonthlyBudgets = Record<string, MonthlyBudgetItem[]>;
 
 export function PersonalFinancesView() {
   const { records, allRecords, importRecords, loading, addRecord, updateRecord, deleteRecord, stats } = useFinances(
@@ -366,10 +357,12 @@ export function PersonalFinancesView() {
           >
             <Inbox className="w-4 h-4" /> Inbox (Bot)
           </Button>
-          <FinanceSyncButton 
-            records={allRecords} 
-            onSyncComplete={importRecords} 
-            storageKey="personal_finance_records" 
+          <FinanceSyncButton
+            records={allRecords}
+            onSyncComplete={importRecords}
+            storageKey="personal_finance_records"
+            budgets={budgets}
+            onBudgetsSyncComplete={setBudgets}
           />
           <Button onClick={handleCreate} className="gap-2 shadow-lg hover:shadow-xl transition-all">
             <Plus className="w-4 h-4" /> Nuevo Registro

@@ -2,16 +2,24 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Cloud, RefreshCw, Check, AlertCircle } from 'lucide-react';
 import { SyncService } from '../services/syncService';
-import { FinanceRecord } from '../types';
+import { FinanceRecord, MonthlyBudgets } from '../types';
 import { toast } from 'sonner';
 
 interface FinanceSyncButtonProps {
   records: FinanceRecord[];
   onSyncComplete: (newRecords: FinanceRecord[]) => void;
   storageKey: string;
+  budgets?: MonthlyBudgets;
+  onBudgetsSyncComplete?: (newBudgets: MonthlyBudgets) => void;
 }
 
-export function FinanceSyncButton({ records, onSyncComplete, storageKey }: FinanceSyncButtonProps) {
+export function FinanceSyncButton({
+  records,
+  onSyncComplete,
+  storageKey,
+  budgets,
+  onBudgetsSyncComplete
+}: FinanceSyncButtonProps) {
   const [isSyncing, setIsSyncing] = useState(false);
   const [lastSync, setLastSync] = useState<Date | null>(null);
 
@@ -28,8 +36,17 @@ export function FinanceSyncButton({ records, onSyncComplete, storageKey }: Finan
     try {
       const fileName = getBackupFileName();
       const mergedRecords = await SyncService.syncFinanceData(records, fileName);
-      
+
       onSyncComplete(mergedRecords);
+      
+      if (storageKey === 'personal_finance_records' && budgets && onBudgetsSyncComplete) {
+        const mergedBudgets = await SyncService.syncMonthlyBudgets(
+          budgets,
+          'personal_finances_budget_v1.json'
+        );
+        onBudgetsSyncComplete(mergedBudgets);
+      }
+
       setLastSync(new Date());
       
       toast.success('Sincronización completada', { id: toastId });

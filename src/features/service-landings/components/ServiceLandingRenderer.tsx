@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ServiceLandingConfig } from '@/shared/types/service-landing';
 import { cn } from '@/lib/utils';
 import { useServiceLanding } from '@/features/service-landings/hooks/useServiceLanding';
@@ -11,6 +11,7 @@ import { ServiceProcess } from './sections/ServiceProcess';
 import { ServiceShowcase } from './sections/ServiceShowcase';
 import { ServiceCTA } from './sections/ServiceCTA';
 import { ServiceFooter } from './sections/ServiceFooter';
+import { trackEvent, AnalyticsEvents, AnalyticsLocations } from '@/lib/analytics';
 
 interface ServiceLandingRendererProps {
   config: ServiceLandingConfig;
@@ -27,6 +28,17 @@ export default function ServiceLandingRenderer({ config, isPreview = false }: Se
     focusSection,
     processSection
   } = useServiceLanding(config, isPreview);
+
+  useEffect(() => {
+    if (isPreview) return;
+
+    trackEvent(AnalyticsEvents.VIEW_SERVICE_LANDING, {
+      id: config.id,
+      name: config.name,
+      location: AnalyticsLocations.SERVICE_LANDING,
+      page_type: 'service',
+    });
+  }, [config.id, config.name, isPreview]);
 
   // Custom CSS for primary color override
   const style = {

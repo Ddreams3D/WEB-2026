@@ -22,18 +22,17 @@ export function ProductInfo({ product, onShare }: ProductInfoProps) {
           <h1 className="text-3xl lg:text-4xl font-extrabold text-foreground mb-2 lg:mb-3 tracking-tight leading-tight">
             {product.name}
           </h1>
-          {product.kind === 'service' && product.slug === 'modelado-3d-personalizado' ? (
-            <h2 className="text-lg lg:text-xl font-medium text-muted-foreground mb-3 lg:mb-4 leading-relaxed">
-              <span className="block">Modelado 3D personalizado, hecho a medida.</span>
-              <span className="block">Cuéntanos tu idea y la desarrollamos contigo paso a paso.</span>
-            </h2>
-          ) : (
-            product.shortDescription && (
-              <h2 className="text-lg lg:text-xl font-medium text-muted-foreground mb-3 lg:mb-4 leading-relaxed">
-                {product.shortDescription}
-              </h2>
-            )
-          )}
+          {product.kind === 'service' && product.slug === 'modelado-3d-personalizado'
+            ? (product.description || product.shortDescription) && (
+                <h2 className="text-lg lg:text-xl font-medium text-muted-foreground mb-3 lg:mb-4 leading-relaxed">
+                  {product.description || product.shortDescription}
+                </h2>
+              )
+            : product.shortDescription && (
+                <h2 className="text-lg lg:text-xl font-medium text-muted-foreground mb-3 lg:mb-4 leading-relaxed">
+                  {product.shortDescription}
+                </h2>
+              )}
           {product.kind === 'product' && (
             <p className="text-muted-foreground text-base lg:text-lg flex items-center gap-2">
               Vendido por <span className="font-semibold text-primary underline decoration-primary/30 underline-offset-4">Ddreams 3D</span>

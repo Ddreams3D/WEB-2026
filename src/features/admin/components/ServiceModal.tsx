@@ -48,6 +48,9 @@ export default function ServiceModal({ isOpen, onClose, onSave, service }: Servi
   } = useServiceForm({ service, onSave, onClose });
 
   // --- RENDER HELPERS ---
+  const isOrganicService =
+    (formData.slug || service?.slug) === 'modelado-3d-personalizado';
+
   const sections = [
     { id: 'info', label: 'Info Básica', icon: LayoutGrid },
     { id: 'details', label: 'Detalles', icon: Box },
@@ -155,7 +158,11 @@ export default function ServiceModal({ isOpen, onClose, onSave, service }: Servi
             />
             
             <div className="max-w-[1600px] mx-auto px-6 lg:px-8 py-8 relative z-10">
-              <div className="grid grid-cols-1 xl:grid-cols-[1fr_400px] gap-8 items-start">
+              <div
+                className={`grid grid-cols-1 gap-8 items-start ${
+                  activeSection === 'content' ? '' : 'xl:grid-cols-[1fr_400px]'
+                }`}
+              >
                 
                 {/* LEFT COLUMN: FORM EDITORS */}
                 <div className="space-y-6 pb-20">
@@ -194,29 +201,45 @@ export default function ServiceModal({ isOpen, onClose, onSave, service }: Servi
 
                     {/* Quick Stats Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <div 
+                        {!isOrganicService && (
+                          <div
                             onClick={() => setEditingBlock('price')}
                             className={`bg-card rounded-2xl border shadow-sm transition-all cursor-pointer ${editingBlock === 'price' ? 'ring-2 ring-primary' : 'hover:shadow-md'} p-3`}
-                        >
+                          >
                             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Precio Base</label>
                             {editingBlock === 'price' ? (
-                                <div className="flex items-center gap-1 mt-1">
-                                    <span className="text-xl font-medium text-muted-foreground">S/</span>
-                                    <input 
-                                        type="number" 
-                                        name="price"
-                                        value={formData.price ?? 0}
-                                        onChange={handleChange}
-                                        autoFocus
-                                        onBlur={() => setEditingBlock(null)}
-                                        className="text-2xl font-bold bg-transparent border-none focus:ring-0 p-0 w-full"
-                                        placeholder="0.00"
-                                    />
-                                </div>
+                              <div className="flex items-center gap-1 mt-1">
+                                <span className="text-xl font-medium text-muted-foreground">S/</span>
+                                <input
+                                  type="number"
+                                  name="price"
+                                  value={formData.price ?? 0}
+                                  onChange={handleChange}
+                                  autoFocus
+                                  onBlur={() => setEditingBlock(null)}
+                                  className="text-2xl font-bold bg-transparent border-none focus:ring-0 p-0 w-full"
+                                  placeholder="0.00"
+                                />
+                              </div>
                             ) : (
-                                <div className="text-2xl font-bold mt-1">S/ {formData.price?.toFixed(2) || '0.00'}</div>
+                              <div className="text-2xl font-bold mt-1">S/ {formData.price?.toFixed(2) || '0.00'}</div>
                             )}
-                        </div>
+                          </div>
+                        )}
+
+                        {isOrganicService && (
+                          <div className="bg-card rounded-2xl border shadow-sm transition-shadow p-3">
+                            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                              Tipo de cotización
+                            </label>
+                            <div className="mt-1 text-sm text-muted-foreground">
+                              {formData.customPriceDisplay || 'Cotización personalizada'}
+                            </div>
+                            <p className="mt-1 text-[10px] text-muted-foreground">
+                              Este servicio se cotiza por proyecto. Puedes ajustar el texto en &quot;Info Básica&quot;.
+                            </p>
+                          </div>
+                        )}
 
                         <div className="bg-card rounded-2xl border shadow-sm hover:shadow-md transition-shadow flex items-center justify-between p-3">
                             <div>
@@ -290,47 +313,48 @@ export default function ServiceModal({ isOpen, onClose, onSave, service }: Servi
                 </div>
 
                 {/* RIGHT COLUMN: PREVIEW */}
-                <div className="hidden xl:block sticky top-8 space-y-6">
+                {activeSection !== 'content' && (
+                  <div className="hidden xl:block sticky top-8 space-y-6">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                        <Eye className="w-4 h-4" />
-                        <span className="font-medium">Vista Previa en Vivo</span>
+                      <Eye className="w-4 h-4" />
+                      <span className="font-medium">Vista Previa en Vivo</span>
                     </div>
 
                     <div className="relative group perspective-1000">
-                         {/* Glow Effect */}
-                        <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 via-purple-500/20 to-blue-500/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                        
-                        <div className="relative transform transition-all duration-300 group-hover:scale-[1.02]">
-                            <ProductCard 
-                                product={previewService} 
-                                className="shadow-2xl ring-1 ring-black/5 dark:ring-white/10" 
-                            />
-                        </div>
+                      <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 via-purple-500/20 to-blue-500/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                      <div className="relative transform transition-all duration-300 group-hover:scale-[1.02]">
+                        <ProductCard
+                          product={previewService}
+                          className="shadow-2xl ring-1 ring-black/5 dark:ring-white/10"
+                        />
+                      </div>
                     </div>
 
                     <Card className="bg-card/50 backdrop-blur border-primary/20">
-                        <CardContent className="p-4 space-y-3">
-                            <h4 className="font-semibold flex items-center gap-2 text-sm">
-                                <Info className="w-4 h-4 text-primary" />
-                                Tips para Servicios
-                            </h4>
-                            <ul className="text-xs space-y-2 text-muted-foreground">
-                                <li className="flex gap-2">
-                                    <span className="text-primary">•</span>
-                                    Usa imágenes de alta calidad (ratio 1:1 recomendado).
-                                </li>
-                                <li className="flex gap-2">
-                                    <span className="text-primary">•</span>
-                                    Configura las pestañas de contenido para diferentes perfiles de cliente.
-                                </li>
-                                <li className="flex gap-2">
-                                    <span className="text-primary">•</span>
-                                    El precio base es referencial, usa &quot;Cotización personalizada&quot; si es variable.
-                                </li>
-                            </ul>
-                        </CardContent>
+                      <CardContent className="p-4 space-y-3">
+                        <h4 className="font-semibold flex items-center gap-2 text-sm">
+                          <Info className="w-4 h-4 text-primary" />
+                          Tips para Servicios
+                        </h4>
+                        <ul className="text-xs space-y-2 text-muted-foreground">
+                          <li className="flex gap-2">
+                            <span className="text-primary">•</span>
+                            Usa imágenes de alta calidad (ratio 1:1 recomendado).
+                          </li>
+                          <li className="flex gap-2">
+                            <span className="text-primary">•</span>
+                            Configura las pestañas de contenido para diferentes perfiles de cliente.
+                          </li>
+                          <li className="flex gap-2">
+                            <span className="text-primary">•</span>
+                            El precio base es referencial, usa &quot;Cotización personalizada&quot; si es variable.
+                          </li>
+                        </ul>
+                      </CardContent>
                     </Card>
-                </div>
+                  </div>
+                )}
 
               </div>
             </div>
