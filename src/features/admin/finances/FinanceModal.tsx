@@ -176,6 +176,7 @@ export function FinanceModal({ isOpen, onClose, record, onSave }: FinanceModalPr
     }
 
     if (!formData.expenseType) {
+      alert('Por favor selecciona el tipo de gasto antes de añadir una categoría.');
       return;
     }
 
@@ -392,6 +393,7 @@ export function FinanceModal({ isOpen, onClose, record, onSave }: FinanceModalPr
                     onChange={(e) => setNewCategoryName(e.target.value)}
                     placeholder="Nueva categoría"
                     className="flex-1 px-2 py-1.5 rounded-lg border border-border bg-background text-xs"
+                    disabled={!isIncome && !formData.expenseType}
                   />
                   <Button
                     type="button"
@@ -399,6 +401,7 @@ export function FinanceModal({ isOpen, onClose, record, onSave }: FinanceModalPr
                     variant="outline"
                     onClick={handleAddCategory}
                     className="text-xs"
+                    disabled={!isIncome && !formData.expenseType}
                   >
                     Añadir
                   </Button>
