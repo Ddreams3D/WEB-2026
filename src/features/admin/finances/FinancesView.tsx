@@ -189,6 +189,7 @@ export function FinancesView() {
         isOpen={isInboxOpen}
         onClose={() => setIsInboxOpen(false)}
         onSave={handleSaveFromInbox}
+        mode="business"
       />
     </div>
   );

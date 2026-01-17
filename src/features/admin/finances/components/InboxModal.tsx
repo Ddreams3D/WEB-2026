@@ -13,9 +13,10 @@ interface InboxModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (record: Partial<FinanceRecord>) => void;
+  mode?: 'business' | 'personal' | 'all';
 }
 
-export function InboxModal({ isOpen, onClose, onSave }: InboxModalProps) {
+export function InboxModal({ isOpen, onClose, onSave, mode = 'all' }: InboxModalProps) {
   const [items, setItems] = useState<InboxItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState<string | null>(null);
@@ -37,8 +38,12 @@ export function InboxModal({ isOpen, onClose, onSave }: InboxModalProps) {
     setLoading(true);
     try {
       const data = await InboxService.getInbox();
-      // Sort by newest first
-      setItems(data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+      const filtered = data.filter((item) => {
+        if (mode === 'personal') return item.context === 'personal';
+        if (mode === 'business') return item.context !== 'personal';
+        return true;
+      });
+      setItems(filtered.sort((a, b) => b.createdAt - a.createdAt));
     } catch (error) {
       console.error('Failed to load inbox', error);
     } finally {
