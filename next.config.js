@@ -77,22 +77,22 @@ const nextConfig = {
     return [
       {
         source: '/catalogo-impresion-3d/general/premio-estilo-oscar-impreso-en-3d-reconocimiento-personalizado',
-        destination: '/catalogo-impresion-3d/general/premio-oscar-impreso-3d',
+        destination: '/catalogo-impresion-3d/arte-diseno/premio-oscar-impreso-3d',
         permanent: true,
       },
       {
         source: '/catalogo-impresion-3d/general/premio-estilo-oscar-impreso-en-3d-reconocimiento-personalizado/',
-        destination: '/catalogo-impresion-3d/general/premio-oscar-impreso-3d/',
+        destination: '/catalogo-impresion-3d/arte-diseno/premio-oscar-impreso-3d/',
         permanent: true,
       },
       {
         source: '/catalogo-impresion-3d/product/premio-estilo-oscar-impreso-en-3d-reconocimiento-personalizado',
-        destination: '/catalogo-impresion-3d/general/premio-oscar-impreso-3d',
+        destination: '/catalogo-impresion-3d/arte-diseno/premio-oscar-impreso-3d',
         permanent: true,
       },
       {
         source: '/catalogo-impresion-3d/product/premio-estilo-oscar-impreso-en-3d-reconocimiento-personalizado/',
-        destination: '/catalogo-impresion-3d/general/premio-oscar-impreso-3d/',
+        destination: '/catalogo-impresion-3d/arte-diseno/premio-oscar-impreso-3d/',
         permanent: true,
       },
       // 1. Redirección principal de marketplace a catálogo
@@ -135,24 +135,24 @@ const nextConfig = {
          destination: '/servicios/modelado-3d-personalizado', // Destino válido en ruta pública /servicios/[slug]
          permanent: true,
        },
-      // 6. Catch-all para casos de estudio (excepto los explícitamente ignorados o definidos arriba)
-      // Nota: Next.js evalúa en orden. Si '/casos-estudio/clinica-innovacion' no está definida, caería aquí.
-      // Pero como queremos que sea 404, NO debemos matchearla aquí.
-      // Solución: Usar regex negativo o definir primero la redirección general y excluir la específica es complejo en simple config.
-      // Mejor estrategia: Redirigir todo lo que NO sea la excepción.
-      // Sin embargo, Next.js redirects no soporta "excepto X" fácilmente sin regex complejos.
-      // Estrategia purista: Definir el catch-all pero sabiendo que la excepción del 404 se maneja implícitamente al NO definirla
-      // PERO, si ponemos catch-all, se comerá al 404.
-      // Solución técnica: No podemos forzar un 404 desde next.config.js redirects (solo redirects/rewrites).
-      // Si la URL '/casos-estudio/clinica-innovacion' llega al servidor y no hay página, dará 404 nativo.
-      // El problema es que el catch-all de abajo la redirigiría.
-      // Truco: Usar 'has' o regex para excluir, o simplemente no usar catch-all ciego si hay excepciones 404.
-      // Dado el requisito "Resto -> redirigir", asumimos que la excepción es única.
-      {
-        source: '/casos-estudio/:slug((?!clinica-innovacion$).*)', // Regex para excluir 'clinica-innovacion'
-        destination: '/services',
+       {
+        source: '/casos-estudio/clinica-innovacion',
+        destination: '/services', // Redirigir al índice de servicios para recuperar tráfico
         permanent: true,
       },
+      // 7. Favicon legacy path
+      {
+        source: '/favicon.ico',
+        destination: '/logo/isotipo_DD_negro_V2.svg',
+        permanent: true,
+      },
+      // 6. Catch-all para casos de estudio (excepto los explícitamente ignorados o definidos arriba)
+      // ELIMINADO: Dejar que de 404 para evitar soft-404 y problemas de UX
+      // {
+      //   source: '/casos-estudio/:slug((?!clinica-innovacion$).*)', 
+      //   destination: '/services',
+      //   permanent: true,
+      // },
     ];
   },
 
@@ -192,21 +192,6 @@ const nextConfig = {
   },
   
   // Headers de seguridad y caché
-  async redirects() {
-    return [
-      {
-        source: '/marketplace',
-        destination: '/catalogo-impresion-3d',
-        permanent: true,
-      },
-      {
-        source: '/marketplace/:slug*',
-        destination: '/catalogo-impresion-3d/:slug*',
-        permanent: true,
-      },
-    ];
-  },
-
   async headers() {
     return [
       {
@@ -227,25 +212,6 @@ const nextConfig = {
           {
             key: 'Referrer-Policy',
             value: 'strict-origin-when-cross-origin',
-          },
-        ],
-      },
-      // Prevenir caché en rutas de la aplicación para asegurar que los usuarios vean la última versión
-      // Esto soluciona el problema de "errores antiguos" al recargar
-      {
-        source: '/((?!_next|static|favicon.ico|images|logo|api).*)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
-          },
-          {
-            key: 'Pragma',
-            value: 'no-cache',
-          },
-          {
-            key: 'Expires',
-            value: '0',
           },
         ],
       },

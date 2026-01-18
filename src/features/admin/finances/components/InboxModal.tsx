@@ -25,7 +25,7 @@ export function InboxModal({ isOpen, onClose, onSave, mode = 'all' }: InboxModal
   const [selectedItem, setSelectedItem] = useState<InboxItem | null>(null);
   const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
 
-  const { markAsRead } = useNotifications();
+  const { markAsRead, addLocalNotification } = useNotifications();
 
   // Load items when modal opens
   useEffect(() => {
@@ -42,6 +42,11 @@ export function InboxModal({ isOpen, onClose, onSave, mode = 'all' }: InboxModal
           setItems(filtered.sort((a, b) => b.createdAt - a.createdAt));
         } catch (error) {
           console.error('Failed to load inbox', error);
+          addLocalNotification(
+            'No se pudo cargar el Inbox del Bot',
+            'Revisa tu conexión o intenta de nuevo en unos minutos.',
+            'warning'
+          );
         } finally {
           setLoading(false);
         }

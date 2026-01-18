@@ -42,11 +42,9 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!user) return;
     
-    // Only check inbox if user is admin
     const isAdmin = user.role === 'admin' || isSuperAdmin(user.email);
     if (!isAdmin) return;
 
-    // Dynamically import InboxService to avoid circular deps or server issues
     const checkInbox = async () => {
       try {
         const { InboxService } = await import('@/features/admin/finances/services/InboxService');
@@ -76,10 +74,22 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
         }
       } catch (error) {
         console.error('Error checking inbox:', error);
+        if (user) {
+          const newNoti: AppNotification = {
+            id: `local-inbox-error-${Date.now()}`,
+            userId: user.id,
+            title: 'No se pudo conectar con el Inbox del Bot',
+            message: 'Intenta nuevamente en unos minutos. Si persiste, revisa Firebase Storage.',
+            type: 'warning',
+            read: false,
+            createdAt: new Date(),
+            link: '/admin/finanzas'
+          };
+          setLocalNotifications(prev => [newNoti, ...prev]);
+        }
       }
     };
 
-    // Check immediately and then every 30 seconds
     checkInbox();
     const interval = setInterval(checkInbox, 30000);
 

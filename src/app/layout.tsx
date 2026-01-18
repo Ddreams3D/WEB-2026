@@ -117,6 +117,28 @@ export default function RootLayout({
         className="antialiased text-foreground dark:text-white"
         suppressHydrationWarning
       >
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var savedDarkMode = localStorage.getItem('darkMode');
+                  var initialDarkMode = savedDarkMode ? JSON.parse(savedDarkMode) : window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  if (initialDarkMode) {
+                    document.documentElement.classList.add('dark');
+                  } else {
+                    document.documentElement.classList.remove('dark');
+                  }
+                  
+                  var savedTheme = localStorage.getItem('theme');
+                  if (savedTheme) {
+                    document.documentElement.setAttribute('data-theme', savedTheme);
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
         {/* Script para excluir analytics si es necesario */}
         <Script
           id="analytics-exclusion-init"

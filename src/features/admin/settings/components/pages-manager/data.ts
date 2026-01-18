@@ -3,12 +3,53 @@ import { RouteItem } from './types';
 export const ACTIVE_REDIRECTS: RouteItem[] = [
   { 
     path: '/catalogo-impresion-3d/general/premio-estilo-oscar-impreso-en-3d-reconocimiento-personalizado', 
-    name: 'Premio Oscar Legacy', 
+    name: 'Legacy: Premio Oscar (General)', 
     type: 'Redirect', 
     category: 'Tienda', 
     status: 'redirect', 
-    redirectTarget: '/catalogo-impresion-3d/general/premio-oscar-impreso-3d',
-    description: 'Redirección SEO para preservar posicionamiento del producto Oscar antiguo'
+    redirectTarget: '/catalogo-impresion-3d/arte-diseno/premio-oscar-impreso-3d',
+    description: 'Redirección corregida: Categoría general -> arte-diseno'
+  },
+  { 
+    path: '/catalogo-impresion-3d/product/premio-estilo-oscar-impreso-en-3d-reconocimiento-personalizado', 
+    name: 'Legacy: Premio Oscar (Product)', 
+    type: 'Redirect', 
+    category: 'Tienda', 
+    status: 'redirect', 
+    redirectTarget: '/catalogo-impresion-3d/arte-diseno/premio-oscar-impreso-3d',
+    description: 'Redirección variante product -> arte-diseno'
+  },
+  { 
+    path: '/marketplace/product/2', 
+    name: 'Legacy ID: Copa Pistón', 
+    type: 'Redirect', 
+    category: 'Tienda', 
+    status: 'redirect', 
+    redirectTarget: '/catalogo-impresion-3d/arte-diseno/regalo-personalizado-fanaticos-autos-copa-piston' 
+  },
+  { 
+    path: '/marketplace/product/3', 
+    name: 'Legacy ID: Copa Pistón Grande', 
+    type: 'Redirect', 
+    category: 'Tienda', 
+    status: 'redirect', 
+    redirectTarget: '/catalogo-impresion-3d/arte-diseno/regalo-personalizado-fanaticos-autos-copa-piston-grande' 
+  },
+  { 
+    path: '/marketplace/product/4', 
+    name: 'Legacy ID: Cooler V6', 
+    type: 'Redirect', 
+    category: 'Tienda', 
+    status: 'redirect', 
+    redirectTarget: '/catalogo-impresion-3d/arte-diseno/cooler-motor-3d-v6' 
+  },
+  { 
+    path: '/marketplace/product/5', 
+    name: 'Legacy ID: Cooler V8', 
+    type: 'Redirect', 
+    category: 'Tienda', 
+    status: 'redirect', 
+    redirectTarget: '/catalogo-impresion-3d/arte-diseno/cooler-motor-3d-v8' 
   },
   { 
     path: '/marketplace', 
@@ -19,13 +60,13 @@ export const ACTIVE_REDIRECTS: RouteItem[] = [
     redirectTarget: '/catalogo-impresion-3d',
     seo: { robots: 'noindex, follow' }
   },
-  { path: '/marketplace/product/:slug', name: 'Legacy Product', type: 'Redirect', category: 'Tienda', status: 'redirect', redirectTarget: '/catalogo-impresion-3d/product/:slug' },
+  { path: '/marketplace/product/:slug', name: 'Legacy Product Slug', type: 'Redirect', category: 'Tienda', status: 'redirect', redirectTarget: '/catalogo-impresion-3d/product/:slug' },
   { path: '/shop', name: 'Legacy Shop', type: 'Redirect', category: 'Tienda', status: 'redirect', redirectTarget: '/catalogo-impresion-3d' },
   { path: '/products', name: 'Legacy Products', type: 'Redirect', category: 'Tienda', status: 'redirect', redirectTarget: '/catalogo-impresion-3d' },
   { path: '/portfolio', name: 'Legacy Portfolio', type: 'Redirect', category: 'General', status: 'redirect', redirectTarget: '/catalogo-impresion-3d' },
   { path: '/casos-estudio/techpro-industries', name: 'Case Study: TechPro', type: 'Redirect', category: 'Servicios', status: 'redirect', redirectTarget: '/servicios/modelado-3d-personalizado' },
-  { path: '/casos-estudio/clinica-innovacion', name: 'Case Study: Clinica', type: 'Redirect', category: 'Servicios', status: 'inactive', description: '404 Intencional' },
-  { path: '/casos-estudio/*', name: 'Other Case Studies', type: 'Redirect', category: 'Servicios', status: 'redirect', redirectTarget: '/services' },
+  { path: '/casos-estudio/clinica-innovacion', name: 'Case Study: Clinica', type: 'Redirect', category: 'Servicios', status: 'redirect', redirectTarget: '/services', description: 'Recuperación de tráfico a índice' },
+  { path: '/casos-estudio/*', name: 'Other Case Studies', type: 'Redirect', category: 'Servicios', status: 'inactive', redirectTarget: '/services', description: 'Desactivado para evitar Soft-404' },
 ];
 
 export const SITE_ROUTES: RouteItem[] = [

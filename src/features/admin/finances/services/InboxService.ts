@@ -68,8 +68,15 @@ export const InboxService = {
         return await response.json();
       }
     } catch (error: any) {
-      if (error.code === 'storage/object-not-found') return [];
-      console.error('Error fetching inbox:', error);
+      if (error && error.code === 'storage/object-not-found') return [];
+      const message = typeof error?.message === 'string' ? error.message : '';
+      if (message.toLowerCase().includes('failed to fetch')) {
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn('No se pudo leer el inbox de finanzas (fallo de red).');
+        }
+      } else {
+        console.error('Error fetching inbox:', error);
+      }
     }
     return [];
   },
