@@ -55,7 +55,7 @@ export function SeoEditSheet({ isOpen, onClose, route, onSave, isSaving }: SeoEd
       const initialData = {
         metaTitle: route.seo?.metaTitle || '',
         metaDescription: route.seo?.metaDescription || '',
-        canonicalUrl: route.seo?.canonicalUrl || `https://ddream3d.com${route.path}`,
+        canonicalUrl: route.seo?.canonicalUrl || `https://ddreams3d.com${route.path}`,
         robots: normalizedRobots
       };
       setFormData(initialData);
@@ -127,7 +127,7 @@ export function SeoEditSheet({ isOpen, onClose, route, onSave, isSaving }: SeoEd
               {formData.metaTitle || route.name}
             </div>
             <div className="text-[#006621] text-sm truncate">
-              {formData.canonicalUrl || `https://ddream3d.com${route.path}`}
+              {formData.canonicalUrl || `https://ddreams3d.com${route.path}`}
             </div>
             <div className="text-[#545454] text-sm line-clamp-2">
               {formData.metaDescription || route.description || "No hay descripción configurada."}

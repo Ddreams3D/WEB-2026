@@ -105,7 +105,6 @@ export default function CampaignsManager() {
         automationEnabled={automationEnabled}
       />
 
-      {/* Editor Sheet */}
       <CampaignEditorSheet
         editingId={editingId}
         themes={themes}
@@ -113,11 +112,6 @@ export default function CampaignsManager() {
         onSave={handleSave}
         isSaving={saving}
         updateTheme={updateTheme}
-        updateLanding={updateLanding}
-        updateAnnouncement={updateAnnouncement}
-        updateDateRange={updateDateRange}
-        addDateRange={addDateRange}
-        removeDateRange={removeDateRange}
         automationEnabled={automationEnabled}
       />
     </div>

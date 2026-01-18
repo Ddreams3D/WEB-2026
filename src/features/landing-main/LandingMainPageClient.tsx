@@ -1,11 +1,17 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { LandingMainConfig } from '@/shared/types/landing';
 import { CatalogItem } from '@/shared/types/catalog';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { useAdminPermissions } from '@/features/admin/hooks/useAdminProtection';
+import { UniversalLandingEditor } from '@/features/admin/components/universal-landing/UniversalLandingEditor';
+import { mainToUnified, unifiedToMain } from '@/features/admin/components/universal-landing/adapters';
+import { UnifiedLandingData } from '@/features/admin/components/universal-landing/types';
+import { saveLandingMain } from '@/services/landing.service';
+import { toast } from 'sonner';
 
-// Components
 import { HeroSection } from './components/HeroSection';
 import { BenefitsSection } from './components/BenefitsSection';
 import { FeaturedProductsSection } from './components/FeaturedProductsSection';
@@ -28,38 +34,85 @@ export default function LandingMainPageClient({
   services,
   bubbleImages
 }: LandingMainPageClientProps) {
-  // Determine theme class from config
-  const themeClass = initialConfig?.themeMode === 'dark' ? 'dark' : initialConfig?.themeMode === 'light' ? 'light' : '';
+  const [config, setConfig] = useState<LandingMainConfig | null>(initialConfig);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const { isAdmin } = useAdminPermissions();
+
+  useEffect(() => {
+    setConfig(initialConfig);
+  }, [initialConfig]);
+
+  const themeClass = config?.themeMode === 'dark' ? 'dark' : config?.themeMode === 'light' ? 'light' : '';
+
+  const effectiveBubbleImages = useMemo(() => {
+    const fromConfig = config?.bubbleImages?.filter(Boolean) || [];
+    if (fromConfig.length > 0) return fromConfig;
+    return bubbleImages;
+  }, [config, bubbleImages]);
+
+  const initialData: UnifiedLandingData | null = useMemo(() => {
+    if (!config) return null;
+    const unified = mainToUnified(config);
+    unified.bubbles = effectiveBubbleImages;
+    return unified;
+  }, [config, effectiveBubbleImages]);
+
+  const handleSave = async (data: UnifiedLandingData) => {
+    if (!config) return;
+    try {
+      setIsSaving(true);
+      const newConfig = unifiedToMain(data);
+      await saveLandingMain(newConfig);
+      setConfig(newConfig);
+      toast.success('Landing principal actualizada correctamente');
+      setIsEditing(false);
+    } catch (error: any) {
+      const message = error?.message || 'No se pudo guardar la landing principal';
+      toast.error(message);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
-    <div 
-      className={cn("min-h-screen bg-background text-foreground overflow-x-hidden selection:bg-primary/20", themeClass)}
-      data-theme={themeClass === 'light' ? 'standard' : undefined}
-    >
-      
-      {/* 1. HERO SECTION */}
-      <HeroSection initialConfig={initialConfig} bubbleImages={bubbleImages} />
+    <>
+      <div 
+        className={cn("min-h-screen bg-background text-foreground overflow-x-hidden selection:bg-primary/20", themeClass)}
+        data-theme={themeClass === 'light' ? 'standard' : undefined}
+      >
+        <HeroSection initialConfig={config} bubbleImages={effectiveBubbleImages} />
+        <BenefitsSection />
+        <FeaturedProductsSection featuredProducts={featuredProducts} />
+        <ServicesPreviewSection services={services} />
+        <TestimonialsSection />
+        <FAQSection />
+        <CallToActionSection />
+        <LandingFooter />
+      </div>
 
-      {/* 2. BENEFITS SECTION */}
-      <BenefitsSection />
+      {isAdmin && initialData && (
+        <UniversalLandingEditor
+          isOpen={isEditing}
+          onClose={() => setIsEditing(false)}
+          onSave={handleSave}
+          initialData={initialData}
+          isSaving={isSaving}
+        />
+      )}
 
-      {/* 3. FEATURED PRODUCTS */}
-      <FeaturedProductsSection featuredProducts={featuredProducts} />
-
-      {/* 4. SERVICES PREVIEW */}
-      <ServicesPreviewSection services={services} />
-
-      {/* 5. LOCAL SOCIAL PROOF (Testimonials) */}
-      <TestimonialsSection />
-
-      {/* 6. FAQ Section */}
-      <FAQSection />
-
-      {/* 7. FINAL CTA */}
-      <CallToActionSection />
-
-      {/* 8. FOOTER */}
-      <LandingFooter />
-    </div>
+      {isAdmin && config && (
+        <div className="fixed bottom-4 right-4 z-50">
+          <Button
+            size="sm"
+            className="shadow-lg bg-primary text-primary-foreground hover:bg-primary/90"
+            onClick={() => setIsEditing(true)}
+            disabled={isSaving}
+          >
+            Editar landing principal
+          </Button>
+        </div>
+      )}
+    </>
   );
 }

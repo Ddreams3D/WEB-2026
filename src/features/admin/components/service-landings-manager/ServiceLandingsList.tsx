@@ -1,7 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { 
-  Edit, 
-  ExternalLink, 
   LayoutTemplate,
   Plus
 } from 'lucide-react';
@@ -9,47 +7,27 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { ServiceLandingConfig } from '@/shared/types/service-landing';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { Eye } from '@/lib/icons';
 import DefaultImage from '@/shared/components/ui/DefaultImage';
 
 interface ServiceLandingsListProps {
     filteredLandings: ServiceLandingConfig[];
-    handleEdit: (landing: ServiceLandingConfig) => void;
     handleCreateNew: () => void;
 }
 
 export function ServiceLandingsList({
     filteredLandings,
-    handleEdit,
     handleCreateNew
 }: ServiceLandingsListProps) {
-  const [livePreview, setLivePreview] = useState<{
-    open: boolean;
-    url: string;
-    title: string;
-  }>({
-    open: false,
-    url: '',
-    title: ''
-  });
-
-  const openLivePreview = (landing: ServiceLandingConfig) => {
-    const url = `/servicios/${landing.slug}`;
-    setLivePreview({
-      open: true,
-      url,
-      title: landing.name
-    });
-  };
-
   return (
-    <>
     <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-        {filteredLandings.map((landing) => (
+        {filteredLandings.map((landing) => {
+            return (
             <div 
                 key={landing.id} 
-                className="group relative flex flex-col rounded-xl border bg-card text-card-foreground shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                className="group relative flex flex-col rounded-xl border bg-card text-card-foreground shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+                onClick={() => {
+                    window.location.href = `/servicios/${landing.slug}`;
+                }}
             >
                 {/* Browser Mockup Frame */}
                 <div className="relative w-full aspect-[16/10] overflow-hidden rounded-t-xl bg-muted border-b">
@@ -90,37 +68,6 @@ export function ServiceLandingsList({
                           )}
                         </div>
                       </div>
-                    </div>
-
-                    {/* Hover Overlay */}
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3 z-10">
-                        <Button 
-                            size="sm" 
-                            variant="secondary" 
-                            className="font-semibold shadow-lg translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
-                            onClick={() => handleEdit(landing)}
-                        >
-                            <Edit className="w-4 h-4 mr-2" />
-                            Editar
-                        </Button>
-                        <Button
-                            size="sm"
-                            variant="secondary"
-                            className="font-semibold shadow-lg translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75"
-                            onClick={() => openLivePreview(landing)}
-                        >
-                            <Eye className="w-4 h-4 mr-2" />
-                            Vista
-                        </Button>
-                        <a 
-                            href={`/servicios/${landing.slug}`} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center h-9 w-9 rounded-md bg-secondary text-secondary-foreground shadow-lg translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75 hover:bg-secondary/80"
-                            title="Ver página real"
-                        >
-                            <ExternalLink className="w-4 h-4" />
-                        </a>
                     </div>
 
                     {/* Status Badge */}
@@ -173,7 +120,8 @@ export function ServiceLandingsList({
                     </div>
                 </div>
             </div>
-        ))}
+            );
+        })}
 
         {/* Empty State */}
         {filteredLandings.length === 0 && (
@@ -192,32 +140,5 @@ export function ServiceLandingsList({
             </div>
         )}
     </div>
-    <Dialog
-      open={livePreview.open}
-      onOpenChange={(open) => setLivePreview(prev => ({ ...prev, open }))}
-    >
-      <DialogContent className="max-w-6xl w-[95vw] h-[85vh] p-0 overflow-hidden">
-        <div className="h-10 bg-muted/90 border-b flex items-center justify-between px-3 gap-3">
-          <div className="text-xs text-muted-foreground truncate">
-            {livePreview.title} — {livePreview.url}
-          </div>
-          <a
-            href={livePreview.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground"
-          >
-            <ExternalLink className="w-4 h-4" />
-            Abrir
-          </a>
-        </div>
-        <iframe
-          title={livePreview.title || 'Vista en vivo'}
-          src={livePreview.url}
-          className="w-full h-[calc(85vh-40px)] bg-background"
-        />
-      </DialogContent>
-    </Dialog>
-    </>
   );
 }

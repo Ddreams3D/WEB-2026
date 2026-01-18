@@ -30,7 +30,7 @@ export function CampaignEditorSheet({
   updateTheme,
   automationEnabled
 }: CampaignEditorSheetProps) {
-  const editingTheme = themes.find(t => t.id === editingId);
+  const editingTheme = themes.find(t => t.id === editingId && t.id === 'standard');
 
   const initialData: UnifiedLandingData | null = useMemo(() => {
     if (!editingTheme) return null;

@@ -18,6 +18,12 @@ export function useServiceLanding(config: ServiceLandingConfig, isPreview: boole
     async function loadProducts() {
       setIsLoading(true);
       try {
+        if (config.id === 'organic-modeling') {
+          setFeaturedProducts([]);
+          setIsLoading(false);
+          return;
+        }
+
         const all = await ProductService.getAllProducts();
         
         // Filter by the featured tag if present
@@ -39,7 +45,7 @@ export function useServiceLanding(config: ServiceLandingConfig, isPreview: boole
     }
 
     loadProducts();
-  }, [config.featuredTag, isPreview]);
+  }, [config.id, config.featuredTag, isPreview]);
 
   // Determine theme class override
   const [systemTheme, setSystemTheme] = useState<'dark' | 'light'>('light');
@@ -67,6 +73,7 @@ export function useServiceLanding(config: ServiceLandingConfig, isPreview: boole
   const featuresSection = config.sections.find(s => s.type === 'features');
   const focusSection = config.sections.find(s => s.type === 'focus');
   const processSection = config.sections.find(s => s.type === 'process');
+  const gallerySection = config.sections.find(s => s.type === 'gallery');
 
   return {
     featuredProducts,
@@ -77,6 +84,7 @@ export function useServiceLanding(config: ServiceLandingConfig, isPreview: boole
     heroSection,
     featuresSection,
     focusSection,
-    processSection
+    processSection,
+    gallerySection
   };
 }

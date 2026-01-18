@@ -23,6 +23,60 @@ export const SERVICE_LANDINGS_DATA: ServiceLandingConfig[] = [
         content: 'Transformamos conceptos en figuras tridimensionales detalladas listas para producción.',
       },
       {
+        id: 'segmentation',
+        type: 'focus',
+        title: 'Para quién es (y para quién no es)',
+        content:
+          '**¿Para quién es este servicio?**\n' +
+          'Personas que quieren una figura o personaje único\n' +
+          'Proyectos personalizados para impresión 3D\n' +
+          'Ideas que aún no están claras y necesitan guía visual\n\n' +
+          '**¿Para quién no es este servicio?**\n' +
+          'Proyectos enfocados en videojuegos o motores en tiempo real\n' +
+          'Renderizado hiperrealista exclusivo para publicidad\n' +
+          'Producción en masa o archivos industriales complejos',
+      },
+      {
+        id: 'process-cards',
+        type: 'process',
+        title: 'Cómo trabajamos tu proyecto (3 pasos)',
+        subtitle: 'Hacemos simple un proceso que detrás lleva mucha experiencia.',
+        items: [
+          {
+            title: 'Entendemos tu idea',
+            description: 'Nos cuentas qué tienes en mente, incluso si aún no está claro.',
+            icon: 'Lightbulb'
+          },
+          {
+            title: 'Bocetamos y definimos el modelo',
+            description: 'Usamos IA y herramientas digitales para aterrizar la forma y el estilo.',
+            icon: 'PenTool'
+          },
+          {
+            title: 'Refinamos y preparamos para entrega',
+            description: 'Ajustamos detalles y dejamos el modelo listo según el objetivo del proyecto.',
+            icon: 'Hammer'
+          }
+        ]
+      },
+      {
+        id: 'organic-gallery',
+        type: 'gallery',
+        title: 'Ejemplos de proyectos de modelado 3D orgánico',
+        items: [
+          {
+            title: 'Personaje estilizado para impresión 3D',
+            description: 'Modelo orgánico listo para impresión, con detalles y pose pensados para vitrina o colección.',
+            image: '/images/services/modelado-3d-organico-personajes-esculturas-digitales.png'
+          },
+          {
+            title: 'Escultura digital artística',
+            description: 'Exploración de formas orgánicas con enfoque en volúmenes, gestos y silueta.',
+            image: '/images/services/diseno-3d-organico-modelado-artistico-profesional.png'
+          }
+        ]
+      },
+      {
         id: 'features',
         type: 'features',
         title: '¿Qué incluye este servicio?',
@@ -187,6 +241,201 @@ fríos, impersonales, sin carácter.
         subtitle: 'Precisión médica en tus manos',
         content: 'Réplicas anatómicas exactas a partir de tomografías para planificación y docencia.',
       }
+    ],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 'technical-prototyping',
+    slug: 'prototipado-tecnico-impresion-3d',
+    name: 'Prototipado Técnico en Impresión 3D',
+    isActive: true,
+    themeMode: 'system',
+    metaTitle: 'Prototipado Técnico en Impresión 3D | Validación Rápida de Piezas',
+    metaDescription: 'Prototipado técnico con impresión 3D para validar encajes, tolerancias y funcionalidad antes de fabricar en serie. Ideal para ingeniería y diseño de producto.',
+    primaryColor: '#0f766e',
+    sections: [
+      {
+        id: 'hero',
+        type: 'hero',
+        title: 'Prototipado Técnico en Impresión 3D',
+        subtitle: 'Valida tus diseños antes de invertir en producción',
+        content: 'Creamos prototipos funcionales y piezas de prueba para revisar formas, encajes y tolerancias sin invertir en moldes ni procesos costosos.',
+      },
+      {
+        id: 'focus',
+        type: 'focus',
+        title: 'Pensado para equipos técnicos',
+        content:
+          'Ideal para ingenieros, diseñadores de producto y fabricantes que necesitan validar piezas rápidamente.\n\n' +
+          'Trabajamos a partir de archivos CAD, bocetos técnicos o piezas físicas que necesitas replicar o ajustar.',
+      },
+      {
+        id: 'process',
+        type: 'process',
+        title: 'Cómo trabajamos tu prototipo',
+        items: [
+          {
+            title: 'Revisión del diseño',
+            description: 'Analizamos tu archivo o idea para detectar riesgos de impresión y uso.',
+          },
+          {
+            title: 'Impresión del prototipo',
+            description: 'Producimos la pieza en el material más adecuado para pruebas.',
+          },
+          {
+            title: 'Ajustes y refinamiento',
+            description: 'A partir de tus pruebas, iteramos el diseño hasta dejarlo listo para producción.',
+          },
+        ],
+      },
+      {
+        id: 'features',
+        type: 'features',
+        title: 'Casos de uso frecuentes',
+        items: [
+          {
+            title: 'Validación de encastres y uniones',
+            description: 'Comprueba cómo se comportan tus piezas ensambladas antes de fabricar en serie.',
+          },
+          {
+            title: 'Prototipos de producto',
+            description: 'Muestras físicas para presentaciones, pitches e iteraciones internas.',
+          },
+          {
+            title: 'Soporte a equipos de ingeniería',
+            description: 'Iteraciones rápidas sin frenar el avance del proyecto.',
+          },
+        ],
+      },
+    ],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 'custom-spare-parts',
+    slug: 'repuestos-personalizados-impresion-3d',
+    name: 'Repuestos Personalizados en Impresión 3D',
+    isActive: true,
+    themeMode: 'system',
+    metaTitle: 'Repuestos Personalizados con Impresión 3D | Piezas Difíciles de Conseguir',
+    metaDescription: 'Fabricamos repuestos personalizados en impresión 3D cuando la pieza original ya no existe o es difícil de importar. Soluciones rápidas para hogar, oficina y negocio.',
+    primaryColor: '#ea580c',
+    sections: [
+      {
+        id: 'hero',
+        type: 'hero',
+        title: 'Repuestos Personalizados en Impresión 3D',
+        subtitle: 'Cuando el fabricante ya no tiene la pieza, la diseñamos nosotros',
+        content: 'Recreamos y mejoramos piezas rotas o descontinuadas mediante diseño 3D e impresión de alta precisión.',
+      },
+      {
+        id: 'focus',
+        type: 'focus',
+        title: '¿En qué casos funciona mejor?',
+        content:
+          'Repuestos pequeños o medianos para electrodomésticos, mobiliario, soportes, mecanismos sencillos y partes plásticas.\n\n' +
+          'No trabajamos piezas de alta exigencia estructural crítica como frenos, elementos de seguridad o carga extrema.',
+      },
+      {
+        id: 'features',
+        type: 'features',
+        title: 'Ventajas frente al repuesto original',
+        items: [
+          {
+            title: 'Rápido y local',
+            description: 'Evita tiempos de importación y costos altos por piezas pequeñas.',
+          },
+          {
+            title: 'Posibilidad de mejora',
+            description: 'Podemos reforzar zonas frágiles o ajustar la pieza a tu uso real.',
+          },
+          {
+            title: 'Producción bajo demanda',
+            description: 'Solo fabricamos lo que necesitas, sin mínimos de pedido.',
+          },
+        ],
+      },
+    ],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 'device-mounts',
+    slug: 'soportes-personalizados-dispositivos',
+    name: 'Soportes Personalizados para Dispositivos',
+    isActive: true,
+    themeMode: 'system',
+    metaTitle: 'Soportes Personalizados para Celulares, Tablets y Dispositivos',
+    metaDescription: 'Diseñamos y fabricamos soportes personalizados para celulares, tablets, consolas, cámaras y periféricos. Organización y ergonomía a medida con impresión 3D.',
+    primaryColor: '#4f46e5',
+    sections: [
+      {
+        id: 'hero',
+        type: 'hero',
+        title: 'Soportes Personalizados para tus Dispositivos',
+        subtitle: 'Tu escritorio y tu setup, ordenados a tu manera',
+        content: 'Creamos soportes, bases y accesorios específicos para tus equipos, adaptados a tu espacio y forma de trabajar.',
+      },
+      {
+        id: 'features',
+        type: 'features',
+        title: 'Ideas de soportes que podemos crear',
+        items: [
+          {
+            title: 'Soportes para celular y tablet',
+            description: 'Bases para escritorio, videollamadas, lectura o monitoreo constante.',
+          },
+          {
+            title: 'Organizadores de periféricos',
+            description: 'Soportes para audífonos, mandos, stylus, hubs y accesorios de escritorio.',
+          },
+          {
+            title: 'Accesorios para setup de contenido',
+            description: 'Soportes para cámaras pequeñas, micrófonos o luces ligeras.',
+          },
+        ],
+      },
+    ],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 'custom-web-landings',
+    slug: 'landings-web-personalizadas',
+    name: 'Landings Web Personalizadas',
+    isActive: true,
+    themeMode: 'system',
+    metaTitle: 'Diseño de Landings Web Personalizadas | Enfoque en Conversión',
+    metaDescription: 'Diseñamos landings web enfocadas en conversión para campañas específicas, servicios o productos. Mensajes claros, estructura pensada para que el usuario actúe.',
+    primaryColor: '#7c3aed',
+    sections: [
+      {
+        id: 'hero',
+        type: 'hero',
+        title: 'Landings Web Personalizadas para tus campañas',
+        subtitle: 'Una página, un objetivo claro',
+        content: 'Creamos páginas enfocadas en una sola acción: vender, captar leads o agendar reuniones, alineadas a tu marca.',
+      },
+      {
+        id: 'features',
+        type: 'features',
+        title: 'Qué incluye una landing bien pensada',
+        items: [
+          {
+            title: 'Mensaje claro y segmentado',
+            description: 'Texto y estructura enfocados en un tipo de cliente y un solo objetivo.',
+          },
+          {
+            title: 'Diseño alineado a tu marca',
+            description: 'Componentes visuales coherentes con tu identidad, sin usar plantillas genéricas.',
+          },
+          {
+            title: 'Preparada para campañas',
+            description: 'Estructura lista para conectar con anuncios, formularios y herramientas analíticas.',
+          },
+        ],
+      },
     ],
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),

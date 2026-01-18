@@ -9,13 +9,15 @@ import { UnifiedLandingData } from '../types';
 import { ServiceLandingSection } from '@/shared/types/service-landing';
 import { cn } from '@/lib/utils';
 import { motion, Reorder } from 'framer-motion';
+import ImageUpload from '@/features/admin/components/ImageUpload';
 
 interface ContentSectionProps {
   data: UnifiedLandingData;
   updateField: (field: keyof UnifiedLandingData, value: any) => void;
+  disableFeaturesText?: boolean;
 }
 
-export function ContentSection({ data, updateField }: ContentSectionProps) {
+export function ContentSection({ data, updateField, disableFeaturesText = false }: ContentSectionProps) {
   // Only for Service Landing for now
   if (data.type !== 'service') {
     return (
@@ -50,6 +52,7 @@ export function ContentSection({ data, updateField }: ContentSectionProps) {
   }
 
   const sections = data.sections || [];
+  const isOrganicService = data.type === 'service' && (data.id === 'organic-modeling' || data._originalService?.id === 'organic-modeling');
 
   const addSection = () => {
     const newSection: ServiceLandingSection = {
@@ -142,8 +145,9 @@ export function ContentSection({ data, updateField }: ContentSectionProps) {
         )}
 
         {sections.map((section, index) => {
-            // Skip hero section as it is handled in the Hero tab
             if (section.type === 'hero') return null;
+            const isFeaturesSectionReadOnly = disableFeaturesText && isOrganicService && section.type === 'features';
+            const isGallerySection = section.type === 'gallery';
 
             return (
                 <div key={section.id} className="group border rounded-xl bg-card shadow-sm overflow-hidden transition-all hover:shadow-md">
@@ -191,6 +195,7 @@ export function ContentSection({ data, updateField }: ContentSectionProps) {
                                     <SelectItem value="features">Características</SelectItem>
                                     <SelectItem value="focus">Enfoque</SelectItem>
                                     <SelectItem value="process">Proceso</SelectItem>
+                                    <SelectItem value="gallery">Galería</SelectItem>
                                 </SelectContent>
                                 </Select>
                             </div>
@@ -198,7 +203,8 @@ export function ContentSection({ data, updateField }: ContentSectionProps) {
                                 <Label>Título</Label>
                                 <Input 
                                     value={section.title || ''} 
-                                    onChange={(e) => updateSection(index, { title: e.target.value })}
+                                    onChange={isFeaturesSectionReadOnly ? undefined : (e) => updateSection(index, { title: e.target.value })}
+                                    disabled={isFeaturesSectionReadOnly}
                                 />
                             </div>
                         </div>
@@ -207,23 +213,24 @@ export function ContentSection({ data, updateField }: ContentSectionProps) {
                             <Label>Subtítulo / Descripción</Label>
                             <Textarea 
                                 value={section.subtitle || ''} 
-                                onChange={(e) => updateSection(index, { subtitle: e.target.value })}
+                                onChange={isFeaturesSectionReadOnly ? undefined : (e) => updateSection(index, { subtitle: e.target.value })}
                                 rows={2}
+                                disabled={isFeaturesSectionReadOnly}
                             />
                         </div>
 
-                        {/* Items Editor */}
                         <div className="space-y-4 pt-4 border-t">
                             <div className="flex items-center justify-between">
-                                <Label>Items de la Sección</Label>
+                                <Label>{isGallerySection ? 'Items de la galería' : 'Items de la Sección'}</Label>
                                 <Button 
                                     variant="outline" 
                                     size="sm"
                                     onClick={() => {
                                         const newItems = [...(section.items || [])];
-                                        newItems.push({ title: 'Nuevo Item', description: '' });
+                                        newItems.push({ title: 'Nuevo Item', description: '', image: '' });
                                         updateSection(index, { items: newItems });
                                     }}
+                                    disabled={isFeaturesSectionReadOnly}
                                 >
                                     <Plus className="w-3 h-3 mr-2" />
                                     Agregar Item
@@ -237,44 +244,108 @@ export function ContentSection({ data, updateField }: ContentSectionProps) {
                             )}
 
                             <div className="grid gap-3">
-                                {section.items?.map((item, itemIndex) => (
-                                    <div key={itemIndex} className="flex gap-3 items-start p-3 bg-muted/20 rounded-lg border">
-                                        <div className="flex-1 space-y-2">
-                                            <Input 
-                                                value={item.title} 
-                                                onChange={(e) => {
+                                {section.items?.map((item, itemIndex) => {
+                                    if (isGallerySection) {
+                                        return (
+                                            <div key={itemIndex} className="flex gap-3 items-start p-3 bg-muted/20 rounded-lg border">
+                                                <div className="w-40">
+                                                    <Label className="text-xs">Imagen</Label>
+                                                    <ImageUpload
+                                                        value={item.image || ''}
+                                                        onChange={(url, _viewType) => {
+                                                            const newItems = [...(section.items || [])];
+                                                            newItems[itemIndex] = { ...item, image: url };
+                                                            updateSection(index, { items: newItems });
+                                                        }}
+                                                        onRemove={() => {
+                                                            const newItems = [...(section.items || [])];
+                                                            newItems[itemIndex] = { ...item, image: '' };
+                                                            updateSection(index, { items: newItems });
+                                                        }}
+                                                        defaultName={data.internalName || 'organic-gallery'}
+                                                        existingImages={[]}
+                                                        storagePath="images/services"
+                                                    />
+                                                </div>
+                                                <div className="flex-1 space-y-2">
+                                                    <Input 
+                                                        value={item.title} 
+                                                        onChange={(e) => {
+                                                            const newItems = [...(section.items || [])];
+                                                            newItems[itemIndex] = { ...item, title: e.target.value };
+                                                            updateSection(index, { items: newItems });
+                                                        }}
+                                                        placeholder="Título del item"
+                                                        className="h-8"
+                                                    />
+                                                    <Textarea 
+                                                        value={item.description} 
+                                                        onChange={(e) => {
+                                                            const newItems = [...(section.items || [])];
+                                                            newItems[itemIndex] = { ...item, description: e.target.value };
+                                                            updateSection(index, { items: newItems });
+                                                        }}
+                                                        placeholder="Descripción del item"
+                                                        className="min-h-[60px] text-sm"
+                                                    />
+                                                </div>
+                                                <Button 
+                                                    variant="ghost" 
+                                                    size="icon" 
+                                                    className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                                                    onClick={() => {
+                                                        const newItems = [...(section.items || [])];
+                                                        newItems.splice(itemIndex, 1);
+                                                        updateSection(index, { items: newItems });
+                                                    }}
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </Button>
+                                            </div>
+                                        );
+                                    }
+
+                                    return (
+                                        <div key={itemIndex} className="flex gap-3 items-start p-3 bg-muted/20 rounded-lg border">
+                                            <div className="flex-1 space-y-2">
+                                                <Input 
+                                                    value={item.title} 
+                                                    onChange={isFeaturesSectionReadOnly ? undefined : (e) => {
+                                                        const newItems = [...(section.items || [])];
+                                                        newItems[itemIndex] = { ...item, title: e.target.value };
+                                                        updateSection(index, { items: newItems });
+                                                    }}
+                                                    placeholder="Título del item"
+                                                    className="h-8"
+                                                    disabled={isFeaturesSectionReadOnly}
+                                                />
+                                                <Textarea 
+                                                    value={item.description} 
+                                                    onChange={isFeaturesSectionReadOnly ? undefined : (e) => {
+                                                        const newItems = [...(section.items || [])];
+                                                        newItems[itemIndex] = { ...item, description: e.target.value };
+                                                        updateSection(index, { items: newItems });
+                                                    }}
+                                                    placeholder="Descripción del item"
+                                                    disabled={isFeaturesSectionReadOnly}
+                                                    className="min-h-[60px] text-sm"
+                                                />
+                                            </div>
+                                            <Button 
+                                                variant="ghost" 
+                                                size="icon" 
+                                                className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                                                onClick={() => {
                                                     const newItems = [...(section.items || [])];
-                                                    newItems[itemIndex] = { ...item, title: e.target.value };
+                                                    newItems.splice(itemIndex, 1);
                                                     updateSection(index, { items: newItems });
                                                 }}
-                                                placeholder="Título del item"
-                                                className="h-8"
-                                            />
-                                            <Textarea 
-                                                value={item.description} 
-                                                onChange={(e) => {
-                                                    const newItems = [...(section.items || [])];
-                                                    newItems[itemIndex] = { ...item, description: e.target.value };
-                                                    updateSection(index, { items: newItems });
-                                                }}
-                                                placeholder="Descripción del item"
-                                                className="min-h-[60px] text-sm"
-                                            />
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </Button>
                                         </div>
-                                        <Button 
-                                            variant="ghost" 
-                                            size="icon" 
-                                            className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                                            onClick={() => {
-                                                const newItems = [...(section.items || [])];
-                                                newItems.splice(itemIndex, 1);
-                                                updateSection(index, { items: newItems });
-                                            }}
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </Button>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>

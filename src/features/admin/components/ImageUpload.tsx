@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 import { storage } from '@/lib/firebase';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { ProductImageViewType, ProductImage } from '@/shared/types';
@@ -248,11 +249,11 @@ export default function ImageUpload({ value, onChange, onRemove, onUploadStatusC
       <div className="space-y-4">
         {previewUrl && (
            <div className="relative w-full h-48 bg-muted rounded-lg overflow-hidden border border-border">
-               {/* eslint-disable-next-line @next/next/no-img-element */}
-               <img 
+               <Image 
                    src={previewUrl} 
                    alt="Preview" 
-                   className="w-full h-full object-cover"
+                   fill 
+                   className="object-cover"
                />
            </div>
         )}

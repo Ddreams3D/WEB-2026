@@ -3,21 +3,13 @@
 import { useServiceLandingsManager } from "@/features/admin/hooks/useServiceLandingsManager";
 import { ServiceLandingsHeader } from "./service-landings-manager/ServiceLandingsHeader";
 import { ServiceLandingsList } from "./service-landings-manager/ServiceLandingsList";
-import { ServiceLandingEditorSheet } from "./service-landings-manager/ServiceLandingEditorSheet";
 
 export default function ServiceLandingsManager() {
     const {
         filteredLandings,
         searchQuery,
         setSearchQuery,
-        handleCreateNew,
-        handleEdit,
-        handleSave,
-        isEditing,
-        setIsEditing,
-        currentLanding,
-        updateField,
-        updateCurrentLanding
+        handleCreateNew
     } = useServiceLandingsManager();
 
     return (
@@ -31,17 +23,7 @@ export default function ServiceLandingsManager() {
 
             <ServiceLandingsList
                 filteredLandings={filteredLandings}
-                handleEdit={handleEdit}
                 handleCreateNew={handleCreateNew}
-            />
-
-            <ServiceLandingEditorSheet
-                isEditing={isEditing}
-                setIsEditing={setIsEditing}
-                currentLanding={currentLanding}
-                updateField={updateField}
-                updateCurrentLanding={updateCurrentLanding}
-                onSave={handleSave}
             />
         </div>
     );

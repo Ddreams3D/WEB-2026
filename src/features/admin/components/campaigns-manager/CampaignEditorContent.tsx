@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -155,7 +156,7 @@ export function CampaignEditorContent({ theme, updateLanding }: CampaignEditorCo
             </Tabs>
           </div>
 
-          <div className="space-y-2 border-t pt-4">
+             <div className="space-y-2 border-t pt-4">
              <Label className="flex items-center gap-2">
                <Camera className="w-4 h-4" />
                Galería / Slider (Opcional)
@@ -167,8 +168,12 @@ export function CampaignEditorContent({ theme, updateLanding }: CampaignEditorCo
              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
                 {theme.landing.heroImages?.map((img, index) => (
                     <div key={index} className="relative group aspect-square rounded-md overflow-hidden border bg-muted">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={img} alt={`Slide ${index + 1}`} className="w-full h-full object-cover" />
+                        <Image 
+                            src={img} 
+                            alt={`Slide ${index + 1}`} 
+                            fill 
+                            className="object-cover" 
+                        />
                         <button
                             onClick={() => {
                                 const newImages = [...(theme.landing.heroImages || [])];

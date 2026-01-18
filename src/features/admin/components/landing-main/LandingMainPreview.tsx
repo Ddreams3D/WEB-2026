@@ -8,10 +8,9 @@ interface LandingMainPreviewProps {
     form: LandingMainConfig;
     previewMode: 'desktop' | 'mobile';
     setPreviewMode: (mode: 'desktop' | 'mobile') => void;
-    setIsEditing: (editing: boolean) => void;
 }
 
-export function LandingMainPreview({ form, previewMode, setPreviewMode, setIsEditing }: LandingMainPreviewProps) {
+export function LandingMainPreview({ form, previewMode, setPreviewMode }: LandingMainPreviewProps) {
   return (
     <div className="xl:col-span-2 space-y-4">
         <div className="flex items-center justify-between">
@@ -50,7 +49,7 @@ export function LandingMainPreview({ form, previewMode, setPreviewMode, setIsEdi
                     <div className="w-3 h-3 rounded-full bg-green-400/80" />
                 </div>
                 <div className="ml-4 flex-1 max-w-xl h-6 bg-background/50 rounded-md text-[10px] flex items-center px-3 text-muted-foreground/60 select-none">
-                    ddreams3d.com
+                    ddreams3d.com/impresion-3d-arequipa
                 </div>
             </div>
             
@@ -61,7 +60,7 @@ export function LandingMainPreview({ form, previewMode, setPreviewMode, setIsEdi
             )}>
                 <iframe
                     title="Vista en vivo - Landing Principal"
-                    src="/"
+                    src="/impresion-3d-arequipa"
                     className="origin-top-left absolute top-0 left-0 w-[200%] h-[200%] scale-[0.5] bg-background"
                 />
             </div>
@@ -69,11 +68,15 @@ export function LandingMainPreview({ form, previewMode, setPreviewMode, setIsEdi
             {/* Interactive Overlay */}
             <div 
                 className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center cursor-pointer backdrop-blur-[1px]"
-                onClick={() => setIsEditing(true)}
+                onClick={() => {
+                    if (typeof window !== 'undefined') {
+                        window.open('/impresion-3d-arequipa', '_blank');
+                    }
+                }}
             >
                 <Button size="lg" className="shadow-2xl scale-110 font-bold">
                     <Edit className="w-5 h-5 mr-2" />
-                    Editar Contenido
+                    Editar en landing
                 </Button>
             </div>
         </div>

@@ -9,7 +9,6 @@ interface PageProps {
   }>;
 }
 
-// Generate Metadata for SEO
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const landing = await ServiceLandingsService.getBySlug(slug);
@@ -20,6 +19,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
+  const isNoIndex =
+    slug === 'soportes-personalizados-dispositivos' ||
+    slug === 'landings-web-personalizadas';
+
   return {
     title: `${landing.metaTitle} | DDream3D`,
     description: landing.metaDescription,
@@ -28,6 +31,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description: landing.metaDescription,
       images: landing.heroImage ? [landing.heroImage] : [],
     },
+    robots: isNoIndex
+      ? {
+          index: false,
+          follow: false,
+        }
+      : undefined,
   };
 }
 

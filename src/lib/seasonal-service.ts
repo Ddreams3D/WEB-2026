@@ -14,6 +14,17 @@ export async function saveSeasonalThemes(themes: SeasonalThemeConfig[]): Promise
   await saveThemesToFirestore(themes);
 }
 
+export async function saveSeasonalTheme(theme: SeasonalThemeConfig): Promise<void> {
+  const themes = await getSeasonalThemes();
+  const existingIndex = themes.findIndex(t => t.id === theme.id);
+  const nextThemes =
+    existingIndex >= 0
+      ? themes.map(t => (t.id === theme.id ? theme : t))
+      : [...themes, theme];
+
+  await saveSeasonalThemes(nextThemes);
+}
+
 /**
  * Checks if the current date falls within a specific month/day range.
  * Handles ranges that cross year boundaries (e.g., Dec 20 - Jan 5).

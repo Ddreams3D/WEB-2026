@@ -10,7 +10,7 @@ export function useServiceManager() {
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSeeding, setIsSeeding] = useState(false);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
+  const [viewMode, setViewModeState] = useState<'grid' | 'list'>('list');
   const [confirmation, setConfirmation] = useState({
     isOpen: false,
     title: '',
@@ -20,6 +20,21 @@ export function useServiceManager() {
     isLoading: false
   });
   const { showSuccess, showError } = useToast();
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const storedView = localStorage.getItem('admin_services_view_mode');
+    if (storedView === 'grid' || storedView === 'list') {
+      setViewModeState(storedView);
+    }
+  }, []);
+
+  const setViewMode = (mode: 'grid' | 'list') => {
+    setViewModeState(mode);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('admin_services_view_mode', mode);
+    }
+  };
 
   const loadServices = useCallback(async (force = false) => {
     try {

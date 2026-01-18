@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertCircle, Edit } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
@@ -7,10 +7,9 @@ import { LandingMainConfig } from '@/shared/types/landing';
 
 interface LandingMainStatsProps {
     form: LandingMainConfig;
-    setIsEditing: (editing: boolean) => void;
 }
 
-export function LandingMainStats({ form, setIsEditing }: LandingMainStatsProps) {
+export function LandingMainStats({ form }: LandingMainStatsProps) {
   return (
     <div className="space-y-6">
         {/* Status Card */}
@@ -36,14 +35,19 @@ export function LandingMainStats({ form, setIsEditing }: LandingMainStatsProps) 
                     <span className="text-sm font-medium block">Burbujas Flotantes</span>
                     <span className="text-xs text-muted-foreground block">{form.bubbleImages?.length || 0} imágenes cargadas</span>
                 </div>
-                <Button variant="ghost" size="sm" onClick={() => setIsEditing(true)}>Gestionar</Button>
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                        if (typeof window !== 'undefined') {
+                            window.open('/impresion-3d-arequipa', '_blank');
+                        }
+                    }}
+                >
+                    Gestionar
+                </Button>
             </div>
         </div>
-
-        <Button className="w-full mt-6" variant="secondary" onClick={() => setIsEditing(true)}>
-            <Edit className="w-4 h-4 mr-2" />
-            Abrir Editor Completo
-        </Button>
         </div>
 
         {/* Tips Card */}

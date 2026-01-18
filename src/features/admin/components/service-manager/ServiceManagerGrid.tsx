@@ -44,10 +44,18 @@ export function ServiceManagerGrid({
 
     return (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            {filteredServices.map((service) => (
+            {filteredServices.map((service) => {
+                const hasLandingAndForm =
+                    service.slug === 'modelado-3d-personalizado' ||
+                    service.slug === 'merchandising-3d-personalizado' ||
+                    service.slug === 'trofeos-medallas-3d-personalizados' ||
+                    service.slug === 'maquetas-didacticas-material-educativo-3d' ||
+                    service.slug === 'proyectos-anatomicos-3d-personalizados';
+
+                return (
                 <div
                     key={service.id}
-                    className="group bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-800 hover:shadow-md transition-all duration-300 overflow-hidden relative cursor-pointer"
+                    className="group bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-800 hover:shadow-md transition-all duration-300 overflow-hidden relative cursor-pointer flex flex-col h-full"
                     onClick={() => handleSingleClick(service)}
                     onDoubleClick={() => handleDoubleClick(service)}
                 >
@@ -75,14 +83,14 @@ export function ServiceManagerGrid({
                         )}
                     </div>
 
-                    <div className="p-3">
-                        <div className="flex justify-between items-start gap-2 mb-1">
-                            <h3 className="font-medium text-sm text-neutral-900 dark:text-neutral-100 truncate flex-1" title={service.name}>
+                    <div className="p-3 flex flex-col justify-between flex-1">
+                        <div className="mb-1">
+                            <h3
+                                className="font-medium text-sm text-neutral-900 dark:text-neutral-100 leading-snug line-clamp-3 break-words"
+                                title={service.name}
+                            >
                                 {service.name}
                             </h3>
-                            <span className="font-semibold text-sm text-neutral-900 dark:text-white shrink-0">
-                                {service.customPriceDisplay || 'Cotización'}
-                            </span>
                         </div>
                         
                         <div className="flex items-center justify-between mt-2">
@@ -91,17 +99,33 @@ export function ServiceManagerGrid({
                             </span>
                             
                             <div className="flex items-center gap-1.5" title={service.isActive ? 'Activo' : 'Inactivo'}>
-                                <div className={`w-1.5 h-1.5 rounded-full ${
-                                    service.isActive ? 'bg-green-500 shadow-[0_0_4px_rgba(34,197,94,0.5)]' : 'bg-neutral-300 dark:bg-neutral-600'
-                                }`} />
-                                <span className={`text-xs ${service.isActive ? 'text-neutral-700 dark:text-neutral-300' : 'text-neutral-400'}`}>
+                                <div
+                                    className={`w-1.5 h-1.5 rounded-full ${
+                                        service.isActive ? 'bg-green-500 shadow-[0_0_4px_rgba(34,197,94,0.5)]' : 'bg-neutral-300 dark:bg-neutral-600'
+                                    }`}
+                                />
+                                <span
+                                    className={`text-[10px] font-semibold px-1.5 py-[1px] rounded-sm border ${
+                                        hasLandingAndForm
+                                            ? 'bg-green-100 text-green-700 border-green-300'
+                                            : 'bg-red-100 text-red-700 border-red-300'
+                                    }`}
+                                >
+                                    L
+                                </span>
+                                <span
+                                    className={`text-xs ${
+                                        service.isActive ? 'text-neutral-700 dark:text-neutral-300' : 'text-neutral-400'
+                                    }`}
+                                >
                                     {service.isActive ? 'Activo' : 'Inactivo'}
                                 </span>
                             </div>
                         </div>
                     </div>
                 </div>
-            ))}
+                );
+            })}
         </div>
     );
 }

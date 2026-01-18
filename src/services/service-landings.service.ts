@@ -1,9 +1,22 @@
 import { db } from '@/lib/firebase';
 import { collection, getDocs, doc, setDoc, query, where, getDoc } from 'firebase/firestore';
-import { ServiceLandingConfig } from '@/shared/types/service-landing';
+import { ServiceLandingConfig, ServiceLandingSection } from '@/shared/types/service-landing';
 import { SERVICE_LANDINGS_DATA } from '@/shared/data/service-landings-data';
 
 const COLLECTION = 'service_landings';
+
+function mergeSections(localSections: ServiceLandingSection[] = [], dbSections: ServiceLandingSection[] = []): ServiceLandingSection[] {
+  const result: ServiceLandingSection[] = [...dbSections];
+
+  localSections.forEach(localSection => {
+    const exists = dbSections.some(dbSection => dbSection.id === localSection.id);
+    if (!exists) {
+      result.push(localSection);
+    }
+  });
+
+  return result;
+}
 
 export const ServiceLandingsService = {
   async getAll(): Promise<ServiceLandingConfig[]> {
@@ -23,13 +36,11 @@ export const ServiceLandingsService = {
       dbLandings.forEach(dbLanding => {
         const index = mergedLandings.findIndex(l => l.id === dbLanding.id);
         if (index >= 0) {
-          // Merge DB data but keep local styling/config if needed
           const localData = mergedLandings[index];
           mergedLandings[index] = {
             ...dbLanding,
-            // Ensure local code config for colors takes precedence if defined
-            // This ensures design updates in code are reflected even if DB exists
             primaryColor: localData.primaryColor ?? dbLanding.primaryColor,
+            sections: mergeSections(localData.sections, dbLanding.sections || []),
           };
         } else {
           mergedLandings.push(dbLanding);
@@ -61,11 +72,12 @@ export const ServiceLandingsService = {
         if (!snapshot.empty) {
           const data = snapshot.docs[0].data() as ServiceLandingConfig;
           
-          // Apply local overrides (like color) to ensure code updates are reflected
+          // Apply local overrides (like color/sections) to ensure code updates are reflected
           const localData = SERVICE_LANDINGS_DATA.find(l => l.id === data.id);
           const finalData = localData ? {
              ...data,
-             primaryColor: localData.primaryColor ?? data.primaryColor
+             primaryColor: localData.primaryColor ?? data.primaryColor,
+             sections: mergeSections(localData.sections, data.sections || [])
           } : data;
 
           // Filter soft-deleted in memory

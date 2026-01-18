@@ -15,32 +15,36 @@ export function useSeoRoutes() {
   // 1. Construct the initial base list from static code definitions
   const getBaseRoutes = useCallback(() => {
     const serviceLandings: RouteItem[] = SERVICE_LANDINGS_DATA.map(l => ({
-      path: `/servicios/${l.slug}`,
-      name: l.name,
-      type: 'Generada' as RouteType,
-      category: 'Servicios' as RouteCategory,
-      status: (l.isActive ? 'active' : 'inactive') as RouteStatus,
-      description: 'Landing generada dinámicamente',
-      seo: {
-        canonicalUrl: `https://ddream3d.com/servicios/${l.slug}`,
-        robots: 'index, follow'
-      }
-    }));
+    path: `/servicios/${l.slug}`,
+    name: l.name,
+    type: 'Generada' as RouteType,
+    category: 'Servicios' as RouteCategory,
+    status: (l.isActive ? 'active' : 'inactive') as RouteStatus,
+    description: 'Landing generada dinámicamente',
+    seo: {
+      canonicalUrl: `https://ddreams3d.com/servicios/${l.slug}`,
+      robots:
+        l.slug === 'soportes-personalizados-dispositivos' ||
+        l.slug === 'landings-web-personalizadas'
+          ? 'noindex, nofollow'
+          : 'index, follow'
+    }
+  }));
 
     const campaignLandings: RouteItem[] = seasonalThemes.map(t => ({
-      path: `/campanas/${t.id}`,
-      name: `Campaña: ${t.name}`,
-      type: 'Campaign' as RouteType,
-      category: 'Marketing' as RouteCategory,
-      status: 'active' as RouteStatus,
-      description: `Landing estacional de ${t.name}`,
-      seo: {
-          metaTitle: `${t.landing.heroTitle} | Ddreams 3D`,
-          metaDescription: t.landing.heroDescription,
-          canonicalUrl: `https://ddream3d.com/campanas/${t.id}`,
-          robots: 'index, follow'
-      }
-    }));
+    path: `/campanas/${t.id}`,
+    name: `Campaña: ${t.name}`,
+    type: 'Campaign' as RouteType,
+    category: 'Marketing' as RouteCategory,
+    status: 'active' as RouteStatus,
+    description: `Landing estacional de ${t.name}`,
+    seo: {
+        metaTitle: `${t.landing.heroTitle} | Ddreams 3D`,
+        metaDescription: t.landing.heroDescription,
+        canonicalUrl: `https://ddreams3d.com/campanas/${t.id}`,
+        robots: 'index, follow'
+    }
+  }));
 
     return [
       ...SITE_ROUTES,

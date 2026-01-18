@@ -40,7 +40,7 @@ export const SITE_ROUTES: RouteItem[] = [
     seo: {
       metaTitle: 'Ddream 3D | Impresión 3D, Diseño y Prototipado en Arequipa',
       metaDescription: 'Transformamos tus ideas en realidad con impresión 3D de alta calidad. Servicios de diseño, modelado y manufactura aditiva en Arequipa, Perú.',
-      canonicalUrl: 'https://ddream3d.com/',
+      canonicalUrl: 'https://ddreams3d.com/',
       robots: 'index, follow',
       updatedAt: '2025-01-02'
     }
@@ -55,7 +55,7 @@ export const SITE_ROUTES: RouteItem[] = [
     seo: {
       metaTitle: 'Sobre Nosotros | Ddream 3D - Expertos en Tecnología 3D',
       metaDescription: 'Conoce al equipo detrás de Ddream 3D. Nuestra misión es democratizar el acceso a la manufactura digital con tecnología de punta.',
-      canonicalUrl: 'https://ddream3d.com/about',
+      canonicalUrl: 'https://ddreams3d.com/about',
       robots: 'index, follow'
     }
   },
@@ -69,7 +69,7 @@ export const SITE_ROUTES: RouteItem[] = [
     seo: {
       metaTitle: 'Contáctanos | Ddream 3D Arequipa',
       metaDescription: '¿Tienes un proyecto en mente? Escríbenos para cotizaciones de impresión 3D, diseño personalizado o consultoría técnica.',
-      canonicalUrl: 'https://ddream3d.com/contact',
+      canonicalUrl: 'https://ddreams3d.com/contact',
       robots: 'index, follow'
     }
   },
@@ -96,7 +96,7 @@ export const SITE_ROUTES: RouteItem[] = [
     seo: {
       metaTitle: 'Servicio de Impresión 3D en Arequipa | Entrega Rápida',
       metaDescription: 'El mejor servicio de impresión 3D en Arequipa. Prototipos, maquetas y piezas finales con materiales de ingeniería.',
-      canonicalUrl: 'https://ddream3d.com/impresion-3d-arequipa',
+      canonicalUrl: 'https://ddreams3d.com/impresion-3d-arequipa',
       robots: 'index, follow'
     }
   },
@@ -112,7 +112,7 @@ export const SITE_ROUTES: RouteItem[] = [
     seo: {
       metaTitle: 'Tienda de Impresión 3D y Regalos Personalizados | Ddream Store', // Más descriptivo para CTR
       metaDescription: 'Encuentra el regalo perfecto en nuestro catálogo 3D. Figuras, decoración, accesorios y más. Envíos a todo el Perú.',
-      canonicalUrl: 'https://ddream3d.com/catalogo-impresion-3d',
+      canonicalUrl: 'https://ddreams3d.com/catalogo-impresion-3d',
       robots: 'index, follow'
     }
   },
@@ -144,7 +144,7 @@ export const SITE_ROUTES: RouteItem[] = [
     seo: {
       metaTitle: 'Nuestros Servicios | Impresión, Escaneo y Diseño 3D',
       metaDescription: 'Soluciones integrales de manufactura aditiva. Ofrecemos impresión FDM/SLA, escaneo 3D de precisión y modelado CAD.',
-      canonicalUrl: 'https://ddream3d.com/services',
+      canonicalUrl: 'https://ddreams3d.com/services',
       robots: 'index, follow'
     }
   },
@@ -164,7 +164,7 @@ export const SITE_ROUTES: RouteItem[] = [
     seo: {
       metaTitle: 'Política de Privacidad y Datos | Ddream 3D',
       metaDescription: 'Política de tratamiento de datos personales y privacidad de Ddream 3D. Cumplimiento con normativa de protección de datos.',
-      canonicalUrl: 'https://ddream3d.com/privacy',
+      canonicalUrl: 'https://ddreams3d.com/privacy',
       robots: 'noindex, follow'
     }
   },
@@ -177,7 +177,7 @@ export const SITE_ROUTES: RouteItem[] = [
     seo: { 
       metaTitle: 'Términos y Condiciones de Servicio | Ddream 3D',
       metaDescription: 'Condiciones de uso, políticas de venta, envíos y garantías de nuestros servicios de impresión 3D.',
-      canonicalUrl: 'https://ddream3d.com/terms',
+      canonicalUrl: 'https://ddreams3d.com/terms',
       robots: 'noindex, follow'
     } 
   },
@@ -190,7 +190,7 @@ export const SITE_ROUTES: RouteItem[] = [
     seo: { 
       metaTitle: 'Libro de Reclamaciones Virtual | Ddream 3D',
       metaDescription: 'Canal oficial para presentar reclamos o quejas conforme a la ley peruana.',
-      canonicalUrl: 'https://ddream3d.com/complaints',
+      canonicalUrl: 'https://ddreams3d.com/complaints',
       robots: 'noindex, follow' 
     } 
   },

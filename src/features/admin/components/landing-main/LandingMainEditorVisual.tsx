@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -67,9 +68,13 @@ export function LandingMainEditorVisual({
                                 className="font-mono text-xs"
                             />
                             {img && (
-                                <div className="w-10 h-10 rounded border bg-background flex-shrink-0 overflow-hidden">
-                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img src={img} alt="" className="w-full h-full object-contain" />
+                                <div className="relative w-10 h-10 rounded border bg-background flex-shrink-0 overflow-hidden">
+                                    <Image 
+                                        src={img} 
+                                        alt="" 
+                                        fill 
+                                        className="object-contain" 
+                                    />
                                 </div>
                             )}
                             <Button 

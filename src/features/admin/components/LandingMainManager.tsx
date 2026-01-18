@@ -2,27 +2,17 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { LayoutTemplate, ExternalLink, Save } from 'lucide-react';
+import { LayoutTemplate, ExternalLink } from 'lucide-react';
 import { useLandingMainForm } from '../hooks/useLandingMainForm';
 import { LandingMainPreview } from './landing-main/LandingMainPreview';
 import { LandingMainStats } from './landing-main/LandingMainStats';
-import { LandingMainEditor } from './landing-main/LandingMainEditor';
 
 export default function LandingMainManager() {
   const {
     form,
     loading,
-    saving,
-    isEditing,
     previewMode,
-    setIsEditing,
-    setPreviewMode,
-    updateField,
-    updateAnnouncement,
-    handleAddBubble,
-    handleRemoveBubble,
-    handleUpdateBubble,
-    handleSave
+    setPreviewMode
   } = useLandingMainForm();
 
   if (loading) {
@@ -54,19 +44,6 @@ export default function LandingMainManager() {
                         Ver en vivo
                     </a>
                 </Button>
-                <Button onClick={() => handleSave()} disabled={saving} className="min-w-[140px] shadow-md">
-                    {saving ? (
-                        <>
-                        <div className="animate-spin mr-2 h-4 w-4 border-2 border-b-transparent rounded-full" />
-                        Guardando...
-                        </>
-                    ) : (
-                        <>
-                        <Save className="mr-2 h-4 w-4" />
-                        Guardar Cambios
-                        </>
-                    )}
-                </Button>
             </div>
         </div>
 
@@ -76,29 +53,13 @@ export default function LandingMainManager() {
                 form={form}
                 previewMode={previewMode}
                 setPreviewMode={setPreviewMode}
-                setIsEditing={setIsEditing}
             />
 
             {/* Right Column: Quick Status & Config */}
             <LandingMainStats 
                 form={form}
-                setIsEditing={setIsEditing}
             />
         </div>
-
-        {/* Edit Sheet */}
-        <LandingMainEditor 
-            form={form}
-            isEditing={isEditing}
-            setIsEditing={setIsEditing}
-            updateField={updateField}
-            updateAnnouncement={updateAnnouncement}
-            handleAddBubble={handleAddBubble}
-            handleRemoveBubble={handleRemoveBubble}
-            handleUpdateBubble={handleUpdateBubble}
-            onSave={handleSave}
-            isSaving={saving}
-        />
     </div>
   );
 }

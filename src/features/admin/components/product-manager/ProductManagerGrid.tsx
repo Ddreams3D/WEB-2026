@@ -54,11 +54,11 @@
      }
    };
    return (
-     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
      {filteredProducts.map((product) => (
        <div
          key={product.id}
-        className="group bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-800 hover:shadow-md transition-all duration-300 overflow-hidden relative cursor-pointer"
+       className="group bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-800 hover:shadow-md transition-all duration-300 overflow-hidden relative cursor-pointer flex flex-col h-full"
         onClick={() => handleSingleClick(product)}
         onDoubleClick={() => handleDoubleClick(product)}
        >
@@ -88,9 +88,12 @@
           )}
         </div>
  
-        <div className="p-3">
+       <div className="p-3 flex flex-col justify-between flex-1">
           <div className="flex justify-between items-start gap-2 mb-1">
-            <h3 className="font-medium text-sm text-neutral-900 dark:text-neutral-100 truncate flex-1" title={product.name}>
+            <h3
+              className="font-medium text-sm text-neutral-900 dark:text-neutral-100 leading-snug line-clamp-2 break-words flex-1"
+              title={product.name}
+            >
               {product.name}
             </h3>
             <span className="font-semibold text-sm text-neutral-900 dark:text-white shrink-0">

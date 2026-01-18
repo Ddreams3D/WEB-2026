@@ -11,9 +11,11 @@ interface ServiceHeroProps {
   config: ServiceLandingConfig;
   heroSection: any;
   primaryColor: string;
+  isEditable?: boolean;
+  onChangeField?: (field: 'title' | 'subtitle' | 'content', value: string) => void;
 }
 
-export function ServiceHero({ config, heroSection, primaryColor }: ServiceHeroProps) {
+export function ServiceHero({ config, heroSection, primaryColor, isEditable = false, onChangeField }: ServiceHeroProps) {
   return (
     <section className="relative min-h-screen w-full grid grid-cols-1 lg:grid-cols-2 overflow-hidden bg-background">
       
@@ -210,21 +212,47 @@ export function ServiceHero({ config, heroSection, primaryColor }: ServiceHeroPr
 
               <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-muted/50 backdrop-blur-md border border-border/50 text-sm font-medium shadow-sm w-fit mx-auto lg:mx-0">
                   <Sparkles className="w-4 h-4" style={{ color: primaryColor }} />
-                  <span 
-                    className="font-bold"
-                    style={{ color: primaryColor }}
-                  >
+                  {isEditable && onChangeField ? (
+                    <input
+                      className="bg-transparent border-none outline-none font-bold text-center lg:text-left"
+                      style={{ color: primaryColor }}
+                      value={heroSection?.subtitle || config.name}
+                      onChange={e => onChangeField('subtitle', e.target.value)}
+                    />
+                  ) : (
+                    <span
+                      className="font-bold"
+                      style={{ color: primaryColor }}
+                    >
                       {heroSection?.subtitle || config.name}
-                  </span>
+                    </span>
+                  )}
               </div>
               
-              <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black tracking-tighter leading-[1.1] text-foreground text-center lg:text-left">
+              {isEditable && onChangeField ? (
+                <input
+                  className="w-full text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black tracking-tighter leading-[1.1] text-foreground text-center lg:text-left bg-transparent border-b border-dashed border-muted focus:outline-none focus:border-primary"
+                  value={heroSection?.title || config.name}
+                  onChange={e => onChangeField('title', e.target.value)}
+                />
+              ) : (
+                <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black tracking-tighter leading-[1.1] text-foreground text-center lg:text-left">
                   {heroSection?.title || config.name}
-              </h1>
+                </h1>
+              )}
               
-              <p className="text-lg text-muted-foreground max-w-lg mx-auto lg:mx-0 leading-relaxed text-center lg:text-left">
+              {isEditable && onChangeField ? (
+                <textarea
+                  className="w-full text-lg text-muted-foreground max-w-lg mx-auto lg:mx-0 leading-relaxed text-center lg:text-left bg-transparent border border-dashed border-muted rounded-md p-2 focus:outline-none focus:border-primary"
+                  value={heroSection?.content || config.metaDescription}
+                  onChange={e => onChangeField('content', e.target.value)}
+                  rows={3}
+                />
+              ) : (
+                <p className="text-lg text-muted-foreground max-w-lg mx-auto lg:mx-0 leading-relaxed text-center lg:text-left">
                   {heroSection?.content || config.metaDescription}
-              </p>
+                </p>
+              )}
 
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
                   <Button 

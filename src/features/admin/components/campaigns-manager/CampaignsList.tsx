@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Edit, ExternalLink, Calendar as CalendarIcon, AlertTriangle, Eye } from '@/lib/icons';
+import { Calendar as CalendarIcon, AlertTriangle } from '@/lib/icons';
 import { SeasonalThemeConfig } from '@/shared/types/seasonal';
 import { getThemeStatus } from '../../utils/campaign-utils';
 import DefaultImage from '@/shared/components/ui/DefaultImage';
@@ -28,25 +28,6 @@ export function CampaignsList({ themes, setEditingId, updateTheme, onSave, autom
     action: 'activate',
     themeName: ''
   });
-
-  const [livePreview, setLivePreview] = useState<{
-    open: boolean;
-    url: string;
-    title: string;
-  }>({
-    open: false,
-    url: '',
-    title: ''
-  });
-
-  const openLivePreview = (theme: SeasonalThemeConfig) => {
-    const url = theme.id === 'standard' ? '/' : `/campanas/${theme.id}?preview=true`;
-    setLivePreview({
-      open: true,
-      url,
-      title: theme.name
-    });
-  };
 
   const handleToggle = (theme: SeasonalThemeConfig) => {
     if (automationEnabled) return;
@@ -98,8 +79,20 @@ export function CampaignsList({ themes, setEditingId, updateTheme, onSave, autom
                     </div>
                 </div>
 
-                {/* Content Preview */}
-                <div className="absolute top-7 left-0 right-0 bottom-0 bg-background">
+                {/* Content Preview (clickable area) */}
+                <div
+                  className="absolute top-7 left-0 right-0 bottom-0 bg-background cursor-pointer"
+                  onClick={() => {
+                    if (theme.id === 'standard') {
+                      setEditingId(theme.id);
+                      return;
+                    }
+                    if (typeof window !== 'undefined') {
+                      const url = `/campanas/${theme.id}?preview=true`;
+                      window.open(url, '_blank');
+                    }
+                  }}
+                >
                   <DefaultImage
                     src={theme.landing.heroImage || theme.landing.heroImages?.[0]}
                     alt={theme.landing.heroTitle || theme.name}
@@ -125,37 +118,6 @@ export function CampaignsList({ themes, setEditingId, updateTheme, onSave, autom
                   </div>
                 </div>
 
-                {/* Hover Overlay */}
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3 z-10">
-                    <Button 
-                        size="sm" 
-                        variant="secondary" 
-                        className="font-semibold shadow-lg translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
-                        onClick={() => setEditingId(theme.id)}
-                    >
-                        <Edit className="w-4 h-4 mr-2" />
-                        Editar
-                    </Button>
-                    <Button
-                        size="sm"
-                        variant="secondary"
-                        className="font-semibold shadow-lg translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75"
-                        onClick={() => openLivePreview(theme)}
-                    >
-                        <Eye className="w-4 h-4 mr-2" />
-                        Vista
-                    </Button>
-                    <a 
-                        href={theme.id === 'standard' ? '/' : `/campanas/${theme.id}?preview=true`} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center h-9 w-9 rounded-md bg-secondary text-secondary-foreground shadow-lg translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75 hover:bg-secondary/80"
-                        title="Ver página real"
-                    >
-                        <ExternalLink className="w-4 h-4" />
-                    </a>
-                </div>
-
                 {/* Status Badge */}
                 {theme.isActive && (
                     <div className="absolute top-10 right-3 z-[10]">
@@ -166,8 +128,8 @@ export function CampaignsList({ themes, setEditingId, updateTheme, onSave, autom
                     </div>
                 )}
             </div>
-            
-            {/* Card Content */}
+
+            {/* Card Content (no click handler) */}
             <div className="p-5 flex flex-col flex-1 gap-3">
               <div>
                   <div className="flex justify-between items-start mb-1">
@@ -249,33 +211,6 @@ export function CampaignsList({ themes, setEditingId, updateTheme, onSave, autom
               Confirmar
             </Button>
           </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog
-        open={livePreview.open}
-        onOpenChange={(open) => setLivePreview(prev => ({ ...prev, open }))}
-      >
-        <DialogContent className="max-w-6xl w-[95vw] h-[85vh] p-0 overflow-hidden">
-          <div className="h-10 bg-muted/90 border-b flex items-center justify-between px-3 gap-3">
-            <div className="text-xs text-muted-foreground truncate">
-              {livePreview.title} — {livePreview.url}
-            </div>
-            <a
-              href={livePreview.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground"
-            >
-              <ExternalLink className="w-4 h-4" />
-              Abrir
-            </a>
-          </div>
-          <iframe
-            title={livePreview.title || 'Vista en vivo'}
-            src={livePreview.url}
-            className="w-full h-[calc(85vh-40px)] bg-background"
-          />
         </DialogContent>
       </Dialog>
     </>
