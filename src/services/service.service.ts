@@ -489,6 +489,26 @@ export const ServiceService = {
         return null;
     }
 
+    // AUTO-DELETE ORPHANED IMAGES
+    if (db && updates.images) {
+        const currentImages = service.images || [];
+        const newImages = updates.images;
+        
+        const removedImages = currentImages.filter(curr => 
+            !newImages.some(newImg => newImg.url === curr.url)
+        );
+
+        if (removedImages.length > 0) {
+            console.log(`[ServiceService] Auto-deleting ${removedImages.length} removed images from storage...`);
+            try {
+                await deleteImagesFromStorage(removedImages);
+                console.log('[ServiceService] Orphaned images deleted successfully');
+            } catch (err) {
+                console.warn('[ServiceService] Failed to delete orphaned images:', err);
+            }
+        }
+    }
+
     const updatedService = {
       ...service,
       ...updates,

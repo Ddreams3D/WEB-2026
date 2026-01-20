@@ -413,6 +413,29 @@ export const ProductService = {
         return null;
     }
 
+    // AUTO-DELETE ORPHANED IMAGES
+    // If we are updating images, check for removed ones and delete them from Storage
+    if (db && updates.images) {
+        const currentImages = product.images || [];
+        const newImages = updates.images;
+        
+        // Find images present in current but missing in new (by URL)
+        const removedImages = currentImages.filter(curr => 
+            !newImages.some(newImg => newImg.url === curr.url)
+        );
+
+        if (removedImages.length > 0) {
+            console.log(`[ProductService] Auto-deleting ${removedImages.length} removed images from storage...`);
+            try {
+                await deleteImagesFromStorage(removedImages);
+                console.log('[ProductService] Orphaned images deleted successfully');
+            } catch (err) {
+                console.warn('[ProductService] Failed to delete orphaned images:', err);
+                // Continue with update even if image deletion fails
+            }
+        }
+    }
+
     const updatedProduct = {
       ...product,
       ...updates,

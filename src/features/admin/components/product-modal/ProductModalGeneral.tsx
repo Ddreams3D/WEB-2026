@@ -1,7 +1,8 @@
 import React from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Plus, Info, Layers, Check, Trash2, Star, ImageIcon, FileText } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Plus, Info, Layers, Check, Trash2, Star, ImageIcon, FileText, Globe, ExternalLink } from 'lucide-react';
 import { EditableBlock } from '../EditableBlock';
 import ImageUpload from '../ImageUpload';
 import { StringListEditor } from '../AdminEditors';
@@ -13,6 +14,11 @@ import { THEME_CONFIG } from '@/config/themes';
 import { StoragePathBuilder } from '@/shared/constants/storage-paths';
 import { cleanAndSlugify } from '@/features/admin/utils/image-upload-utils';
 import { extractMetadataFromFilename } from '@/lib/utils';
+import { ServiceLandingsService } from '@/services/service-landings.service';
+import { ServiceLandingConfig } from '@/shared/types/service-landing';
+import { fetchThemesFromFirestore } from '@/services/seasonal.service';
+import { SeasonalThemeConfig } from '@/shared/types/seasonal';
+import { useEffect, useState } from 'react';
 
 interface ProductModalGeneralProps {
   formData: Partial<Product | Service>;
@@ -44,6 +50,28 @@ export const ProductModalGeneral: React.FC<ProductModalGeneralProps> = ({
   handleImageUploaded
 }) => {
   const { theme } = useTheme();
+  const [availableLandings, setAvailableLandings] = useState<ServiceLandingConfig[]>([]);
+  const [availableThemes, setAvailableThemes] = useState<SeasonalThemeConfig[]>([]);
+  const [loadingLandings, setLoadingLandings] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+        try {
+            setLoadingLandings(true);
+            const [landings, themes] = await Promise.all([
+                ServiceLandingsService.getAll(),
+                fetchThemesFromFirestore()
+            ]);
+            setAvailableLandings(landings);
+            setAvailableThemes(themes);
+        } catch (error) {
+            console.error('Error fetching landings/themes:', error);
+        } finally {
+            setLoadingLandings(false);
+        }
+    };
+    fetchData();
+  }, []);
 
   return (
     <motion.div 
@@ -200,7 +228,8 @@ export const ProductModalGeneral: React.FC<ProductModalGeneralProps> = ({
                 </div>
                 <div className="space-y-2">
                     <label className="text-sm font-medium">Etiquetas (Tags)</label>
-                    <div className="flex flex-wrap gap-2 mb-2">
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
+                        {/* Global Scope */}
                         <button
                             onClick={() => {
                                 const current = formData.tags || [];
@@ -208,21 +237,64 @@ export const ProductModalGeneral: React.FC<ProductModalGeneralProps> = ({
                                     setFormData(prev => ({ ...prev, tags: [...current, 'scope:global'] }));
                                 }
                             }}
-                            className="text-xs px-2 py-1 rounded-md border border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors"
+                            className="text-xs px-2 py-1 rounded-md border border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors flex items-center gap-1"
                         >
-                            + Global
+                            <Globe className="w-3 h-3" /> + Global
                         </button>
-                        <button
-                            onClick={() => {
-                                const current = formData.tags || [];
-                                if (!current.includes('scope:landing-halloween')) {
-                                    setFormData(prev => ({ ...prev, tags: [...current, 'scope:landing-halloween'] }));
-                                }
-                            }}
-                            className="text-xs px-2 py-1 rounded-md border border-orange-200 bg-orange-50 text-orange-700 hover:bg-orange-100 transition-colors"
-                        >
-                            + Halloween
-                        </button>
+
+                        {/* Dynamic Landing Scope Selector */}
+                        <div className="flex items-center">
+                            <Select
+                                value=""
+                                onValueChange={(tag) => {
+                                    const current = formData.tags || [];
+                                    if (!current.includes(tag)) {
+                                        setFormData(prev => ({ ...prev, tags: [...current, tag] }));
+                                    }
+                                }}
+                            >
+                                <SelectTrigger className="h-7 text-xs w-[160px] px-2 bg-orange-50 border-orange-200 text-orange-700 hover:bg-orange-100 rounded-md focus:ring-0 focus:ring-offset-0">
+                                    <div className="flex items-center gap-1 truncate w-full">
+                                        <ExternalLink className="w-3 h-3 flex-shrink-0" />
+                                        <SelectValue placeholder="+ Asignar Landing" />
+                                    </div>
+                                </SelectTrigger>
+                                <SelectContent className="max-h-[300px] overflow-y-auto">
+                                    {loadingLandings ? (
+                                        <div className="p-2 text-xs text-muted-foreground text-center">Cargando...</div>
+                                    ) : (availableLandings.length === 0 && availableThemes.length === 0) ? (
+                                        <div className="p-2 text-xs text-muted-foreground text-center">No hay landings</div>
+                                    ) : (
+                                        <>
+                                            {availableThemes.length > 0 && (
+                                                <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground bg-muted/50">Campañas</div>
+                                            )}
+                                            {availableThemes.map(theme => {
+                                                const tag = theme.landing?.featuredTag || `scope:landing-${theme.id}`;
+                                                return (
+                                                    <SelectItem key={theme.id} value={tag} className="text-xs pl-4">
+                                                        {theme.name}
+                                                    </SelectItem>
+                                                );
+                                            })}
+
+                                            {availableLandings.length > 0 && (
+                                                <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground bg-muted/50 mt-1">Servicios</div>
+                                            )}
+                                            {availableLandings.map(landing => {
+                                                const tag = `scope:landing-${landing.slug}`;
+                                                return (
+                                                    <SelectItem key={landing.id} value={tag} className="text-xs pl-4">
+                                                        {landing.name}
+                                                    </SelectItem>
+                                                );
+                                            })}
+                                        </>
+                                    )}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
                          <button
                             onClick={() => {
                                 const current = formData.tags || [];
