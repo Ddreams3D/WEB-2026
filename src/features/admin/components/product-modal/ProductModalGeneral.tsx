@@ -73,6 +73,31 @@ export const ProductModalGeneral: React.FC<ProductModalGeneralProps> = ({
     fetchData();
   }, []);
 
+  const getReadableTagName = (tag: string) => {
+    if (tag === 'scope:global') return 'Global';
+    if (tag === 'scope:hidden') return 'Oculto';
+    
+    if (tag.startsWith('scope:landing-')) {
+        const slug = tag.replace('scope:landing-', '');
+        
+        // Try to find in services
+        const landing = availableLandings.find(l => l.slug === slug);
+        if (landing) return `Landing: ${landing.name}`;
+        
+        // Try to find in themes (by ID or featured tag logic if strictly mapped)
+        const theme = availableThemes.find(t => t.id === slug);
+        if (theme) return `Campaña: ${theme.name}`;
+        
+        // Check featured tags from themes
+        const themeByTag = availableThemes.find(t => t.landing.featuredTag === tag);
+        if (themeByTag) return `Campaña: ${themeByTag.name}`;
+
+        return `Landing: ${slug}`;
+    }
+    
+    return tag;
+  };
+
   return (
     <motion.div 
         key="general"
@@ -122,7 +147,7 @@ export const ProductModalGeneral: React.FC<ProductModalGeneralProps> = ({
         </EditableBlock>
 
          {/* Organization Block */}
-         <EditableBlock
+        <EditableBlock
             id="organization"
             title="Organización"
             icon={Layers}
@@ -130,6 +155,7 @@ export const ProductModalGeneral: React.FC<ProductModalGeneralProps> = ({
             onEdit={() => setEditingBlock('organization')}
             onSave={() => setEditingBlock(null)}
             onCancel={() => setEditingBlock(null)}
+            className="z-20 relative" 
             preview={
                 <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -144,7 +170,7 @@ export const ProductModalGeneral: React.FC<ProductModalGeneralProps> = ({
                                     key={t} 
                                     className={`px-3 py-1 border rounded-md text-xs font-medium shadow-sm transition-colors ${THEME_CONFIG[theme].badgeClass}`}
                                 >
-                                    {t}
+                                    {getReadableTagName(t)}
                                 </span>
                             ))}
                         </div>
@@ -325,6 +351,7 @@ export const ProductModalGeneral: React.FC<ProductModalGeneralProps> = ({
             onEdit={() => setEditingBlock('images')}
             onSave={() => setEditingBlock(null)}
             onCancel={() => setEditingBlock(null)}
+            className="z-10 relative"
             preview={
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {formData.images?.map((img, idx) => (

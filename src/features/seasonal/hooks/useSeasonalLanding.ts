@@ -94,9 +94,15 @@ export function useSeasonalLanding(config: SeasonalThemeConfig) {
       try {
         const all = await ProductService.getAllProducts();
         
-        const tag = config.landing.featuredTag.toLowerCase();
+        const tag = config.landing.featuredTag?.toLowerCase() || `scope:landing-${config.id}`.toLowerCase();
+        
+        if (!tag) {
+             setFeaturedProducts([]);
+             return;
+        }
+
         const filtered = all.filter(p => 
-          p.tags.some(t => t.toLowerCase() === tag)
+          p.isActive && p.tags.some(t => t.toLowerCase() === tag)
         );
         
         setFeaturedProducts(filtered);

@@ -26,16 +26,22 @@ export function useServiceLanding(config: ServiceLandingConfig, isPreview: boole
 
         const all = await ProductService.getAllProducts();
         
-        // Filter by the featured tag if present
-        const tag = config.featuredTag?.toLowerCase();
+        // Filter by the featured tag if present, or fallback to scope:landing-{slug}
+        const tag = config.featuredTag?.toLowerCase() || `scope:landing-${config.slug}`.toLowerCase();
+        
         if (tag) {
             const filtered = all.filter(p => 
-              p.tags.some(t => t.toLowerCase().includes(tag))
+              p.isActive && p.tags.some(t => t.toLowerCase().includes(tag))
             );
+            // Only use filtered if we actually found matches or if a specific tag was enforced
+            // If it's a fallback tag and no matches, we might want to show empty or recent?
+            // User requested "solo deberían mostrar los productos que tengan el scope".
+            // So if no matches, show empty.
             setFeaturedProducts(filtered);
         } else {
             // Fallback: Show recent products or empty
-            setFeaturedProducts(all.slice(0, 4));
+            // If no tag strategy exists, show recent 4
+            setFeaturedProducts(all.filter(p => p.isActive).slice(0, 4));
         }
       } catch (error) {
         console.error('Error loading products:', error);
