@@ -289,12 +289,17 @@ export const ProductModalGeneral: React.FC<ProductModalGeneralProps> = ({
                                     {loadingLandings ? (
                                         <div className="p-2 text-xs text-muted-foreground text-center">Cargando...</div>
                                     ) : (availableLandings.length === 0 && availableThemes.length === 0) ? (
-                                        <div className="p-2 text-xs text-muted-foreground text-center">No hay landings</div>
-                                    ) : (
-                                        <>
-                                            {availableThemes.length > 0 && (
-                                                <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground bg-muted/50">Campañas</div>
-                                            )}
+                    <div className="p-2 text-xs text-muted-foreground text-center">No hay landings</div>
+                ) : (
+                    <>
+                        <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground bg-muted/50">General</div>
+                        <SelectItem value="scope:global" className="text-xs pl-4">
+                            Web Principal
+                        </SelectItem>
+
+                        {availableThemes.length > 0 && (
+                            <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground bg-muted/50 mt-1">Campañas</div>
+                        )}
                                             {availableThemes.map(theme => {
                                                 const tag = theme.landing?.featuredTag || `scope:landing-${theme.id}`;
                                                 return (
