@@ -66,6 +66,7 @@ export default async function HomePage() {
         featuredProjects={featuredProjects} 
         heroTitle={standardTheme?.landing?.heroTitle}
         heroDescription={standardTheme?.landing?.heroDescription}
+        heroImage={standardTheme?.landing?.heroImage}
         ctaText={standardTheme?.landing?.ctaText}
         ctaLink={standardTheme?.landing?.ctaLink}
       />

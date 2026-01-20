@@ -21,13 +21,15 @@ export interface HeroProps {
   description?: string;
   ctaText?: string;
   ctaLink?: string;
+  imageUrl?: string;
 }
 
 export default function Hero({ 
   title = heroContent.title, 
   description = heroContent.description,
   ctaText = "Descubre como podemos ayudarte.",
-  ctaLink = "/services"
+  ctaLink = "/services",
+  imageUrl
 }: HeroProps) {
   // Animation hooks
   const { ref: heroRef, isVisible } = useIntersectionAnimation({
@@ -56,7 +58,7 @@ export default function Hero({
         {/* Visual Separator - Gradient to blend with next section */}
         <div className={cn("absolute bottom-0 left-0 w-full h-24 z-20 pointer-events-none", "bg-gradient-to-t from-background to-transparent")} />
         <DefaultImage
-          src={heroContent.image}
+          src={imageUrl || heroContent.image}
           alt={title}
           fill
           className={cn(

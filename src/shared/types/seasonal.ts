@@ -24,6 +24,9 @@ export interface SeasonalThemeConfig {
     heroImages?: string[]; // Multiple images for slider/carousel
     heroVideo?: string; // Optional background video
     
+    // Visual Elements
+    bubbleImages?: string[]; // Floating bubbles images
+    
     // Call to Action
     ctaText: string;
     ctaLink: string;

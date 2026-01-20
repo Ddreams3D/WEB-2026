@@ -65,4 +65,3 @@ export async function bulkUpdateImageReferences(replacements: Map<string, string
     return 0;
   }
 }
-

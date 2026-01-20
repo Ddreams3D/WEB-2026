@@ -146,10 +146,12 @@ export const seasonalThemes: SeasonalThemeConfig[] = [
     landing: {
       heroTitle: "Tus ideas. Nuestro arte. En 3D.",
       heroDescription: "Fabricación de prototipos, trofeos y piezas personalizadas con tecnología 3D.",
+      heroImage: `/${StoragePathBuilder.ui.brand()}/impresion-3d-arequipa-ddreams-v2.png`,
       ctaText: "Descubre como podemos ayudarte.",
       ctaLink: "/services",
       featuredTag: "destacado",
-      themeMode: "light"
+      themeMode: "light",
+      bubbleImages: []
     },
     announcement: {
       enabled: false,

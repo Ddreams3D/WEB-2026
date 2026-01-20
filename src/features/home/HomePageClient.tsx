@@ -20,6 +20,7 @@ interface HomePageClientProps {
   featuredProjects?: PortfolioItem[];
   heroTitle?: string;
   heroDescription?: string;
+  heroImage?: string;
   ctaText?: string;
   ctaLink?: string;
 }
@@ -28,6 +29,7 @@ export default function HomePageClient({
   featuredProjects,
   heroTitle,
   heroDescription,
+  heroImage,
   ctaText,
   ctaLink
 }: HomePageClientProps) {
@@ -43,6 +45,7 @@ export default function HomePageClient({
       <Hero 
         title={heroTitle}
         description={heroDescription}
+        imageUrl={heroImage}
         ctaText={ctaText}
         ctaLink={ctaLink}
       />
