@@ -1,5 +1,6 @@
 
 import { ServiceLandingConfig } from '../types/service-landing';
+import { StoragePathBuilder } from '@/shared/constants/storage-paths';
 
 export const SERVICE_LANDINGS_DATA: ServiceLandingConfig[] = [
   {
@@ -8,11 +9,12 @@ export const SERVICE_LANDINGS_DATA: ServiceLandingConfig[] = [
     name: 'Modelado 3D Orgánico',
     isActive: true,
     themeMode: 'system',
+    category: 'vertical',
     metaTitle: 'Modelado 3D de Personajes y Figuras Orgánicas | Esculpido Digital en Arequipa',
     metaDescription: 'Servicio profesional de esculpido digital y modelado 3D orgánico en Arequipa. Creamos personajes, criaturas y figuras complejas con alto nivel de detalle para impresión 3D.',
     primaryColor: '#c2410c', // Clay / Terracota Intenso - Organic & Warm
-    heroImage: 'https://placehold.co/800x800/e2e8f0/475569.png?text=Escultura+Real', // Placeholder Real
-    heroImageComparison: 'https://placehold.co/800x800/475569/e2e8f0.png?text=Modelo+3D', // Placeholder 3D
+    heroImage: `/${StoragePathBuilder.services('modelado-3d-personalizado')}/modelado-3d-organico-personajes-esculturas-digitales.png`,
+    heroImageComparison: `/${StoragePathBuilder.services('modelado-3d-personalizado')}/diseno-3d-organico-modelado-artistico-profesional.png`,
     featuredTag: 'organico',
     sections: [
       {
@@ -67,12 +69,12 @@ export const SERVICE_LANDINGS_DATA: ServiceLandingConfig[] = [
           {
             title: 'Personaje estilizado para impresión 3D',
             description: 'Modelo orgánico listo para impresión, con detalles y pose pensados para vitrina o colección.',
-            image: '/images/services/modelado-3d-organico-personajes-esculturas-digitales.png'
+            image: `/${StoragePathBuilder.services('modelado-3d-personalizado')}/modelado-3d-organico-personajes-esculturas-digitales.png`
           },
           {
             title: 'Escultura digital artística',
             description: 'Exploración de formas orgánicas con enfoque en volúmenes, gestos y silueta.',
-            image: '/images/services/diseno-3d-organico-modelado-artistico-profesional.png'
+            image: `/${StoragePathBuilder.services('modelado-3d-personalizado')}/diseno-3d-organico-modelado-artistico-profesional.png`
           }
         ]
       },
@@ -108,10 +110,11 @@ export const SERVICE_LANDINGS_DATA: ServiceLandingConfig[] = [
     name: 'Merchandising Corporativo 3D',
     isActive: true,
     themeMode: 'system',
+    category: 'vertical',
     metaTitle: 'Merchandising Corporativo y Regalos Empresariales 3D en Arequipa | DDream3D',
     metaDescription: 'Merchandising único y personalizado para tu marca en Arequipa. Llaveros, soportes, logos 3D y regalos corporativos que destacan. Envíos a todo el Perú.',
     primaryColor: '#2563eb', // Blue-600
-    heroImage: 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&q=80',
+    heroImage: `/${StoragePathBuilder.services('merchandising-corporativo-3d')}/hero-cover.jpg`,
     featuredTag: 'merch',
     sections: [
       {
@@ -153,10 +156,11 @@ export const SERVICE_LANDINGS_DATA: ServiceLandingConfig[] = [
     name: 'Trofeos y Reconocimientos',
     isActive: true,
     themeMode: 'system',
+    category: 'vertical',
     metaTitle: 'Trofeos Personalizados y Reconocimientos en Impresión 3D',
     metaDescription: 'Diseño y fabricación de trofeos personalizados. Premios únicos para torneos, eventos corporativos y competiciones gaming.',
     primaryColor: '#CA8A04', // Yellow-600 (Gold) - Trophy & Premium
-    heroImage: 'https://images.unsplash.com/photo-1530541930197-ff16ac917b0e?auto=format&fit=crop&q=80',
+    heroImage: `/${StoragePathBuilder.services('trofeos-personalizados-3d')}/hero-cover.jpg`,
     sections: [
       {
         id: 'hero',
@@ -207,10 +211,11 @@ fríos, impersonales, sin carácter.
     name: 'Maquetas para Estudiantes',
     isActive: true,
     themeMode: 'system',
+    category: 'vertical',
     metaTitle: 'Maquetas Volumétricas y Proyectos Estudiantiles 3D',
     metaDescription: 'Apoyo en maquetas y prototipos para estudiantes. Arquitectura, diseño industrial, ingeniería y proyectos de ciencias.',
     primaryColor: '#16a34a', // Green-600
-    heroImage: 'https://images.unsplash.com/photo-1544531696-b7809315d0de?auto=format&fit=crop&q=80',
+    heroImage: `/${StoragePathBuilder.services('maquetas-3d')}/maquetas-didacticas-v2.png`,
     sections: [
       {
         id: 'hero',
@@ -229,10 +234,11 @@ fríos, impersonales, sin carácter.
     name: 'Biomodelos Médicos',
     isActive: true,
     themeMode: 'system',
+    category: 'vertical',
     metaTitle: 'Biomodelos e Impresión 3D Médica en Arequipa',
     metaDescription: 'Impresión 3D de órganos, huesos y estructuras anatómicas en Arequipa para planificación quirúrgica, educación médica y exposiciones.',
     primaryColor: '#0891b2', // Cyan-600
-    heroImage: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&q=80',
+    heroImage: `/${StoragePathBuilder.services('modelos-anatomicos-3d')}/hero-cover.jpg`,
     sections: [
       {
         id: 'hero',
@@ -361,81 +367,49 @@ fríos, impersonales, sin carácter.
     updatedAt: new Date().toISOString(),
   },
   {
-    id: 'device-mounts',
-    slug: 'soportes-personalizados-dispositivos',
-    name: 'Soportes Personalizados para Dispositivos',
+    id: 'custom-landings-service',
+    slug: 'landings-personalizadas',
+    name: 'Diseño de Landings Personalizadas',
     isActive: true,
-    themeMode: 'system',
-    metaTitle: 'Soportes Personalizados para Celulares, Tablets y Dispositivos',
-    metaDescription: 'Diseñamos y fabricamos soportes personalizados para celulares, tablets, consolas, cámaras y periféricos. Organización y ergonomía a medida con impresión 3D.',
-    primaryColor: '#4f46e5',
+    themeMode: 'dark',
+    category: 'special',
+    robots: 'index, follow', // This is a service we want to sell, so index it
+    metaTitle: 'Diseño de Landing Pages Personalizadas | Ddreams Digital',
+    metaDescription: 'Servicio de diseño y desarrollo de Landing Pages optimizadas para conversión. Rapidez, estética y funcionalidad para tu negocio.',
+    primaryColor: '#6366f1', // Indigo-500
+    heroImage: `/${StoragePathBuilder.services('landings-personalizadas')}/hero-placeholder.svg`,
     sections: [
       {
         id: 'hero',
-        type: 'hero',
-        title: 'Soportes Personalizados para tus Dispositivos',
-        subtitle: 'Tu escritorio y tu setup, ordenados a tu manera',
-        content: 'Creamos soportes, bases y accesorios específicos para tus equipos, adaptados a tu espacio y forma de trabajar.',
-      },
-      {
-        id: 'features',
-        type: 'features',
-        title: 'Ideas de soportes que podemos crear',
-        items: [
-          {
-            title: 'Soportes para celular y tablet',
-            description: 'Bases para escritorio, videollamadas, lectura o monitoreo constante.',
-          },
-          {
-            title: 'Organizadores de periféricos',
-            description: 'Soportes para audífonos, mandos, stylus, hubs y accesorios de escritorio.',
-          },
-          {
-            title: 'Accesorios para setup de contenido',
-            description: 'Soportes para cámaras pequeñas, micrófonos o luces ligeras.',
-          },
-        ],
-      },
+            type: 'hero',
+            title: 'Landings que Convierten',
+            subtitle: 'Diseño web estratégico para potenciar tus ventas',
+            content: 'Creamos páginas de aterrizaje rápidas, modernas y efectivas.'
+        }
     ],
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   },
   {
-    id: 'custom-web-landings',
-    slug: 'landings-web-personalizadas',
-    name: 'Landings Web Personalizadas',
+    id: 'soportes-personalizados-landing',
+    slug: 'soportes-personalizados',
+    name: 'Soportes Personalizados',
     isActive: true,
     themeMode: 'system',
-    metaTitle: 'Diseño de Landings Web Personalizadas | Enfoque en Conversión',
-    metaDescription: 'Diseñamos landings web enfocadas en conversión para campañas específicas, servicios o productos. Mensajes claros, estructura pensada para que el usuario actúe.',
-    primaryColor: '#7c3aed',
+    category: 'special',
+    robots: 'noindex, nofollow', // EXPLICIT REQUEST: No Index due to IP concerns
+    metaTitle: 'Soportes Personalizados | Ddreams 3D',
+    metaDescription: 'Colección exclusiva de soportes personalizados para tus dispositivos. Alexa, Nintendo Switch, Celulares y más.',
+    primaryColor: '#0ea5e9', // Sky-500
+    heroImage: `/${StoragePathBuilder.services('soportes-personalizados')}/hero-placeholder.svg`,
     sections: [
       {
         id: 'hero',
         type: 'hero',
-        title: 'Landings Web Personalizadas para tus campañas',
-        subtitle: 'Una página, un objetivo claro',
-        content: 'Creamos páginas enfocadas en una sola acción: vender, captar leads o agendar reuniones, alineadas a tu marca.',
-      },
-      {
-        id: 'features',
-        type: 'features',
-        title: 'Qué incluye una landing bien pensada',
-        items: [
-          {
-            title: 'Mensaje claro y segmentado',
-            description: 'Texto y estructura enfocados en un tipo de cliente y un solo objetivo.',
-          },
-          {
-            title: 'Diseño alineado a tu marca',
-            description: 'Componentes visuales coherentes con tu identidad, sin usar plantillas genéricas.',
-          },
-          {
-            title: 'Preparada para campañas',
-            description: 'Estructura lista para conectar con anuncios, formularios y herramientas analíticas.',
-          },
-        ],
-      },
+        title: 'Soportes personalizados para tus dispositivos',
+        subtitle: 'Ordena tu escritorio y tu zona de juego con soportes diseñados específicamente para tus equipos.',
+        content: 'Diseños únicos para Alexa, Nintendo Switch y más.'
+      }
     ],
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),

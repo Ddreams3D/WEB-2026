@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 import { ProductService } from '@/services/product.service';
 import { SERVICE_LANDINGS_DATA } from '@/shared/data/service-landings-data';
-import seasonalThemes from '@/data/seasonal-themes.json';
+import { seasonalThemes } from '@/data/seasonal-themes';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://ddreams3d.com';

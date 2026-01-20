@@ -231,6 +231,57 @@ export const ServiceService = {
     return allServices.find((s: Service) => s.id === idOrSlug || s.slug === idOrSlug);
   },
 
+  async updateImageReference(oldUrl: string, newUrl: string): Promise<number> {
+    const map = new Map<string, string>();
+    map.set(oldUrl, newUrl);
+    return this.bulkUpdateImageReferences(map);
+  },
+
+  async bulkUpdateImageReferences(replacements: Map<string, string>): Promise<number> {
+    if (!db || replacements.size === 0) return 0;
+    try {
+      let updatedCount = 0;
+      const allServices = await this.getAllServices(true, true);
+      
+      const batch = writeBatch(db);
+      let batchCount = 0;
+
+      for (const service of allServices) {
+        let changed = false;
+        const newImages = service.images.map(img => {
+          if (img.url && replacements.has(img.url)) {
+            changed = true;
+            return { ...img, url: replacements.get(img.url)! };
+          }
+          return img;
+        });
+
+        if (changed) {
+          const ref = doc(db, COLLECTION_NAME, service.id);
+          const cleanImages = JSON.parse(JSON.stringify(newImages));
+          batch.update(ref, { images: cleanImages, updatedAt: new Date() });
+          updatedCount++;
+          batchCount++;
+        }
+      }
+
+      if (batchCount > 0) {
+        await batch.commit();
+        servicesCache = null;
+      }
+
+      return updatedCount;
+    } catch (error) {
+      console.error('Error updating service image references:', error);
+      return 0;
+    }
+  },
+
+  async getServiceBySlug(slug: string): Promise<Service | undefined> {
+    const allServices = await this.getAllServices(false, true); // Allow finding deleted for restore
+    return allServices.find((s: Service) => s.slug === slug);
+  },
+
   /**
    * Get services by category.
    */

@@ -86,6 +86,7 @@ export function ImageComparison({
             fill
             className="object-cover"
             priority
+            sizes="(max-width: 768px) 100vw, 50vw"
          />
          {/* Label */}
          <div className="absolute top-4 right-4 bg-black/60 text-white text-xs font-bold px-3 py-1.5 rounded-full backdrop-blur-md border border-white/10 z-10 pointer-events-none">
@@ -109,6 +110,7 @@ export function ImageComparison({
             fill
             className="object-cover"
             priority
+            sizes="(max-width: 768px) 100vw, 50vw"
         />
         {/* Label */}
         <div className="absolute top-4 left-4 bg-black/60 text-white text-xs font-bold px-3 py-1.5 rounded-full backdrop-blur-md border border-white/10 z-10 pointer-events-none">

@@ -10,6 +10,7 @@ import { ServiceLandingSection } from '@/shared/types/service-landing';
 import { cn } from '@/lib/utils';
 import { motion, Reorder } from 'framer-motion';
 import ImageUpload from '@/features/admin/components/ImageUpload';
+import { StoragePathBuilder } from '@/shared/constants/storage-paths';
 
 interface ContentSectionProps {
   data: UnifiedLandingData;
@@ -262,9 +263,9 @@ export function ContentSection({ data, updateField, disableFeaturesText = false 
                                                             newItems[itemIndex] = { ...item, image: '' };
                                                             updateSection(index, { items: newItems });
                                                         }}
-                                                        defaultName={data.internalName || 'organic-gallery'}
+                                                        defaultName={`${data.slug || 'service'}-gallery-${itemIndex + 1}`}
                                                         existingImages={[]}
-                                                        storagePath="images/services"
+                                                        storagePath={StoragePathBuilder.services(data.slug || 'service', 'gallery')}
                                                     />
                                                 </div>
                                                 <div className="flex-1 space-y-2">

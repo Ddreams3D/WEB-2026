@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { ServiceLandingsService } from '@/services/service-landings.service';
 import ServiceLandingRenderer from '@/features/service-landings/components/ServiceLandingRenderer';
 
@@ -11,6 +11,15 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
+  
+  // Handle redirect for deprecated slug
+  if (slug === 'soportes-personalizados-dispositivos') {
+     return {
+        title: 'Redirigiendo...',
+        robots: { index: false, follow: false }
+     }
+  }
+
   const landing = await ServiceLandingsService.getBySlug(slug);
 
   if (!landing) {
@@ -20,7 +29,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const isNoIndex =
-    slug === 'soportes-personalizados-dispositivos' ||
     slug === 'landings-web-personalizadas';
 
   return {
@@ -50,6 +58,12 @@ export async function generateStaticParams() {
 
 export default async function ServiceLandingPage({ params }: PageProps) {
   const { slug } = await params;
+
+  // REDIRECT: Legacy landing to new custom page
+  if (slug === 'soportes-personalizados-dispositivos') {
+    redirect('/soportes-personalizados');
+  }
+
   const landing = await ServiceLandingsService.getBySlug(slug);
 
   if (!landing) {

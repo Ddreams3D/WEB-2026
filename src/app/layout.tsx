@@ -4,6 +4,7 @@ import { Inter, Montserrat, Montserrat_Alternates } from 'next/font/google';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import Script from 'next/script';
 import './globals.css';
+import { StoragePathBuilder } from '@/shared/constants/storage-paths';
 import { Providers } from '@/contexts/Providers';
 import { getAppUrl } from '@/lib/url-utils';
 import { CookieBanner } from '@/components/ui';
@@ -74,7 +75,7 @@ export const metadata: Metadata = {
       'Expertos en impresión 3D, modelado y prototipado rápido. Transformamos tus ideas en realidad con tecnología de vanguardia.',
     images: [
       {
-        url: '/logo-ddreams-3d.jpg',
+        url: `/${StoragePathBuilder.ui.brand()}/logo-ddreams-3d.jpg`,
         width: 1200,
         height: 630,
         alt: 'Ddreams 3D Logo',
@@ -86,7 +87,7 @@ export const metadata: Metadata = {
     title: 'Ddreams 3D - Servicios profesionales de impresión 3D',
     description:
       'Expertos en impresión 3D, modelado y prototipado rápido. Transformamos tus ideas en realidad con tecnología de vanguardia.',
-    images: ['/logo-ddreams-3d.jpg'],
+    images: [`/${StoragePathBuilder.ui.brand()}/logo-ddreams-3d.jpg`],
   },
   icons: {
     icon: '/logo/isotipo_DD_negro_V2.svg',

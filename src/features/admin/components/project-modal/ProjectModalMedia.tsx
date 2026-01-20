@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { Layers, ImageIcon, Trash2 } from 'lucide-react';
 import ImageUpload from '../ImageUpload';
 import { PortfolioItem } from '@/shared/types/domain';
+import { StoragePathBuilder } from '@/shared/constants/storage-paths';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 
@@ -64,6 +65,7 @@ export const ProjectModalMedia: React.FC<ProjectModalMediaProps> = ({
                     onRemove={() => handleCoverUpload('')}
                     onUploadStatusChange={setIsImageUploading}
                     defaultName={formData.slug || 'proyecto-portada'}
+                    storagePath={StoragePathBuilder.projects(formData.slug || 'temp', 'cover')}
                 />
             </div>
         </div>
@@ -84,6 +86,7 @@ export const ProjectModalMedia: React.FC<ProjectModalMediaProps> = ({
                         onRemove={() => {}}
                         onUploadStatusChange={setIsImageUploading}
                         defaultName={`${formData.slug || 'proyecto'}-galeria-${(formData.galleryImages?.length || 0) + 1}`}
+                        storagePath={StoragePathBuilder.projects(formData.slug || 'temp', 'gallery')}
                     />
                 </div>
 
@@ -103,8 +106,8 @@ export const ProjectModalMedia: React.FC<ProjectModalMediaProps> = ({
                                         src={url} 
                                         alt={`Galería ${idx + 1}`} 
                                         fill
-                                        sizes="(max-width: 768px) 50vw, 25vw"
                                         className="object-cover transition-transform duration-300 group-hover:scale-105"
+                                        sizes="(max-width: 768px) 50vw, 25vw"
                                     />
                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                                         <Button

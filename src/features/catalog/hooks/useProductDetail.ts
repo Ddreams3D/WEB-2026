@@ -72,7 +72,7 @@ export function useProductDetail(initialProduct: Product | Service) {
     }
 
     if (typeof window !== 'undefined') {
-      const storedProducts = localStorage.getItem('catalog_products');
+      const storedProducts = localStorage.getItem('catalog_products_v2');
       if (storedProducts) {
         try {
           const parsed = JSON.parse(storedProducts);

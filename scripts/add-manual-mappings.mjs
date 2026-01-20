@@ -10,20 +10,20 @@ const MAPPING_FILE = path.join(PROJECT_ROOT, 'src/data/image-mapping.json');
 // Define manual mappings from missing local files to existing Firebase URLs
 const MANUAL_MAPPINGS = {
   // Categories -> Placeholders
-  '/images/categories/medical.jpg': '/images/images/placeholder-medical.svg',
-  '/images/categories/architecture.jpg': '/images/images/placeholder-architectural.svg',
-  '/images/categories/education.jpg': '/images/images/placeholder-educational.svg',
-  '/images/categories/engineering.jpg': '/images/images/placeholder-engineering.svg',
-  '/images/categories/art.jpg': '/images/images/placeholder-artistic.svg',
+  '/images/categories/medical.jpg': '/images/ui/placeholders/placeholder-medical.svg',
+  '/images/categories/architecture.jpg': '/images/ui/placeholders/placeholder-architectural.svg',
+  '/images/categories/education.jpg': '/images/ui/placeholders/placeholder-educational.svg',
+  '/images/categories/engineering.jpg': '/images/ui/placeholders/placeholder-engineering.svg',
+  '/images/categories/art.jpg': '/images/ui/placeholders/placeholder-artistic.svg',
 
   // Seasonal -> Generic Placeholder
-  '/images/seasonal/christmas-hero.jpg': '/images/images/placeholder.svg',
-  '/images/seasonal/halloween-hero.jpg': '/images/images/placeholder.svg',
-  '/images/seasonal/peru-hero.jpg': '/images/images/placeholder.svg',
-  '/images/seasonal/valentines-hero.jpg': '/images/images/placeholder.svg',
+  '/images/seasonal/christmas-hero.jpg': '/images/ui/placeholders/placeholder.svg',
+  '/images/seasonal/halloween-hero.jpg': '/images/ui/placeholders/placeholder.svg',
+  '/images/seasonal/peru-hero.jpg': '/images/ui/placeholders/placeholder.svg',
+  '/images/seasonal/valentines-hero.jpg': '/images/ui/placeholders/placeholder.svg',
 
   // Services OG -> Solutions Placeholder
-  '/images/services-og.jpg': '/images/images/placeholder-solutions.svg'
+  '/images/services-og.jpg': '/images/ui/placeholders/placeholder-solutions.svg'
 };
 
 async function addManualMappings() {

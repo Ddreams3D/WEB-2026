@@ -1,4 +1,5 @@
 import { StoreProduct } from '@/shared/types/domain';
+import { StoragePathBuilder } from '@/shared/constants/storage-paths';
 
 export const products: StoreProduct[] = [
   {
@@ -17,7 +18,7 @@ export const products: StoreProduct[] = [
       {
         id: '1',
         productId: '1',
-        url: 'https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fcatalogo%2Fmodelo-pelvis-anatomica-escala-real-3d-vista-frontal.png?alt=media&token=d16a5cd3-4552-4995-910a-e3cadc295252',
+        url: `/${StoragePathBuilder.products('medicina', 'modelo-anatomico-pelvis-humana-escala-real')}/modelo-pelvis-anatomica-escala-real-3d-vista-frontal.png`,
         alt: 'Modelo de Pelvis Anatómica en Escala Real - Impresión 3D - Vista Frontal',
         isPrimary: true,
         imagePosition: 'object-center',
@@ -29,7 +30,7 @@ export const products: StoreProduct[] = [
       {
         id: '1-b',
         productId: '1',
-        url: 'https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fcatalogo%2Fmodelo-pelvis-anatomica-escala-real-3d-vista-lateral.png?alt=media&token=4074c59c-3962-447d-bdfc-25fada2de4fd',
+        url: `/${StoragePathBuilder.products('medicina', 'modelo-anatomico-pelvis-humana-escala-real')}/modelo-pelvis-anatomica-escala-real-3d-vista-lateral.png`,
         alt: 'Modelo de Pelvis Anatómica en Escala Real - Impresión 3D - Vista Lateral',
         isPrimary: false,
         width: 800,
@@ -40,7 +41,7 @@ export const products: StoreProduct[] = [
       {
         id: '1-c',
         productId: '1',
-        url: 'https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fcatalogo%2Fmodelo-pelvis-anatomica-escala-real-3d-detalle.jpg?alt=media&token=80fc524d-aecd-4096-91e7-9eaa7d658302',
+        url: `/${StoragePathBuilder.products('medicina', 'modelo-anatomico-pelvis-humana-escala-real')}/modelo-pelvis-anatomica-escala-real-3d-detalle.jpg`,
         alt: 'Modelo de Pelvis Anatómica en Escala Real - Impresión 3D - Detalle Estructural',
         isPrimary: false,
         width: 800,
@@ -51,7 +52,7 @@ export const products: StoreProduct[] = [
       {
         id: '1-d',
         productId: '1',
-        url: 'https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fcatalogo%2Fmodelo-pelvis-anatomica-escala-real-3d-perspectiva.jpg?alt=media&token=ba6ebecf-7939-45b5-a01e-319e425d16e8',
+        url: `/${StoragePathBuilder.products('medicina', 'modelo-anatomico-pelvis-humana-escala-real')}/modelo-pelvis-anatomica-escala-real-3d-perspectiva.jpg`,
         alt: 'Modelo de Pelvis Anatómica en Escala Real - Impresión 3D - Perspectiva',
         isPrimary: false,
         width: 800,
@@ -62,7 +63,7 @@ export const products: StoreProduct[] = [
       {
         id: '1-e',
         productId: '1',
-        url: 'https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fcatalogo%2Fmodelo-pelvis-anatomica-escala-real-3d-uso-educativo.jpg?alt=media&token=533a34cd-0cc8-40ba-8e4d-d1addf825c74',
+        url: `/${StoragePathBuilder.products('medicina', 'modelo-anatomico-pelvis-humana-escala-real')}/modelo-pelvis-anatomica-escala-real-3d-uso-educativo.jpg`,
         alt: 'Modelo de Pelvis Anatómica en Escala Real - Impresión 3D - Uso Educativo',
         isPrimary: false,
         width: 800,
@@ -105,7 +106,7 @@ export const products: StoreProduct[] = [
       {
         id: '12',
         productId: '6',
-        url: 'https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fcatalogo%2Fmodelo-pelvis-anatomica-escala-real-3d-vista-frontal.png?alt=media&token=d16a5cd3-4552-4995-910a-e3cadc295252',
+        url: `/${StoragePathBuilder.products('medicina', 'columna-vertebral-anatomica-escala-real')}/modelo-pelvis-anatomica-escala-real-3d-vista-frontal.png`,
         alt: 'Columna Vertebral Anatómica - Modelo 3D Ensamblado',
         isPrimary: true,
         imagePosition: 'object-top',
@@ -184,7 +185,7 @@ export const products: StoreProduct[] = [
       {
         id: '2',
         productId: '2',
-        url: 'https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fcatalogo%2Fcopa-piston-20cm-regalo-personalizado-autos-3d-frontal.png?alt=media&token=de1cdac1-67be-461a-abd2-2fccd8729a56',
+        url: `/${StoragePathBuilder.products('arte-diseno', 'regalo-personalizado-fanaticos-autos-copa-piston')}/copa-piston-20cm-regalo-personalizado-autos-3d-frontal.png`,
         alt: 'Copa Pistón 20cm - Regalo Personalizado para Fanáticos de Autos - Impresión 3D - Vista Frontal',
         isPrimary: true,
         width: 800,
@@ -195,7 +196,7 @@ export const products: StoreProduct[] = [
       {
         id: '2-b',
         productId: '2',
-        url: 'https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fcatalogo%2Fcopa-piston-20cm-regalo-personalizado-autos-3d-detalle.png?alt=media&token=2086d4b3-2d6c-48d1-8b30-925b67804580',
+        url: `/${StoragePathBuilder.products('arte-diseno', 'regalo-personalizado-fanaticos-autos-copa-piston')}/copa-piston-20cm-regalo-personalizado-autos-3d-detalle.png`,
         alt: 'Copa Pistón 20cm - Regalo Personalizado para Fanáticos de Autos - Impresión 3D - Vista Detalle',
         isPrimary: false,
         width: 800,
@@ -290,7 +291,7 @@ export const products: StoreProduct[] = [
       {
         id: '3',
         productId: '3',
-        url: 'https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fcatalogo%2Fcopa-piston-grande-30cm-regalo-personalizado-autos-3d-frontal.png?alt=media&token=5f9bd09b-f26a-420c-931f-07142f86d65b',
+        url: `/${StoragePathBuilder.products('arte-diseno', 'regalo-personalizado-fanaticos-autos-copa-piston-grande')}/copa-piston-grande-30cm-regalo-personalizado-autos-3d-frontal.png`,
         alt: 'Copa Pistón Grande 30cm - Regalo Personalizado para Fanáticos de Autos - Impresión 3D - Vista Frontal',
         isPrimary: true,
         width: 800,
@@ -301,7 +302,7 @@ export const products: StoreProduct[] = [
       {
         id: '3-b',
         productId: '3',
-        url: 'https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fcatalogo%2Fcopa-piston-grande-30cm-regalo-personalizado-autos-3d-detalle.png?alt=media&token=5a2e4773-77e7-461e-8d7b-1608e6f6c101',
+        url: `/${StoragePathBuilder.products('arte-diseno', 'regalo-personalizado-fanaticos-autos-copa-piston-grande')}/copa-piston-grande-30cm-regalo-personalizado-autos-3d-detalle.png`,
         alt: 'Copa Pistón Grande 30cm - Regalo Personalizado para Fanáticos de Autos - Impresión 3D - Vista Detalle',
         isPrimary: false,
         width: 800,
@@ -397,7 +398,7 @@ export const products: StoreProduct[] = [
       {
         id: 'img-1767444829616',
         productId: '4',
-        url: 'https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fcatalogo%2F1767444826620_cooler-motor-3d-v6-frontal.jpg?alt=media&token=c5446033-cb26-480e-b890-faa903ed8ae1',
+        url: `/${StoragePathBuilder.products('arte-diseno', 'cooler-motor-3d-v6')}/cooler-motor-3d-v6-frontal.jpg`,
         alt: 'Cooler Motor 3D – V6',
         isPrimary: true,
         width: 800,
@@ -408,7 +409,7 @@ export const products: StoreProduct[] = [
       {
         id: 'img-1767444889590',
         productId: '4',
-        url: 'https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fcatalogo%2F1767444886808_cooler-motor-3d-v6-frontal-2.jpg?alt=media&token=7eaf0456-ccc3-4383-891b-45fd9170c9de',
+        url: `/${StoragePathBuilder.products('arte-diseno', 'cooler-motor-3d-v6')}/cooler-motor-3d-v6-frontal-2.jpg`,
         alt: 'Cooler Motor 3D – V6 - Frontal 2',
         isPrimary: false,
         width: 800,
@@ -419,7 +420,7 @@ export const products: StoreProduct[] = [
       {
         id: 'img-1767444916119',
         productId: '4',
-        url: 'https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fcatalogo%2F1767444913401_cooler-motor-3d-v6-lateral.jpg?alt=media&token=482993c5-b4e2-421f-9b3d-615b3921df31',
+        url: `/${StoragePathBuilder.products('arte-diseno', 'cooler-motor-3d-v6')}/cooler-motor-3d-v6-lateral.jpg`,
         alt: 'Cooler Motor 3D – V6 - Lateral',
         isPrimary: false,
         width: 800,
@@ -430,7 +431,7 @@ export const products: StoreProduct[] = [
       {
         id: 'img-1767444925468',
         productId: '4',
-        url: 'https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fcatalogo%2F1767444923544_cooler-motor-3d-v6-posterior.jpg?alt=media&token=8dc918d0-a001-4124-b453-e0df72ca3ceb',
+        url: `/${StoragePathBuilder.products('arte-diseno', 'cooler-motor-3d-v6')}/cooler-motor-3d-v6-posterior.jpg`,
         alt: 'Cooler Motor 3D – V6 - Posterior',
         isPrimary: false,
         width: 800,
@@ -523,7 +524,7 @@ export const products: StoreProduct[] = [
       {
         id: '10',
         productId: '5',
-        url: 'https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fcatalogo%2Fcooler-motor-v8-impresion-3d-regalo-autos-frontal.png?alt=media&token=1e24c02c-eab9-4ed8-81f4-7454cdda126c',
+        url: `/${StoragePathBuilder.products('arte-diseno', 'cooler-motor-3d-v8')}/cooler-motor-v8-impresion-3d-regalo-autos-frontal.png`,
         alt: 'Cooler Motor 3D V8 - Vista Principal',
         isPrimary: true,
         width: 800,
@@ -534,7 +535,7 @@ export const products: StoreProduct[] = [
       {
         id: '10-b',
         productId: '5',
-        url: 'https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fcatalogo%2Fcooler-motor-v8-impresion-3d-regalo-autos-detalle.png?alt=media&token=c846c579-5d8a-4c86-a192-19b8912df6bd',
+        url: `/${StoragePathBuilder.products('arte-diseno', 'cooler-motor-3d-v8')}/cooler-motor-v8-impresion-3d-regalo-autos-detalle.png`,
         alt: 'Cooler Motor 3D V8 - Detalle',
         isPrimary: false,
         width: 800,
@@ -545,7 +546,7 @@ export const products: StoreProduct[] = [
       {
         id: '10-c',
         productId: '5',
-        url: 'https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fcatalogo%2Fcooler-motor-v8-impresion-3d-regalo-autos-superior.png?alt=media&token=bc0f3ce5-b2ae-4ad0-ac7f-f54ba825337a',
+        url: `/${StoragePathBuilder.products('arte-diseno', 'cooler-motor-3d-v8')}/cooler-motor-v8-impresion-3d-regalo-autos-superior.png`,
         alt: 'Cooler Motor 3D V8 - Vista Superior',
         isPrimary: false,
         width: 800,
@@ -556,7 +557,7 @@ export const products: StoreProduct[] = [
       {
         id: '10-d',
         productId: '5',
-        url: 'https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fcatalogo%2Fcooler-motor-v8-impresion-3d-regalo-autos-uso.png?alt=media&token=8247f60b-b83c-4418-adb2-7916e6fa96d5',
+        url: `/${StoragePathBuilder.products('arte-diseno', 'cooler-motor-3d-v8')}/cooler-motor-v8-impresion-3d-regalo-autos-uso.png`,
         alt: 'Cooler Motor 3D V8 - Uso',
         isPrimary: false,
         width: 800,

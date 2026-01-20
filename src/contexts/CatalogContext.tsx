@@ -118,6 +118,13 @@ export function CatalogProvider({
       );
     }
 
+    // Tags (Scope/Segmentation)
+    if (filters.tags && filters.tags.length > 0) {
+      filteredItems = filteredItems.filter(item => 
+        filters.tags!.some(filterTag => (item.tags || []).includes(filterTag))
+      );
+    }
+
     // Type
     if (filters.type && filters.type !== 'all') {
       filteredItems = filteredItems.filter(item => item.kind === filters.type);

@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { STORAGE_PATHS, StoragePathBuilder } from '@/shared/constants/storage-paths';
 
 interface CampaignEditorContentProps {
   theme: SeasonalThemeConfig;
@@ -127,7 +128,7 @@ export function CampaignEditorContent({ theme, updateLanding }: CampaignEditorCo
                      onChange={(url) => updateLanding(theme.id, { heroImage: url })}
                      onRemove={() => updateLanding(theme.id, { heroImage: '' })}
                      defaultName={`hero-${theme.themeId}`}
-                     storagePath={`campaigns/${theme.id}/hero-images`}
+                     storagePath={`${StoragePathBuilder.seasonal(theme.id)}/hero`}
                    />
                    <p className="text-xs text-muted-foreground">
                      Imagen principal que se mostrará por defecto.
@@ -173,6 +174,7 @@ export function CampaignEditorContent({ theme, updateLanding }: CampaignEditorCo
                             alt={`Slide ${index + 1}`} 
                             fill 
                             className="object-cover" 
+                            sizes="(max-width: 768px) 100vw, 50vw"
                         />
                         <button
                             onClick={() => {
@@ -200,8 +202,8 @@ export function CampaignEditorContent({ theme, updateLanding }: CampaignEditorCo
                          }
                      }}
                      onRemove={() => {}}
-                     defaultName={`hero-slider-${Date.now()}`}
-                     storagePath={`campaigns/${theme.id}/hero-images/slider`}
+                     defaultName={`slider-${theme.themeId}-${(theme.landing.heroImages?.length || 0) + 1}`}
+                     storagePath={StoragePathBuilder.seasonal(theme.id, 'hero')}
                  />
              </div>
           </div>

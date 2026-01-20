@@ -51,6 +51,10 @@ const nextConfig = {
         pathname: '/logo/**',
         search: '', // Permitir cualquier parámetro de consulta
       },
+      {
+        pathname: '/landings/**',
+        search: '', // Permitir imágenes de landings personalizadas
+      },
     ],
   },
   experimental: {

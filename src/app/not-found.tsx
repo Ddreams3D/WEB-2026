@@ -22,7 +22,7 @@ export default function NotFound() {
         {/* Fun 3D Print Failure Image/Illustration */}
         <div className="mb-6 relative h-64 w-64 mx-auto animate-float">
           {/* We use a placeholder div that looks like a spaghetti monster/failed print 
-              In a real scenario, you'd use a real image like '/images/failed-print-spaghetti.png'
+              In a real scenario, you'd use a real image like StoragePathBuilder.ui.placeholders('failed-print.png')
           */}
           <div className="w-full h-full relative flex items-center justify-center">
              <svg 

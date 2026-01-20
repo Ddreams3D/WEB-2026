@@ -94,6 +94,7 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
             handlePermanentDeleteProduct={handlePermanentDeleteProduct}
             handleEditProduct={handleEditProduct}
             handleDeleteProduct={handleDeleteProduct}
+            handleAddProduct={handleAddProduct}
         />
       )}
       

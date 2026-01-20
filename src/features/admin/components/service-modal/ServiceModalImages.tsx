@@ -3,6 +3,7 @@ import { X } from 'lucide-react';
 import { Service } from '@/shared/types/domain';
 import ImageUpload from '../ImageUpload';
 import { ProductImage } from '@/shared/components/ui/DefaultImage';
+import { StoragePathBuilder } from '@/shared/constants/storage-paths';
 
 interface ServiceModalImagesProps {
   formData: Partial<Service>;
@@ -28,6 +29,7 @@ export function ServiceModalImages({
           onUploadStatusChange={setIsImageUploading}
           defaultName={formData.name}
           existingImages={formData.images || []}
+          storagePath={StoragePathBuilder.services(formData.slug || 'temp', 'gallery')}
         />
       </div>
 

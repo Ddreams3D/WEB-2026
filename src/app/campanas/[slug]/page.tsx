@@ -5,6 +5,7 @@ import { getSeasonalThemes, isDateInRange } from '@/lib/seasonal-service';
 import { getAppUrl } from '@/lib/url-utils';
 import { JsonLd } from '@/components/seo/JsonLd';
 import Link from 'next/link';
+import { StoragePathBuilder } from '@/shared/constants/storage-paths';
 
 interface PageProps {
   params: Promise<{
@@ -37,7 +38,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   // Ensure absolute URL for image
   const imageUrl = theme.landing.heroImage?.startsWith('http') 
     ? theme.landing.heroImage 
-    : `${baseUrl}${theme.landing.heroImage || '/images/og-default.jpg'}`;
+    : `${baseUrl}${theme.landing.heroImage || `/${StoragePathBuilder.ui.brand()}/impresion-3d-arequipa-ddreams-v2.png`}`;
 
   return {
     title: `${theme.landing.heroTitle} | Regalos Personalizados | Ddreams 3D`,
@@ -128,7 +129,7 @@ export default async function CampaignPage({ params, searchParams }: PageProps) 
     url: `${baseUrl}/campanas/${theme.id}`,
     image: theme.landing.heroImage?.startsWith('http') 
       ? theme.landing.heroImage 
-      : `${baseUrl}${theme.landing.heroImage || '/images/og-default.jpg'}`,
+      : `${baseUrl}${theme.landing.heroImage || `/${StoragePathBuilder.ui.brand()}/impresion-3d-arequipa-ddreams-v2.png`}`,
     publisher: {
       '@type': 'Organization',
       name: 'Ddreams 3D',

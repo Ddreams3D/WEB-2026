@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import { RouteItem, RouteType, RouteCategory, RouteStatus, SeoConfig } from '../types';
 import { SITE_ROUTES, ACTIVE_REDIRECTS } from '../data';
 import { SERVICE_LANDINGS_DATA } from '@/shared/data/service-landings-data';
-import seasonalThemes from '@/data/seasonal-themes.json';
+import { seasonalThemes } from '@/data/seasonal-themes';
 import { fetchAllSeoConfigs, saveSeoConfig, getDocIdFromPath } from '@/services/seo.service';
 import { revalidateSeoPath } from '@/app/actions/seo';
 

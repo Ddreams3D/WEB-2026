@@ -31,25 +31,32 @@ service firebase.storage {
     }
 
     // ========================================================================
-    // PUBLIC ASSETS (Catalog & Projects)
+    // PUBLIC ASSETS (Unified under images/)
     // ========================================================================
     
-    // Products: Public read, Admin write
-    match /products/{allPaths=**} {
+    // All public images must be organized under images/
+    match /images/{allPaths=**} {
       allow read: if true;
       allow write: if isAdmin() && isImage() && isSmallFile();
     }
-    
-    // Services: Public read, Admin write
-    match /services/{allPaths=**} {
-      allow read: if true;
-      allow write: if isAdmin() && isImage() && isSmallFile();
+
+    // ========================================================================
+    // SYSTEM ROOTS (Finances, Orders)
+    // ========================================================================
+
+    match /finances/{allPaths=**} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
     }
-    
-    // Projects: Public read, Admin write
-    match /projects/{allPaths=**} {
+
+    match /orders/{allPaths=**} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /assets/{allPaths=**} {
       allow read: if true;
-      allow write: if isAdmin() && isImage() && isSmallFile();
+      allow write: if isAdmin();
     }
 
     // ========================================================================

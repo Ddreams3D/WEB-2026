@@ -42,3 +42,37 @@ export function formatDate(date: Date | string | number): string {
     year: 'numeric'
   });
 }
+
+export function formatBytes(bytes: number, decimals = 2): string {
+  if (bytes === 0) return '0 Bytes';
+
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
+export function extractMetadataFromFilename(filename: string): { name: string; tags: string[] } {
+  // Remove extension
+  const nameWithoutExt = filename.replace(/\.[^/.]+$/, "");
+  
+  // Replace separators with spaces
+  const cleanName = nameWithoutExt
+    .replace(/[-_]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  // Capitalize first letter of each word for the Name
+  const name = cleanName.replace(/\b\w/g, (l) => l.toUpperCase());
+
+  // Generate tags (split by space, filter small words if needed)
+  const tags = cleanName
+    .toLowerCase()
+    .split(" ")
+    .filter(word => word.length > 2); // Filter out very short words like "de", "el"
+
+  return { name, tags };
+}

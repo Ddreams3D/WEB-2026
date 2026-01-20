@@ -81,9 +81,31 @@ export async function saveServiceLandingAction(landing: ServiceLandingConfig): P
     await ServiceLandingsService.save(validation.data as ServiceLandingConfig);
     revalidatePath('/admin/service-landings');
     revalidatePath(`/servicios/${validation.data.slug}`);
+    
+    // Revalidate specific standalone pages if they match known slugs
+    if (validation.data.slug === 'soportes-personalizados-dispositivos') {
+        revalidatePath('/soportes-personalizados');
+    }
+    
     return { success: true, data: undefined };
   } catch (error: any) {
     console.error('Failed to save service landing:', error);
     return { success: false, error: error.message || 'Failed to save service landing' };
   }
+}
+
+export async function revalidateServiceLandingAction(slug: string): Promise<ActionResponse<void>> {
+  const isAdmin = await verifyAdminSession();
+  if (!isAdmin) {
+    return { success: false, error: 'Unauthorized' };
+  }
+
+  revalidatePath('/admin/service-landings');
+  revalidatePath(`/servicios/${slug}`);
+  
+  if (slug === 'soportes-personalizados-dispositivos') {
+      revalidatePath('/soportes-personalizados');
+  }
+
+  return { success: true, data: undefined };
 }

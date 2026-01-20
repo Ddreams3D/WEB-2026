@@ -5,6 +5,7 @@ import { fetchLandingMain } from '@/services/landing.service';
 import { ProductService } from '@/services/product.service';
 import { ServiceService } from '@/services/service.service';
 import { CatalogItem } from '@/shared/types/catalog';
+import { StoragePathBuilder } from '@/shared/constants/storage-paths';
 
 export const metadata: Metadata = {
   title: {
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: '/images/impresion-3d-arequipa-ddreams-v2.png',
+        url: `/${StoragePathBuilder.ui.brand()}/impresion-3d-arequipa-ddreams-v2.png`,
         width: 1200,
         height: 630,
         alt: 'Servicio de Impresión 3D en Arequipa - Ddreams 3D',
@@ -35,7 +36,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Impresión 3D en Arequipa | Servicio Profesional a Medida',
     description: 'Servicio profesional de impresión 3D. Calidad, rapidez y atención personalizada.',
-    images: ['/images/impresion-3d-arequipa-ddreams-v2.png'],
+    images: [`/${StoragePathBuilder.ui.brand()}/impresion-3d-arequipa-ddreams-v2.png`],
   },
   robots: {
     index: true,

@@ -21,7 +21,9 @@ interface DefaultImageProps {
   style?: React.CSSProperties;
 }
 
-const DEFAULT_FALLBACK = 'https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fimpresion-3d-arequipa-ddreams-v2.png?alt=media&token=b80e2ba9-93a7-4986-8c3b-97735aba96ad';
+import { StoragePathBuilder } from '@/shared/constants/storage-paths';
+
+const DEFAULT_FALLBACK = `/${StoragePathBuilder.ui.brand()}/impresion-3d-arequipa-ddreams-v2.png`;
 
 export default function DefaultImage({
   src,
@@ -93,7 +95,7 @@ export default function DefaultImage({
         priority={priority}
         quality={quality}
         style={style}
-        {...(fill ? { fill: true, sizes } : { width, height })}
+        {...(fill ? { fill: true, sizes: sizes || "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" } : { width, height })}
       />
     </div>
   );
@@ -112,7 +114,7 @@ export function ProductImage({
       src={src}
       alt={alt}
       className={className}
-      fallbackSrc="https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fimpresion-3d-arequipa-ddreams-v2.png?alt=media&token=b80e2ba9-93a7-4986-8c3b-97735aba96ad"
+      fallbackSrc={`/${StoragePathBuilder.ui.brand()}/impresion-3d-arequipa-ddreams-v2.png`}
       placeholderText="Producto sin imagen"
       {...props}
     />
@@ -131,7 +133,7 @@ export function UserAvatar({
       src={src}
       alt={alt}
       className={`rounded-full ${className}`}
-      fallbackSrc="https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fplaceholder-team.svg?alt=media&token=9393f5dd-069c-48db-a72f-c065bf98af13"
+      fallbackSrc={`/${StoragePathBuilder.ui.placeholders()}/placeholder-team.svg`}
       placeholderText="Usuario"
       {...props}
     />
@@ -150,7 +152,7 @@ export function CompanyLogo({
       src={src}
       alt={alt}
       className={className}
-      fallbackSrc="/logo-ddreams-3d.jpg"
+      fallbackSrc={`/${StoragePathBuilder.ui.brand()}/logo-ddreams-3d.jpg`}
       placeholderText="Logo"
       {...props}
     />

@@ -180,6 +180,54 @@ export const ProductService = {
     return includeDeleted ? products : products.filter(p => !p.isDeleted);
   },
 
+  async updateImageReference(oldUrl: string, newUrl: string): Promise<number> {
+    const map = new Map<string, string>();
+    map.set(oldUrl, newUrl);
+    return this.bulkUpdateImageReferences(map);
+  },
+
+  async bulkUpdateImageReferences(replacements: Map<string, string>): Promise<number> {
+    if (!db || replacements.size === 0) return 0;
+    try {
+      let updatedCount = 0;
+      const allProducts = await this.getAllProducts(true, true);
+      
+      const batch = writeBatch(db);
+      let batchCount = 0;
+
+      for (const product of allProducts) {
+        let changed = false;
+        const newImages = product.images.map(img => {
+          if (img.url && replacements.has(img.url)) {
+            changed = true;
+            return { ...img, url: replacements.get(img.url)! };
+          }
+          return img;
+        });
+
+        if (changed) {
+          const ref = doc(db, COLLECTION_NAME, product.id);
+          // Only update images field
+          const cleanImages = JSON.parse(JSON.stringify(newImages));
+          batch.update(ref, { images: cleanImages, updatedAt: new Date() });
+          updatedCount++;
+          batchCount++;
+        }
+      }
+
+      if (batchCount > 0) {
+        await batch.commit();
+        // Invalidate cache
+        productsCache = null;
+      }
+
+      return updatedCount;
+    } catch (error) {
+      console.error('Error updating product image references:', error);
+      return 0;
+    }
+  },
+
   // Get product by ID or Slug
   async getProductById(idOrSlug: string): Promise<StoreProduct | undefined> {
     const allProducts = await this.getAllProducts(false, true); // Allow finding deleted for restore/admin

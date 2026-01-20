@@ -1,0 +1,160 @@
+import { SeasonalThemeConfig } from '@/shared/types/seasonal';
+import { StoragePathBuilder } from '@/shared/constants/storage-paths';
+
+export const seasonalThemes: SeasonalThemeConfig[] = [
+  {
+    id: "christmas",
+    themeId: "festive-warm",
+    name: "Navidad",
+    dateRanges: [
+      {
+        start: {
+          month: 12,
+          day: 1
+        },
+        end: {
+          month: 12,
+          day: 31
+        }
+      }
+    ],
+    landing: {
+      heroTitle: "Regala Magia esta Navidad",
+      heroSubtitle: "Edición Especial Navideña",
+      heroDescription: "Descubre nuestra colección exclusiva de decoraciones y regalos personalizados impresos en 3D. Haz que esta navidad sea inolvidable.",
+      heroImage: `/${StoragePathBuilder.seasonal('christmas', 'hero')}/cover.jpg`,
+      ctaText: "Ver Colección Navideña",
+      ctaLink: "/catalogo-impresion-3d",
+      featuredTag: "navidad",
+      featuredTitle: "Favoritos de Santa"
+    }
+  },
+  {
+    id: "halloween",
+    themeId: "halloween",
+    name: "Halloween",
+    dateRanges: [
+      {
+        start: {
+          month: 10,
+          day: 1
+        },
+        end: {
+          month: 10,
+          day: 31
+        }
+      }
+    ],
+    landing: {
+      heroTitle: "Terroríficamente Increíble",
+      heroSubtitle: "Colección Halloween",
+      heroDescription: "Máscaras, accesorios y decoraciones espeluznantes para tu fiesta de Halloween. Impresión 3D de alta calidad.",
+      heroImage: `/${StoragePathBuilder.seasonal('halloween', 'hero')}/cover.png`,
+      ctaText: "Explorar el Terror",
+      ctaLink: "/catalogo-impresion-3d",
+      featuredTag: "halloween",
+      featuredTitle: "Lo más buscado este Halloween"
+    }
+  },
+  {
+    id: "fiestas-patrias",
+    themeId: "festive-strong",
+    name: "Fiestas Patrias Perú",
+    dateRanges: [
+      {
+        start: {
+          month: 7,
+          day: 15
+        },
+        end: {
+          month: 7,
+          day: 30
+        }
+      }
+    ],
+    landing: {
+      heroTitle: "Celebra al Perú",
+      heroSubtitle: "Orgullo Peruano en 3D",
+      heroDescription: "Símbolos patrios, mapas en relieve y souvenirs personalizados para celebrar nuestra independencia.",
+      heroImage: `/${StoragePathBuilder.seasonal('fiestas-patrias', 'hero')}/cover.jpg`,
+      ctaText: "Ver Colección Patriota",
+      ctaLink: "/catalogo-impresion-3d",
+      featuredTag: "peru",
+      featuredTitle: "Orgullo Nacional"
+    }
+  },
+  {
+    id: "san-valentin",
+    themeId: "valentines",
+    name: "San Valentín",
+    dateRanges: [
+      {
+        start: {
+          month: 2,
+          day: 1
+        },
+        end: {
+          month: 2,
+          day: 14
+        }
+      }
+    ],
+    landing: {
+      heroTitle: "Dilo con un Regalo Único",
+      heroSubtitle: "San Valentín",
+      heroDescription: "Regalos personalizados que expresan lo que sientes. Litofanías, corazones y detalles especiales.",
+      heroImage: `/${StoragePathBuilder.seasonal('san-valentin', 'hero')}/cover.jpg`,
+      ctaText: "Encontrar el Regalo Perfecto",
+      ctaLink: "/catalogo-impresion-3d",
+      featuredTag: "amor",
+      featuredTitle: "Para esa persona especial"
+    }
+  },
+  {
+    id: "dia-de-la-madre",
+    themeId: "festive-soft",
+    name: "Día de la Madre",
+    dateRanges: [
+      {
+        start: {
+          month: 5,
+          day: 1
+        },
+        end: {
+          month: 5,
+          day: 15
+        }
+      }
+    ],
+    landing: {
+      heroTitle: "Mamá se merece lo mejor",
+      heroSubtitle: "Día de la Madre",
+      heroDescription: "Sorprende a mamá con un detalle personalizado único, hecho con amor y tecnología.",
+      heroImage: `/${StoragePathBuilder.seasonal('dia-de-la-madre', 'hero')}/cover.jpg`,
+      ctaText: "Ver Regalos para Mamá",
+      ctaLink: "/catalogo-impresion-3d",
+      featuredTag: "madre",
+      featuredTitle: "Detalles que enamoran"
+    }
+  },
+  {
+    id: "standard",
+    themeId: "standard",
+    name: "Estándar (Marca)",
+    isActive: false,
+    dateRanges: [],
+    landing: {
+      heroTitle: "Tus ideas. Nuestro arte. En 3D.",
+      heroDescription: "Fabricación de prototipos, trofeos y piezas personalizadas con tecnología 3D.",
+      ctaText: "Descubre como podemos ayudarte.",
+      ctaLink: "/services",
+      featuredTag: "destacado",
+      themeMode: "light"
+    },
+    announcement: {
+      enabled: false,
+      content: "",
+      closable: true
+    }
+  }
+];

@@ -1,5 +1,5 @@
 import { db } from '@/lib/firebase';
-import { collection, getDocs, doc, setDoc, query, where, getDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, setDoc, query, where, getDoc, writeBatch } from 'firebase/firestore';
 import { ServiceLandingConfig, ServiceLandingSection } from '@/shared/types/service-landing';
 import { SERVICE_LANDINGS_DATA } from '@/shared/data/service-landings-data';
 
@@ -97,8 +97,8 @@ export const ServiceLandingsService = {
 
     // 2. Fallback to static data
     const staticLanding = SERVICE_LANDINGS_DATA.find(l => l.slug === slug);
-    if (staticLanding && !staticLanding.isDeleted) {
-        return staticLanding;
+    if (staticLanding && !staticLanding.isDeleted && staticLanding.isActive !== false) {
+      return staticLanding;
     }
     return undefined;
   },
@@ -121,5 +121,70 @@ export const ServiceLandingsService = {
       console.error('Error saving service landing to Firebase:', error);
       throw error;
     }
+  },
+
+  async updateImageReference(oldUrl: string, newUrl: string): Promise<number> {
+    const map = new Map<string, string>();
+    map.set(oldUrl, newUrl);
+    return this.bulkUpdateImageReferences(map);
+  },
+
+  async bulkUpdateImageReferences(replacements: Map<string, string>): Promise<number> {
+    if (!db || replacements.size === 0) return 0;
+    let updatedCount = 0;
+
+    try {
+      // 1. Get all landings (1 fetch)
+      // Note: We need the actual DOC IDs to update efficiently.
+      // getAll() returns the data objects.
+      // We'll query everything from the collection to get refs.
+      const snapshot = await getDocs(collection(db, COLLECTION));
+      if (snapshot.empty) return 0;
+
+      const batch = writeBatch(db);
+      let batchCount = 0;
+
+      snapshot.docs.forEach(docSnap => {
+        const landing = docSnap.data() as ServiceLandingConfig;
+        let changed = false;
+
+        // Helper to replace
+        const replace = (url: string | undefined) => {
+          if (url && replacements.has(url)) {
+            changed = true;
+            return replacements.get(url)!;
+          }
+          return url;
+        };
+
+        // 1. Hero
+        landing.heroImage = replace(landing.heroImage);
+        landing.heroImageComparison = replace(landing.heroImageComparison);
+
+        // 2. Sections
+        landing.sections?.forEach(section => {
+          section.image = replace(section.image);
+          section.items?.forEach(item => {
+            item.image = replace(item.image);
+          });
+        });
+
+        if (changed) {
+          // Ensure no undefined values are passed to Firestore
+          const cleanLanding = JSON.parse(JSON.stringify(landing));
+          batch.set(docSnap.ref, cleanLanding, { merge: true });
+          updatedCount++;
+          batchCount++;
+        }
+      });
+
+      if (batchCount > 0) {
+        await batch.commit();
+      }
+    } catch (error) {
+      console.error('Error updating image references:', error);
+    }
+
+    return updatedCount;
   }
 };

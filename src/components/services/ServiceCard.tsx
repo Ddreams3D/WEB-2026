@@ -33,8 +33,13 @@ export function ServiceCard({
   // Services use 'general-service' logic by default for URL construction in this context
   // or we can use the dedicated service detail page if it exists.
   // We use /services/[slug] for services.
-  // For now, we'll stick to the existing URL pattern but add ?from=services
-  const serviceUrl = `/services/${service.slug || service.id}`;
+  
+  let serviceUrl = `/services/${service.slug || service.id}`;
+
+  // Custom override for "Soportes Personalizados" to point to the new independent landing
+  if (service.slug === 'soportes-personalizados-dispositivos') {
+    serviceUrl = '/soportes-personalizados';
+  }
 
   const images = service.images || [];
   const primaryImage = images.find((img) => img.isPrimary) || images[0];

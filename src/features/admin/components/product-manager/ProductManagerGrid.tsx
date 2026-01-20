@@ -1,28 +1,30 @@
  'use client';
  import React, { useRef } from 'react';
- import { Package, Star } from '@/lib/icons';
- import { ProductImage } from '@/shared/components/ui/DefaultImage';
- import { StoreProduct as Product, Service } from '@/shared/types/domain';
- 
- interface ProductManagerGridProps {
-     filteredProducts: (Product | Service)[];
-     showDeleted: boolean;
-     mode: 'product' | 'service' | 'all';
-     handleRestoreProduct: (id: string) => void;
-     handlePermanentDeleteProduct: (id: string) => void;
-     handleEditProduct: (product: Product | Service) => void;
-     handleDeleteProduct: (id: string) => void;
- }
- 
- export function ProductManagerGrid({
-     filteredProducts,
-     showDeleted,
-     mode,
-     handleRestoreProduct,
-     handlePermanentDeleteProduct,
-     handleEditProduct,
-     handleDeleteProduct
- }: ProductManagerGridProps) {
+ import { Package, Star, Plus } from '@/lib/icons';
+import { ProductImage } from '@/shared/components/ui/DefaultImage';
+import { StoreProduct as Product, Service } from '@/shared/types/domain';
+
+interface ProductManagerGridProps {
+    filteredProducts: (Product | Service)[];
+    showDeleted: boolean;
+    mode: 'product' | 'service' | 'all';
+    handleRestoreProduct: (id: string) => void;
+    handlePermanentDeleteProduct: (id: string) => void;
+    handleEditProduct: (product: Product | Service) => void;
+    handleDeleteProduct: (id: string) => void;
+    handleAddProduct: () => void;
+}
+
+export function ProductManagerGrid({
+    filteredProducts,
+    showDeleted,
+    mode,
+    handleRestoreProduct,
+    handlePermanentDeleteProduct,
+    handleEditProduct,
+    handleDeleteProduct,
+    handleAddProduct
+}: ProductManagerGridProps) {
    const clickTimer = useRef<number | null>(null);
    const lastClickedId = useRef<string | null>(null);
  
@@ -55,6 +57,19 @@
    };
    return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+      {/* Add New Product Card */}
+      {!showDeleted && (
+        <div 
+          onClick={handleAddProduct}
+          className="group flex flex-col items-center justify-center bg-muted/30 border-2 border-dashed border-muted-foreground/20 rounded-lg hover:border-primary/50 hover:bg-primary/5 cursor-pointer transition-all duration-300 min-h-[250px]"
+        >
+          <div className="p-4 rounded-full bg-background shadow-sm group-hover:scale-110 transition-transform duration-300 mb-3">
+            <Plus className="w-6 h-6 text-primary" />
+          </div>
+          <span className="font-medium text-muted-foreground group-hover:text-primary transition-colors">Crear Nuevo</span>
+        </div>
+      )}
+
      {filteredProducts.map((product) => (
        <div
          key={product.id}

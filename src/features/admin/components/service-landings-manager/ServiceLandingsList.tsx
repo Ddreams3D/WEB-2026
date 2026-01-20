@@ -86,17 +86,24 @@ export function ServiceLandingsList({
                     <div>
                         <div className="flex justify-between items-start mb-1">
                             <h3 className="font-bold text-lg leading-tight group-hover:text-primary transition-colors line-clamp-1">{landing.name}</h3>
-                            <Badge 
-                                variant={landing.isActive ? "default" : "outline"} 
-                                className={cn(
-                                    "text-[10px] px-1.5 h-5",
-                                    landing.isActive 
-                                        ? "bg-green-500 hover:bg-green-600" 
-                                        : "text-muted-foreground"
+                            <div className="flex gap-1">
+                                {landing.robots?.includes('noindex') && (
+                                    <Badge variant="destructive" className="text-[10px] px-1.5 h-5">
+                                        NO-INDEX
+                                    </Badge>
                                 )}
-                            >
-                                {landing.isActive ? "ACTIVA" : "BORRADOR"}
-                            </Badge>
+                                <Badge 
+                                    variant={landing.isActive ? "default" : "outline"} 
+                                    className={cn(
+                                        "text-[10px] px-1.5 h-5",
+                                        landing.isActive 
+                                            ? "bg-green-500 hover:bg-green-600" 
+                                            : "text-muted-foreground"
+                                    )}
+                                >
+                                    {landing.isActive ? "ACTIVA" : "BORRADOR"}
+                                </Badge>
+                            </div>
                         </div>
                         <p className="text-sm text-muted-foreground line-clamp-1">{landing.metaDescription || "Sin descripción"}</p>
                     </div>

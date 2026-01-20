@@ -411,6 +411,7 @@ export function ServiceHero({ config, heroSection, primaryColor, isEditable = fa
                     fill
                     className="object-cover"
                     priority
+                    sizes="(max-width: 1024px) 100vw, 50vw"
                 />
               </>
           )}

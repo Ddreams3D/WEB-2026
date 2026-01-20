@@ -9,10 +9,14 @@ import { compressImage, generateSeoFilename } from '@/features/admin/utils/image
 import { ImageUploadConfig } from './image-upload/ImageUploadConfig';
 import { ImageUploadDropzone } from './image-upload/ImageUploadDropzone';
 import { ImageUploadPreview } from './image-upload/ImageUploadPreview';
+import { STORAGE_PATHS } from '@/shared/constants/storage-paths';
+import { Button } from '@/components/ui/button';
+import { FolderOpen } from 'lucide-react';
+import { StoragePickerModal } from './storage-manager/StoragePickerModal';
 
 interface ImageUploadProps {
   value?: string;
-  onChange: (url: string, viewType: ProductImageViewType) => void;
+  onChange: (url: string, viewType?: ProductImageViewType, originalFilename?: string) => void;
   onRemove: () => void;
   onUploadStatusChange?: (isUploading: boolean) => void;
   defaultName?: string;
@@ -20,8 +24,9 @@ interface ImageUploadProps {
   storagePath?: string;
 }
 
-export default function ImageUpload({ value, onChange, onRemove, onUploadStatusChange, defaultName, existingImages = [], storagePath = 'images/catalogo' }: ImageUploadProps) {
+export default function ImageUpload({ value, onChange, onRemove, onUploadStatusChange, defaultName, existingImages = [], storagePath = STORAGE_PATHS.PRODUCTS }: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -155,7 +160,7 @@ export default function ImageUpload({ value, onChange, onRemove, onUploadStatusC
                 
                 // Delay callback and reset to show success UI
                 setTimeout(() => {
-                    onChange(url, selectedViewType);
+                    onChange(url, selectedViewType, fileName);
                     
                     // Reset local state
                     updateUploadingState(false);
@@ -196,7 +201,7 @@ export default function ImageUpload({ value, onChange, onRemove, onUploadStatusC
                     setIsSuccess(true);
                     
                     setTimeout(() => {
-                        onChange(result, selectedViewType);
+                        onChange(result, selectedViewType, fileName);
                         alert('Imagen simulada subida correctamente (Base64).');
                         
                         updateUploadingState(false);
@@ -241,6 +246,14 @@ export default function ImageUpload({ value, onChange, onRemove, onUploadStatusC
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+  };
+
+  const handlePickerSelect = (url: string) => {
+    // Select image from library, default type 'otro' or 'frontal'
+    // Since it's from library, we skip the rename/compress flow
+    const type: ProductImageViewType = existingImages.length === 0 ? 'frontal' : 'otro';
+    onChange(url, type);
+    setIsPickerOpen(false);
   };
 
   // 1. Mostrar Preview y Formulario de Renombrado si hay archivo seleccionado (sea nuevo o reemplazo)
@@ -291,8 +304,35 @@ export default function ImageUpload({ value, onChange, onRemove, onUploadStatusC
             isUploading={isUploading}
         />
       ) : (
-        <ImageUploadDropzone handleClick={handleClick} />
+        <div className="space-y-3">
+            <ImageUploadDropzone handleClick={handleClick} />
+            
+            <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-2 text-muted-foreground">O selecciona de la biblioteca</span>
+                </div>
+            </div>
+
+            <Button 
+                type="button" 
+                variant="outline" 
+                className="w-full"
+                onClick={() => setIsPickerOpen(true)}
+            >
+                <FolderOpen className="mr-2 h-4 w-4" />
+                Buscar en Catálogo / Soportes
+            </Button>
+        </div>
       )}
+
+      <StoragePickerModal 
+         isOpen={isPickerOpen}
+         onClose={() => setIsPickerOpen(false)}
+         onSelect={handlePickerSelect}
+      />
     </div>
   );
 }

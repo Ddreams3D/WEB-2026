@@ -141,14 +141,26 @@ DialogTitle.displayName = "DialogTitle"
 
 const DialogDescription = React.forwardRef<
   HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
->(({ className, ...props }, ref) => (
-  <p
-    ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
-    {...props}
-  />
-))
+  React.HTMLAttributes<HTMLParagraphElement> & { asChild?: boolean }
+>(({ className, children, asChild, ...props }, ref) => {
+  if (asChild && React.isValidElement(children)) {
+    const child = children as React.ReactElement<any>;
+    return React.cloneElement(child, {
+      ref,
+      className: cn("text-sm text-muted-foreground", className, child.props.className),
+      ...props,
+    })
+  }
+  return (
+    <p
+      ref={ref}
+      className={cn("text-sm text-muted-foreground", className)}
+      {...props}
+    >
+      {children}
+    </p>
+  )
+})
 DialogDescription.displayName = "DialogDescription"
 
 export {

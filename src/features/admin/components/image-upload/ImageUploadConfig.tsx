@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Upload, Check, RefreshCw } from '@/lib/icons';
+import { Upload, Check, RefreshCw, Wand2 } from '@/lib/icons';
 import { ProductImageViewType } from '@/shared/types';
 
 interface ImageUploadConfigProps {
@@ -74,9 +74,10 @@ export function ImageUploadConfig({
                 </div>
             </div>
 
-            <div className="mb-4">
-                <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
-                    Nombre del archivo (SEO)
+            <div className="mb-4 p-3 bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900 rounded-lg">
+                <label className="flex items-center gap-2 text-xs font-semibold text-blue-700 dark:text-blue-300 mb-2">
+                    <Wand2 className="w-3.5 h-3.5" />
+                    RENOMBRAR PARA AUTO-GENERAR DATOS
                 </label>
                 <div className="flex">
                     <input
@@ -84,14 +85,15 @@ export function ImageUploadConfig({
                         type="text"
                         value={fileName}
                         onChange={(e) => setFileName(e.target.value)}
-                        className="flex-1 min-w-0 block w-full px-3 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm focus:ring-blue-500 focus:border-blue-500 dark:text-white"
+                        placeholder="Ej. mascara-calavera-roja"
+                        className="flex-1 min-w-0 block w-full px-3 py-2 rounded-l-md border border-blue-200 dark:border-blue-800 bg-white dark:bg-gray-800 text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white"
                     />
-                    <span className="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 text-sm">
+                    <span className="inline-flex items-center px-3 rounded-r-md border border-l-0 border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-sm font-medium">
                         .{selectedFile.name.split('.').pop()}
                     </span>
                 </div>
-                <p className="mt-1 text-xs text-gray-500">
-                    Se usará: {fileName}.{selectedFile.name.split('.').pop()}
+                <p className="mt-2 text-[10px] text-blue-600/80 dark:text-blue-400/80 leading-tight">
+                    💡 <strong>Tip Pro:</strong> Escribe un buen nombre aquí (ej: "Mascara Batman Negra") y el sistema llenará automáticamente el Título, URL y Tags del producto.
                 </p>
             </div>
 

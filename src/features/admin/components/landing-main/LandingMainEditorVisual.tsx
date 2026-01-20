@@ -6,6 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Palette, Laptop, Sun, Moon, Image as ImageIcon, Plus, Trash2 } from 'lucide-react';
 import { LandingMainConfig } from '@/shared/types/landing';
+import ImageUpload from '@/features/admin/components/ImageUpload';
+import { STORAGE_PATHS, StoragePathBuilder } from '@/shared/constants/storage-paths';
 
 interface LandingMainEditorVisualProps {
     form: LandingMainConfig;
@@ -45,6 +47,23 @@ export function LandingMainEditorVisual({
                 </div>
             </div>
 
+            {/* Hero Image */}
+            <div className="space-y-4 border rounded-lg p-4 bg-muted/10">
+                <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-2">
+                    <ImageIcon className="w-4 h-4" />
+                    Imagen Hero
+                </h3>
+                <div className="space-y-3">
+                    <ImageUpload
+                        value={form.heroImage || ''}
+                        onChange={(url) => updateField('heroImage', url)}
+                        onRemove={() => updateField('heroImage', '')}
+                        defaultName="hero-arequipa"
+                        storagePath={StoragePathBuilder.home('hero')}
+                    />
+                </div>
+            </div>
+
             {/* Floating Bubbles */}
             <div className="space-y-4 border rounded-lg p-4 bg-muted/10">
                 <div className="flex items-center justify-between mb-2">
@@ -60,28 +79,21 @@ export function LandingMainEditorVisual({
                 
                 <div className="space-y-3">
                     {(form.bubbleImages || []).map((img, idx) => (
-                        <div key={idx} className="flex gap-2">
-                            <Input 
-                                value={img} 
-                                onChange={e => handleUpdateBubble(idx, e.target.value)}
-                                placeholder="URL de la imagen PNG"
-                                className="font-mono text-xs"
-                            />
-                            {img && (
-                                <div className="relative w-10 h-10 rounded border bg-background flex-shrink-0 overflow-hidden">
-                                    <Image 
-                                        src={img} 
-                                        alt="" 
-                                        fill 
-                                        className="object-contain" 
-                                    />
-                                </div>
-                            )}
+                        <div key={idx} className="flex gap-2 items-start">
+                            <div className="flex-1">
+                                <ImageUpload
+                                    value={img}
+                                    onChange={(url) => handleUpdateBubble(idx, url)}
+                                    onRemove={() => handleRemoveBubble(idx)}
+                                    defaultName={`bubble-home-${idx + 1}`}
+                                    storagePath={StoragePathBuilder.home('bubbles')}
+                                />
+                            </div>
                             <Button 
                                 size="icon" 
                                 variant="ghost" 
                                 onClick={() => handleRemoveBubble(idx)}
-                                className="flex-shrink-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+                                className="flex-shrink-0 text-destructive hover:text-destructive hover:bg-destructive/10 mt-2"
                             >
                                 <Trash2 className="w-4 h-4" />
                             </Button>

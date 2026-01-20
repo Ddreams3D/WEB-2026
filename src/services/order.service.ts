@@ -18,6 +18,7 @@ import {
 } from 'firebase/firestore';
 import { db, auth } from '@/lib/firebase';
 import { Order, OrderStatus, OrderHistoryEntry } from '@/shared/types/domain';
+import { StoragePathBuilder } from '@/shared/constants/storage-paths';
 
 const COLLECTION_NAME = 'orders';
 const CACHE_DURATION = 2 * 60 * 1000; // 2 minutes for orders (more volatile)
@@ -403,7 +404,7 @@ export const OrderService = {
             quantity: 1,
             price: 45.00,
             total: 45.00,
-            image: '/images/products/maceta-geo.jpg'
+            image: `/${StoragePathBuilder.products('general', 'macetas-3d-decorativas-interior')}/maceta-geo.jpg`
           },
           {
             id: 'item-2',

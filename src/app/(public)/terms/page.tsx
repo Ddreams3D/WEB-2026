@@ -3,6 +3,7 @@
 import React from 'react';
 import PageHeader from '@/shared/components/PageHeader';
 import { EMAIL_BUSINESS, PHONE_DISPLAY, ADDRESS_BUSINESS } from '../../../shared/constants/contactInfo';
+import { StoragePathBuilder } from '@/shared/constants/storage-paths';
 
 /* ----------------------------- */
 /* Section Header */
@@ -38,7 +39,7 @@ export default function TermsOfService() {
       <PageHeader
         title="Términos de Servicio"
         description="Condiciones de uso de nuestros servicios"
-        image="https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fservicios-diseno-modelado-impresion-3d-ddreams-3d.png?alt=media&token=bd65bb84-b55b-42d7-a3ab-2fb622ce5d1f"
+        image={`/${StoragePathBuilder.ui.banners()}/servicios-diseno-modelado-impresion-3d-ddreams-3d.png`}
       />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">

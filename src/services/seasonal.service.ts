@@ -11,7 +11,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { SeasonalThemeConfig, SeasonalSystemConfig } from '@/shared/types/seasonal';
-import seasonalThemesData from '@/data/seasonal-themes.json';
+import { seasonalThemes } from '@/data/seasonal-themes';
 
 const COLLECTION_NAME = 'seasonal_themes';
 const CONFIG_DOC_ID = '_config';
@@ -19,7 +19,7 @@ const FIRESTORE_TIMEOUT = 2000; // 2s timeout
 const ENABLE_FIRESTORE_FOR_PUBLIC = true; // Enabled to allow public/admin read/write
 
 // Fallback data from JSON
-const FALLBACK_THEMES = seasonalThemesData as SeasonalThemeConfig[];
+const FALLBACK_THEMES = seasonalThemes;
 
 /**
  * Fetches seasonal themes from Firestore.
@@ -98,15 +98,88 @@ export async function fetchSeasonalConfig(): Promise<SeasonalSystemConfig> {
 export async function saveSeasonalConfig(config: SeasonalSystemConfig): Promise<void> {
   const dbInstance = db;
   if (!dbInstance) throw new Error('Firestore is not configured.');
-
+  
   try {
     const docRef = doc(dbInstance, COLLECTION_NAME, CONFIG_DOC_ID);
-    await setDoc(docRef, config);
+    await setDoc(docRef, config, { merge: true });
   } catch (error) {
     console.error('Error saving seasonal config:', error);
     throw error;
   }
 }
+
+export async function bulkUpdateImageReferences(replacements: Map<string, string>): Promise<number> {
+  const dbInstance = db;
+  if (!dbInstance || replacements.size === 0) return 0;
+
+  try {
+    const themes = await fetchThemesFromFirestore();
+    const batch = writeBatch(dbInstance);
+    let batchCount = 0;
+    let updatedCount = 0;
+
+    for (const theme of themes) {
+      if (!theme.landing) continue;
+      let changed = false;
+      const l = theme.landing;
+
+      // Helper
+      const replace = (url: string | undefined) => {
+        if (url && replacements.has(url)) {
+            changed = true;
+            return replacements.get(url)!;
+        }
+        return url;
+      };
+
+      l.heroImage = replace(l.heroImage);
+      l.heroVideo = replace(l.heroVideo); // Video is a file too
+      
+      if (l.heroImages) {
+          l.heroImages = l.heroImages.map(url => {
+              if (url && replacements.has(url)) {
+                  changed = true;
+                  return replacements.get(url)!;
+              }
+              return url;
+          });
+      }
+
+      if (changed) {
+        // Need doc ref. If theme has ID, we can assume it's the doc ID.
+        // The fetchThemesFromFirestore uses orderBy('id'), and pushes doc.data().
+        // It doesn't explicitly attach doc.id to the object if it's not in data.
+        // But usually id is in data. Let's verify type.
+        // SeasonalThemeConfig usually has 'id'.
+        const ref = doc(dbInstance, COLLECTION_NAME, theme.id);
+        const cleanLanding = JSON.parse(JSON.stringify(l));
+        batch.update(ref, { landing: cleanLanding });
+        updatedCount++;
+        batchCount++;
+      }
+    }
+
+    if (batchCount > 0) {
+      await batch.commit();
+    }
+    return updatedCount;
+  } catch (error) {
+    console.error('Error updating seasonal image references:', error);
+    return 0;
+  }
+}
+
+/**
+ * Updates a single image reference in all seasonal themes.
+ * Wrapper around bulkUpdateImageReferences for compatibility with other services.
+ */
+export async function updateImageReference(oldUrl: string, newUrl: string): Promise<number> {
+    const map = new Map<string, string>();
+    map.set(oldUrl, newUrl);
+    return bulkUpdateImageReferences(map);
+}
+
+
 
 /**
  * Saves all themes to Firestore.

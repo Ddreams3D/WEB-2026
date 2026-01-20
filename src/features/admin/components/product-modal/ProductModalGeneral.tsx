@@ -10,6 +10,9 @@ import { Product, ProductImage } from '@/shared/types';
 import { Service } from '@/shared/types/domain';
 import { useTheme } from '@/contexts/ThemeContext';
 import { THEME_CONFIG } from '@/config/themes';
+import { StoragePathBuilder } from '@/shared/constants/storage-paths';
+import { cleanAndSlugify } from '@/features/admin/utils/image-upload-utils';
+import { extractMetadataFromFilename } from '@/lib/utils';
 
 interface ProductModalGeneralProps {
   formData: Partial<Product | Service>;
@@ -197,6 +200,41 @@ export const ProductModalGeneral: React.FC<ProductModalGeneralProps> = ({
                 </div>
                 <div className="space-y-2">
                     <label className="text-sm font-medium">Etiquetas (Tags)</label>
+                    <div className="flex flex-wrap gap-2 mb-2">
+                        <button
+                            onClick={() => {
+                                const current = formData.tags || [];
+                                if (!current.includes('scope:global')) {
+                                    setFormData(prev => ({ ...prev, tags: [...current, 'scope:global'] }));
+                                }
+                            }}
+                            className="text-xs px-2 py-1 rounded-md border border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors"
+                        >
+                            + Global
+                        </button>
+                        <button
+                            onClick={() => {
+                                const current = formData.tags || [];
+                                if (!current.includes('scope:landing-halloween')) {
+                                    setFormData(prev => ({ ...prev, tags: [...current, 'scope:landing-halloween'] }));
+                                }
+                            }}
+                            className="text-xs px-2 py-1 rounded-md border border-orange-200 bg-orange-50 text-orange-700 hover:bg-orange-100 transition-colors"
+                        >
+                            + Halloween
+                        </button>
+                         <button
+                            onClick={() => {
+                                const current = formData.tags || [];
+                                if (!current.includes('scope:hidden')) {
+                                    setFormData(prev => ({ ...prev, tags: [...current, 'scope:hidden'] }));
+                                }
+                            }}
+                            className="text-xs px-2 py-1 rounded-md border border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100 transition-colors"
+                        >
+                            + Oculto
+                        </button>
+                    </div>
                     <StringListEditor 
                         items={formData.tags || []} 
                         onChange={(tags) => setFormData(prev => ({ ...prev, tags }))}
@@ -233,12 +271,56 @@ export const ProductModalGeneral: React.FC<ProductModalGeneralProps> = ({
         >
             <div className="space-y-4">
                 <ImageUpload 
-                    onChange={(url) => handleImageUploaded(url)} 
+                    onChange={(url, viewType, fileName) => {
+                        handleImageUploaded(url);
+
+                        // Auto-SEO & Metadata Filling from Filename
+                        if (fileName) {
+                            const metadata = extractMetadataFromFilename(fileName);
+                            
+                            setFormData(prev => {
+                                const newData = { ...prev };
+                                let hasChanges = false;
+
+                                // 1. Auto-fill Name
+                                if (!newData.name) {
+                                    newData.name = metadata.name;
+                                    hasChanges = true;
+                                    
+                                    // Auto-slug
+                                    if (!newData.slug) {
+                                        newData.slug = cleanAndSlugify(metadata.name);
+                                    }
+                                }
+
+                                // 2. Auto-fill Short Description
+                                if (!newData.shortDescription) {
+                                    newData.shortDescription = metadata.name;
+                                    hasChanges = true;
+                                }
+
+                                // 3. Auto-fill Tags
+                                const currentTags = newData.tags || [];
+                                const uniqueNewTags = metadata.tags.filter(t => !currentTags.includes(t));
+                                
+                                if (uniqueNewTags.length > 0) {
+                                    newData.tags = [...currentTags, ...uniqueNewTags];
+                                    hasChanges = true;
+                                }
+
+                                return hasChanges ? newData : prev;
+                            });
+                        }
+                    }} 
                     onRemove={() => handleImageUploaded('')}
                     onUploadStatusChange={(status) => {
                         // If we needed to lift the state up, we could call a handler here.
                         // Currently isImageUploading is passed down but not a setter.
                     }}
+                    storagePath={StoragePathBuilder.products(
+                        cleanAndSlugify(formData.categoryName || 'general'), 
+                        formData.slug || 'temp'
+                    )}
                 />
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
                     {formData.images?.map((img, index) => (

@@ -57,6 +57,7 @@ export function ProductImageGallery({
           fill
           className={getImageClassName(selectedImage?.id)}
           priority
+          sizes="(max-width: 768px) 100vw, 50vw"
         />
         
         {/* Zoom Indicator - Bottom Right Corner */}

@@ -8,6 +8,7 @@ import { Palette, ImageIcon, Moon, Sun, Monitor, Megaphone } from 'lucide-react'
 import { UnifiedLandingData } from '../types';
 import { cn } from '@/lib/utils';
 import ImageUpload from '@/features/admin/components/ImageUpload';
+import { StoragePathBuilder } from '@/shared/constants/storage-paths';
 
 interface VisualSectionProps {
   data: UnifiedLandingData;
@@ -113,7 +114,7 @@ export function VisualSection({ data, updateField }: VisualSectionProps) {
                       onChange={(url) => updateField('heroImage', url)}
                       onRemove={() => updateField('heroImage', '')}
                       defaultName={`hero-real-${data.slug || 'service'}`}
-                      storagePath={`images/landings/services/${data.slug || 'service'}/hero`}
+                      storagePath={StoragePathBuilder.landings(data.slug || 'service', 'hero')}
                     />
                   </div>
 
@@ -126,7 +127,7 @@ export function VisualSection({ data, updateField }: VisualSectionProps) {
                       onChange={(url) => updateField('heroImageComparison', url)}
                       onRemove={() => updateField('heroImageComparison', '')}
                       defaultName={`hero-3d-${data.slug || 'service'}`}
-                      storagePath={`images/landings/services/${data.slug || 'service'}/hero`}
+                      storagePath={`${StoragePathBuilder.services(data.slug || 'service')}/hero`}
                     />
                   </div>
                 </div>
@@ -188,7 +189,11 @@ export function VisualSection({ data, updateField }: VisualSectionProps) {
                   onChange={(url) => updateField('heroImage', url)}
                   onRemove={() => updateField('heroImage', '')}
                   defaultName={`hero-${data.slug || 'landing'}`}
-                  storagePath="images/landings"
+                  storagePath={
+                    data.type === 'campaign'
+                      ? StoragePathBuilder.seasonal(data.slug || data.id || 'general', 'hero')
+                      : StoragePathBuilder.landings(data.slug || data.id || 'general', 'hero')
+                  }
                 />
               </div>
               <div className="text-center space-y-1">
@@ -226,7 +231,7 @@ export function VisualSection({ data, updateField }: VisualSectionProps) {
                       updateField('bubbles', next);
                     }}
                     defaultName={`bubble-${idx + 1}`}
-                    storagePath="images/landings/main/bubbles"
+                    storagePath={StoragePathBuilder.landings('main', 'bubbles')}
                   />
                 </div>
               ))}

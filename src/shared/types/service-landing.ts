@@ -27,6 +27,12 @@ export interface ServiceLandingConfig {
   metaTitle: string;
   metaDescription: string;
   
+  // SEO & Indexing
+  robots?: string; // e.g. 'noindex, nofollow'
+  
+  // Classification
+  category?: 'vertical' | 'special'; // 'vertical' = Core Business, 'special' = Independent/Satellite
+
   // Visual Identity
   primaryColor?: string; // Optional override
   heroImage?: string;

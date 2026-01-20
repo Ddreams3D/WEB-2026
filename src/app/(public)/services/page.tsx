@@ -4,6 +4,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { PHONE_BUSINESS, ADDRESS_BUSINESS, PHONE_DISPLAY } from '@/shared/constants/contactInfo';
 import { ServiceService } from '@/services/service.service';
 import { Service } from '@/shared/types/domain';
+import { StoragePathBuilder } from '@/shared/constants/storage-paths';
 
 export const revalidate = 3600; // Revalidar cada hora (ISR)
 
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: 'https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fservicios-diseno-modelado-impresion-3d-ddreams-3d.png?alt=media&token=bd65bb84-b55b-42d7-a3ab-2fb622ce5d1f', // Asegurarse de tener una imagen por defecto o usar una genérica si no existe
+        url: `/${StoragePathBuilder.ui.banners()}/servicios-diseno-modelado-impresion-3d-ddreams-3d.png`, // Asegurarse de tener una imagen por defecto o usar una genérica si no existe
         width: 1200,
         height: 630,
         alt: 'Servicios de Impresión 3D Ddreams 3D',
@@ -55,7 +56,7 @@ export default async function ServicesPage() {
     '@context': 'https://schema.org',
     '@type': 'ProfessionalService',
     'name': 'Ddreams 3D Servicios de Impresión',
-    'image': 'https://ddreams3d.com/logo.png',
+    'image': `https://ddreams3d.com/${StoragePathBuilder.ui.brand()}/logo-ddreams-3d.jpg`,
     '@id': 'https://ddreams3d.com/servicios',
     'url': 'https://ddreams3d.com/servicios',
     'telephone': PHONE_DISPLAY,

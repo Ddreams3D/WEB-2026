@@ -171,11 +171,6 @@ export function ProductManagerHeader({
             >
             <Trash2 className="w-4 h-4" />
             </Button>
-            
-            <Button onClick={handleAddProduct} className="gap-2 bg-primary hover:bg-primary/90 pl-3 pr-4">
-            <Plus className="w-4 h-4" />
-            <span className="hidden sm:inline">Nuevo</span>
-            </Button>
         </div>
         </div>
     </div>

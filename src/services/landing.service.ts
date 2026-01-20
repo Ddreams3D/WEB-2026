@@ -24,3 +24,45 @@ export async function saveLandingMain(config: LandingMainConfig): Promise<void> 
   await setDoc(ref, sanitized, { merge: true });
 }
 
+export async function bulkUpdateImageReferences(replacements: Map<string, string>): Promise<number> {
+  if (!db || replacements.size === 0) return 0;
+  try {
+    const config = await fetchLandingMain();
+    if (!config) return 0;
+
+    let changed = false;
+    
+    // Helper
+    const replace = (url: string | undefined) => {
+      if (url && replacements.has(url)) {
+        changed = true;
+        return replacements.get(url)!;
+      }
+      return url;
+    };
+
+    // 1. Hero
+    config.heroImage = replace(config.heroImage);
+
+    // 2. Bubbles
+    if (config.bubbleImages) {
+        config.bubbleImages = config.bubbleImages.map(url => {
+            if (url && replacements.has(url)) {
+                changed = true;
+                return replacements.get(url)!;
+            }
+            return url;
+        });
+    }
+
+    if (changed) {
+      await saveLandingMain(config);
+      return 1;
+    }
+    return 0;
+  } catch (error) {
+    console.error('Error updating landing main image references:', error);
+    return 0;
+  }
+}
+

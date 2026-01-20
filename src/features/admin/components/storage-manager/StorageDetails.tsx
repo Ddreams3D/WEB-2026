@@ -1,15 +1,32 @@
 import React from 'react';
-import { FileText, ExternalLink, Copy } from 'lucide-react';
+import { FileText, ExternalLink, Copy, MoveRight } from 'lucide-react';
 import DefaultImage from '@/shared/components/ui/DefaultImage';
-import { StorageItem } from '@/features/admin/hooks/useStorageManager';
+import { StorageItem, StorageFile } from '@/features/admin/hooks/useStorageManager';
 
 interface StorageDetailsProps {
     selectedItem: StorageItem | null;
     copyToClipboard: (text: string) => void;
+    moveFile: (file: StorageFile, targetPath: string) => Promise<void>;
+    currentPath: string;
 }
 
-export function StorageDetails({ selectedItem, copyToClipboard }: StorageDetailsProps) {
+export function StorageDetails({ selectedItem, copyToClipboard, moveFile, currentPath }: StorageDetailsProps) {
     if (!selectedItem || selectedItem.type !== 'file') return null;
+
+    const handleMove = () => {
+        if (!selectedItem || selectedItem.type !== 'file') return;
+        
+        const target = window.prompt('Mover a la carpeta (ej: images/services/nueva/):', currentPath);
+        
+        if (target && target.trim() !== currentPath) {
+            let cleanTarget = target.trim();
+            // Ensure trailing slash
+            if (!cleanTarget.endsWith('/')) {
+                cleanTarget += '/';
+            }
+            moveFile(selectedItem, cleanTarget);
+        }
+    };
 
     const formatSize = (bytes: number) => {
         if (bytes === 0) return '0 Bytes';
@@ -83,6 +100,13 @@ export function StorageDetails({ selectedItem, copyToClipboard }: StorageDetails
                     >
                         <Copy className="w-4 h-4" />
                         Copiar URL
+                    </button>
+                    <button
+                        onClick={handleMove}
+                        className="flex items-center justify-center gap-2 w-full px-4 py-2 rounded-lg border hover:bg-accent transition-colors text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                    >
+                        <MoveRight className="w-4 h-4" />
+                        Mover a otra carpeta
                     </button>
                 </div>
             </div>

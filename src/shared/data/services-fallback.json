@@ -18,7 +18,7 @@
       {
         "id": "17-a",
         "productId": "17",
-        "url": "https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fservices%2Fmodelado-3d-organico-personajes-esculturas-digitales.png?alt=media&token=9b5fb6aa-3949-47ec-9239-10e194241578",
+        "url": "/images/services/modelado-3d-personalizado/modelado-3d-organico-personajes-esculturas-digitales.png",
         "alt": "Modelado 3D Orgánico - Personajes y Esculturas Digitales",
         "isPrimary": true,
         "width": 800,
@@ -29,7 +29,7 @@
       {
         "id": "17-b",
         "productId": "17",
-        "url": "https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fservices%2Fdiseno-3d-organico-modelado-artistico-profesional.png?alt=media&token=50bb545f-13aa-4c5c-ab4e-b2c6827241fe",
+        "url": "/images/services/modelado-3d-personalizado/diseno-3d-organico-modelado-artistico-profesional.png",
         "alt": "Diseño 3D Orgánico - Modelado Artístico Profesional",
         "isPrimary": false,
         "width": 800,
@@ -52,7 +52,7 @@
     "id": "21",
     "kind": "service",
     "displayOrder": 2,
-    "slug": "prototipado-tecnico-diseno-cad-funcional",
+    "slug": "prototipado-tecnico-impresion-3d",
     "name": "Prototipado Técnico y Diseño CAD Funcional",
     "description": "Diseño CAD, prototipado funcional y producción seriada para proyectos técnicos y empresariales",
     "shortDescription": "Diseño CAD, prototipado funcional y producción seriada para proyectos técnicos y empresariales",
@@ -67,7 +67,7 @@
       {
         "id": "21-a",
         "productId": "21",
-        "url": "https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fservices%2Fprototipado-tecnico-diseno-cad-industrial.png?alt=media&token=c23d6fe0-d09d-4544-be50-3ba7e2ac6d08",
+        "url": "/images/services/prototipado-tecnico-impresion-3d/prototipado-tecnico-diseno-cad-industrial.png",
         "alt": "Prototipado Técnico y Diseño CAD Industrial",
         "isPrimary": true,
         "width": 800,
@@ -78,7 +78,7 @@
       {
         "id": "21-b",
         "productId": "21",
-        "url": "https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fservices%2Fingenieria-inversa-diseno-mecanico-3d.png?alt=media&token=a1845786-1805-4ab5-b066-131f5efe1560",
+        "url": "/images/services/prototipado-tecnico-impresion-3d/ingenieria-inversa-diseno-mecanico-3d.png",
         "alt": "Ingeniería Inversa y Diseño Mecánico 3D",
         "isPrimary": false,
         "width": 800,
@@ -141,7 +141,7 @@
       {
         "id": "18-a",
         "productId": "18",
-        "url": "https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fservices%2Fimpresion-3d-encargo-servicio-profesional.jpg?alt=media&token=1d6960d4-0889-49ea-9791-811cf7ab2714",
+        "url": "/images/services/impresion-3d-por-encargo/impresion-3d-encargo-servicio-profesional.jpg",
         "alt": "Servicio de Impresión 3D por Encargo - Calidad Profesional",
         "isPrimary": true,
         "width": 800,
@@ -152,7 +152,7 @@
       {
         "id": "18-b",
         "productId": "18",
-        "url": "https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fservices%2Fimpresion-3d-detalle-alta-calidad.jpg?alt=media&token=85fce39f-40ba-4287-a9a3-5563e19e951c",
+        "url": "/images/services/impresion-3d-por-encargo/impresion-3d-detalle-alta-calidad.jpg",
         "alt": "Detalle de Impresión 3D de Alta Calidad y Precisión",
         "isPrimary": false,
         "width": 800,
@@ -163,7 +163,7 @@
       {
         "id": "18-c",
         "productId": "18",
-        "url": "https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fservices%2Fimpresion-3d-gran-formato-piezas-industriales.jpg?alt=media&token=4fe94eca-c5f1-4374-82e4-706dadacf70e",
+        "url": "/images/services/impresion-3d-por-encargo/impresion-3d-gran-formato-piezas-industriales.jpg",
         "alt": "Impresión 3D de Gran Formato para Piezas Industriales",
         "isPrimary": false,
         "width": 800,
@@ -174,7 +174,7 @@
       {
         "id": "18-d",
         "productId": "18",
-        "url": "https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fservices%2Fimpresion-3d-produccion-lotes-piezas-tecnicas.jpg?alt=media&token=74bc8b95-c2c1-4a85-a4b2-ec0bc3c63a5e",
+        "url": "/images/services/impresion-3d-por-encargo/impresion-3d-produccion-lotes-piezas-tecnicas.jpg",
         "alt": "Producción de Lotes de Piezas Técnicas en Impresión 3D",
         "isPrimary": false,
         "width": 800,
@@ -222,7 +222,7 @@
     "id": "13",
     "kind": "service",
     "displayOrder": 4,
-    "slug": "merchandising-3d-personalizado",
+    "slug": "merchandising-corporativo-3d",
     "name": "Merchandising 3D Personalizado",
     "description": "",
     "shortDescription": "",
@@ -237,7 +237,7 @@
       {
         "id": "13-a",
         "productId": "13",
-        "url": "https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fservices%2Fmerchandising-3d-personalizado-regalos-corporativos.png?alt=media&token=54d8f08f-f5b1-4665-9626-6c15285961f3",
+        "url": "/images/services/merchandising-corporativo-3d/merchandising-3d-personalizado-regalos-corporativos.png",
         "alt": "Merchandising 3D Personalizado y Regalos Corporativos",
         "isPrimary": true,
         "width": 800,
@@ -248,7 +248,7 @@
       {
         "id": "13-b",
         "productId": "13",
-        "url": "https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fservices%2Fmerchandising-3d-dragpharma-orejas-perro-anatomicas.png?alt=media&token=6c03a008-e37a-4b7c-985a-d10adc3ca7e3",
+        "url": "/images/services/merchandising-corporativo-3d/merchandising-3d-dragpharma-orejas-perro-anatomicas.png",
         "alt": "Orejas de Perro Anatómicas 3D - Proyecto Dragpharma",
         "isPrimary": false,
         "width": 800,
@@ -259,7 +259,7 @@
       {
         "id": "13-c",
         "productId": "13",
-        "url": "https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fservices%2Fmerchandising-3d-detalle-producto-creativo.jpg?alt=media&token=034c4959-11d8-4f5f-9331-7bcc901e6647",
+        "url": "/images/services/merchandising-corporativo-3d/merchandising-3d-detalle-producto-creativo.jpg",
         "alt": "Detalle de Producto Creativo en Impresión 3D",
         "isPrimary": false,
         "width": 800,
@@ -270,7 +270,7 @@
       {
         "id": "13-d",
         "productId": "13",
-        "url": "https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fservices%2Fmerchandising-3d-regalos-personalizados-unicos.jpg?alt=media&token=342f8229-4e06-4b82-8330-f437c155d6c5",
+        "url": "/images/services/merchandising-corporativo-3d/merchandising-3d-regalos-personalizados-unicos.jpg",
         "alt": "Regalos Personalizados Únicos para Empresas",
         "isPrimary": false,
         "width": 800,
@@ -317,7 +317,7 @@
     "id": "8",
     "kind": "service",
     "displayOrder": 5,
-    "slug": "trofeos-medallas-3d-personalizados",
+    "slug": "trofeos-personalizados-3d",
     "name": "Trofeos y Medallas 3D Personalizados",
     "description": "Servicio de diseño y fabricación de trofeos 3D personalizados, ideales para reconocimientos, eventos especiales, competencias y celebraciones personales.\nCreamos trofeos temáticos y piezas únicas, adaptadas al concepto del evento, con acabados personalizados y fabricación mediante impresión 3D.",
     "shortDescription": "Trofeos y Medallas 3D Personalizados para eventos y empresas",
@@ -332,7 +332,7 @@
       {
         "id": "8-a",
         "productId": "8",
-        "url": "https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fcatalogo%2Ftrofeos-medallas-personalizadas-3d-b2b-principal.jpg?alt=media&token=6784cdda-9089-4587-b3dd-020a1fb15584",
+        "url": "/images/services/trofeos-personalizados-3d/trofeos-medallas-personalizadas-3d-b2b-principal.jpg",
         "alt": "Trofeos y Medallas 3D Personalizados - Vista Principal",
         "isPrimary": true,
         "width": 800,
@@ -343,7 +343,7 @@
       {
         "id": "8-b",
         "productId": "8",
-        "url": "https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fcatalogo%2Ftrofeos-medallas-personalizadas-3d-b2b-detalle.jpg?alt=media&token=a3d83662-80da-422b-a658-953c2ec956bc",
+        "url": "/images/services/trofeos-personalizados-3d/trofeos-medallas-personalizadas-3d-b2b-detalle.jpg",
         "alt": "Trofeos y Medallas 3D Personalizados - Vista Detalle",
         "isPrimary": false,
         "width": 800,
@@ -411,7 +411,7 @@
       {
         "id": "14-a",
         "productId": "14",
-        "url": "https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fservices%2Fprototipado-ingenieria-vista-general-piezas.jpg?alt=media&token=22f9ba61-d29c-4d31-9f8f-116f46cdbbf5",
+        "url": "/images/services/prototipado-ingenieria-piezas-tecnicas/prototipado-ingenieria-vista-general-piezas.jpg",
         "alt": "Prototipado de Ingeniería 3D - Vista General de Piezas",
         "isPrimary": true,
         "width": 800,
@@ -422,7 +422,7 @@
       {
         "id": "14-b",
         "productId": "14",
-        "url": "https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fservices%2Fprototipado-ingenieria-detalle-mecanico-funcional.jpg?alt=media&token=a169d2bd-1974-451e-ae4e-39a305365cfc",
+        "url": "/images/services/prototipado-ingenieria-piezas-tecnicas/prototipado-ingenieria-detalle-mecanico-funcional.jpg",
         "alt": "Detalle de Mecanismo Funcional y Precisión Técnica",
         "isPrimary": false,
         "width": 800,
@@ -433,7 +433,7 @@
       {
         "id": "14-c",
         "productId": "14",
-        "url": "https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fservices%2Fprototipado-ingenieria-conjunto-piezas-tecnicas.jpg?alt=media&token=5b9cd89b-dea9-48e3-bfa5-7b27e208d22a",
+        "url": "/images/services/prototipado-ingenieria-piezas-tecnicas/prototipado-ingenieria-conjunto-piezas-tecnicas.jpg",
         "alt": "Conjunto de Piezas Técnicas para Validación de Diseño",
         "isPrimary": false,
         "width": 800,
@@ -495,7 +495,7 @@
       {
         "id": "19-a",
         "productId": "19",
-        "url": "https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fservices%2Ffabricacion-cascos-mascaras-cosplay-props-frontal.jpg?alt=media&token=9ae874f6-e128-4e0a-b6c5-d4d7a35904bf",
+        "url": "/images/services/fabricacion-cascos-mascaras-props-cosplay/fabricacion-cascos-mascaras-cosplay-props-frontal.jpg",
         "alt": "Fabricación de Cascos y Máscaras Cosplay - Vista Frontal",
         "isPrimary": true,
         "width": 800,
@@ -506,7 +506,7 @@
       {
         "id": "19-b",
         "productId": "19",
-        "url": "https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fservices%2Ffabricacion-cascos-mascaras-cosplay-props-detalle.jpg?alt=media&token=3465bb54-acdf-4912-b87b-ca3b35f08e47",
+        "url": "/images/services/fabricacion-cascos-mascaras-props-cosplay/fabricacion-cascos-mascaras-cosplay-props-detalle.jpg",
         "alt": "Detalle de Props y Accesorios Cosplay Personalizados",
         "isPrimary": false,
         "width": 800,
@@ -517,7 +517,7 @@
       {
         "id": "19-c",
         "productId": "19",
-        "url": "https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fservices%2Ffabricacion-cascos-mascaras-cosplay-props-ejemplo-creativo.png?alt=media&token=d584d342-a9f8-49c4-a33a-da2a12570a41",
+        "url": "/images/services/fabricacion-cascos-mascaras-props-cosplay/fabricacion-cascos-mascaras-cosplay-props-ejemplo-creativo.png",
         "alt": "Ejemplo Creativo de Máscaras y Cascos 3D",
         "isPrimary": false,
         "width": 800,
@@ -528,7 +528,7 @@
       {
         "id": "19-d",
         "productId": "19",
-        "url": "https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fservices%2Ffabricacion-cascos-mascaras-cosplay-props-acabado-final.png?alt=media&token=c8f7a8c6-e72c-4f70-b82b-dc27a1000f0b",
+        "url": "/images/services/fabricacion-cascos-mascaras-props-cosplay/fabricacion-cascos-mascaras-cosplay-props-acabado-final.png",
         "alt": "Acabado Final en Props de Cosplay",
         "isPrimary": false,
         "width": 800,
@@ -539,7 +539,7 @@
       {
         "id": "19-e",
         "productId": "19",
-        "url": "https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fservices%2Ffabricacion-cascos-mascaras-cosplay-props-modelo-exclusivo.png?alt=media&token=aa1fbb5c-c9a7-49fe-b563-196934de1cf3",
+        "url": "/images/services/fabricacion-cascos-mascaras-props-cosplay/fabricacion-cascos-mascaras-cosplay-props-modelo-exclusivo.png",
         "alt": "Modelo Exclusivo de Casco/Máscara 3D Personalizado",
         "isPrimary": false,
         "width": 800,
@@ -586,7 +586,7 @@
     "id": "15",
     "kind": "service",
     "displayOrder": 8,
-    "slug": "maquetas-didacticas-material-educativo-3d",
+    "slug": "maquetas-3d",
     "name": "Maquetas Didácticas y Material Educativo 3D",
     "description": "Diseño y fabricación de material didáctico interactivo y modelos educativos impresos en 3D",
     "shortDescription": "Diseño y fabricación de material didáctico interactivo y modelos educativos impresos en 3D",
@@ -601,7 +601,7 @@
       {
         "id": "15-a",
         "productId": "15",
-        "url": "https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fservices%2Fmaquetas-didacticas-v2.png?alt=media&token=facc350a-3825-42cc-9e5c-1e635ebd79c3",
+        "url": "/images/services/maquetas-3d/maquetas-didacticas-v2.png",
         "alt": "Maquetas Didácticas y Material Educativo 3D",
         "isPrimary": true,
         "width": 800,
@@ -648,7 +648,7 @@
     "id": "16",
     "kind": "service",
     "displayOrder": 9,
-    "slug": "proyectos-anatomicos-3d-personalizados",
+    "slug": "modelos-anatomicos-3d",
     "name": "Proyectos Anatómicos 3D Personalizados",
     "description": "Desarrollo, modelado y fabricación de modelos anatómicos personalizados en impresión 3D",
     "shortDescription": "Desarrollo, modelado y fabricación de modelos anatómicos personalizados en impresión 3D",
@@ -663,7 +663,7 @@
       {
         "id": "b2b-1-a",
         "productId": "16",
-        "url": "https://firebasestorage.googleapis.com/v0/b/ddreams3d.firebasestorage.app/o/images%2Fcatalogo%2Fmodelo-pelvis-anatomica-escala-real-3d-vista-frontal.png?alt=media&token=d16a5cd3-4552-4995-910a-e3cadc295252",
+        "url": "/images/services/modelos-anatomicos-3d/modelo-pelvis-anatomica-escala-real-3d-vista-frontal.png",
         "alt": "Proyectos Anatómicos 3D Personalizados",
         "isPrimary": true,
         "width": 800,

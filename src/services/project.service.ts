@@ -84,6 +84,73 @@ export const ProjectService = {
     }
   },
 
+  async updateImageReference(oldUrl: string, newUrl: string): Promise<number> {
+    const map = new Map<string, string>();
+    map.set(oldUrl, newUrl);
+    return this.bulkUpdateImageReferences(map);
+  },
+
+  async bulkUpdateImageReferences(replacements: Map<string, string>): Promise<number> {
+    const dbInstance = db;
+    if (!dbInstance || replacements.size === 0) return 0;
+    try {
+      let updatedCount = 0;
+      const allProjects = await this.getAllProjects(true); // Include deleted
+      
+      const batch = writeBatch(dbInstance);
+      let batchCount = 0;
+
+      for (const project of allProjects) {
+        let changed = false;
+        
+        // 1. Cover Image
+        let newCoverImage = project.coverImage;
+        if (project.coverImage && replacements.has(project.coverImage)) {
+            newCoverImage = replacements.get(project.coverImage)!;
+            changed = true;
+        }
+
+        // 2. Gallery Images
+        let newGalleryImages = project.galleryImages;
+        if (project.galleryImages) {
+            let galleryChanged = false;
+            const updatedGallery = project.galleryImages.map(url => {
+                if (url && replacements.has(url)) {
+                    galleryChanged = true;
+                    return replacements.get(url)!;
+                }
+                return url;
+            });
+            if (galleryChanged) {
+                newGalleryImages = updatedGallery;
+                changed = true;
+            }
+        }
+
+        if (changed) {
+          const ref = doc(dbInstance, COLLECTION, project.id);
+          // Only update affected fields
+          batch.update(ref, { 
+              coverImage: newCoverImage,
+              galleryImages: newGalleryImages,
+              updatedAt: Timestamp.now() 
+          });
+          updatedCount++;
+          batchCount++;
+        }
+      }
+
+      if (batchCount > 0) {
+        await batch.commit();
+      }
+
+      return updatedCount;
+    } catch (error) {
+      console.error('Error updating project image references:', error);
+      return 0;
+    }
+  },
+
   async getProjectById(idOrSlug: string): Promise<PortfolioItem | undefined> {
     const dbInstance = db;
     if (!dbInstance) {
