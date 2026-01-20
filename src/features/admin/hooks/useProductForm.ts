@@ -49,7 +49,6 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
   const [activeSection, setActiveSection] = useState('general');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isImageUploading, setIsImageUploading] = useState(false);
-  const [selectedMaterial, setSelectedMaterial] = useState<string>('');
   const [isDirty, setIsDirty] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   const [slugEditable, setSlugEditable] = useState(false);
@@ -124,9 +123,6 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
         materials: product.kind === 'product' ? product.materials || [] : [],
         categoryName: product.categoryName || '',
       });
-      if (product.kind === 'product' && product.materials && product.materials.length > 0) {
-        setSelectedMaterial(product.materials[0]);
-      }
     } else {
       const initialKind = forcedType === 'service' ? 'service' : 'product';
       let tempId = '';
@@ -145,7 +141,6 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
         price: 0, stock: 999, images: [], isActive: true, isFeatured: false, tags: [], seoKeywords: [],
         specifications: [], tabs: [], tabsTitle: '', materials: [], kind: initialKind
       });
-      setSelectedMaterial('PLA+');
     }
     if (typeof window !== 'undefined') {
       const storedDraft = localStorage.getItem(getDraftKey());
@@ -185,7 +180,7 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
     try {
       const baseData = { ...formData, slug: formData.slug || generateSlug(formData.name || '') };
       const dataToSave = formData.kind === 'product' 
-        ? { ...baseData, materials: selectedMaterial ? [selectedMaterial] : (formData as Product).materials }
+        ? { ...baseData, materials: (formData as Product).materials || [] }
         : baseData;
 
       const schema = formData.kind === 'service' ? serviceSchema : productSchema;
@@ -212,12 +207,6 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
-    if (name === 'selectedMaterial') {
-        setSelectedMaterial(value);
-        setFormData(prev => ({ ...prev, materials: [value] }));
-        setIsDirty(true);
-        return;
-    }
     setFormData(prev => ({ ...prev, [name]: type === 'number' ? parseFloat(value) || 0 : value }));
     setIsDirty(true);
   };
@@ -245,7 +234,7 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
   const validateNow = () => {
     const baseData = { ...formData, slug: formData.slug || generateSlug(formData.name || '') };
     const dataToValidate = formData.kind === 'product' 
-      ? { ...baseData, materials: selectedMaterial ? [selectedMaterial] : (formData as Product).materials }
+      ? { ...baseData, materials: (formData as Product).materials || [] }
       : baseData;
     const schema = formData.kind === 'service' ? serviceSchema : productSchema;
     const result = schema.safeParse(dataToValidate);
@@ -288,8 +277,6 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
     isSubmitting,
     isImageUploading,
     setIsImageUploading,
-    selectedMaterial,
-    setSelectedMaterial,
     isDirty,
     lastSavedAt,
     slugEditable,

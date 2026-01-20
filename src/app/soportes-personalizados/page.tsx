@@ -5,6 +5,7 @@ import { MainLogo } from '@/components/ui';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 import { SUPPORT_CATEGORIES, type SupportCategory, type SupportItem, DEFAULT_HERO } from './data';
 import { ServiceLandingsService } from '@/services/service-landings.service';
+import { getCachedProducts } from '@/services/data-access.server';
 import { StoragePathBuilder } from '@/shared/constants/storage-paths';
 
 export const metadata: Metadata = {
@@ -21,10 +22,113 @@ export const metadata: Metadata = {
 };
 
 export default async function SupportsPage() {
-  // Use getAll() to ensure we find the landing even if direct query fails (index issues)
+  // 1. Fetch Landing Configuration
   const allLandings = await ServiceLandingsService.getAll();
-  const landing = allLandings.find(l => l.slug === 'soportes-personalizados-dispositivos');
+  // Try finding by explicit slug, or fallback to the one user likely created
+  const landing = allLandings.find(l => l.slug === 'soportes-personalizados-dispositivos' || l.slug === 'soportes-personalizados');
   
+  // 2. Fetch Dynamic Products
+  const allProducts = await getCachedProducts();
+  const dynamicProducts = allProducts.filter(p => {
+    const tags = (p.tags || []).map(t => t.toLowerCase());
+    const isScoped = tags.some(t => t.includes('scope:landing-soportes-personalizados'));
+    const isHidden = tags.includes('scope:hidden') || tags.includes('oculto');
+    return p.isActive && isScoped && !isHidden;
+  });
+
+  // 3. Merge Products into Categories
+  // Clone categories to avoid mutating the constant
+  const displayCategories: SupportCategory[] = JSON.parse(JSON.stringify(SUPPORT_CATEGORIES));
+  
+  // Extract "Otros" to ensure it stays at the end
+  const othersIndex = displayCategories.findIndex(c => c.id === 'otros');
+  let othersCategory: SupportCategory | undefined;
+  if (othersIndex !== -1) {
+    othersCategory = displayCategories.splice(othersIndex, 1)[0];
+  }
+
+  dynamicProducts.forEach(product => {
+    // Basic slugify for category if needed, or default to 'general'
+    const catSlug = product.categoryName 
+      ? product.categoryName.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '')
+      : 'general';
+
+    const item: SupportItem = {
+      id: product.id,
+      title: product.name,
+      description: product.shortDescription || product.description.substring(0, 100),
+      imageUrl: product.images?.[0]?.url,
+      price: product.price,
+      slug: product.slug,
+      categorySlug: catSlug
+    };
+
+    // Smart Categorization
+    const catName = (product.categoryName || '').toLowerCase();
+    const tags = (product.tags || []).join(' ').toLowerCase();
+    const text = `${catName} ${tags} ${item.title.toLowerCase()}`;
+
+    let placed = false;
+    
+    // 1. Try mapping to existing hardcoded categories via keywords
+    if (text.includes('alexa') || text.includes('echo') || text.includes('amazon')) {
+      const cat = displayCategories.find(c => c.id === 'alexa');
+      if (cat) { cat.items.push(item); placed = true; }
+    } else if (text.includes('switch') || text.includes('nintendo') || text.includes('joycon')) {
+      const cat = displayCategories.find(c => c.id === 'nintendo-switch');
+      if (cat) { cat.items.push(item); placed = true; }
+    } else if (text.includes('celular') || text.includes('iphone') || text.includes('samsung') || text.includes('smartphone') || text.includes('móvil')) {
+      const cat = displayCategories.find(c => c.id === 'celulares');
+      if (cat) { cat.items.push(item); placed = true; }
+    } else if (text.includes('mando') || text.includes('control') || text.includes('ps5') || text.includes('xbox') || text.includes('playstation')) {
+      const cat = displayCategories.find(c => c.id === 'mandos');
+      if (cat) { cat.items.push(item); placed = true; }
+    } else if (text.includes('auricular') || text.includes('headset') || text.includes('audífono')) {
+        // Special case: if we want to map headphones to a new or existing category
+        // If we don't have a hardcoded one, let it fall through to dynamic creation or Other
+    }
+
+    if (placed) return;
+
+    // 2. Dynamic Category Creation based on product.categoryName
+    // If the product has a specific category name, try to use it
+    if (product.categoryName) {
+      const normCatName = product.categoryName.trim();
+      const normId = normCatName.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+
+      // Check if it matches an existing category in displayCategories (by Title or ID)
+      const existingCat = displayCategories.find(c => 
+        c.title.toLowerCase() === normCatName.toLowerCase() || 
+        c.id === normId
+      );
+
+      if (existingCat) {
+        existingCat.items.push(item);
+        placed = true;
+      } else {
+        // Create a new category dynamically
+        const newCat: SupportCategory = {
+          id: normId,
+          title: normCatName,
+          description: `Explora nuestra colección de ${normCatName}.`,
+          items: [item]
+        };
+        displayCategories.push(newCat);
+        placed = true;
+      }
+    }
+
+    // 3. Fallback to Others
+    if (!placed && othersCategory) {
+      othersCategory.items.push(item);
+    }
+  });
+
+  // Re-append "Otros" at the end if it has items or just to keep structure
+  if (othersCategory) {
+    displayCategories.push(othersCategory);
+  }
+
   // Use DB data if available, otherwise fallback to local defaults
   // IMPORTANT: Only fallback if landing.heroImage is undefined or null
   const heroImage = landing?.heroImage || DEFAULT_HERO.imageUrl;
@@ -96,7 +200,7 @@ export default async function SupportsPage() {
         <div className="relative container mx-auto px-4 max-w-6xl">
 
         <div className="flex flex-wrap justify-center gap-2 mb-10">
-          {SUPPORT_CATEGORIES.map((category: SupportCategory) => (
+          {displayCategories.map((category: SupportCategory) => (
             <Link
               key={category.id}
               href={`#${category.id}`}
@@ -108,7 +212,7 @@ export default async function SupportsPage() {
         </div>
 
         <div className="space-y-20">
-          {SUPPORT_CATEGORIES.map((category: SupportCategory) => (
+          {displayCategories.map((category: SupportCategory) => (
             <section key={category.id} id={category.id} className="scroll-mt-24">
               <div className="flex flex-col md:flex-row items-baseline gap-4 mb-8 border-b border-slate-200 dark:border-slate-800 pb-4">
                 <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
@@ -145,9 +249,18 @@ export default async function SupportsPage() {
                           <span className="font-semibold text-indigo-600 dark:text-indigo-400">
                             {item.price ? `S/ ${item.price.toFixed(2)}` : 'Consultar'}
                           </span>
-                          <button className="text-xs font-medium px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-200 hover:bg-indigo-100 dark:hover:bg-indigo-900/30 transition-colors">
-                            Ver Detalles
-                          </button>
+                          {item.slug ? (
+                            <Link 
+                                href={`/catalogo-impresion-3d/${item.categorySlug || 'general'}/${item.slug}`}
+                                className="text-xs font-medium px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-200 hover:bg-indigo-100 dark:hover:bg-indigo-900/30 transition-colors"
+                            >
+                                Ver Detalles
+                            </Link>
+                          ) : (
+                            <button className="text-xs font-medium px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-200 hover:bg-indigo-100 dark:hover:bg-indigo-900/30 transition-colors">
+                                Ver Detalles
+                            </button>
+                          )}
                         </div>
                       </div>
                     </div>

@@ -197,7 +197,6 @@ export function SeoEditSheet({ isOpen, onClose, route, onSave, isSaving }: SeoEd
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="index, follow">Pública (Index, Follow)</SelectItem>
-                  <SelectItem value="noindex, follow">En progreso (No Index, Follow)</SelectItem>
                   <SelectItem value="noindex, nofollow">Privada / Admin (No Index, No Follow)</SelectItem>
                 </SelectContent>
               </Select>

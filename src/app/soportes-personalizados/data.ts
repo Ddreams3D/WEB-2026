@@ -13,6 +13,8 @@ export interface SupportItem {
   description: string;
   imageUrl?: string;
   price?: number;
+  slug?: string;
+  categorySlug?: string;
 }
 
 export interface SupportHero {
