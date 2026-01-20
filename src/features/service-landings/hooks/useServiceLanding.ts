@@ -30,9 +30,14 @@ export function useServiceLanding(config: ServiceLandingConfig, isPreview: boole
         const tag = config.featuredTag?.toLowerCase() || `scope:landing-${config.slug}`.toLowerCase();
         
         if (tag) {
-            const filtered = all.filter(p => 
-              p.isActive && p.tags.some(t => t.toLowerCase().includes(tag))
-            );
+            const filtered = all.filter(p => {
+              if (!p.isActive) return false;
+              const pTags = (p.tags || []).map(t => t.toLowerCase());
+              // Strict exclusion of hidden products
+              if (pTags.includes('scope:hidden') || pTags.includes('oculto')) return false;
+              
+              return pTags.some(t => t.includes(tag));
+            });
             // Only use filtered if we actually found matches or if a specific tag was enforced
             // If it's a fallback tag and no matches, we might want to show empty or recent?
             // User requested "solo deberían mostrar los productos que tengan el scope".

@@ -34,15 +34,31 @@ export default async function CatalogPage() {
     ]);
 
     // 2. Normalizar y combinar
-    const normalizedProducts: StoreProduct[] = fetchedProducts.map(p => ({
-      ...p,
-      kind: 'product'
-    } as StoreProduct));
+    const normalizedProducts: StoreProduct[] = fetchedProducts
+      .filter(p => {
+         const tags = (p.tags || []).map(t => t.toLowerCase());
+         return p.isActive && 
+                tags.includes('scope:global') && 
+                !tags.includes('scope:hidden') && 
+                !tags.includes('oculto');
+      })
+      .map(p => ({
+        ...p,
+        kind: 'product'
+      } as StoreProduct));
 
-    const normalizedServices: Service[] = fetchedServices.map(s => ({
-      ...s,
-      kind: 'service'
-    } as Service));
+    const normalizedServices: Service[] = fetchedServices
+      .filter(s => {
+         const tags = (s.tags || []).map(t => t.toLowerCase());
+         return s.isActive && 
+                tags.includes('scope:global') && 
+                !tags.includes('scope:hidden') && 
+                !tags.includes('oculto');
+      })
+      .map(s => ({
+        ...s,
+        kind: 'service'
+      } as Service));
 
     const catalogItems: CatalogItem[] = [...normalizedProducts, ...normalizedServices].sort((a, b) =>
       getCatalogSortDate(b) - getCatalogSortDate(a)

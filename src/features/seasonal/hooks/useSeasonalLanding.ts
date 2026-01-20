@@ -101,10 +101,15 @@ export function useSeasonalLanding(config: SeasonalThemeConfig) {
              return;
         }
 
-        const filtered = all.filter(p => 
-          p.isActive && p.tags.some(t => t.toLowerCase() === tag)
-        );
-        
+        const filtered = all.filter(p => {
+            if (!p.isActive) return false;
+            const pTags = (p.tags || []).map(t => t.toLowerCase());
+            // Strict exclusion of hidden products
+            if (pTags.includes('scope:hidden') || pTags.includes('oculto')) return false;
+
+            return pTags.includes(tag);
+        });
+
         setFeaturedProducts(filtered);
       } catch (error) {
         console.error('Error loading seasonal products:', error);

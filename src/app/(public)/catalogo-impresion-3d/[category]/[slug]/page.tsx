@@ -34,10 +34,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? `${product.shortDescription} Personaliza este diseño o cotiza uno nuevo en Arequipa. Envíos a todo el Perú.`
     : `${product.description.substring(0, 150)}... Regalo personalizado en Arequipa. Compra online en Ddreams 3D.`;
 
+  // Detect robots directive from tags
+  const isNoIndex = product.tags?.some(tag => tag.toLowerCase() === 'scope:noindex');
+  const isNoFollow = product.tags?.some(tag => tag.toLowerCase() === 'scope:nofollow');
+
+  const robots = {
+    index: !isNoIndex,
+    follow: !isNoFollow,
+    googleBot: {
+      index: !isNoIndex,
+      follow: !isNoFollow,
+    }
+  };
+
   return {
     title: `Comprar ${product.name} en Arequipa | Ddreams 3D`,
     description: description,
     keywords: [...product.tags, ...(product.seoKeywords || [])],
+    robots: robots,
     alternates: {
       canonical: `${baseUrl}/catalogo-impresion-3d/${categorySlug}/${product.slug || product.id}`,
     },

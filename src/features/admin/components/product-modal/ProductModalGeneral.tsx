@@ -20,6 +20,10 @@ import { fetchThemesFromFirestore } from '@/services/seasonal.service';
 import { SeasonalThemeConfig } from '@/shared/types/seasonal';
 import { useEffect, useState } from 'react';
 
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { Settings2 } from 'lucide-react';
+
 interface ProductModalGeneralProps {
   formData: Partial<Product | Service>;
   setFormData: React.Dispatch<React.SetStateAction<Partial<Product | Service>>>;
@@ -53,6 +57,7 @@ export const ProductModalGeneral: React.FC<ProductModalGeneralProps> = ({
   const [availableLandings, setAvailableLandings] = useState<ServiceLandingConfig[]>([]);
   const [availableThemes, setAvailableThemes] = useState<SeasonalThemeConfig[]>([]);
   const [loadingLandings, setLoadingLandings] = useState(false);
+  const [isAdvancedSeo, setIsAdvancedSeo] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -254,6 +259,113 @@ export const ProductModalGeneral: React.FC<ProductModalGeneralProps> = ({
                 </div>
                 <div className="space-y-2">
                     <label className="text-sm font-medium">Etiquetas (Tags)</label>
+                    {/* SEO Indexing Control */}
+                    <div className="flex flex-col gap-2 mb-3 p-3 bg-muted/30 rounded-lg border border-border/50">
+                        {isAdvancedSeo ? (
+                            <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
+                                <div className="flex items-center justify-between">
+                                    <Label className="text-xs font-semibold text-muted-foreground">Configuración SEO Avanzada</Label>
+                                    <button 
+                                        onClick={() => setIsAdvancedSeo(false)}
+                                        className="text-[10px] text-primary hover:underline"
+                                    >
+                                        Volver a modo simple
+                                    </button>
+                                </div>
+                                <Select
+                                    value={(() => {
+                                        const tags = formData.tags || [];
+                                        const noIndex = tags.includes('scope:noindex');
+                                        const noFollow = tags.includes('scope:nofollow');
+                                        if (noIndex && noFollow) return 'noindex_nofollow';
+                                        if (noIndex && !noFollow) return 'noindex_follow';
+                                        if (!noIndex && noFollow) return 'index_nofollow';
+                                        return 'index_follow';
+                                    })()}
+                                    onValueChange={(val) => {
+                                        const current = (formData.tags || []).filter(t => t !== 'scope:noindex' && t !== 'scope:nofollow');
+                                        const newTags = [...current];
+                                        if (val === 'noindex_nofollow') {
+                                            newTags.push('scope:noindex', 'scope:nofollow');
+                                        } else if (val === 'noindex_follow') {
+                                            newTags.push('scope:noindex');
+                                        } else if (val === 'index_nofollow') {
+                                            newTags.push('scope:nofollow');
+                                        }
+                                        setFormData(prev => ({ ...prev, tags: newTags }));
+                                    }}
+                                >
+                                    <SelectTrigger className="h-8 text-xs bg-background">
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="index_follow">
+                                            <div className="flex flex-col">
+                                                <span className="font-medium">Index, Follow (Público)</span>
+                                                <span className="text-[10px] text-muted-foreground">Visible en Google, sigue enlaces.</span>
+                                            </div>
+                                        </SelectItem>
+                                        <SelectItem value="noindex_nofollow">
+                                            <div className="flex flex-col">
+                                                <span className="font-medium">No Index, No Follow (Privado)</span>
+                                                <span className="text-[10px] text-muted-foreground">Oculto en Google, no sigue enlaces.</span>
+                                            </div>
+                                        </SelectItem>
+                                        <SelectItem value="noindex_follow">
+                                            <div className="flex flex-col">
+                                                <span className="font-medium">No Index, Follow (Especial)</span>
+                                                <span className="text-[10px] text-muted-foreground">Oculto, pero sigue enlaces internos.</span>
+                                            </div>
+                                        </SelectItem>
+                                        <SelectItem value="index_nofollow">
+                                            <div className="flex flex-col">
+                                                <span className="font-medium">Index, No Follow (Raro)</span>
+                                                <span className="text-[10px] text-muted-foreground">Visible, pero no sigue enlaces.</span>
+                                            </div>
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        ) : (
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <Switch
+                                        id="seo-index"
+                                        checked={!((formData.tags || []).includes('scope:noindex'))}
+                                        onCheckedChange={(checked) => {
+                                            const current = (formData.tags || []).filter(t => t !== 'scope:noindex' && t !== 'scope:nofollow');
+                                            const newTags = [...current];
+                                            if (!checked) {
+                                                // OFF = No Index, No Follow (Private)
+                                                newTags.push('scope:noindex', 'scope:nofollow');
+                                            }
+                                            // ON = Index, Follow (Public) -> Removed tags
+                                            setFormData(prev => ({ ...prev, tags: newTags }));
+                                        }}
+                                    />
+                                    <div className="space-y-0.5">
+                                        <Label htmlFor="seo-index" className="text-sm font-medium">Indexación en Google</Label>
+                                        <div className="text-[10px] text-muted-foreground">
+                                            {!((formData.tags || []).includes('scope:noindex')) 
+                                                ? <span className="text-green-600 font-medium">Visible (Público)</span> 
+                                                : <span className="text-amber-600 font-medium">Oculto (Privado)</span>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => setIsAdvancedSeo(true)}
+                                    className="h-6 px-2 text-[10px] text-muted-foreground hover:text-foreground"
+                                    title="Configuración avanzada de robots"
+                                >
+                                    <Settings2 className="w-3 h-3 mr-1" />
+                                    Opciones
+                                </Button>
+                            </div>
+                        )}
+                    </div>
                     <div className="flex flex-wrap items-center gap-2 mb-2">
                         {/* Global Scope */}
                         <button
@@ -292,13 +404,8 @@ export const ProductModalGeneral: React.FC<ProductModalGeneralProps> = ({
                     <div className="p-2 text-xs text-muted-foreground text-center">No hay landings</div>
                 ) : (
                     <>
-                        <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground bg-muted/50">General</div>
-                        <SelectItem value="scope:global" className="text-xs pl-4">
-                            Web Principal
-                        </SelectItem>
-
                         {availableThemes.length > 0 && (
-                            <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground bg-muted/50 mt-1">Campañas</div>
+                            <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground bg-muted/50">Campañas</div>
                         )}
                                             {availableThemes.map(theme => {
                                                 const tag = theme.landing?.featuredTag || `scope:landing-${theme.id}`;

@@ -125,6 +125,13 @@ export function CatalogProvider({
       );
     }
 
+    // Explicitly exclude hidden items (scope:hidden or 'Oculto')
+    // This MUST override positive scope matches
+    filteredItems = filteredItems.filter(item => {
+      const tags = (item.tags || []).map(t => t.toLowerCase());
+      return !tags.includes('scope:hidden') && !tags.includes('oculto');
+    });
+
     // Type
     if (filters.type && filters.type !== 'all') {
       filteredItems = filteredItems.filter(item => item.kind === filters.type);
