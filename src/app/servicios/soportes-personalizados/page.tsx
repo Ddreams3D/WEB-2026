@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
-import { SUPPORT_CATEGORIES, type SupportCategory, type SupportItem, DEFAULT_HERO } from './data';
+import { SUPPORT_CATEGORIES, type SupportCategory, type SupportItem, DEFAULT_HERO } from '@/app/soportes-personalizados/data';
 import { ServiceLandingsService } from '@/services/service-landings.service';
 import { getCachedProducts } from '@/services/data-access.server';
-import SupportsLandingRenderer from './SupportsLandingRenderer';
+import SupportsLandingRenderer from '@/app/soportes-personalizados/SupportsLandingRenderer';
 import { ServiceLandingConfig } from '@/shared/types/service-landing';
 
 export const metadata: Metadata = {
@@ -25,26 +25,21 @@ export default async function SupportsPage() {
   let landing = allLandings.find(l => l.slug === 'soportes-personalizados-dispositivos' || l.slug === 'soportes-personalizados');
   
   // AUTO-FIX: Restore original hero content if generic title is detected (reverts accidental overrides)
-  if (landing && (landing.slug === 'soportes-personalizados' || landing.id === 'soportes-personalizados-landing')) {
-    // Restore Hero content if it looks generic or incorrect
-    if (landing.sections?.some(s => s.type === 'hero')) {
-      landing = {
-        ...landing,
-        heroImage: DEFAULT_HERO.imageUrl,
-        sections: landing.sections.map(s => {
-          if (s.type === 'hero') {
-            return {
-              ...s,
-              title: DEFAULT_HERO.title,
-              subtitle: DEFAULT_HERO.subtitle,
-              // Ensure hero content matches default if it was generic
-              content: s.content === 'Descripción de tu servicio' ? 'Diseños únicos para Alexa, Nintendo Switch y más.' : s.content
-            };
-          }
-          return s;
-        })
-      };
-    }
+  if (landing && landing.sections?.some(s => s.type === 'hero' && s.title === 'Soportes Personalizados')) {
+    landing = {
+      ...landing,
+      heroImage: DEFAULT_HERO.imageUrl,
+      sections: landing.sections.map(s => {
+        if (s.type === 'hero') {
+          return {
+            ...s,
+            title: DEFAULT_HERO.title,
+            subtitle: DEFAULT_HERO.subtitle
+          };
+        }
+        return s;
+      })
+    };
   }
   
   // 2. Fetch Dynamic Products
@@ -147,8 +142,8 @@ export default async function SupportsPage() {
     category: 'special',
     metaTitle: 'Soportes Personalizados | Ddreams 3D',
     metaDescription: 'Colección exclusiva de soportes personalizados para Alexa, Nintendo Switch, celulares y más.',
-    primaryColor: '#7c3aed', // Violet-600 (Deep Purple)
-     heroImage: DEFAULT_HERO.imageUrl,
+    primaryColor: '#0ea5e9', // Sky-500
+    heroImage: DEFAULT_HERO.imageUrl,
     sections: [
         {
             id: 'hero-main',

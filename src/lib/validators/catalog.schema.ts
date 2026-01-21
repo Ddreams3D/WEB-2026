@@ -26,6 +26,8 @@ export const productSchema = z.object({
   specifications: z.array(specificationSchema).optional(),
   kind: z.literal('product'),
   materials: z.array(z.string()).optional(),
+  slug: z.string().min(1, { message: "El slug es obligatorio" }),
+  status: z.enum(['draft', 'published', 'archived']).optional(),
 });
 
 export const serviceSchema = z.object({
@@ -39,6 +41,23 @@ export const serviceSchema = z.object({
   isFeatured: z.boolean().optional(),
   tags: z.array(z.string()).optional(),
   kind: z.literal('service'),
+  slug: z.string().min(1, { message: "El slug es obligatorio" }),
+  status: z.enum(['draft', 'published', 'archived']).optional(),
+});
+
+// Draft Schemas (Solo validan Nombre y Slug)
+export const productDraftSchema = z.object({
+  name: z.string().min(3, { message: "El nombre debe tener al menos 3 caracteres" }),
+  slug: z.string().min(1, { message: "El slug es obligatorio" }),
+  kind: z.literal('product'),
+  status: z.enum(['draft', 'published', 'archived']).optional(),
+});
+
+export const serviceDraftSchema = z.object({
+  name: z.string().min(3, { message: "El nombre debe tener al menos 3 caracteres" }),
+  slug: z.string().min(1, { message: "El slug es obligatorio" }),
+  kind: z.literal('service'),
+  status: z.enum(['draft', 'published', 'archived']).optional(),
 });
 
 export type ProductFormData = z.infer<typeof productSchema>;

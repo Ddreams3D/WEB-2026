@@ -123,6 +123,9 @@ export interface Product {
   options?: ProductOption[];
   tags: string[];
   seoKeywords?: string[];
+  
+  // Status Flow
+  status?: 'draft' | 'published' | 'archived';
 
   // SEO Metadata
   metaTitle?: string;

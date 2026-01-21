@@ -24,8 +24,7 @@ export function useSeoRoutes() {
     seo: {
       canonicalUrl: `https://ddreams3d.com/servicios/${l.slug}`,
       robots:
-        l.slug === 'soportes-personalizados-dispositivos' ||
-        l.slug === 'landings-web-personalizadas'
+        l.slug === 'soportes-personalizados-dispositivos'
           ? 'noindex, nofollow'
           : 'index, follow'
     }

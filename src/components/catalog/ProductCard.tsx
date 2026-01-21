@@ -111,7 +111,7 @@ export function ProductCard({
         
         {/* Featured Badge */}
         {product.isFeatured && (
-          <div className="absolute top-3 right-3 z-20 bg-primary text-primary-foreground px-2 py-1 rounded-md text-[10px] font-bold shadow-md pointer-events-none uppercase tracking-wider border border-primary/20">
+          <div className="absolute top-3 right-3 z-20 bg-primary text-primary-foreground px-2 py-1 rounded-md text-[10px] font-bold shadow-md pointer-events-none uppercase tracking-wider border border-primary/20" style={{ backgroundColor: 'var(--primary-color, rgb(var(--primary-500)))', borderColor: 'var(--primary-color, rgb(var(--primary-500)))' }}>
             Destacado
           </div>
         )}
@@ -121,13 +121,19 @@ export function ProductCard({
       <div className="p-4 flex-1 flex flex-col">
         {/* Category */}
         <div className="mb-2">
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-primary/10 text-primary uppercase tracking-wide">
+          <span 
+            className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-primary/10 text-primary uppercase tracking-wide"
+            style={{ 
+              color: 'var(--primary-color, rgb(var(--primary-500)))',
+              backgroundColor: 'color-mix(in srgb, var(--primary-color, rgb(var(--primary-500))) 10%, transparent)'
+            }}
+          >
             {product.categoryName}
           </span>
         </div>
 
         {/* Product Name */}
-        <h3 className="font-bold text-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors duration-300 text-lg leading-tight">
+        <h3 className="font-bold text-foreground mb-2 line-clamp-2 hover:text-[color:var(--primary-color,rgb(var(--primary-500)))] transition-colors duration-300 text-lg leading-tight">
           {product.name}
         </h3>
 
@@ -245,6 +251,7 @@ export function ProductCard({
               asChild
               variant="gradient"
               className="w-full"
+              style={{ background: 'var(--primary-color, rgb(var(--primary-500)))' } as React.CSSProperties}
             >
               <Link 
                 href={customAction.href} 
@@ -262,6 +269,7 @@ export function ProductCard({
               variant="gradient"
               className="w-full group/btn flex items-center justify-center space-x-2"
               aria-label={`Agregar ${product.name} al carrito`}
+              style={{ background: 'var(--primary-color, rgb(var(--primary-500)))' } as React.CSSProperties}
             >
               <ShoppingCart className="w-4 h-4 group-hover/btn:scale-110 transition-transform duration-300" aria-hidden="true" />
               <span>Agregar</span>

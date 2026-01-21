@@ -16,6 +16,98 @@ interface ServiceHeroProps {
 }
 
 export function ServiceHero({ config, heroSection, primaryColor, isEditable = false, onChangeField }: ServiceHeroProps) {
+  // SPECIAL LAYOUT: Soportes Personalizados (Full Width + Centered)
+  if (config.slug === 'soportes-personalizados') {
+    return (
+      <section className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-background">
+        {/* Full Background Image */}
+        <div className="absolute inset-0 w-full h-full z-0">
+          {config.heroImage ? (
+             <Image 
+               src={config.heroImage} 
+               alt={heroSection?.title || config.name}
+               fill
+               className="object-cover"
+               priority
+             />
+          ) : (
+             <div className="w-full h-full bg-muted" />
+          )}
+          <div className="absolute inset-0 bg-black/60" /> {/* Dark Overlay */}
+        </div>
+
+        {/* Content */}
+        <div className="relative z-10 container mx-auto px-4 flex flex-col items-center text-center space-y-8 animate-fade-in-up">
+            {/* Logo */}
+            <div className="mb-4">
+                <IsotypeLogo 
+                    className="w-24 h-10 md:w-32 md:h-12" 
+                    primaryColor={primaryColor}
+                />
+            </div>
+
+            {/* Subtitle / Badge */}
+            <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-sm font-medium shadow-sm text-white">
+                <Sparkles className="w-4 h-4" style={{ color: primaryColor }} />
+                {isEditable && onChangeField ? (
+                  <input
+                    className="bg-transparent border-none outline-none font-bold text-center text-white placeholder-white/50 min-w-[200px]"
+                    value={heroSection?.subtitle || config.name}
+                    onChange={e => onChangeField('subtitle', e.target.value)}
+                  />
+                ) : (
+                  <span className="font-bold">
+                    {heroSection?.subtitle || config.name}
+                  </span>
+                )}
+            </div>
+
+            {/* Title */}
+            {isEditable && onChangeField ? (
+              <input
+                className="w-full text-4xl md:text-5xl lg:text-7xl font-black tracking-tighter leading-[1.1] text-white text-center bg-transparent border-b border-dashed border-white/30 focus:outline-none focus:border-primary max-w-4xl"
+                value={heroSection?.title || config.name}
+                onChange={e => onChangeField('title', e.target.value)}
+              />
+            ) : (
+              <h1 className="text-4xl md:text-5xl lg:text-7xl font-black tracking-tighter leading-[1.1] text-white max-w-4xl">
+                {heroSection?.title || config.name}
+              </h1>
+            )}
+
+            {/* Description */}
+             {isEditable && onChangeField ? (
+                <textarea
+                  className="w-full text-lg text-white/90 max-w-2xl leading-relaxed text-center bg-transparent border border-dashed border-white/30 rounded-md p-2 focus:outline-none focus:border-primary"
+                  value={heroSection?.content || config.metaDescription}
+                  onChange={e => onChangeField('content', e.target.value)}
+                  rows={3}
+                />
+              ) : (
+                <p className="text-lg md:text-xl text-white/90 max-w-2xl leading-relaxed">
+                  {heroSection?.content || config.metaDescription}
+                </p>
+              )}
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
+                  <Button 
+                      size="lg" 
+                      className="h-12 px-8 text-base font-bold tracking-wide rounded-full shadow-lg transition-all hover:scale-105 text-white hover:opacity-90 w-full sm:w-auto"
+                      style={{ backgroundColor: primaryColor }}
+                      asChild
+                  >
+                      <Link href="#coleccion">
+                          Explorar Colección
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                      </Link>
+                  </Button>
+            </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="relative min-h-screen w-full grid grid-cols-1 lg:grid-cols-2 overflow-hidden bg-background">
       

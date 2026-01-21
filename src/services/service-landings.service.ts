@@ -39,11 +39,11 @@ export const ServiceLandingsService = {
           const localData = mergedLandings[index];
           mergedLandings[index] = {
             ...dbLanding,
-            // Force code-defined fields to be source of truth
-            name: localData.name, 
-            slug: localData.slug,
-            primaryColor: localData.primaryColor ?? dbLanding.primaryColor,
-            sections: mergeSections(localData.sections, dbLanding.sections || []),
+            // Force code-defined fields to be source of truth ONLY if not present in DB
+            name: dbLanding.name || localData.name, 
+            slug: dbLanding.slug || localData.slug,
+            primaryColor: dbLanding.primaryColor ?? localData.primaryColor,
+            sections: dbLanding.sections && dbLanding.sections.length > 0 ? dbLanding.sections : localData.sections,
           };
         } else {
           mergedLandings.push(dbLanding);
@@ -75,15 +75,14 @@ export const ServiceLandingsService = {
         if (!snapshot.empty) {
           const data = snapshot.docs[0].data() as ServiceLandingConfig;
           
-          // Apply local overrides (like color/sections) to ensure code updates are reflected
+          // Apply local overrides ONLY as fallback
           const localData = SERVICE_LANDINGS_DATA.find(l => l.id === data.id);
           const finalData = localData ? {
              ...data,
-             // Force code-defined fields to be source of truth
-             name: localData.name,
-             slug: localData.slug,
-             primaryColor: localData.primaryColor ?? data.primaryColor,
-             sections: mergeSections(localData.sections, data.sections || [])
+             name: data.name || localData.name,
+             slug: data.slug || localData.slug,
+             primaryColor: data.primaryColor ?? localData.primaryColor,
+             sections: (data.sections && data.sections.length > 0) ? data.sections : localData.sections
           } : data;
 
           // Filter soft-deleted in memory

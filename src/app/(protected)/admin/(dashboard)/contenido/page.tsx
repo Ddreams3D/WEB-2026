@@ -84,13 +84,13 @@ export default function ContentManagerPage() {
             {/* CARD 1: Soportes Personalizados */}
             <div className="group flex flex-col rounded-xl border bg-card text-card-foreground shadow-sm hover:shadow-md transition-all duration-300 h-full">
                 {/* Browser Mockup Frame (Link to WEB) */}
-                <Link href="/soportes-personalizados" target="_blank" className="relative w-full aspect-[16/10] overflow-hidden rounded-t-xl bg-muted border-b cursor-pointer hover:opacity-95 transition-opacity">
+                <Link href="/servicios/soportes-personalizados" target="_blank" className="relative w-full aspect-[16/10] overflow-hidden rounded-t-xl bg-muted border-b cursor-pointer hover:opacity-95 transition-opacity">
                     <div className="absolute top-0 left-0 right-0 h-7 bg-muted/90 backdrop-blur-sm border-b flex items-center px-3 gap-1.5 z-20">
                         <div className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
                         <div className="w-2.5 h-2.5 rounded-full bg-yellow-400/80" />
                         <div className="w-2.5 h-2.5 rounded-full bg-green-400/80" />
                         <div className="ml-2 flex-1 h-4 bg-background/50 rounded text-[9px] flex items-center px-2 text-muted-foreground/60 truncate group-hover:text-primary/80 transition-colors">
-                            ddreams3d.com/servicios/soportes-personalizados-dispositivos
+                            ddreams3d.com/servicios/soportes-personalizados
                             <ExternalLink className="ml-1 w-2 h-2 inline" />
                         </div>
                     </div>
@@ -140,40 +140,34 @@ export default function ContentManagerPage() {
                 </div>
             </div>
 
-            {/* CARD 2: Landings Web */}
-            <div className="group flex flex-col rounded-xl border bg-card text-card-foreground shadow-sm opacity-75 h-full">
+            {/* CARD 2: Landings Personalizadas */}
+            <div className="group flex flex-col rounded-xl border bg-card text-card-foreground shadow-sm hover:shadow-md transition-all duration-300 h-full">
                 {/* Browser Mockup Frame (Link to WEB) */}
-                <Link href="/servicios/landings-web-personalizadas" target="_blank" className="relative w-full aspect-[16/10] overflow-hidden rounded-t-xl bg-muted border-b cursor-pointer hover:opacity-95 transition-opacity">
+                <Link href="/servicios/landings-personalizadas" target="_blank" className="relative w-full aspect-[16/10] overflow-hidden rounded-t-xl bg-muted border-b cursor-pointer hover:opacity-95 transition-opacity">
                     <div className="absolute top-0 left-0 right-0 h-7 bg-muted/90 backdrop-blur-sm border-b flex items-center px-3 gap-1.5 z-20">
                         <div className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
                         <div className="w-2.5 h-2.5 rounded-full bg-yellow-400/80" />
                         <div className="w-2.5 h-2.5 rounded-full bg-green-400/80" />
                         <div className="ml-2 flex-1 h-4 bg-background/50 rounded text-[9px] flex items-center px-2 text-muted-foreground/60 truncate group-hover:text-primary/80 transition-colors">
-                            ddreams3d.com/servicios/landings-web-personalizadas
-                             <ExternalLink className="ml-1 w-2 h-2 inline" />
+                            ddreams3d.com/servicios/landings-personalizadas
+                            <ExternalLink className="ml-1 w-2 h-2 inline" />
                         </div>
                     </div>
                     {/* Content Preview */}
-                    <div className="absolute top-7 left-0 right-0 bottom-0 bg-background bg-violet-900">
+                    <div className="absolute top-7 left-0 right-0 bottom-0 bg-background bg-indigo-900">
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                       <div className="absolute inset-x-0 bottom-0 p-4">
                         <div className="flex items-end justify-between gap-3">
                           <div className="min-w-0">
                             <div className="text-[10px] text-white/80 font-semibold uppercase tracking-wider truncate">
-                              Una página, un objetivo claro
+                              Diseño Web Estratégico
                             </div>
                             <div className="text-white font-bold text-sm leading-snug line-clamp-2">
-                              Landings Web Personalizadas para tus campañas
+                              Landings que Convierten para tu Negocio
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                     <div className="absolute top-10 right-3 z-[10]">
-                        <span className="relative flex h-3 w-3">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-                        </span>
                     </div>
                 </Link>
                 
@@ -182,22 +176,24 @@ export default function ContentManagerPage() {
                     <div>
                         <div className="flex justify-between items-start mb-1">
                             <h3 className="font-bold text-lg leading-tight line-clamp-1">
-                              Landings Web Personalizadas
+                              Diseño de Landings
                             </h3>
                             <Badge variant="default" className="text-[10px] px-1.5 h-5 bg-green-500">
                                 ACTIVA
                             </Badge>
                         </div>
                         <p className="text-sm text-muted-foreground line-clamp-3">
-                          Diseñamos landings web enfocadas en conversión para campañas específicas, servicios o productos.
+                          Servicio de diseño y desarrollo de Landing Pages optimizadas para conversión. Rapidez y estética.
                         </p>
                     </div>
                     
                     {/* Admin Button */}
                     <div className="mt-auto pt-4">
-                        <Button disabled variant="outline" className="w-full gap-2">
-                            <Settings className="w-4 h-4" />
-                            Próximamente
+                        <Button asChild className="w-full gap-2">
+                            <Link href="/admin/landings-personalizadas">
+                                <Settings className="w-4 h-4" />
+                                Gestionar Contenido
+                            </Link>
                         </Button>
                     </div>
                 </div>

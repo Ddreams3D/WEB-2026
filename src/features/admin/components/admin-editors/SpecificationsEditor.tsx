@@ -22,6 +22,10 @@ export function SpecificationsEditor({ specs = [], onChange }: SpecificationsEdi
     onChange(newSpecs);
   };
 
+  const handleAdd = () => {
+    onChange([...specs, { name: '', value: '' }]);
+  };
+
   return (
     <div className="space-y-3">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -55,6 +59,17 @@ export function SpecificationsEditor({ specs = [], onChange }: SpecificationsEdi
           </div>
         ))}
       </div>
+      
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={handleAdd}
+        className="w-full py-2 border-dashed text-muted-foreground hover:text-primary"
+      >
+        <Plus className="w-4 h-4 mr-2" />
+        Agregar Especificación
+      </Button>
     </div>
   );
 }

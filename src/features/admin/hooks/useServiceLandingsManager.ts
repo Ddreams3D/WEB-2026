@@ -30,8 +30,10 @@ export function useServiceLandingsManager() {
 
   const filteredLandings = useMemo(() => {
     return landings.filter(l => 
-      l.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      l.slug.toLowerCase().includes(searchQuery.toLowerCase())
+      // Filter out special category landings
+      (l.category !== 'special') &&
+      (l.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      l.slug.toLowerCase().includes(searchQuery.toLowerCase()))
     );
   }, [landings, searchQuery]);
 

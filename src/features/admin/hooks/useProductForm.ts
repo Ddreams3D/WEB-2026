@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Product, ProductImage, ProductTab } from '@/shared/types';
 import { Service } from '@/shared/types/domain';
 import { generateSlug } from '@/lib/utils';
-import { productSchema, serviceSchema } from '@/lib/validators/catalog.schema';
+import { productSchema, serviceSchema, productDraftSchema, serviceDraftSchema } from '@/lib/validators/catalog.schema';
 import { useToast } from '@/components/ui/ToastManager';
 
 interface UseProductFormProps {
@@ -25,7 +25,8 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
     price: 0,
     stock: 999,
     images: [],
-    isActive: true,
+    isActive: false, // Default to false (draft)
+    status: 'draft', // Default status
     isFeatured: false,
     tags: [],
     seoKeywords: [],
@@ -118,6 +119,7 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
     if (product) {
       setFormData({
         ...product,
+        status: product.status || (product.isActive ? 'published' : 'draft'),
         images: product.images || [],
         tags: product.tags || [],
         specifications: product.specifications || [],
@@ -148,7 +150,8 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
           { name: 'Stock', value: 'Fabricación bajo pedido' },
           { name: 'Tiempo de fabricación', value: '2-4 días hábiles' }
         ],
-        tabs: [], tabsTitle: '', materials: [], kind: initialKind
+        tabs: [], tabsTitle: '', materials: [], kind: initialKind,
+        status: 'draft'
       });
     }
     if (typeof window !== 'undefined') {
@@ -225,19 +228,50 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
     setIsDirty(true);
   };
 
-  const handleSubmit = async (e?: React.FormEvent) => {
+  const handleSubmit = async (e?: React.FormEvent, asDraft: boolean = false) => {
     if (e) e.preventDefault();
     setIsSubmitting(true);
     try {
       // Ensure strict normalization on save
       const finalSlug = generateSlug(formData.slug || formData.name || '');
-      const baseData = { ...formData, slug: finalSlug };
+      
+      // Update status and isActive based on save mode
+      const targetStatus: 'draft' | 'published' | 'archived' = asDraft ? 'draft' : 'published';
+      const targetIsActive = !asDraft; // Draft = inactive, Published = active
+
+      // Auto-populate SEO if missing (Draft or Publish)
+      const humanReadable = finalSlug
+           .replace(/-/g, ' ')
+           .replace(/3D/g, '3D')
+           .split(' ')
+           .filter(Boolean)
+           .map(w => w === '3D' ? '3D' : w.charAt(0).toUpperCase() + w.slice(1))
+           .join(' ');
+
+      const autoMetaTitle = humanReadable;
+      const autoMetaDesc = `Descubre ${humanReadable} en Ddreams 3D. Calidad y precisión garantizada.`;
+
+      const baseData = { 
+        ...formData, 
+        slug: finalSlug,
+        status: targetStatus,
+        isActive: targetIsActive,
+        metaTitle: formData.metaTitle || autoMetaTitle,
+        metaDescription: formData.metaDescription || autoMetaDesc
+      };
       
       const dataToSave = formData.kind === 'product' 
         ? { ...baseData, materials: (formData as Product).materials || [] }
         : baseData;
 
-      const schema = formData.kind === 'service' ? serviceSchema : productSchema;
+      // Select schema based on save mode
+      let schema;
+      if (asDraft) {
+        schema = formData.kind === 'service' ? serviceDraftSchema : productDraftSchema;
+      } else {
+        schema = formData.kind === 'service' ? serviceSchema : productSchema;
+      }
+      
       const result = schema.safeParse(dataToSave);
 
       if (!result.success) {
@@ -247,8 +281,23 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
         return;
       }
 
-      await onSave(dataToSave);
-      onClose();
+      onSave(dataToSave);
+      
+      // Update local state to reflect the save
+      setFormData(prev => ({
+        ...prev,
+        status: targetStatus,
+        isActive: targetIsActive,
+        slug: finalSlug
+      }));
+
+      // Only close if it's a full save, otherwise keep editing
+      if (!asDraft) {
+        onClose();
+      } else {
+        showSuccess('Borrador guardado', 'El producto se ha guardado como borrador. Puedes continuar editando.');
+      }
+      
       setIsDirty(false);
       setLastSavedAt(new Date());
       try { localStorage.removeItem(getDraftKey()); } catch {}

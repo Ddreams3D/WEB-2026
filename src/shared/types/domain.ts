@@ -39,6 +39,9 @@ export interface Service {
   tags: string[];
   seoKeywords?: string[];
   
+  // Status Flow
+  status?: 'draft' | 'published' | 'archived';
+  
   // Media
   images: ProductImage[];
   

@@ -28,8 +28,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  const isNoIndex =
-    slug === 'landings-web-personalizadas';
+  const isNoIndex = false;
 
   return {
     title: `${landing.metaTitle} | DDream3D`,
@@ -62,6 +61,10 @@ export default async function ServiceLandingPage({ params }: PageProps) {
   // REDIRECT: Legacy landing to new custom page
   if (slug === 'soportes-personalizados-dispositivos') {
     redirect('/soportes-personalizados');
+  }
+
+  if (slug === 'landings-web-personalizadas') {
+    redirect('/servicios/landings-personalizadas');
   }
 
   const landing = await ServiceLandingsService.getBySlug(slug);

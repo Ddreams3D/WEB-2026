@@ -142,9 +142,21 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
               </div>
             </div>
             
-            <div className="p-4 border-t border-border/50 bg-muted/20">
+            <div className="p-4 border-t border-border/50 bg-muted/20 space-y-3">
               <Button 
-                onClick={() => handleSubmit()} 
+                onClick={() => handleSubmit(undefined, true)} // Save as Draft
+                disabled={isSubmitting || isImageUploading}
+                variant="secondary"
+                className="w-full h-10 rounded-xl font-medium shadow-sm hover:bg-secondary/80 transition-all border border-border"
+              >
+                 <div className="flex items-center gap-2">
+                    <Save className="w-4 h-4" />
+                    <span className="hidden lg:inline">Guardar Borrador</span>
+                 </div>
+              </Button>
+
+              <Button 
+                onClick={() => handleSubmit(undefined, false)} // Publish
                 disabled={isSubmitting || isImageUploading}
                 className="w-full h-12 rounded-xl font-semibold shadow-lg hover:shadow-primary/20 transition-all"
               >
@@ -154,8 +166,8 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
                     </motion.div>
                 ) : (
                     <div className="flex items-center gap-2">
-                        <Save className="w-4 h-4" />
-                        <span className="hidden lg:inline">Guardar Cambios</span>
+                        <Check className="w-4 h-4" />
+                        <span className="hidden lg:inline">Publicar Producto</span>
                     </div>
                 )}
               </Button>
@@ -262,17 +274,13 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
                             <div>
                                 <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Estado</label>
                                 <div className="mt-1 font-semibold text-lg flex items-center gap-2">
-                                    <span className={`w-2 h-2 rounded-full ${formData.isActive ? 'bg-green-500' : 'bg-red-500'}`} />
-                                    {formData.isActive ? 'Publicado' : 'Borrador'}
+                                    <span className={`w-2 h-2 rounded-full ${
+                                        formData.status === 'published' ? 'bg-green-500' : 
+                                        formData.status === 'draft' ? 'bg-amber-500' : 'bg-red-500'
+                                    }`} />
+                                    {formData.status === 'published' ? 'Publicado' : 
+                                     formData.status === 'draft' ? 'En Preparación' : 'Archivado'}
                                 </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <input 
-                                    type="checkbox" 
-                                    checked={formData.isActive || false}
-                                    onChange={(e) => handleCheckboxChange('isActive', e.target.checked)}
-                                    className="w-6 h-6 rounded-md accent-primary cursor-pointer"
-                                />
                             </div>
                         </div>
                     </div>

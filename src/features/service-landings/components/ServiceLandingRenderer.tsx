@@ -230,6 +230,7 @@ export default function ServiceLandingRenderer({ config, isPreview = false }: Se
           featuredProducts={featuredProducts} 
           gallerySection={gallerySection}
           isPreview={isPreview} 
+          primaryColor={primaryColor}
         />
 
         <ServiceCTA
