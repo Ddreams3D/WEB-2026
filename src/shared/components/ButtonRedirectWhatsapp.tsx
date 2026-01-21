@@ -1,22 +1,27 @@
 import React from 'react';
-import { WHATSAPP_REDIRECT } from '@/shared/constants/contactInfo';
 import { Button } from '@/components/ui/button';
 import { MessageCircle } from 'lucide-react';
 import { trackEvent, AnalyticsEvents, AnalyticsLocations } from '@/lib/analytics';
+import { WhatsAppService } from '@/services/whatsapp.service';
 
 interface PropsButtonRedirectWhatsapp {
-  msgRedirect?: string;
+  message?: string; // Plain text message
   className?: string;
   text?: string;
   variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link' | 'gradient' | 'glass' | 'success';
 }
 
 export default function ButtonRedirectWhatsapp({
-  msgRedirect,
+  message,
   className,
   text,
   variant = 'success',
 }: PropsButtonRedirectWhatsapp) {
+  // Use 'custom' template if message is provided, otherwise default to 'general_contact'
+  const whatsappUrl = message 
+    ? WhatsAppService.getLink('custom', { message })
+    : WhatsAppService.getLink('general_contact');
+
   return (
     <Button
       asChild
@@ -25,11 +30,7 @@ export default function ButtonRedirectWhatsapp({
       className={`shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 gap-2 ${className || ''}`}
     >
       <a
-        href={`${WHATSAPP_REDIRECT}?text=${
-          msgRedirect
-            ? msgRedirect
-            : 'Hola,%20me%20interesa%20conocer%20más%20sobre%20sus%20servicios%20de%20impresión%203D'
-        }`}
+        href={whatsappUrl}
         target="_blank"
         rel="noopener noreferrer"
         className="flex items-center gap-2"

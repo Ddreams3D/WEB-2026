@@ -98,6 +98,7 @@ export const AnalyticsLocations = {
   FLOATING_BUTTON: 'floating_button',
   CALL_TO_ACTION: 'call_to_action',
   SEARCH_BAR: 'search_bar',
+  GENERAL: 'general',
 } as const;
 
 export type AnalyticsLocation = typeof AnalyticsLocations[keyof typeof AnalyticsLocations];
@@ -328,6 +329,10 @@ const LOCATION_METADATA: Partial<Record<AnalyticsLocation, {
   [AnalyticsLocations.SEARCH_BAR]: {
     es_name: 'Barra de búsqueda',
     es_description: 'Buscador principal o interno',
+  },
+  [AnalyticsLocations.GENERAL]: {
+    es_name: 'General',
+    es_description: 'Ubicación genérica o no especificada',
   },
 };
 

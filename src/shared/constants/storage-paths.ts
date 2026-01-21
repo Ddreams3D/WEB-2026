@@ -7,7 +7,6 @@ export const STORAGE_PATHS = {
   PROJECTS: 'images/projects',
   SEASONAL: 'images/seasonal',
   CATEGORIES: 'images/categories',
-  SOPORTES: 'images/soportes',
   UI: 'images/ui',
   BLOG: 'images/blog',
   HOME: 'images/home',
@@ -61,12 +60,6 @@ export const StoragePathBuilder = {
      */
     categories: (slug: string) => 
         `${STORAGE_PATHS.CATEGORIES}/${slug}`,
-
-    /**
-     * Returns path for supports images: images/soportes/{categoryOrSection}/
-     */
-    soportes: (categoryOrSection: string) => 
-        `${STORAGE_PATHS.SOPORTES}/${categoryOrSection}`,
 
     /**
      * Returns path for home images: images/home/{section}/

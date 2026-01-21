@@ -53,7 +53,6 @@ export const SECTIONS = [
     { id: 'servicios', label: 'Servicios', path: `${STORAGE_PATHS.SERVICES}/` },
     { id: 'proyectos', label: 'Proyectos', path: `${STORAGE_PATHS.PROJECTS}/` },
     { id: 'categories', label: 'Categorías', path: `${STORAGE_PATHS.CATEGORIES}/` },
-    { id: 'soportes', label: 'Soportes', path: `${STORAGE_PATHS.SOPORTES}/` },
     { id: 'ui', label: 'Interfaz (UI)', path: `${STORAGE_PATHS.UI}/` },
     { id: 'blog', label: 'Blog', path: `${STORAGE_PATHS.BLOG}/` },
     { id: 'home', label: 'Home / Web', path: `${STORAGE_PATHS.HOME}/` },

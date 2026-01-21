@@ -10,7 +10,7 @@ import {
   ShieldCheck as ShieldCheckIcon,
   Check as CheckIcon
 } from '@/lib/icons';
-import { LayoutTemplate, BookOpen, Languages, Brain, Dna, Minimize2, Maximize2 } from 'lucide-react';
+import { LayoutTemplate, BookOpen, Languages, Brain, Dna, Minimize2, Maximize2, MessageCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAdminSettings, AdminSettings } from '@/features/admin/settings/hooks/useAdminSettings';
 import { useAdminLayout } from '@/shared/components/layout/AdminLayout';
@@ -30,6 +30,7 @@ const GlossarySettings = dynamic(() => import('@/features/admin/settings/compone
 const PromptVocabularySettings = dynamic(() => import('@/features/admin/settings/components/PromptVocabularySettings').then(m => m.PromptVocabularySettings), { ssr: false });
 const AIRulesManager = dynamic(() => import('@/features/admin/settings/components/ai-rules/AIRulesManager').then(m => m.AIRulesManager), { ssr: false });
 const ArchitectureSettings = dynamic(() => import('@/features/admin/settings/components/ArchitectureSettings').then(m => m.ArchitectureSettings), { ssr: false });
+const WhatsAppSettings = dynamic(() => import('@/features/admin/settings/components/WhatsAppSettings').then(m => m.WhatsAppSettings), { ssr: false });
 
 export default function Settings() {
   const searchParams = useSearchParams();
@@ -41,6 +42,7 @@ export default function Settings() {
   const tabs = [
     { id: 'general', label: 'General y Contacto', icon: CogIcon },
     { id: 'store', label: 'Tienda y Pagos', icon: StoreIcon },
+    { id: 'whatsapp', label: 'Mensajes WhatsApp', icon: MessageCircle },
     { id: 'pages', label: 'Páginas y Rutas', icon: LayoutTemplate },
     { id: 'analytics', label: 'Analytics', icon: ShieldCheckIcon },
     { id: 'glossary', label: 'Glosario / Conceptos', icon: BookOpen },
@@ -131,6 +133,10 @@ export default function Settings() {
 
           {activeTab === 'store' && (
             <StoreSettings settings={settings} updateSetting={updateSetting} />
+          )}
+
+          {activeTab === 'whatsapp' && (
+            <WhatsAppSettings />
           )}
 
           {activeTab === 'pages' && (

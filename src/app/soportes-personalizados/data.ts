@@ -34,33 +34,13 @@ export const SUPPORT_CATEGORIES: SupportCategory[] = [
     id: 'alexa',
     title: 'Soportes para Alexa',
     description: 'Personaliza y protege tu asistente de voz con nuestros diseños únicos.',
-    items: [
-      {
-        id: 'alexa-1',
-        title: 'Soporte Alexa Echo Dot 4/5 - R2D2',
-        description: 'Transforma tu Alexa en el famoso droide de Star Wars.',
-        imageUrl: `/${StoragePathBuilder.services('soportes-personalizados')}/alexa-r2d2.jpg`
-      },
-      {
-        id: 'alexa-2',
-        title: 'Soporte de Mesa Minimalista',
-        description: 'Diseño elegante para cualquier espacio.',
-        imageUrl: `/${StoragePathBuilder.services('soportes-personalizados')}/alexa-min.jpg`
-      }
-    ]
+    items: []
   },
   {
     id: 'nintendo-switch',
     title: 'Soportes para Nintendo Switch',
     description: 'Exhibe y juega con estilo con nuestros diseños temáticos.',
-    items: [
-      {
-        id: 'switch-1',
-        title: 'Base Arcade',
-        description: 'Estilo retro para tu consola moderna.',
-        imageUrl: `/${StoragePathBuilder.services('soportes-personalizados')}/switch-arcade.jpg`
-      }
-    ]
+    items: []
   },
   {
     id: 'celulares',

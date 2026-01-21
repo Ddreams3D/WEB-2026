@@ -114,7 +114,7 @@ export function VisualSection({ data, updateField }: VisualSectionProps) {
                       onChange={(url) => updateField('heroImage', url)}
                       onRemove={() => updateField('heroImage', '')}
                       defaultName={`hero-real-${data.slug || 'service'}`}
-                      storagePath={StoragePathBuilder.landings(data.slug || 'service', 'hero')}
+                      storagePath={StoragePathBuilder.services(data.slug || 'service', 'hero')}
                     />
                   </div>
 

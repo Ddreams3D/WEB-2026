@@ -16,7 +16,6 @@ export default function ServiceManager() {
     selectedService,
     isModalOpen,
     setIsModalOpen,
-    isSeeding,
     viewMode,
     setViewMode,
     confirmation,
@@ -24,7 +23,6 @@ export default function ServiceManager() {
     handleAddService,
     handleEditService,
     handleDeleteService,
-    handleSeed,
     handleSaveService,
     filteredServices
   } = useServiceManager();
@@ -46,8 +44,6 @@ export default function ServiceManager() {
         setSearchTerm={setSearchTerm}
         viewMode={viewMode}
         setViewMode={setViewMode}
-        isSeeding={isSeeding}
-        handleSeed={handleSeed}
         handleAddService={handleAddService}
       />
 

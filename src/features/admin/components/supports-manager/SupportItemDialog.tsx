@@ -70,7 +70,7 @@ export function SupportItemDialog({
                 onChange={(url) => setFormData({ ...formData, imageUrl: url })}
                 onRemove={() => setFormData({ ...formData, imageUrl: '' })}
                 defaultName={formData.title}
-                storagePath={StoragePathBuilder.soportes(categoryId)}
+                storagePath={`${StoragePathBuilder.services('soportes-personalizados')}/${categoryId}`}
               />
             </div>
           </div>

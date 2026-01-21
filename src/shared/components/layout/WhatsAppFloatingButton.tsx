@@ -1,12 +1,11 @@
 'use client';
 
 import React from 'react';
-import { WHATSAPP_REDIRECT } from '@/shared/constants/contactInfo';
 import { trackEvent, AnalyticsEvents, AnalyticsLocations } from '@/lib/analytics';
+import { WhatsAppService } from '@/services/whatsapp.service';
 
 export default function WhatsAppFloatingButton() {
-  const defaultMessage = "Hola, vengo de su página web y me gustaría cotizar un proyecto.";
-  const whatsappUrl = `${WHATSAPP_REDIRECT}?text=${encodeURIComponent(defaultMessage)}`;
+  const whatsappUrl = WhatsAppService.getLink('general_contact');
 
   return (
     <a

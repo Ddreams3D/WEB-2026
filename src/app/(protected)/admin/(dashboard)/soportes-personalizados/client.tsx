@@ -69,7 +69,7 @@ export default function SupportsAdminClient({ initialLanding }: SupportsAdminCli
             // Use FIXED ID to prevent duplicate/ghost entries
             updatedLanding = {
                 id: 'soportes-personalizados-landing', 
-                slug: 'soportes-personalizados-dispositivos',
+                slug: 'soportes-personalizados',
                 name: 'Soportes Personalizados',
                 isActive: true,
                 themeMode: 'system',
@@ -246,7 +246,7 @@ export default function SupportsAdminClient({ initialLanding }: SupportsAdminCli
                                     onChange={(url) => setHeroData({ ...heroData, imageUrl: url })}
                                     onRemove={() => setHeroData({ ...heroData, imageUrl: '' })}
                                     defaultName="hero-soportes"
-                                    storagePath={StoragePathBuilder.soportes('hero')}
+                                    storagePath={StoragePathBuilder.services('soportes-personalizados', 'hero')}
                                 />
                             </div>
                         </div>

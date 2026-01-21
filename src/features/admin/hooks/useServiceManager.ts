@@ -90,36 +90,6 @@ export function useServiceManager() {
     });
   };
 
-  const handleSeed = (force = false) => {
-    const message = force 
-      ? '¿Estás seguro de recargar los datos estáticos? Esto sobrescribirá los servicios existentes.' 
-      : '¿Importar servicios desde el archivo estático?';
-      
-    setConfirmation({
-      isOpen: true,
-      title: force ? 'Reiniciar Servicios' : 'Importar Servicios',
-      message,
-      variant: force ? 'danger' : 'warning',
-      isLoading: false,
-      onConfirm: async () => {
-        try {
-          setConfirmation(prev => ({ ...prev, isLoading: true }));
-          setIsSeeding(true);
-          await ServiceService.seedServices(force);
-          await loadServices(true);
-          showSuccess('Reiniciado', 'Servicios inicializados correctamente');
-          closeConfirmation();
-        } catch (error) {
-          console.error('Error seeding services:', error);
-          showError('Error', 'Error al inicializar servicios');
-          setConfirmation(prev => ({ ...prev, isLoading: false }));
-        } finally {
-          setIsSeeding(false);
-        }
-      }
-    });
-  };
-
   const handleSaveService = async (serviceData: Partial<Service>) => {
     try {
       if (selectedService) {
@@ -153,7 +123,6 @@ export function useServiceManager() {
     selectedService,
     isModalOpen,
     setIsModalOpen,
-    isSeeding,
     viewMode,
     setViewMode,
     confirmation,
@@ -161,7 +130,6 @@ export function useServiceManager() {
     handleAddService,
     handleEditService,
     handleDeleteService,
-    handleSeed,
     handleSaveService,
     filteredServices
   };

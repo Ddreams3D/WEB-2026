@@ -1,6 +1,5 @@
 import React from 'react';
 import { Plus, Search } from '@/lib/icons';
-import { Loader2, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ViewToggle } from '../ViewToggle';
 
@@ -9,8 +8,6 @@ interface ServiceManagerHeaderProps {
     setSearchTerm: (term: string) => void;
     viewMode: 'grid' | 'list';
     setViewMode: (mode: 'grid' | 'list') => void;
-    isSeeding: boolean;
-    handleSeed: (force: boolean) => void;
     handleAddService: () => void;
 }
 
@@ -19,8 +16,6 @@ export function ServiceManagerHeader({
     setSearchTerm,
     viewMode,
     setViewMode,
-    isSeeding,
-    handleSeed,
     handleAddService
 }: ServiceManagerHeaderProps) {
     return (
@@ -40,10 +35,6 @@ export function ServiceManagerHeader({
             </div>
             <div className="flex gap-2">
                 <ViewToggle view={viewMode} onViewChange={setViewMode} />
-                <Button variant="outline" onClick={() => handleSeed(true)} disabled={isSeeding}>
-                    {isSeeding ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <RefreshCw className="w-4 h-4 mr-2" />}
-                    Sincronizar Datos Estáticos
-                </Button>
                 <Button onClick={handleAddService} variant="gradient" className="gap-2">
                     <Plus className="w-5 h-5" />
                     Nuevo Servicio

@@ -69,7 +69,7 @@ export default function NotFound() {
           <ButtonRedirectWhatsapp 
             text="Reportar error"
             className="w-full sm:w-auto min-w-[200px]"
-            msgRedirect="Hola, encontré un error 404 (página no encontrada) en su sitio web."
+            message="Hola, encontré un error 404 (página no encontrada) en su sitio web."
           />
         </div>
 
