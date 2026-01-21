@@ -238,7 +238,13 @@ export function InboxModal({ isOpen, onClose, onSave, mode = 'all' }: InboxModal
             title: selectedItem.description,
             currency: selectedItem.currency,
             date: new Date(selectedItem.date).toISOString(),
-            category: '',
+            // Auto-detect withdrawals to pre-fill category and trigger cross-transfer logic
+            category: (selectedItem.description.toLowerCase().includes('retiro') || selectedItem.description.toLowerCase().includes('personal')) 
+              ? 'Retiros del dueño / Finanzas personales' 
+              : '',
+            expenseType: (selectedItem.description.toLowerCase().includes('retiro') || selectedItem.description.toLowerCase().includes('personal'))
+              ? 'fixed'
+              : undefined,
             paymentMethod: 'cash',
             status: 'paid',
             source: 'manual',

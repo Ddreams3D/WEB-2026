@@ -99,7 +99,7 @@ export interface Category {
 // Productos del catálogo
 export interface Product {
   id: string;
-  kind: 'product';
+  kind: 'product' | 'service';
   slug: string;
   name: string;
   description: string;
@@ -138,6 +138,7 @@ export interface Product {
   tabs?: ProductTab[];
   tabsTitle?: string;
   displayOrder?: number;
+  landingPrices?: Record<string, number>;
   createdAt: Date;
   updatedAt: Date;
 

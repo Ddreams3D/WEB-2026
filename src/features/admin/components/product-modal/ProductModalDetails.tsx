@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { SpecificationsEditor } from '../AdminEditors';
+import { SpecificationsEditor, OptionsEditor } from '../AdminEditors';
 import { motion } from 'framer-motion';
 import { Product } from '@/shared/types';
 import { Service } from '@/shared/types/domain';
 import { Button } from '@/components/ui/button';
-import { Plus, X, Trash2 } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
 interface ProductModalDetailsProps {
@@ -23,7 +23,7 @@ export const ProductModalDetails: React.FC<ProductModalDetailsProps> = ({
 }) => {
   const [newMaterial, setNewMaterial] = useState('');
   const [isAdding, setIsAdding] = useState(false);
-
+  
   const handleAddMaterial = () => {
     if (newMaterial.trim() && !availableMaterials.includes(newMaterial.trim())) {
       setAvailableMaterials([...availableMaterials, newMaterial.trim()]);
@@ -121,7 +121,17 @@ export const ProductModalDetails: React.FC<ProductModalDetailsProps> = ({
                         </div>
                     </div>
                 )}
-                
+
+                {formData.kind === 'product' && (
+                    <div className="space-y-2 pt-4 border-t">
+                        <label className="text-sm font-medium">Opciones y Variantes (Colores, Personalización)</label>
+                        <OptionsEditor 
+                            options={(formData as Product).options || []} 
+                            onChange={(options) => setFormData(prev => ({ ...prev, options }))} 
+                        />
+                    </div>
+                )}
+
                 <div className="space-y-2 pt-4 border-t">
                     <label className="text-sm font-medium">Especificaciones Adicionales</label>
                     <SpecificationsEditor 

@@ -111,26 +111,6 @@ export const ProductModalGeneral: React.FC<ProductModalGeneralProps> = ({
         exit={{ opacity: 0, x: 20 }}
         className="space-y-4"
     >
-        {/* Full Description Block */}
-        <EditableBlock
-            id="fullDescription"
-            title="Descripción Detallada"
-            icon={FileText}
-            isEditing={editingBlock === 'fullDescription'}
-            onEdit={() => setEditingBlock('fullDescription')}
-            onSave={() => setEditingBlock(null)}
-            onCancel={() => setEditingBlock(null)}
-            preview={<p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{formData.description || 'Sin descripción detallada...'}</p>}
-        >
-            <textarea
-                name="description"
-                value={formData.description || ''}
-                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                className="w-full p-4 bg-muted/50 rounded-xl border-none focus:ring-1 focus:ring-primary min-h-[150px]"
-                placeholder="Descripción completa del producto..."
-            />
-        </EditableBlock>
-
         {/* Short Description Block */}
         <EditableBlock
             id="description"
@@ -148,6 +128,26 @@ export const ProductModalGeneral: React.FC<ProductModalGeneralProps> = ({
                 onChange={(e) => setFormData(prev => ({ ...prev, shortDescription: e.target.value }))}
                 className="w-full p-4 bg-muted/50 rounded-xl border-none focus:ring-1 focus:ring-primary min-h-[100px]"
                 placeholder="Breve descripción para listados..."
+            />
+        </EditableBlock>
+
+        {/* Full Description Block */}
+        <EditableBlock
+            id="fullDescription"
+            title="Descripción Detallada"
+            icon={FileText}
+            isEditing={editingBlock === 'fullDescription'}
+            onEdit={() => setEditingBlock('fullDescription')}
+            onSave={() => setEditingBlock(null)}
+            onCancel={() => setEditingBlock(null)}
+            preview={<p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{formData.description || 'Sin descripción detallada...'}</p>}
+        >
+            <textarea
+                name="description"
+                value={formData.description || ''}
+                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                className="w-full p-4 bg-muted/50 rounded-xl border-none focus:ring-1 focus:ring-primary min-h-[150px]"
+                placeholder="Descripción completa del producto..."
             />
         </EditableBlock>
 
@@ -450,6 +450,97 @@ export const ProductModalGeneral: React.FC<ProductModalGeneralProps> = ({
                         onChange={(tags) => setFormData(prev => ({ ...prev, tags }))}
                         placeholder="Ej. Novedad"
                     />
+
+                    {/* Landing Prices Editor - Added by Expert Logic */}
+                    {(() => {
+                        const assignedTags = formData.tags || [];
+                        const priceConfigs: { key: string; name: string }[] = [];
+
+                        // 1. Check for Service Landings
+                        availableLandings.forEach(landing => {
+                            const standardTag = `scope:landing-${landing.slug}`;
+                            const customTag = landing.featuredTag;
+                            
+                            const isAssigned = assignedTags.includes(standardTag) || (customTag && assignedTags.includes(customTag));
+                            
+                            if (isAssigned) {
+                                priceConfigs.push({
+                                    key: landing.slug,
+                                    name: `Landing: ${landing.name}`
+                                });
+                            }
+                        });
+
+                        // 2. Check for Themes
+                        availableThemes.forEach(theme => {
+                            const standardTag = `scope:landing-${theme.id}`;
+                            const customTag = theme.landing?.featuredTag;
+                            
+                            const isAssigned = assignedTags.includes(standardTag) || (customTag && assignedTags.includes(customTag));
+                            
+                            if (isAssigned) {
+                                if (!priceConfigs.find(c => c.key === theme.id)) {
+                                    priceConfigs.push({
+                                        key: theme.id,
+                                        name: `Campaña: ${theme.name}`
+                                    });
+                                }
+                            }
+                        });
+
+                        if (priceConfigs.length === 0) return null;
+
+                        return (
+                            <div className="mt-4 pt-4 border-t border-border/50 animate-in fade-in slide-in-from-top-2">
+                                <div className="flex items-center justify-between mb-2">
+                                    <label className="text-sm font-medium flex items-center gap-2">
+                                        <span className="bg-orange-100 text-orange-700 p-1 rounded-md"><ExternalLink className="w-3 h-3" /></span>
+                                        Precios por Landing
+                                    </label>
+                                    <span className="text-[10px] text-muted-foreground">Deja vacío para usar precio base</span>
+                                </div>
+                                <div className="space-y-2">
+                                    {priceConfigs.map(config => {
+                                        const currentPrice = (formData as Product).landingPrices?.[config.key] ?? '';
+                                        const basePrice = (formData as Product).price ?? 0;
+                                        
+                                        return (
+                                            <div key={config.key} className="flex items-center justify-between gap-4 p-2.5 bg-muted/40 rounded-lg border border-border/50 group hover:border-orange-200 transition-colors">
+                                                <div className="flex flex-col">
+                                                    <span className="text-sm font-medium text-foreground/90">{config.name}</span>
+                                                    <span className="text-[10px] text-muted-foreground font-mono">{config.key}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-xs font-medium text-muted-foreground">S/</span>
+                                                    <input
+                                                        type="number"
+                                                        value={currentPrice}
+                                                        onChange={(e) => {
+                                                            const val = e.target.value === '' ? undefined : Number(e.target.value);
+                                                            setFormData(prev => {
+                                                                const prevProduct = prev as Product;
+                                                                const newPrices = { ...(prevProduct.landingPrices || {}) };
+                                                                
+                                                                if (val === undefined) {
+                                                                    delete newPrices[config.key];
+                                                                } else {
+                                                                    newPrices[config.key] = val;
+                                                                }
+                                                                
+                                                                return { ...prev, landingPrices: newPrices };
+                                                            });
+                                                        }}
+                                                        placeholder={`Base: ${basePrice}`}
+                                                        className="w-24 h-8 text-sm bg-background border border-input rounded-md px-2 text-right focus:ring-1 focus:ring-orange-500 transition-all font-mono"
+                                                    />
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        );
+                    })()}
                 </div>
              </div>
         </EditableBlock>

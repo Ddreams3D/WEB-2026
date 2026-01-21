@@ -48,6 +48,7 @@ export interface Service {
   currency: string;
   
   // Detail Content
+  landingPrices?: Record<string, number>;
   tabsTitle?: string;
   tabs?: ProductTab[];
   specifications?: ProductSpecification[];
@@ -98,6 +99,7 @@ export interface StoreProduct {
   images: ProductImage[];
   
   // Detail Content
+  landingPrices?: Record<string, number>;
   tabsTitle?: string;
   tabs?: ProductTab[];
   specifications?: ProductSpecification[];

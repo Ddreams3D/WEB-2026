@@ -32,31 +32,37 @@ export const DEFAULT_HERO: SupportHero = {
 export const SUPPORT_CATEGORIES: SupportCategory[] = [
   {
     id: 'alexa',
-    title: 'Soportes para Alexa',
+    title: 'Soportes decorativos personalizados para Alexa',
     description: 'Personaliza y protege tu asistente de voz con nuestros diseños únicos.',
     items: []
   },
   {
     id: 'nintendo-switch',
-    title: 'Soportes para Nintendo Switch',
+    title: 'Soportes decorativos personalizados para Nintendo Switch',
     description: 'Exhibe y juega con estilo con nuestros diseños temáticos.',
     items: []
   },
   {
+    id: 'audifonos',
+    title: 'Soportes decorativos personalizados para Audífonos',
+    description: 'Cuida y exhibe tus auriculares con estilo y personalidad.',
+    items: []
+  },
+  {
     id: 'celulares',
-    title: 'Soportes para Celulares',
+    title: 'Soportes decorativos personalizados para Celulares',
     description: 'Comodidad y diseño para tu smartphone.',
     items: []
   },
   {
     id: 'mandos',
-    title: 'Soportes para Mandos',
+    title: 'Soportes decorativos personalizados para Mandos',
     description: 'Organiza tus controles de PS5, Xbox y más.',
     items: []
   },
   {
     id: 'otros',
-    title: 'Otros Soportes',
+    title: 'Otros soportes decorativos personalizados',
     description: 'Soluciones creativas para tus dispositivos.',
     items: []
   }

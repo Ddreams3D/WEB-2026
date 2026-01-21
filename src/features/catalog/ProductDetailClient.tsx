@@ -110,7 +110,7 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
 
         <div className="mb-10">
           <ProductInfo
-            product={product}
+            product={product as any}
             onShare={handleShare}
           />
         </div>
@@ -161,12 +161,12 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
             ) : (
               <section id="cotizar" className="space-y-6 rounded-2xl border border-border bg-card/60 p-5 lg:p-6 shadow-sm">
                 <ProductTabs
-                  product={product}
+                  product={product as any}
                   activeTab={activeTab}
                   setActiveTab={setActiveTab}
                 />
                 <ProductActions
-                  product={product}
+                  product={product as any}
                   activeTab={activeTab}
                   isAdding={isAdding}
                   handleAction={handleAction}
@@ -176,14 +176,14 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
 
             {!isWizardService && (
               <ProductPrice
-                product={product}
+                product={product as any}
                 currentPrice={currentPrice}
               />
             )}
 
             {!isWizardService && (
               <ProductOptions
-                product={product}
+                product={product as any}
                 selectedOptions={selectedOptions}
                 customInputs={customInputs}
                 handleOptionChange={handleOptionChange}
@@ -192,17 +192,17 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
             )}
 
             {!isWizardService && (
-              <ProductSpecifications product={product} />
+              <ProductSpecifications product={product as any} />
             )}
 
-            <ProductTags product={product} />
+            <ProductTags product={product as any} />
           </div>
         </div>
 
         <ProductRelated relatedProducts={relatedProducts} />
 
         <ProductImageModal
-          product={product}
+          product={product as any}
           selectedImage={selectedImage}
           selectedImageId={selectedImageId}
           isOpen={isModalOpen}
@@ -241,18 +241,18 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
 
         <div className="space-y-8">
           <ProductInfo
-            product={product}
+            product={product as any}
             onShare={handleShare}
           />
 
           <ProductPrice
-            product={product}
+            product={product as any}
             currentPrice={currentPrice}
           />
 
           {product.tabs ? (
             <ProductTabs
-              product={product}
+              product={product as any}
               activeTab={activeTab}
               setActiveTab={setActiveTab}
             />
@@ -265,30 +265,30 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
           )}
 
           <ProductOptions
-            product={product}
+            product={product as any}
             selectedOptions={selectedOptions}
             customInputs={customInputs}
             handleOptionChange={handleOptionChange}
             setCustomInputs={setCustomInputs}
           />
 
-          <ProductSpecifications product={product} />
+          <ProductSpecifications product={product as any} />
 
           <ProductActions
-            product={product}
+            product={product as any}
             activeTab={activeTab}
             isAdding={isAdding}
             handleAction={handleAction}
           />
 
-          <ProductTags product={product} />
+          <ProductTags product={product as any} />
         </div>
       </div>
 
       <ProductRelated relatedProducts={relatedProducts} />
 
       <ProductImageModal
-        product={product}
+        product={product as any}
         selectedImage={selectedImage}
         selectedImageId={selectedImageId}
         isOpen={isModalOpen}

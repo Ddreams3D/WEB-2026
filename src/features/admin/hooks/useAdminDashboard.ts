@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, onSnapshot, query, orderBy, limit, getCountFromServer } from 'firebase/firestore';
+import { collection, onSnapshot, query, orderBy, limit, getCountFromServer, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { StoreProduct } from '@/shared/types/domain';
 import { useToast } from '@/components/ui/ToastManager';
@@ -41,10 +41,11 @@ export function useAdminDashboard() {
       try {
         // 1. Contadores Optimizados (Aggregation Queries)
         // Evita descargar todos los documentos, solo cuenta usando índices
+        // Filtramos 'isDeleted' != true para mostrar solo items activos/existentes
         const [productsSnap, servicesSnap, ordersSnap, usersSnap] = await Promise.all([
-          getCountFromServer(collection(db!, 'products')),
-          getCountFromServer(collection(db!, 'services')),
-          getCountFromServer(collection(db!, 'orders')),
+          getCountFromServer(query(collection(db!, 'products'), where('isDeleted', '!=', true))),
+          getCountFromServer(query(collection(db!, 'services'), where('isDeleted', '!=', true))),
+          getCountFromServer(query(collection(db!, 'orders'), where('isDeleted', '!=', true))),
           getCountFromServer(collection(db!, 'users'))
         ]);
 

@@ -69,6 +69,13 @@
 
 ## 📜 HISTORIAL DE SOLUCIONES Y LECCIONES (Archivo)
 
+### 7. Multi-Context Pricing (Precios Dinámicos por Landing) [IMPLEMENTADO - Enero 2026]
+- **Problema:** Necesidad de vender el mismo producto con precios distintos según la landing (ej. Medicina vs Estudiantes) sin duplicar el producto en base de datos.
+- **Solución:**
+  - Se extendió el tipo `Product` con `landingPrices: Record<string, number>`.
+  - Se modificaron los hooks `useServiceLanding` y `useSeasonalLanding` para detectar el contexto y sobreescribir el precio visualmente en tiempo de ejecución.
+  - Se mantiene el principio de "Single Source of Truth" (un solo producto, múltiples vistas).
+
 ### 6. Build Crash por Definiciones Duplicadas [MITIGADO - Enero 2026]
 - **Problema:** `ArchitectureSettings.tsx` contenía definiciones locales de componentes (`NavTab`, `SectionLabel`) que causaban errores de "duplicate identifier" y bloqueaban el build.
 - **Solución:**

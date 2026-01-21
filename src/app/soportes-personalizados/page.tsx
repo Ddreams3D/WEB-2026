@@ -70,22 +70,41 @@ export default async function SupportsPage() {
 
     let placed = false;
     
-    // 1. Try mapping to existing hardcoded categories via keywords
-    if (text.includes('alexa') || text.includes('echo') || text.includes('amazon')) {
-      const cat = displayCategories.find(c => c.id === 'alexa');
-      if (cat) { cat.items.push(item); placed = true; }
-    } else if (text.includes('switch') || text.includes('nintendo') || text.includes('joycon')) {
-      const cat = displayCategories.find(c => c.id === 'nintendo-switch');
-      if (cat) { cat.items.push(item); placed = true; }
-    } else if (text.includes('celular') || text.includes('iphone') || text.includes('samsung') || text.includes('smartphone') || text.includes('móvil')) {
-      const cat = displayCategories.find(c => c.id === 'celulares');
-      if (cat) { cat.items.push(item); placed = true; }
-    } else if (text.includes('mando') || text.includes('control') || text.includes('ps5') || text.includes('xbox') || text.includes('playstation')) {
-      const cat = displayCategories.find(c => c.id === 'mandos');
-      if (cat) { cat.items.push(item); placed = true; }
-    } else if (text.includes('auricular') || text.includes('headset') || text.includes('audífono')) {
-        // Special case: if we want to map headphones to a new or existing category
-        // If we don't have a hardcoded one, let it fall through to dynamic creation or Other
+    // Helper for keyword checking
+    const checkKeywords = (sourceText: string) => {
+      if (/\b(alexa|echo|amazon)\b/i.test(sourceText)) return 'alexa';
+      // Added plural support (joycons)
+      if (/\b(switch|nintendo|joycon(s)?)\b/i.test(sourceText)) return 'nintendo-switch';
+      // Added plural support (celulares, smartphones, moviles)
+      if (/\b(celular(es)?|iphone|samsung|smartphone(s)?|móvil(es)?|movil(es)?)\b/i.test(sourceText)) return 'celulares';
+      // Added plural support (mandos, controles)
+      if (/\b(mando(s)?|control(es)?|ps5|xbox|playstation)\b/i.test(sourceText)) return 'mandos';
+      // Added plural support (auriculares, headsets, audifonos)
+      if (/\b(auricular(es)?|headset(s)?|aud[íi]fono(s)?)\b/i.test(sourceText)) return 'audifonos';
+      return null;
+    };
+
+    // 1. PRIORITY: Check explicit Category Name first
+    // This ensures that if a product is explicitly categorized as "Nintendo Switch", it goes there
+    // even if the description mentions "Amazon" (e.g. "Available on Amazon").
+    const explicitId = checkKeywords(catName);
+    if (explicitId) {
+      const cat = displayCategories.find(c => c.id === explicitId);
+      if (cat) { 
+        cat.items.push(item); 
+        return; // Done!
+      }
+    }
+
+    // 2. Fallback: Fuzzy Text Search (Description, Tags, Title)
+    // Only if explicit category didn't match a known group
+    const fuzzyId = checkKeywords(text);
+    if (fuzzyId) {
+      const cat = displayCategories.find(c => c.id === fuzzyId);
+      if (cat) { 
+        cat.items.push(item); 
+        placed = true; 
+      }
     }
 
     if (placed) return;
@@ -96,25 +115,33 @@ export default async function SupportsPage() {
       const normCatName = product.categoryName.trim();
       const normId = normCatName.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
 
-      // Check if it matches an existing category in displayCategories (by Title or ID)
-      const existingCat = displayCategories.find(c => 
-        c.title.toLowerCase() === normCatName.toLowerCase() || 
-        c.id === normId
-      );
-
-      if (existingCat) {
-        existingCat.items.push(item);
-        placed = true;
+      // MERGE GENERIC CATEGORIES INTO 'OTROS'
+      if (['soportes', 'otros-soportes', 'general', 'otros'].includes(normId)) {
+        if (othersCategory) {
+          othersCategory.items.push(item);
+          placed = true;
+        }
       } else {
-        // Create a new category dynamically
-        const newCat: SupportCategory = {
-          id: normId,
-          title: normCatName,
-          description: `Explora nuestra colección de ${normCatName}.`,
-          items: [item]
-        };
-        displayCategories.push(newCat);
-        placed = true;
+        // Check if it matches an existing category in displayCategories (by Title or ID)
+        const existingCat = displayCategories.find(c => 
+          c.title.toLowerCase() === normCatName.toLowerCase() || 
+          c.id === normId
+        );
+
+        if (existingCat) {
+          existingCat.items.push(item);
+          placed = true;
+        } else {
+          // Create a new category dynamically
+          const newCat: SupportCategory = {
+            id: normId,
+            title: normCatName,
+            description: `Explora nuestra colección de ${normCatName}.`,
+            items: [item]
+          };
+          displayCategories.push(newCat);
+          placed = true;
+        }
       }
     }
 

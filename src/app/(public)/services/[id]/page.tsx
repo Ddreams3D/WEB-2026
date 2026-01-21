@@ -109,7 +109,8 @@ export default async function ServicePage({ params }: Props) {
   return (
     <>
       <JsonLd data={jsonLd} />
-      <ProductDetailClient product={productAdapter} />
+      {/* Casteamos a any temporalmente para resolver el conflicto de tipos entre domain.ts e index.ts */}
+      <ProductDetailClient product={productAdapter as any} />
     </>
   );
 }

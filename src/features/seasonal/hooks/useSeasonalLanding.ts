@@ -108,6 +108,15 @@ export function useSeasonalLanding(config: SeasonalThemeConfig) {
             if (pTags.includes('scope:hidden') || pTags.includes('oculto')) return false;
 
             return pTags.includes(tag);
+        }).map(p => {
+             // Apply landing-specific price override if exists
+             if (p.landingPrices && p.landingPrices[config.id]) {
+                 return {
+                     ...p,
+                     price: p.landingPrices[config.id]
+                 };
+             }
+             return p;
         });
 
         setFeaturedProducts(filtered);

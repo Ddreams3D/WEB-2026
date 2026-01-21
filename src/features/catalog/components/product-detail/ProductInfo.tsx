@@ -67,14 +67,34 @@ export function ProductInfo({ product, onShare }: ProductInfoProps) {
       </div>
 
       <div className="flex flex-wrap gap-4 mt-3">
-        {/* Stock Status - Ocultar para servicios */}
+        {/* Stock Status - Data Driven */}
         {product.kind !== 'service' && (
-          <div className="flex items-center text-sm">
-            <div className="w-2 h-2 rounded-full mr-2 bg-success animate-pulse" />
-            <span className="text-success font-medium">
-              Fabricación bajo pedido
-            </span>
-          </div>
+          <>
+            {product.specifications?.find(s => s.name === 'Stock') ? (
+               <div className="flex items-center text-sm">
+                <div className="w-2 h-2 rounded-full mr-2 bg-success animate-pulse" />
+                <span className="text-success font-medium">
+                  {product.specifications.find(s => s.name === 'Stock')?.value}
+                </span>
+              </div>
+            ) : (
+              <div className="flex items-center text-sm">
+                <div className="w-2 h-2 rounded-full mr-2 bg-success animate-pulse" />
+                <span className="text-success font-medium">
+                  Fabricación bajo pedido
+                </span>
+              </div>
+            )}
+
+            {product.specifications?.find(s => s.name === 'Tiempo de fabricación') && (
+               <div className="flex items-center text-sm">
+                <div className="w-2 h-2 rounded-full mr-2 bg-blue-500/50" />
+                <span className="text-muted-foreground font-medium">
+                  {product.specifications.find(s => s.name === 'Tiempo de fabricación')?.value}
+                </span>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

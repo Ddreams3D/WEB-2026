@@ -37,6 +37,15 @@ export function useServiceLanding(config: ServiceLandingConfig, isPreview: boole
               if (pTags.includes('scope:hidden') || pTags.includes('oculto')) return false;
               
               return pTags.some(t => t.includes(tag));
+            }).map(p => {
+              // Apply landing-specific price override if exists
+              if (p.landingPrices && p.landingPrices[config.slug]) {
+                return {
+                  ...p,
+                  price: p.landingPrices[config.slug]
+                };
+              }
+              return p;
             });
             // Only use filtered if we actually found matches or if a specific tag was enforced
             // If it's a fallback tag and no matches, we might want to show empty or recent?

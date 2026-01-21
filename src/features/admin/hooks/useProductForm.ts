@@ -29,10 +29,14 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
     isFeatured: false,
     tags: [],
     seoKeywords: [],
-    specifications: [],
+    specifications: [
+      { name: 'Stock', value: 'Fabricación bajo pedido' },
+      { name: 'Tiempo de fabricación', value: '2-4 días hábiles' }
+    ],
     tabs: [],
     tabsTitle: '',
     materials: [],
+    options: [],
     kind: 'product',
     displayOrder: 0
   });

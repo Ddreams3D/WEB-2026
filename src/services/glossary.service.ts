@@ -68,6 +68,14 @@ const INITIAL_GLOSSARY: GlossaryItem[] = [
     lastUpdated: new Date().toISOString()
   },
 
+  {
+    id: 'core-context-price',
+    term: 'Precio por Contexto (Landing Price)',
+    definition: 'Mecanismo que permite a un mismo Producto tener precios diferentes según la Landing Page donde se visualice. Mantiene un inventario unificado pero adapta la oferta al segmento de mercado (ej. Estudiantes vs Profesionales).',
+    category: 'core',
+    lastUpdated: new Date().toISOString()
+  },
+
   // --- MARKETING ---
   {
     id: 'mkt-landings-specific',

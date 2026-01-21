@@ -77,7 +77,7 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
       {viewMode === 'list' ? (
         <ProductManagerList
             loading={loading}
-            filteredProducts={filteredProducts}
+            filteredProducts={filteredProducts as any}
             mode={mode}
             showDeleted={showDeleted}
             handleRestoreProduct={handleRestoreProduct}
@@ -87,7 +87,7 @@ export default function ProductManager({ mode = 'all' }: ProductManagerProps) {
         />
       ) : (
         <ProductManagerGrid
-            filteredProducts={filteredProducts}
+            filteredProducts={filteredProducts as any}
             showDeleted={showDeleted}
             mode={mode}
             handleRestoreProduct={handleRestoreProduct}
