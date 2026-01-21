@@ -55,7 +55,8 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
   const [isImageUploading, setIsImageUploading] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
-  const [slugEditable, setSlugEditable] = useState(false);
+  // Default: Editable only if new product (no ID yet)
+  const [slugEditable, setSlugEditable] = useState(!product?.id);
   const [editingBlock, setEditingBlock] = useState<string | null>(null);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [isAddingCategory, setIsAddingCategory] = useState(false);
@@ -143,7 +144,11 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
         id: tempId,
         name: '', description: '', shortDescription: '', categoryName: '', categoryId: 'general',
         price: 0, stock: 999, images: [], isActive: true, isFeatured: false, tags: [], seoKeywords: [],
-        specifications: [], tabs: [], tabsTitle: '', materials: [], kind: initialKind
+        specifications: [
+          { name: 'Stock', value: 'Fabricación bajo pedido' },
+          { name: 'Tiempo de fabricación', value: '2-4 días hábiles' }
+        ],
+        tabs: [], tabsTitle: '', materials: [], kind: initialKind
       });
     }
     if (typeof window !== 'undefined') {
@@ -178,11 +183,56 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
   }, [isDirty]);
 
   // Handlers
+  const handleSlugChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value;
+    
+    // Custom normalization allowing "3D"
+    // 1. Temporarily hide "3D" to protect it from lowercase
+    const protectedValue = rawValue.replace(/3D/g, 'THREE_D_PLACEHOLDER');
+    
+    // 2. Soft normalize (lowercase everything else, spaces to dashes)
+    const normalized = protectedValue
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^a-z0-9-_]/g, ''); // Allow underscore for placeholder
+        
+    // 3. Restore "3D"
+    const finalInput = normalized.replace(/three_d_placeholder/g, '3D');
+
+    setFormData(prev => {
+        const newData = { ...prev, slug: finalInput };
+        
+        // Auto-generate Metadata suggestions from Slug if fields are empty
+        const humanReadable = finalInput
+            .replace(/-/g, ' ')
+            .replace(/3D/g, '3D') // Ensure 3D is respected in title
+            .split(' ')
+            .filter(Boolean)
+            .map(w => w === '3D' ? '3D' : w.charAt(0).toUpperCase() + w.slice(1))
+            .join(' ');
+
+        if (!prev.metaTitle && humanReadable) {
+            newData.metaTitle = humanReadable;
+        }
+        
+        if (!prev.metaDescription && humanReadable) {
+             // Basic default description
+            newData.metaDescription = `Descubre ${humanReadable} en Ddreams 3D. Calidad y precisión garantizada.`;
+        }
+
+        return newData;
+    });
+    setIsDirty(true);
+  };
+
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setIsSubmitting(true);
     try {
-      const baseData = { ...formData, slug: formData.slug || generateSlug(formData.name || '') };
+      // Ensure strict normalization on save
+      const finalSlug = generateSlug(formData.slug || formData.name || '');
+      const baseData = { ...formData, slug: finalSlug };
+      
       const dataToSave = formData.kind === 'product' 
         ? { ...baseData, materials: (formData as Product).materials || [] }
         : baseData;
@@ -293,6 +343,7 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
     setIsAddingCategory,
     handleSubmit,
     handleChange,
+    handleSlugChange,
     handleCheckboxChange,
     handleImageUploaded,
     handleEsc,

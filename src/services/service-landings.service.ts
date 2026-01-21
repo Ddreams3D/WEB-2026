@@ -39,6 +39,9 @@ export const ServiceLandingsService = {
           const localData = mergedLandings[index];
           mergedLandings[index] = {
             ...dbLanding,
+            // Force code-defined fields to be source of truth
+            name: localData.name, 
+            slug: localData.slug,
             primaryColor: localData.primaryColor ?? dbLanding.primaryColor,
             sections: mergeSections(localData.sections, dbLanding.sections || []),
           };
@@ -76,6 +79,9 @@ export const ServiceLandingsService = {
           const localData = SERVICE_LANDINGS_DATA.find(l => l.id === data.id);
           const finalData = localData ? {
              ...data,
+             // Force code-defined fields to be source of truth
+             name: localData.name,
+             slug: localData.slug,
              primaryColor: localData.primaryColor ?? data.primaryColor,
              sections: mergeSections(localData.sections, data.sections || [])
           } : data;

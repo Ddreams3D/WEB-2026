@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, RefreshCw, Trash2, Filter, Plus, Grid, List, ArrowUp, ArrowDown, Check, Wrench } from '@/lib/icons';
+import { Search, RefreshCw, Trash2, Filter, Plus, Grid, List, ArrowUp, ArrowDown, Check } from '@/lib/icons';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
@@ -44,57 +44,6 @@ export function ProductManagerHeader({
     handleAddProduct
 }: ProductManagerHeaderProps) {
   const { toast } = useToast();
-  const [isUpdatingSpecs, setIsUpdatingSpecs] = useState(false);
-
-  const handleUpdateSpecs = async () => {
-      if (!confirm('¿Estás seguro de agregar las especificaciones de Stock y Tiempo de fabricación a todos los productos?')) return;
-      
-      setIsUpdatingSpecs(true);
-      try {
-          const allProducts = await ProductService.getAllProducts(true);
-          let updatedCount = 0;
-          
-          for (const p of allProducts) {
-              // Only for products, not services
-              if (p.kind !== 'product') continue;
-
-              const currentSpecs = p.specifications || [];
-              let hasStock = false;
-              let hasTime = false;
-              
-              for (const s of currentSpecs) {
-                  if (s.name === 'Stock') hasStock = true;
-                  if (s.name === 'Tiempo de fabricación') hasTime = true;
-              }
-              
-              const newSpecs = [...currentSpecs];
-              let changed = false;
-              
-              if (!hasStock) {
-                  newSpecs.push({ name: 'Stock', value: 'Fabricación bajo pedido' });
-                  changed = true;
-              }
-              
-              if (!hasTime) {
-                  newSpecs.push({ name: 'Tiempo de fabricación', value: '2-4 días hábiles' });
-                  changed = true;
-              }
-              
-              if (changed) {
-                  await ProductService.updateProduct(p.id, { specifications: newSpecs });
-                  updatedCount++;
-              }
-          }
-          
-          toast({ title: 'Actualización completada', message: `Se actualizaron ${updatedCount} productos.`, type: 'success' });
-          loadProducts(true);
-      } catch (error) {
-          console.error(error);
-          toast({ title: 'Error', message: 'Falló la actualización masiva', type: 'error' });
-      } finally {
-          setIsUpdatingSpecs(false);
-      }
-  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -111,16 +60,6 @@ export function ProductManagerHeader({
         </div>
         <div className="flex flex-wrap gap-2 items-center">
             
-            <Button 
-                variant="outline" 
-                size="icon" 
-                onClick={handleUpdateSpecs} 
-                disabled={isUpdatingSpecs || loading} 
-                title="Actualizar Specs Masivamente"
-            >
-                <Wrench className={cn("w-4 h-4", isUpdatingSpecs && "animate-spin")} />
-            </Button>
-
             <Popover>
                 <PopoverTrigger asChild>
                     <Button variant="outline" className="gap-2 bg-white dark:bg-neutral-800 border-dashed">

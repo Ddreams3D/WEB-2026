@@ -12,10 +12,6 @@ interface SpecificationsEditorProps {
 }
 
 export function SpecificationsEditor({ specs = [], onChange }: SpecificationsEditorProps) {
-  const handleAdd = () => {
-    onChange([...specs, { name: '', value: '' }]);
-  };
-
   const handleRemove = (index: number) => {
     onChange(specs.filter((_, i) => i !== index));
   };
@@ -58,14 +54,6 @@ export function SpecificationsEditor({ specs = [], onChange }: SpecificationsEdi
             </Button>
           </div>
         ))}
-        
-        <button
-            onClick={handleAdd}
-            className="flex items-center justify-center gap-2 p-2 rounded-xl border border-dashed border-muted-foreground/30 text-muted-foreground hover:text-primary hover:border-primary/50 hover:bg-primary/5 transition-all h-[50px]"
-        >
-            <Plus className="w-4 h-4" />
-            <span className="text-sm font-medium">Agregar Especificación</span>
-        </button>
       </div>
     </div>
   );

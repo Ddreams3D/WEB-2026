@@ -40,7 +40,7 @@ export function GeneralSection({ data, updateField, automationEnabled }: General
             <div className="space-y-3 relative">
               <Label className="text-base font-medium flex items-center gap-2">
                 <span className="bg-primary/10 p-1 rounded text-primary text-xs">ID</span>
-                Nombre Interno
+                Nombre (Gestión Interna)
               </Label>
               <Input 
                 value={data.internalName || ''} 

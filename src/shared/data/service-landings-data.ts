@@ -231,11 +231,11 @@ fríos, impersonales, sin carácter.
   {
     id: 'medical-models',
     slug: 'modelos-anatomicos-3d', // Término más profesional y específico
-    name: 'Biomodelos Médicos',
+    name: 'Modelos Médicos',
     isActive: true,
     themeMode: 'system',
     category: 'vertical',
-    metaTitle: 'Biomodelos e Impresión 3D Médica en Arequipa',
+    metaTitle: 'Modelos Médicos e Impresión 3D en Arequipa',
     metaDescription: 'Impresión 3D de órganos, huesos y estructuras anatómicas en Arequipa para planificación quirúrgica, educación médica y exposiciones.',
     primaryColor: '#0891b2', // Cyan-600
     heroImage: `/${StoragePathBuilder.services('modelos-anatomicos-3d')}/hero-cover.jpg`,
@@ -243,7 +243,7 @@ fríos, impersonales, sin carácter.
       {
         id: 'hero',
         type: 'hero',
-        title: 'Biomodelos y Anatomía 3D',
+        title: 'Modelos Médicos y Anatomía 3D',
         subtitle: 'Precisión médica en tus manos',
         content: 'Réplicas anatómicas exactas a partir de tomografías para planificación y docencia.',
       }

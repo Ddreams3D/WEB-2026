@@ -53,6 +53,10 @@ export interface Service {
   tabs?: ProductTab[];
   specifications?: ProductSpecification[];
   
+  // SEO Metadata
+  metaTitle?: string;
+  metaDescription?: string;
+
   // Meta
   isActive: boolean;
   isFeatured: boolean;
@@ -98,6 +102,10 @@ export interface StoreProduct {
   // Media
   images: ProductImage[];
   
+  // SEO Metadata
+  metaTitle?: string;
+  metaDescription?: string;
+
   // Detail Content
   landingPrices?: Record<string, number>;
   tabsTitle?: string;

@@ -27,6 +27,10 @@ export interface Project {
   // Soft Delete (Optional as it might not be present on all product types yet)
   isDeleted?: boolean;
   deletedAt?: Date;
+
+  // SEO
+  metaTitle?: string;
+  metaDescription?: string;
 }
 
 export interface Service {
@@ -119,6 +123,11 @@ export interface Product {
   options?: ProductOption[];
   tags: string[];
   seoKeywords?: string[];
+
+  // SEO Metadata
+  metaTitle?: string;
+  metaDescription?: string;
+
   stock?: number;
   minQuantity?: number;
   maxQuantity?: number;

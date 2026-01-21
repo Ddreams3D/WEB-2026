@@ -47,6 +47,7 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
     handleSubmit,
     handleChange,
     handleCheckboxChange,
+    handleSlugChange,
     handleImageUploaded,
     handleEsc,
     requestClose
@@ -320,6 +321,7 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
                             setFormData={setFormData}
                             slugEditable={slugEditable}
                             setSlugEditable={setSlugEditable}
+                            handleSlugChange={handleSlugChange}
                         />
                     )}
                   </AnimatePresence>
