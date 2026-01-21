@@ -232,6 +232,8 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
                             )}
                         </div>
                         
+                        {/* Stock Removed as per user request (On-demand business model) */}
+                        {/* 
                         {formData.kind === 'product' && (
                             <div 
                                 onClick={() => setEditingBlock('stock')}
@@ -253,6 +255,7 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
                                 )}
                             </div>
                         )}
+                        */}
 
                         <div className="bg-card rounded-2xl border shadow-sm hover:shadow-md transition-shadow flex items-center justify-between p-3">
                             <div>
