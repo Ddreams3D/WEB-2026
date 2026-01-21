@@ -2,7 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Info, Layers, Check, Trash2, Star, ImageIcon, FileText, Globe, ExternalLink } from 'lucide-react';
+import { Plus, Info, Layers, Check, Trash2, Star, ImageIcon, FileText, Globe, ExternalLink, Wand2, Lock, Unlock, RefreshCw } from 'lucide-react';
 import { EditableBlock } from '../EditableBlock';
 import ImageUpload from '../ImageUpload';
 import { StringListEditor } from '../AdminEditors';
@@ -37,6 +37,12 @@ interface ProductModalGeneralProps {
   setIsAddingCategory: (isAdding: boolean) => void;
   isImageUploading: boolean;
   handleImageUploaded: (url: string) => void;
+  slugEditable: boolean;
+  setSlugEditable: (editable: boolean) => void;
+  handleLockSlug: () => void;
+  handleGenerateAI: () => void;
+  handleSlugChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  isGenerating: boolean;
 }
 
 export const ProductModalGeneral: React.FC<ProductModalGeneralProps> = ({
@@ -51,7 +57,13 @@ export const ProductModalGeneral: React.FC<ProductModalGeneralProps> = ({
   isAddingCategory,
   setIsAddingCategory,
   isImageUploading,
-  handleImageUploaded
+  handleImageUploaded,
+  slugEditable,
+  setSlugEditable,
+  handleLockSlug,
+  handleGenerateAI,
+  handleSlugChange,
+  isGenerating
 }) => {
   const { theme } = useTheme();
   const [availableLandings, setAvailableLandings] = useState<ServiceLandingConfig[]>([]);
@@ -111,6 +123,64 @@ export const ProductModalGeneral: React.FC<ProductModalGeneralProps> = ({
         exit={{ opacity: 0, x: 20 }}
         className="space-y-4"
     >
+        {/* Slug & AI Control */}
+        <div className="bg-card rounded-xl border p-4 shadow-sm space-y-3">
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <Globe className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">URL & Generación IA</span>
+                </div>
+                {/* AI Button */}
+                <Button 
+                    onClick={handleGenerateAI} 
+                    disabled={isGenerating || !formData.slug}
+                    size="sm"
+                    className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white border-0 shadow-md"
+                >
+                    {isGenerating ? (
+                        <>
+                            <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                            Generando...
+                        </>
+                    ) : (
+                        <>
+                            <Wand2 className="w-4 h-4 mr-2" />
+                            Generar Contenido
+                        </>
+                    )}
+                </Button>
+            </div>
+            
+            <div className="flex gap-2">
+                 <div className="relative flex-1">
+                    <input 
+                        type="text" 
+                        value={formData.slug || ''}
+                        onChange={handleSlugChange}
+                        disabled={!slugEditable}
+                        placeholder="slug-del-producto"
+                        className={`w-full pl-3 pr-10 py-2 rounded-lg border ${slugEditable ? 'bg-background border-input' : 'bg-muted border-transparent text-muted-foreground'} text-sm font-mono focus:ring-2 focus:ring-primary/20 transition-all`}
+                    />
+                    <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                        <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-6 w-6 rounded-full hover:bg-muted"
+                            onClick={handleLockSlug}
+                            title={slugEditable ? "Bloquear URL" : "Desbloquear URL"}
+                        >
+                            {slugEditable ? <Unlock className="w-3 h-3 text-amber-500" /> : <Lock className="w-3 h-3 text-green-600" />}
+                        </Button>
+                    </div>
+                 </div>
+            </div>
+            <p className="text-[11px] text-muted-foreground flex gap-4">
+                <span>1. Define Slug (ej. maceta-groot)</span>
+                <span>2. Bloquea & Sube Imagen</span>
+                <span>3. Generar con IA</span>
+            </p>
+        </div>
+
         {/* Short Description Block */}
         <EditableBlock
             id="description"
@@ -623,6 +693,7 @@ export const ProductModalGeneral: React.FC<ProductModalGeneralProps> = ({
                         cleanAndSlugify(formData.categoryName || 'general'), 
                         formData.slug || 'temp'
                     )}
+                    defaultName={formData.slug || formData.name}
                 />
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
                     {formData.images?.map((img, index) => (

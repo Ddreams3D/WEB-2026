@@ -4,6 +4,7 @@ import { Service } from '@/shared/types/domain';
 import { generateSlug } from '@/lib/utils';
 import { productSchema, serviceSchema, productDraftSchema, serviceDraftSchema } from '@/lib/validators/catalog.schema';
 import { useToast } from '@/components/ui/ToastManager';
+import { generateProductContent } from '@/actions/ai-product-generator';
 
 interface UseProductFormProps {
   product?: Product | Service | null;
@@ -53,6 +54,7 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
   const [activeTabId, setActiveTabId] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState('general');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const [isImageUploading, setIsImageUploading] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
@@ -188,44 +190,109 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
   // Handlers
   const handleSlugChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value;
-    
-    // Custom normalization allowing "3D"
-    // 1. Temporarily hide "3D" to protect it from lowercase
-    const protectedValue = rawValue.replace(/3D/g, 'THREE_D_PLACEHOLDER');
-    
-    // 2. Soft normalize (lowercase everything else, spaces to dashes)
-    const normalized = protectedValue
-        .toLowerCase()
-        .replace(/\s+/g, '-')
-        .replace(/[^a-z0-9-_]/g, ''); // Allow underscore for placeholder
-        
-    // 3. Restore "3D"
-    const finalInput = normalized.replace(/three_d_placeholder/g, '3D');
-
-    setFormData(prev => {
-        const newData = { ...prev, slug: finalInput };
-        
-        // Auto-generate Metadata suggestions from Slug if fields are empty
-        const humanReadable = finalInput
-            .replace(/-/g, ' ')
-            .replace(/3D/g, '3D') // Ensure 3D is respected in title
-            .split(' ')
-            .filter(Boolean)
-            .map(w => w === '3D' ? '3D' : w.charAt(0).toUpperCase() + w.slice(1))
-            .join(' ');
-
-        if (!prev.metaTitle && humanReadable) {
-            newData.metaTitle = humanReadable;
-        }
-        
-        if (!prev.metaDescription && humanReadable) {
-             // Basic default description
-            newData.metaDescription = `Descubre ${humanReadable} en Ddreams 3D. Calidad y precisión garantizada.`;
-        }
-
-        return newData;
-    });
+    // Allow free typing (spaces, accents, case) to act as a "Seed" for generation
+    setFormData(prev => ({ ...prev, slug: rawValue }));
     setIsDirty(true);
+  };
+
+  const handleLockSlug = async () => {
+    if (!slugEditable) {
+        setSlugEditable(true);
+        return;
+    }
+
+    // When locking, just normalize the slug
+    const rawInput = formData.slug || '';
+    const finalSlug = generateSlug(rawInput);
+    
+    setFormData(prev => ({ ...prev, slug: finalSlug }));
+    setSlugEditable(false);
+  };
+
+  const handleGenerateAI = async () => {
+    const rawInput = formData.slug || formData.name || '';
+    if (rawInput.length <= 3) {
+        showError('Info insuficiente', 'Escribe un nombre o slug más largo para generar contenido.');
+        return;
+    }
+
+    setIsGenerating(true);
+    let aiData = null;
+    
+    try {
+        // Race between AI and a 15s Timeout
+        const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error("Tiempo de espera agotado (15s)")), 15000)
+        );
+        
+        // Try to get image context if available
+        let imageBase64: string | undefined = undefined;
+        if (formData.images && formData.images.length > 0 && formData.images[0].url) {
+            try {
+                const imageUrl = formData.images[0].url;
+                // Fetch the image
+                const response = await fetch(imageUrl);
+                if (response.ok) {
+                    const blob = await response.blob();
+                    // Convert to base64
+                    const base64Data = await new Promise<string>((resolve) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                            const res = reader.result as string;
+                            // Remove data:image/...;base64, prefix to get raw base64
+                            resolve(res.split(',')[1]);
+                        };
+                        reader.readAsDataURL(blob);
+                    });
+                    imageBase64 = base64Data;
+                }
+            } catch (e) {
+                console.warn("Could not fetch image for AI context:", e);
+            }
+        }
+        
+        const aiPromise = generateProductContent(rawInput, {
+            validMaterials: availableMaterials,
+            validCategories: availableCategories,
+            imageBase64: imageBase64
+        });
+
+        aiData = await Promise.race([aiPromise, timeoutPromise]) as any;
+
+    } catch (error: any) {
+        console.error("AI Generation Error:", error);
+        if (error.message !== "Tiempo de espera agotado (15s)") {
+             showError('Error IA', `Fallo al generar: ${error.message || 'Error desconocido'}`);
+        } else {
+             console.warn("AI Timeout");
+             showError('Timeout IA', 'La IA tardó demasiado. Intenta de nuevo.');
+        }
+    }
+    
+    setIsGenerating(false);
+
+    if (aiData) {
+        setFormData(prev => ({
+            ...prev,
+            // Only update fields that are present in AI response
+            name: aiData.name || prev.name,
+            description: aiData.description || prev.description,
+            shortDescription: aiData.shortDescription || prev.shortDescription,
+            metaTitle: aiData.metaTitle || prev.metaTitle,
+            metaDescription: aiData.metaDescription || prev.metaDescription,
+            // Convert string "keywords" from AI to array
+            seoKeywords: typeof aiData.keywords === 'string' 
+                ? aiData.keywords.split(',').map((k: string) => k.trim()) 
+                : (Array.isArray(aiData.keywords) ? aiData.keywords : prev.seoKeywords),
+            
+            categoryName: aiData.categorySuggestion || prev.categoryName,
+            // Add material if it's a product and not already set
+            materials: (prev.kind === 'product') 
+                ? (aiData.materialSuggestion ? [aiData.materialSuggestion] : prev.materials)
+                : undefined
+        }));
+        showSuccess('IA: Contenido Generado', 'La inteligencia artificial ha completado los detalles del producto.');
+    }
   };
 
   const handleSubmit = async (e?: React.FormEvent, asDraft: boolean = false) => {
@@ -240,13 +307,7 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
       const targetIsActive = !asDraft; // Draft = inactive, Published = active
 
       // Auto-populate SEO if missing (Draft or Publish)
-      const humanReadable = finalSlug
-           .replace(/-/g, ' ')
-           .replace(/3D/g, '3D')
-           .split(' ')
-           .filter(Boolean)
-           .map(w => w === '3D' ? '3D' : w.charAt(0).toUpperCase() + w.slice(1))
-           .join(' ');
+      const humanReadable = formData.name || finalSlug;
 
       const autoMetaTitle = humanReadable;
       const autoMetaDesc = `Descubre ${humanReadable} en Ddreams 3D. Calidad y precisión garantizada.`;
@@ -361,6 +422,17 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
     }
   };
 
+  const handleDiscard = () => {
+    // Clear draft from storage
+    try { localStorage.removeItem(getDraftKey()); } catch {}
+    
+    // Reset form state to clean state (optional, but good practice)
+    setIsDirty(false);
+    
+    // Close modal
+    onClose();
+  };
+
   const requestClose = () => {
     if (isDirty) {
       showError('Cambios sin guardar', 'Guarda los cambios antes de cerrar');
@@ -381,12 +453,15 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
     activeSection,
     setActiveSection,
     isSubmitting,
+    isGenerating,
     isImageUploading,
     setIsImageUploading,
     isDirty,
     lastSavedAt,
     slugEditable,
     setSlugEditable,
+    handleLockSlug,
+    handleGenerateAI,
     editingBlock,
     setEditingBlock,
     newCategoryName,
@@ -399,6 +474,7 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
     handleCheckboxChange,
     handleImageUploaded,
     handleEsc,
-    requestClose
+    requestClose,
+    handleDiscard
   };
 }

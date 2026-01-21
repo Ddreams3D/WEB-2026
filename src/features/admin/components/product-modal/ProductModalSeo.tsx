@@ -14,6 +14,8 @@ interface ProductModalSeoProps {
   slugEditable: boolean;
   setSlugEditable: (editable: boolean) => void;
   handleSlugChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleLockSlug: () => void;
+  isGenerating?: boolean;
 }
 
 export const ProductModalSeo: React.FC<ProductModalSeoProps> = ({
@@ -21,7 +23,9 @@ export const ProductModalSeo: React.FC<ProductModalSeoProps> = ({
   setFormData,
   slugEditable,
   setSlugEditable,
-  handleSlugChange
+  handleSlugChange,
+  handleLockSlug,
+  isGenerating = false
 }) => {
   const normalizedPreview = generateSlug(formData.slug || '');
 
@@ -39,19 +43,30 @@ export const ProductModalSeo: React.FC<ProductModalSeoProps> = ({
                         <input 
                             type="text" 
                             value={formData.slug || ''}
-                            disabled={!slugEditable}
+                            disabled={!slugEditable || isGenerating}
                             onChange={handleSlugChange}
                             placeholder="nombre-del-producto-unico"
                             className="flex-1 p-3 bg-muted rounded-xl border-none font-mono text-sm focus:ring-2 focus:ring-primary/20 transition-all disabled:opacity-50"
                         />
-                        <Button variant={slugEditable ? "destructive" : "outline"} onClick={() => setSlugEditable(!slugEditable)}>
-                            {slugEditable ? 'Bloquear' : 'Editar'}
+                        <Button 
+                            variant={slugEditable ? "destructive" : "outline"} 
+                            onClick={handleLockSlug}
+                            disabled={isGenerating}
+                        >
+                            {isGenerating ? (
+                                <>
+                                    <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                                    Generando...
+                                </>
+                            ) : (
+                                slugEditable ? 'Bloquear URL' : 'Editar'
+                            )}
                         </Button>
                         <Button 
                             variant="outline" 
                             size="icon"
                             title="Regenerar desde nombre"
-                            disabled={!slugEditable}
+                            disabled={!slugEditable || isGenerating}
                             onClick={() => {
                                 const e = { target: { value: formData.name || '' } } as any;
                                 handleSlugChange(e);

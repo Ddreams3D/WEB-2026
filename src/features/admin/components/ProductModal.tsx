@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { FileText, Layers, Tag, Save, ArrowLeft, LayoutGrid, Box, Check, Eye } from 'lucide-react';
+import { FileText, Layers, Tag, Save, ArrowLeft, LayoutGrid, Box, Check, Eye, X } from 'lucide-react';
 import { Product } from '@/shared/types';
 import { Service } from '@/shared/types/domain';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -35,9 +35,12 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
     activeSection,
     setActiveSection,
     isSubmitting,
+    isGenerating,
     isImageUploading,
     slugEditable,
     setSlugEditable,
+    handleLockSlug,
+    handleGenerateAI,
     editingBlock,
     setEditingBlock,
     newCategoryName,
@@ -50,7 +53,8 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
     handleSlugChange,
     handleImageUploaded,
     handleEsc,
-    requestClose
+    requestClose,
+    handleDiscard
   } = useProductForm({ product, forcedType, onSave, onClose });
 
   // --- RENDER HELPERS ---
@@ -142,33 +146,59 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
               </div>
             </div>
             
-            <div className="p-4 border-t border-border/50 bg-muted/20 space-y-3">
-              <Button 
-                onClick={() => handleSubmit(undefined, true)} // Save as Draft
-                disabled={isSubmitting || isImageUploading}
-                variant="secondary"
-                className="w-full h-10 rounded-xl font-medium shadow-sm hover:bg-secondary/80 transition-all border border-border"
-              >
-                 <div className="flex items-center gap-2">
-                    <Save className="w-4 h-4" />
-                    <span className="hidden lg:inline">Guardar Borrador</span>
-                 </div>
-              </Button>
+            <div className="mt-auto pt-6 px-4 pb-4 space-y-3">
+              <div className="flex gap-2">
+                 <Button 
+                   variant="outline"
+                   onClick={() => handleSubmit(undefined, true)} // Save as draft
+                   disabled={isSubmitting || isImageUploading}
+                   className="flex-1 justify-start gap-2 h-auto py-2 px-2 text-sm hover:bg-primary/5 hover:text-primary border-transparent hover:border-primary/20 transition-all overflow-hidden"
+                 >
+                    <div className="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400 shrink-0">
+                       <Save className="w-4 h-4" />
+                    </div>
+                    <div className="text-left hidden lg:block min-w-0">
+                       <span className="font-semibold block text-foreground truncate">Borrador</span>
+                       <span className="text-[10px] text-muted-foreground truncate">Guardar</span>
+                    </div>
+                 </Button>
+
+                 <Button 
+                   variant="ghost"
+                   onClick={handleDiscard} // Discard and close
+                   disabled={isSubmitting}
+                   className="shrink-0 w-auto justify-center gap-2 h-auto py-2 px-2 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 border-transparent transition-all"
+                 >
+                    <div className="w-8 h-8 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600 shrink-0">
+                       <X className="w-4 h-4" />
+                    </div>
+                    <div className="text-left hidden lg:block">
+                       <span className="font-semibold block truncate">Salir</span>
+                    </div>
+                 </Button>
+              </div>
 
               <Button 
                 onClick={() => handleSubmit(undefined, false)} // Publish
                 disabled={isSubmitting || isImageUploading}
-                className="w-full h-12 rounded-xl font-semibold shadow-lg hover:shadow-primary/20 transition-all"
+                className="w-full h-auto py-3 px-3 rounded-xl font-semibold shadow-lg hover:shadow-primary/20 transition-all justify-start gap-3"
               >
                 {isSubmitting ? (
-                    <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }}>
-                        <Layers className="w-5 h-5" />
-                    </motion.div>
-                ) : (
-                    <div className="flex items-center gap-2">
-                        <Check className="w-4 h-4" />
-                        <span className="hidden lg:inline">Publicar Producto</span>
+                    <div className="w-full flex justify-center">
+                        <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }}>
+                            <Layers className="w-6 h-6" />
+                        </motion.div>
                     </div>
+                ) : (
+                    <>
+                        <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center text-white shrink-0">
+                            <Check className="w-6 h-6" />
+                        </div>
+                        <div className="text-left hidden lg:block">
+                            <span className="font-bold block text-base leading-tight">Publicar</span>
+                            <span className="text-[11px] opacity-90 font-normal block leading-tight">Visible en catálogo</span>
+                        </div>
+                    </>
                 )}
               </Button>
             </div>
@@ -302,6 +332,12 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
                             setIsAddingCategory={setIsAddingCategory}
                             isImageUploading={isImageUploading}
                             handleImageUploaded={handleImageUploaded}
+                            slugEditable={slugEditable}
+                            setSlugEditable={setSlugEditable}
+                            handleLockSlug={handleLockSlug}
+                            handleGenerateAI={handleGenerateAI}
+                            handleSlugChange={handleSlugChange}
+                            isGenerating={isGenerating}
                         />
                     )}
 
@@ -330,6 +366,8 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
                             slugEditable={slugEditable}
                             setSlugEditable={setSlugEditable}
                             handleSlugChange={handleSlugChange}
+                            handleLockSlug={handleLockSlug}
+                            isGenerating={isGenerating}
                         />
                     )}
                   </AnimatePresence>

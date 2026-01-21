@@ -109,6 +109,7 @@ export default function ImageUpload({ value, onChange, onRemove, onUploadStatusC
           const storageRef = ref(storage, `${finalPath}${Date.now()}_${fileName}.jpg`);
           
           // 2. Upload with Progress Tracking
+          const safeFileName = fileName ? fileName : `image_${Date.now()}`;
           const uploadTask = uploadBytesResumable(storageRef, fileToUpload);
 
           uploadTask.on('state_changed', 

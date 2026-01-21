@@ -47,14 +47,14 @@ export const serviceSchema = z.object({
 
 // Draft Schemas (Solo validan Nombre y Slug)
 export const productDraftSchema = z.object({
-  name: z.string().min(3, { message: "El nombre debe tener al menos 3 caracteres" }),
+  name: z.string().min(1, { message: "El nombre es requerido" }),
   slug: z.string().min(1, { message: "El slug es obligatorio" }),
   kind: z.literal('product'),
   status: z.enum(['draft', 'published', 'archived']).optional(),
 });
 
 export const serviceDraftSchema = z.object({
-  name: z.string().min(3, { message: "El nombre debe tener al menos 3 caracteres" }),
+  name: z.string().min(1, { message: "El nombre es requerido" }),
   slug: z.string().min(1, { message: "El slug es obligatorio" }),
   kind: z.literal('service'),
   status: z.enum(['draft', 'published', 'archived']).optional(),
