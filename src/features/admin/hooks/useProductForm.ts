@@ -288,7 +288,10 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
         ...prev,
         status: targetStatus,
         isActive: targetIsActive,
-        slug: finalSlug
+        slug: finalSlug,
+        name: prev.name || humanReadable, // Ensure UI updates with auto-generated name
+        metaTitle: prev.metaTitle || autoMetaTitle,
+        metaDescription: prev.metaDescription || autoMetaDesc
       }));
 
       // Only close if it's a full save, otherwise keep editing
