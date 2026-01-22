@@ -54,7 +54,8 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
     handleImageUploaded,
     handleEsc,
     requestClose,
-    handleDiscard
+    handleDiscard,
+    slugError
   } = useProductForm({ product, forcedType, onSave, onClose });
 
   // --- RENDER HELPERS ---
@@ -361,14 +362,15 @@ export default function ProductModal({ isOpen, onClose, onSave, product, forcedT
 
                     {activeSection === 'seo' && (
                         <ProductModalSeo
-                            formData={formData}
-                            setFormData={setFormData}
-                            slugEditable={slugEditable}
-                            setSlugEditable={setSlugEditable}
-                            handleSlugChange={handleSlugChange}
-                            handleLockSlug={handleLockSlug}
-                            isGenerating={isGenerating}
-                        />
+                formData={formData}
+                setFormData={setFormData}
+                slugEditable={slugEditable}
+                setSlugEditable={setSlugEditable}
+                handleSlugChange={handleSlugChange}
+                handleLockSlug={handleLockSlug}
+                isGenerating={isGenerating}
+                slugError={slugError}
+              />
                     )}
                   </AnimatePresence>
                 </div>

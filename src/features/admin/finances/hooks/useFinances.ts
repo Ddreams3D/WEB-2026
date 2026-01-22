@@ -97,6 +97,42 @@ export function useFinances(
       }
     }
 
+    // New Logic: Personal Income -> Company Expense (Mirroring)
+    if (
+      storageKey === PERSONAL_STORAGE_KEY &&
+      newRecord.type === 'income' &&
+      newRecord.category === PERSONAL_INCOME_FROM_COMPANY_CATEGORY
+    ) {
+      try {
+        const companyRaw = localStorage.getItem(COMPANY_STORAGE_KEY);
+        const companyRecords: FinanceRecord[] = companyRaw ? JSON.parse(companyRaw) : [];
+
+        const companyRecord: FinanceRecord = {
+          id: uuidv4(),
+          date: newRecord.date,
+          type: 'expense',
+          title: `Retiro hacia Personal: ${newRecord.title || 'Sin título'}`,
+          clientName: 'Dueño',
+          amount: newRecord.amount,
+          currency: newRecord.currency,
+          status: 'paid',
+          paymentMethod: 'transfer',
+          category: OWNER_WITHDRAW_CATEGORY,
+          expenseType: 'fixed',
+          source: 'manual',
+          items: [],
+          notes: `Generado automáticamente desde Finanzas Personales. ID: ${newRecord.id}`,
+          createdAt: now,
+          updatedAt: now,
+        };
+
+        const updatedCompany = [companyRecord, ...companyRecords];
+        localStorage.setItem(COMPANY_STORAGE_KEY, JSON.stringify(updatedCompany));
+      } catch (error) {
+        console.error('Error creando registro espejo en finanzas de empresa:', error);
+      }
+    }
+
     return newRecord;
   };
 

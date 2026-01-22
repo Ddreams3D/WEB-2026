@@ -1,6 +1,6 @@
 import { ref, uploadString, getDownloadURL } from 'firebase/storage';
 import { storage } from '@/lib/firebase';
-import { FinanceRecord, MonthlyBudgets, MonthlyBudgetItem } from '../types';
+import { FinanceRecord, MonthlyBudgets, MonthlyBudgetItem, FinanceSettings } from '../types';
 
 export const SyncService = {
   /**
@@ -98,6 +98,62 @@ export const SyncService = {
     }
 
     return mergedBudgets;
+  },
+
+  async syncFinanceSettings(
+    localSettings: FinanceSettings,
+    backupFileName: string
+  ): Promise<FinanceSettings> {
+    if (!storage) throw new Error('Firebase Storage not initialized');
+
+    const storageRef = ref(storage, `finances/${backupFileName}`);
+    let cloudSettings: FinanceSettings | null = null;
+
+    try {
+      const url = await getDownloadURL(storageRef);
+      const response = await fetch(url);
+      if (response.ok) {
+        cloudSettings = await response.json();
+      }
+    } catch (error: any) {
+      if (error.code === 'storage/object-not-found') {
+        console.log('No cloud settings backup found. Using local.');
+        cloudSettings = null;
+      } else {
+        console.error('Error fetching cloud settings backup:', error);
+        // Don't throw here, just return local if cloud fails? 
+        // Better to throw to alert user of sync failure
+        throw error;
+      }
+    }
+
+    // Merge Logic: Last Write Wins based on updatedAt
+    let mergedSettings = localSettings;
+    
+    if (cloudSettings) {
+      const localTime = localSettings.updatedAt || 0;
+      const cloudTime = cloudSettings.updatedAt || 0;
+
+      if (cloudTime > localTime) {
+        mergedSettings = cloudSettings;
+      }
+    }
+
+    // Upload Merged (or Local if newer)
+    try {
+      const jsonString = JSON.stringify(mergedSettings);
+      await uploadString(storageRef, jsonString, 'raw', {
+        contentType: 'application/json',
+        customMetadata: {
+          lastSync: new Date().toISOString()
+        }
+      });
+    } catch (error) {
+      console.error('Error uploading settings backup:', error);
+      throw error;
+    }
+
+    return mergedSettings;
   },
 
   /**

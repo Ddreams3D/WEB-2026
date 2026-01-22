@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Cloud, RefreshCw, Check, AlertCircle } from 'lucide-react';
 import { SyncService } from '../services/syncService';
-import { FinanceRecord, MonthlyBudgets } from '../types';
+import { FinanceRecord, MonthlyBudgets, FinanceSettings } from '../types';
 import { toast } from 'sonner';
 
 interface FinanceSyncButtonProps {
@@ -11,6 +11,8 @@ interface FinanceSyncButtonProps {
   storageKey: string;
   budgets?: MonthlyBudgets;
   onBudgetsSyncComplete?: (newBudgets: MonthlyBudgets) => void;
+  settings?: FinanceSettings;
+  onSettingsSyncComplete?: (newSettings: FinanceSettings) => void;
 }
 
 export function FinanceSyncButton({
@@ -18,7 +20,9 @@ export function FinanceSyncButton({
   onSyncComplete,
   storageKey,
   budgets,
-  onBudgetsSyncComplete
+  onBudgetsSyncComplete,
+  settings,
+  onSettingsSyncComplete
 }: FinanceSyncButtonProps) {
   const [isSyncing, setIsSyncing] = useState(false);
   const [lastSync, setLastSync] = useState<Date | null>(null);
@@ -45,6 +49,15 @@ export function FinanceSyncButton({
           'personal_finances_budget_v1.json'
         );
         onBudgetsSyncComplete(mergedBudgets);
+      }
+
+      // Sync Settings if provided (Global Settings)
+      if (settings && onSettingsSyncComplete) {
+        const mergedSettings = await SyncService.syncFinanceSettings(
+          settings,
+          'finance_global_settings_v1.json'
+        );
+        onSettingsSyncComplete(mergedSettings);
       }
 
       setLastSync(new Date());

@@ -8,6 +8,7 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { useNotifications } from '@/contexts/NotificationContext';
+import { useFinanceSettings } from '../hooks/useFinanceSettings';
 
 interface InboxModalProps {
   isOpen: boolean;
@@ -20,12 +21,36 @@ export function InboxModal({ isOpen, onClose, onSave, mode = 'all' }: InboxModal
   const [items, setItems] = useState<InboxItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState<string | null>(null);
+  const { settings } = useFinanceSettings();
 
   // State for the approval flow
   const [selectedItem, setSelectedItem] = useState<InboxItem | null>(null);
   const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
 
   const { markAsRead, addLocalNotification } = useNotifications();
+
+  // Memoize the record to prevent re-renders in FinanceModal that would reset the form state
+  const approvalRecord = React.useMemo(() => {
+    if (!selectedItem) return null;
+    
+    // Auto-detect category for withdrawals
+    const isWithdrawal = selectedItem.description.toLowerCase().includes('retiro') || 
+                        selectedItem.description.toLowerCase().includes('personal');
+
+    return {
+      type: selectedItem.type,
+      amount: selectedItem.amount,
+      title: selectedItem.description,
+      currency: selectedItem.currency,
+      date: new Date(selectedItem.date).toISOString(),
+      category: isWithdrawal ? 'Retiros del dueño / Finanzas personales' : '',
+      expenseType: isWithdrawal ? 'fixed' : undefined,
+      paymentMethod: 'cash' as const,
+      status: 'paid' as const,
+      source: 'manual' as const,
+      items: []
+    } as Partial<FinanceRecord>;
+  }, [selectedItem]);
 
   // Load items when modal opens
   useEffect(() => {
@@ -232,24 +257,8 @@ export function InboxModal({ isOpen, onClose, onSave, mode = 'all' }: InboxModal
           isOpen={isApprovalModalOpen}
           onClose={() => setIsApprovalModalOpen(false)}
           onSave={handleApprovalSave}
-          record={{
-            type: selectedItem.type,
-            amount: selectedItem.amount,
-            title: selectedItem.description,
-            currency: selectedItem.currency,
-            date: new Date(selectedItem.date).toISOString(),
-            // Auto-detect withdrawals to pre-fill category and trigger cross-transfer logic
-            category: (selectedItem.description.toLowerCase().includes('retiro') || selectedItem.description.toLowerCase().includes('personal')) 
-              ? 'Retiros del dueño / Finanzas personales' 
-              : '',
-            expenseType: (selectedItem.description.toLowerCase().includes('retiro') || selectedItem.description.toLowerCase().includes('personal'))
-              ? 'fixed'
-              : undefined,
-            paymentMethod: 'cash',
-            status: 'paid',
-            source: 'manual',
-            items: []
-          }}
+          record={approvalRecord}
+          settings={settings}
         />
       )}
     </>

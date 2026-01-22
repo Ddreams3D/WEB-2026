@@ -17,6 +17,22 @@ export interface SeasonalThemeConfig {
   // Landing Page Content
   landing: {
     themeMode?: 'system' | 'light' | 'dark';
+    
+    // --- VISUAL CUSTOMIZATION ---
+    primaryColor?: string; // Custom override color (Hex)
+    secondaryColor?: string; // NEW: Secondary accent color
+    backgroundColor?: string; // NEW: Page background override
+    
+    // Typography
+    fontFamilyHeading?: 'inter' | 'playfair' | 'montserrat' | 'oswald'; // NEW
+    fontFamilyBody?: 'inter' | 'roboto' | 'open-sans'; // NEW
+    
+    // UI Elements
+    buttonStyle?: 'rounded' | 'pill' | 'square'; // NEW
+    
+    // Background Effects
+    patternOverlay?: 'none' | 'dots' | 'grid' | 'noise'; // NEW
+    
     heroTitle: string;
     heroSubtitle?: string;
     heroDescription: string;
@@ -41,6 +57,11 @@ export interface SeasonalThemeConfig {
 
   // Manual override (useful for testing or forced events)
   isActive?: boolean; 
+  
+  // Architecture Decoupling:
+  // If true, this campaign will override the global website theme (colors, fonts).
+  // If false, the campaign content is active (landing, products) but the site keeps its standard look.
+  applyThemeToGlobal?: boolean;
 }
 
 export interface SeasonalSystemConfig {

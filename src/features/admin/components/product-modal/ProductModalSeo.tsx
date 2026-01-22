@@ -16,6 +16,7 @@ interface ProductModalSeoProps {
   handleSlugChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleLockSlug: () => void;
   isGenerating?: boolean;
+  slugError?: string | null;
 }
 
 export const ProductModalSeo: React.FC<ProductModalSeoProps> = ({
@@ -25,7 +26,8 @@ export const ProductModalSeo: React.FC<ProductModalSeoProps> = ({
   setSlugEditable,
   handleSlugChange,
   handleLockSlug,
-  isGenerating = false
+  isGenerating = false,
+  slugError
 }) => {
   const normalizedPreview = generateSlug(formData.slug || '');
 
@@ -80,8 +82,15 @@ export const ProductModalSeo: React.FC<ProductModalSeoProps> = ({
                     <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 p-2 rounded-lg font-mono">
                         <LinkIcon className="w-3 h-3" />
                         <span className="opacity-50">.../products/</span>
-                        <span className="text-primary font-medium">{normalizedPreview}</span>
+                        <span className={`font-medium ${slugError ? 'text-destructive' : 'text-primary'}`}>{normalizedPreview}</span>
                     </div>
+
+                    {slugError && (
+                        <div className="flex items-center gap-2 mt-2 text-sm text-destructive font-medium animate-in slide-in-from-top-1 fade-in duration-300">
+                            <AlertTriangle className="w-4 h-4" />
+                            {slugError}
+                        </div>
+                    )}
 
                     {/* Warning for existing products (implied by non-empty slug initially or just always show if needed) */}
                     {/* We can check if it looks like an edit to a live product if we had that info, for now just show a tip */}

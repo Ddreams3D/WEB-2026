@@ -93,7 +93,7 @@ export function ImageUploadConfig({
                     </span>
                 </div>
                 <p className="mt-2 text-[10px] text-blue-600/80 dark:text-blue-400/80 leading-tight">
-                    💡 <strong>Tip Pro:</strong> Escribe un buen nombre aquí (ej: "Mascara Batman Negra") y el sistema llenará automáticamente el Título, URL y Tags del producto.
+                    💡 <strong>Tip Pro:</strong> Escribe un buen nombre aquí (ej: &quot;Mascara Batman Negra&quot;) y el sistema llenará automáticamente el Título, URL y Tags del producto.
                 </p>
             </div>
 

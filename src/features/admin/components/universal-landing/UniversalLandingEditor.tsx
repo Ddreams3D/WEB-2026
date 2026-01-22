@@ -28,6 +28,7 @@ interface UniversalLandingEditorProps {
   isSaving?: boolean;
   automationEnabled?: boolean;
   inheritedPrimaryColor?: string;
+  mode?: 'full' | 'theme_only';
 }
 
 export function UniversalLandingEditor({
@@ -37,7 +38,8 @@ export function UniversalLandingEditor({
   initialData,
   isSaving = false,
   automationEnabled,
-  inheritedPrimaryColor
+  inheritedPrimaryColor,
+  mode = 'full'
 }: UniversalLandingEditorProps) {
   const [data, setData] = useState<UnifiedLandingData>(initialData);
 
@@ -58,6 +60,7 @@ export function UniversalLandingEditor({
   };
 
   const getTitle = () => {
+    if (mode === 'theme_only') return '🎨 Editor de Apariencia Global';
     if (data.type === 'campaign') return '✨ Editor de Campaña';
     if (data.type === 'main') return '🚀 Editor Landing SEO (/impresion-3d-arequipa)';
     if (data.type === 'service') return `🛠️ Editor de Servicio: ${data.internalName || 'Nuevo'}`;
@@ -66,6 +69,7 @@ export function UniversalLandingEditor({
 
   const showSeoTab = data.type === 'service';
   const isOrganicService = data.type === 'service' && (data.id === 'organic-modeling' || data._originalService?.id === 'organic-modeling');
+  const isThemeOnly = mode === 'theme_only';
 
   // Calculate dynamic styles for the editor container to reflect landing colors
     const editorStyle = useMemo(() => {
@@ -142,29 +146,37 @@ export function UniversalLandingEditor({
         <div>
             <Tabs defaultValue="general" className="w-full">
               <TabsList className={`grid w-full mb-8 h-auto p-1.5 bg-muted/30 rounded-2xl ${
-                showSeoTab
-                  ? (isOrganicService ? 'grid-cols-4' : 'grid-cols-5')
-                  : 'grid-cols-4'
+                isThemeOnly
+                  ? 'grid-cols-2'
+                  : showSeoTab
+                    ? (isOrganicService ? 'grid-cols-4' : 'grid-cols-5')
+                    : 'grid-cols-4'
               }`}>
                 <TabsTrigger value="general" className="py-2.5 rounded-xl data-[state=active]:bg-white dark:data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all">
                   <Settings className="w-4 h-4 md:mr-2" />
                   <span className="hidden md:inline">General</span>
                 </TabsTrigger>
-                {!isOrganicService && (
+                
+                {!isThemeOnly && !isOrganicService && (
                   <TabsTrigger value="hero" className="py-2.5 rounded-xl data-[state=active]:bg-white dark:data-[state=active]:bg-card data-[state=active]:text-indigo-500 data-[state=active]:shadow-sm transition-all">
                     <LayoutTemplate className="w-4 h-4 md:mr-2" />
                     <span className="hidden md:inline">Hero</span>
                   </TabsTrigger>
                 )}
+
                 <TabsTrigger value="visual" className="py-2.5 rounded-xl data-[state=active]:bg-white dark:data-[state=active]:bg-card data-[state=active]:text-pink-500 data-[state=active]:shadow-sm transition-all">
                   <Palette className="w-4 h-4 md:mr-2" />
                   <span className="hidden md:inline">Visual</span>
                 </TabsTrigger>
-                <TabsTrigger value="content" className="py-2.5 rounded-xl data-[state=active]:bg-white dark:data-[state=active]:bg-card data-[state=active]:text-teal-500 data-[state=active]:shadow-sm transition-all">
-                  {data.type === 'service' ? <Box className="w-4 h-4 md:mr-2" /> : <FileText className="w-4 h-4 md:mr-2" />}
-                  <span className="hidden md:inline">Contenido</span>
-                </TabsTrigger>
-                {showSeoTab && (
+
+                {!isThemeOnly && (
+                  <TabsTrigger value="content" className="py-2.5 rounded-xl data-[state=active]:bg-white dark:data-[state=active]:bg-card data-[state=active]:text-teal-500 data-[state=active]:shadow-sm transition-all">
+                    {data.type === 'service' ? <Box className="w-4 h-4 md:mr-2" /> : <FileText className="w-4 h-4 md:mr-2" />}
+                    <span className="hidden md:inline">Contenido</span>
+                  </TabsTrigger>
+                )}
+
+                {!isThemeOnly && showSeoTab && (
                   <TabsTrigger value="seo" className="py-2.5 rounded-xl data-[state=active]:bg-white dark:data-[state=active]:bg-card data-[state=active]:text-blue-500 data-[state=active]:shadow-sm transition-all">
                     <FileText className="w-4 h-4 md:mr-2" />
                     <span className="hidden md:inline">SEO</span>
@@ -177,7 +189,7 @@ export function UniversalLandingEditor({
                    <GeneralSection data={data} updateField={updateField} automationEnabled={automationEnabled} />
                 </TabsContent>
 
-                {!isOrganicService && (
+                {!isThemeOnly && !isOrganicService && (
                   <TabsContent value="hero" className="mt-0 focus-visible:outline-none">
                     <HeroSection data={data} updateField={updateField} disableTextEditing={isOrganicService} />
                   </TabsContent>
@@ -191,11 +203,13 @@ export function UniversalLandingEditor({
                   />
                 </TabsContent>
 
-                <TabsContent value="content" className="mt-0 focus-visible:outline-none">
-                  <ContentSection data={data} updateField={updateField} disableFeaturesText={isOrganicService} />
-                </TabsContent>
+                {!isThemeOnly && (
+                  <TabsContent value="content" className="mt-0 focus-visible:outline-none">
+                    <ContentSection data={data} updateField={updateField} disableFeaturesText={isOrganicService} />
+                  </TabsContent>
+                )}
 
-                {showSeoTab && (
+                {!isThemeOnly && showSeoTab && (
                   <TabsContent value="seo" className="mt-0 focus-visible:outline-none">
                     <SeoSection data={data} updateField={updateField} />
                   </TabsContent>

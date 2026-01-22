@@ -30,10 +30,17 @@ export interface UnifiedLandingData {
   // Visuals
   themeMode: 'light' | 'dark' | 'system';
   primaryColor?: string;
+  secondaryColor?: string;
+  backgroundColor?: string;
+  fontFamilyHeading?: 'inter' | 'playfair' | 'montserrat' | 'oswald';
+  fontFamilyBody?: 'inter' | 'roboto' | 'open-sans';
+  buttonStyle?: 'rounded' | 'pill' | 'square';
+  patternOverlay?: 'none' | 'dots' | 'grid' | 'noise';
   
   // Campaign Specifics
   campaignDates?: DateRange[];
   campaignThemeId?: string;
+  applyThemeToGlobal?: boolean; // New flag for architecture decoupling
   
   // Main Specifics
   bubbles?: string[];

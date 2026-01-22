@@ -5,6 +5,7 @@ import { generateSlug } from '@/lib/utils';
 import { productSchema, serviceSchema, productDraftSchema, serviceDraftSchema } from '@/lib/validators/catalog.schema';
 import { useToast } from '@/components/ui/ToastManager';
 import { generateProductContent } from '@/actions/ai-product-generator';
+import { ProductService } from '@/services/product.service';
 
 interface UseProductFormProps {
   product?: Product | Service | null;
@@ -63,6 +64,7 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
   const [editingBlock, setEditingBlock] = useState<string | null>(null);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [isAddingCategory, setIsAddingCategory] = useState(false);
+  const [slugError, setSlugError] = useState<string | null>(null);
   const [sessionId, setSessionId] = useState<string>('');
   const getDraftKey = useCallback(() => {
     const base = product?.id ? `product_form_draft_${product.id}` : 'product_form_draft_new';
@@ -298,10 +300,23 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
   const handleSubmit = async (e?: React.FormEvent, asDraft: boolean = false) => {
     if (e) e.preventDefault();
     setIsSubmitting(true);
+    setSlugError(null);
+
     try {
       // Ensure strict normalization on save
       const finalSlug = generateSlug(formData.slug || formData.name || '');
       
+      // Check uniqueness if not a draft (or even if draft, good to warn, but critical for published)
+      // We check for both to avoid conflicts later
+      const isUnique = await ProductService.isSlugUnique(finalSlug, formData.id);
+      if (!isUnique) {
+        setSlugError(`El slug '${finalSlug}' ya está en uso. Por favor elige otro.`);
+        showError('Error de URL', 'El slug ya existe y debe ser único.');
+        setIsSubmitting(false);
+        setActiveSection('seo');
+        return;
+      }
+
       // Update status and isActive based on save mode
       const targetStatus: 'draft' | 'published' | 'archived' = asDraft ? 'draft' : 'published';
       const targetIsActive = !asDraft; // Draft = inactive, Published = active
@@ -475,6 +490,7 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
     handleImageUploaded,
     handleEsc,
     requestClose,
-    handleDiscard
+    handleDiscard,
+    slugError
   };
 }

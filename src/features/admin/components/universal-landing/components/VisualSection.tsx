@@ -4,7 +4,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { Palette, ImageIcon, Moon, Sun, Monitor, Megaphone } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Palette, ImageIcon, Moon, Sun, Monitor, Megaphone, Type, MousePointerClick, Layers, Box } from 'lucide-react';
 import { UnifiedLandingData } from '../types';
 import { cn } from '@/lib/utils';
 import ImageUpload from '@/features/admin/components/ImageUpload';
@@ -185,37 +186,45 @@ export function VisualSection({ data, updateField, inheritedPrimaryColor }: Visu
         </div>
       ) : (
         <div className="grid gap-6">
-          <div className="bg-card border rounded-xl p-5 shadow-sm space-y-4">
-            <Label className="text-base font-medium">Tema de Color</Label>
-            <div className="grid grid-cols-3 gap-4">
-              {THEME_MODES.map((mode) => (
-                <button
-                  key={mode.id}
-                  onClick={() => updateField('themeMode', mode.id)}
-                  className={cn(
-                    "flex flex-col items-center justify-center gap-3 p-4 rounded-xl border-2 transition-all hover:scale-105",
-                    data.themeMode === mode.id 
-                      ? "border-primary bg-primary/5 text-primary shadow-sm" 
-                      : "border-transparent bg-muted/50 text-muted-foreground hover:bg-muted"
-                  )}
-                >
-                  <mode.icon className={cn("w-6 h-6", data.themeMode === mode.id && "fill-current")} />
-                  <span className="font-medium text-sm">{mode.label}</span>
-                </button>
-              ))}
+          {/* --- COLOR PALETTE --- */}
+          <div className="bg-card border rounded-xl p-5 shadow-sm space-y-6">
+            <div className="flex items-center gap-2 border-b pb-3">
+              <Palette className="w-5 h-5 text-primary" />
+              <Label className="text-base font-medium">Paleta de Colores</Label>
+            </div>
+            
+            <div className="space-y-4">
+              <Label className="text-sm font-medium">Modo de Tema</Label>
+              <div className="grid grid-cols-3 gap-4">
+                {THEME_MODES.map((mode) => (
+                  <button
+                    key={mode.id}
+                    onClick={() => updateField('themeMode', mode.id)}
+                    className={cn(
+                      "flex flex-col items-center justify-center gap-3 p-4 rounded-xl border-2 transition-all hover:scale-105",
+                      data.themeMode === mode.id 
+                        ? "border-primary bg-primary/5 text-primary shadow-sm" 
+                        : "border-transparent bg-muted/50 text-muted-foreground hover:bg-muted"
+                    )}
+                  >
+                    <mode.icon className={cn("w-6 h-6", data.themeMode === mode.id && "fill-current")} />
+                    <span className="font-medium text-sm">{mode.label}</span>
+                  </button>
+                ))}
+              </div>
             </div>
 
-            {data.type === 'main' && (
-              <div className="mt-4 border-t pt-4">
-                <Label className="text-sm font-medium mb-3 block">Color Principal (Heredable)</Label>
-                <div className="flex flex-col gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+               {/* Primary Color */}
+               <div className="space-y-3">
+                  <Label className="text-sm font-medium">Color Principal (Marca/Acción)</Label>
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-md border overflow-hidden shadow-sm">
+                    <div className="w-10 h-10 rounded-xl border-2 shadow-sm overflow-hidden relative transition-transform hover:scale-105">
                       <Input
                         type="color"
                         value={data.primaryColor || '#00BFB3'} 
                         onChange={(e) => updateField('primaryColor', e.target.value)}
-                        className="w-full h-full p-0 border-none cursor-pointer bg-transparent"
+                        className="w-[150%] h-[150%] -top-1/4 -left-1/4 absolute p-0 border-none cursor-pointer"
                       />
                     </div>
                     <div className="flex-1">
@@ -223,16 +232,170 @@ export function VisualSection({ data, updateField, inheritedPrimaryColor }: Visu
                             value={data.primaryColor || ''}
                             onChange={(e) => updateField('primaryColor', e.target.value)}
                             placeholder="#00BFB3"
-                            className="font-mono text-sm h-10"
+                            className="font-mono text-sm"
                         />
                     </div>
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    Este color se usará como base para esta landing y como <strong>color por defecto</strong> para todas las landings satélite que no tengan un color personalizado.
-                  </p>
+                  <p className="text-[11px] text-muted-foreground">Botones, enlaces y destacados.</p>
+               </div>
+
+               {/* Secondary Color */}
+               <div className="space-y-3">
+                  <Label className="text-sm font-medium">Color Secundario (Acento)</Label>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl border-2 shadow-sm overflow-hidden relative transition-transform hover:scale-105">
+                      <Input
+                        type="color"
+                        value={data.secondaryColor || '#ec4899'} 
+                        onChange={(e) => updateField('secondaryColor', e.target.value)}
+                        className="w-[150%] h-[150%] -top-1/4 -left-1/4 absolute p-0 border-none cursor-pointer"
+                      />
+                    </div>
+                    <div className="flex-1">
+                        <Input
+                            value={data.secondaryColor || ''}
+                            onChange={(e) => updateField('secondaryColor', e.target.value)}
+                            placeholder="#ec4899"
+                            className="font-mono text-sm"
+                        />
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">Detalles, bordes y decoraciones.</p>
+               </div>
+
+               {/* Background Color Override */}
+               <div className="space-y-3">
+                  <Label className="text-sm font-medium">Fondo de Página (Opcional)</Label>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl border-2 shadow-sm overflow-hidden relative transition-transform hover:scale-105">
+                      <Input
+                        type="color"
+                        value={data.backgroundColor || '#ffffff'} 
+                        onChange={(e) => updateField('backgroundColor', e.target.value)}
+                        className="w-[150%] h-[150%] -top-1/4 -left-1/4 absolute p-0 border-none cursor-pointer"
+                      />
+                    </div>
+                    <div className="flex-1">
+                        <Input
+                            value={data.backgroundColor || ''}
+                            onChange={(e) => updateField('backgroundColor', e.target.value)}
+                            placeholder="#ffffff"
+                            className="font-mono text-sm"
+                        />
+                    </div>
+                    {data.backgroundColor && (
+                        <Button 
+                            variant="ghost" 
+                            size="icon"
+                            onClick={() => updateField('backgroundColor', undefined)}
+                            title="Limpiar"
+                        >
+                            ×
+                        </Button>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">Sobrescribe el fondo por defecto.</p>
+               </div>
+            </div>
+          </div>
+
+          {/* --- TYPOGRAPHY & UI --- */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-card border rounded-xl p-5 shadow-sm space-y-6">
+                <div className="flex items-center gap-2 border-b pb-3">
+                    <Type className="w-5 h-5 text-indigo-500" />
+                    <Label className="text-base font-medium">Tipografía</Label>
                 </div>
-              </div>
-            )}
+                
+                <div className="space-y-4">
+                    <div className="space-y-2">
+                        <Label className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Títulos</Label>
+                        <Select 
+                            value={data.fontFamilyHeading || 'inter'} 
+                            onValueChange={(val) => updateField('fontFamilyHeading', val)}
+                        >
+                            <SelectTrigger>
+                                <SelectValue placeholder="Seleccionar fuente" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="inter" className="font-sans">Inter (Moderno)</SelectItem>
+                                <SelectItem value="playfair" className="font-serif">Playfair Display (Elegante)</SelectItem>
+                                <SelectItem value="montserrat" className="font-sans font-bold">Montserrat (Fuerte)</SelectItem>
+                                <SelectItem value="oswald" className="font-sans uppercase">Oswald (Impacto)</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Cuerpo de Texto</Label>
+                        <Select 
+                            value={data.fontFamilyBody || 'inter'} 
+                            onValueChange={(val) => updateField('fontFamilyBody', val)}
+                        >
+                            <SelectTrigger>
+                                <SelectValue placeholder="Seleccionar fuente" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="inter">Inter (Legible)</SelectItem>
+                                <SelectItem value="roboto">Roboto (Neutro)</SelectItem>
+                                <SelectItem value="open-sans">Open Sans (Amigable)</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </div>
+            </div>
+
+            <div className="bg-card border rounded-xl p-5 shadow-sm space-y-6">
+                <div className="flex items-center gap-2 border-b pb-3">
+                    <MousePointerClick className="w-5 h-5 text-emerald-500" />
+                    <Label className="text-base font-medium">Estilo de Interfaz</Label>
+                </div>
+
+                <div className="space-y-4">
+                    <div className="space-y-2">
+                        <Label className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Forma de Botones</Label>
+                        <div className="grid grid-cols-3 gap-2">
+                            {[
+                                { id: 'rounded', label: 'Redondo', class: 'rounded-lg' },
+                                { id: 'pill', label: 'Píldora', class: 'rounded-full' },
+                                { id: 'square', label: 'Cuadrado', class: 'rounded-none' }
+                            ].map((style) => (
+                                <button
+                                    key={style.id}
+                                    onClick={() => updateField('buttonStyle', style.id)}
+                                    className={cn(
+                                        "h-10 text-xs font-medium border transition-all flex items-center justify-center",
+                                        style.class,
+                                        data.buttonStyle === style.id 
+                                            ? "bg-primary text-primary-foreground border-primary shadow-md" 
+                                            : "bg-muted/50 hover:bg-muted border-transparent"
+                                    )}
+                                >
+                                    {style.label}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Textura de Fondo</Label>
+                        <Select 
+                            value={data.patternOverlay || 'none'} 
+                            onValueChange={(val) => updateField('patternOverlay', val)}
+                        >
+                            <SelectTrigger>
+                                <SelectValue placeholder="Seleccionar patrón" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="none">Ninguno</SelectItem>
+                                <SelectItem value="dots">Puntos Discretos</SelectItem>
+                                <SelectItem value="grid">Cuadrícula Técnica</SelectItem>
+                                <SelectItem value="noise">Ruido Suave</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </div>
+            </div>
           </div>
 
           {data.type !== 'service' && (

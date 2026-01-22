@@ -23,24 +23,36 @@ export function campaignToUnified(campaign: SeasonalThemeConfig): UnifiedLanding
     ctaLink: campaign.landing.ctaLink,
     
     themeMode: campaign.landing.themeMode || 'system',
+    primaryColor: campaign.landing.primaryColor,
+    secondaryColor: campaign.landing.secondaryColor,
+    backgroundColor: campaign.landing.backgroundColor,
+    fontFamilyHeading: campaign.landing.fontFamilyHeading,
+    fontFamilyBody: campaign.landing.fontFamilyBody,
+    buttonStyle: campaign.landing.buttonStyle,
+    patternOverlay: campaign.landing.patternOverlay,
     
     campaignDates: campaign.dateRanges,
     campaignThemeId: campaign.themeId,
+    applyThemeToGlobal: campaign.applyThemeToGlobal !== false, // Default true if undefined
     announcement: campaign.announcement,
     
     _originalCampaign: campaign
   };
 }
 
-export function unifiedToCampaign(data: UnifiedLandingData): Partial<SeasonalThemeConfig> {
-  if (!data._originalCampaign) return {};
-  
+export const unifiedToCampaign = (data: UnifiedLandingData): SeasonalThemeConfig => {
+  if (!data._originalCampaign) {
+    throw new Error('Datos originales de campaña no encontrados');
+  }
+
   return {
     ...data._originalCampaign,
+    id: data.id || data._originalCampaign.id,
     name: data.internalName || data._originalCampaign.name,
     isActive: data.isActive,
     dateRanges: data.campaignDates || [],
     themeId: (data.campaignThemeId as any) || data._originalCampaign.themeId,
+    applyThemeToGlobal: data.applyThemeToGlobal, // Map back to storage
     announcement: data.announcement,
     landing: {
       ...data._originalCampaign.landing,
@@ -52,7 +64,14 @@ export function unifiedToCampaign(data: UnifiedLandingData): Partial<SeasonalThe
       heroVideo: data.heroVideo,
       ctaText: data.ctaText || '',
       ctaLink: data.ctaLink || '',
-      themeMode: data.themeMode
+      themeMode: data.themeMode,
+      primaryColor: data.primaryColor,
+      secondaryColor: data.secondaryColor,
+      backgroundColor: data.backgroundColor,
+      fontFamilyHeading: data.fontFamilyHeading,
+      fontFamilyBody: data.fontFamilyBody,
+      buttonStyle: data.buttonStyle,
+      patternOverlay: data.patternOverlay,
     }
   };
 }

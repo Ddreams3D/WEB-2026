@@ -51,6 +51,86 @@ export interface FinanceRecord {
 
   // Bot Integration
   originInboxId?: string; // Deterministic ID from Telegram (chatId_messageId)
+
+  // Production Snapshot (Immutable Cost Data)
+  productionSnapshot?: ProductionSnapshot;
+}
+
+export type ProductionType = 'fdm' | 'resin' | 'cnc' | 'other';
+
+export interface ProductionComponent {
+  id: string;
+  type: ProductionType;
+  machineId?: string;
+  machineName?: string;
+  
+  // Inputs
+  machineTimeMinutes: number;
+  materialWeightG: number;
+  
+  // Computed for this component
+  computedEnergyCost: number;
+  computedDepreciationCost: number;
+  computedMaterialCost: number;
+  
+  // Rates applied
+  appliedRates: {
+    machineDepreciationRate: number;
+    materialCostPerUnit: number;
+    electricityPrice: number;
+  };
+}
+
+export interface ProductionSnapshot {
+  type: ProductionType | 'mixed';
+  
+  // User Inputs (Aggregated)
+  machineTimeMinutes: number;
+  humanTimeMinutes: number;
+  materialWeightG: number; // Grams (FDM) or ml (Resin) - Sum of all
+  
+  // Computed Costs (Snapshot - Aggregated)
+  computedEnergyCost: number;
+  computedDepreciationCost: number;
+  computedMaterialCost: number;
+  computedLaborCost: number; // Usually 0 in cash flow, but tracked for efficiency
+  
+  // Configuration used at the moment of creation (Legacy / Primary)
+  appliedRates: {
+    electricityPrice: number;
+    machineDepreciationRate: number;
+    materialCostPerUnit: number; // Cost per Kg or L depending on type
+    humanHourlyRate: number;
+  };
+  
+  // Specific Machine Metadata (Legacy - kept for backward compatibility)
+  machineId?: string;
+  machineName?: string;
+  
+  // Multi-machine support
+  components?: ProductionComponent[];
+}
+
+export interface MachineDefinition {
+  id: string;
+  name: string;
+  type: 'fdm' | 'resin';
+  purchaseCost: number;
+  lifeYears: number;
+  dailyHours: number;
+  hourlyRate: number;
+}
+
+export interface FinanceSettings {
+  electricityPrice: number; // PEN per kWh
+  machineDepreciationRate: number; // Deprecated, kept for backward compatibility
+  machineDepreciationRateFdm: number; // New: Specific for FDM
+  machineDepreciationRateResin: number; // New: Specific for Resin
+  materialCostFdm: number; // PEN per kg
+  materialCostResin: number; // PEN per liter
+  humanHourlyRate: number; // PEN per hour (Target)
+  machines?: MachineDefinition[]; // New: List of specific machines
+  updatedAt?: number; // Timestamp for sync
 }
 
 export interface InboxItem {

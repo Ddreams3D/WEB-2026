@@ -2,22 +2,27 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Plus, List, BarChart3, TrendingUp, TrendingDown, Landmark, PieChart, Inbox } from 'lucide-react';
+import { Plus, List, BarChart3, TrendingUp, TrendingDown, Landmark, PieChart, Inbox, Settings } from 'lucide-react';
 import { useFinances } from './hooks/useFinances';
 import { FinanceTable } from './components/FinanceTable';
 import { FinanceStats } from './components/FinanceStats';
 import { FinanceSummary } from './components/FinanceSummary';
 import { FinanceSyncButton } from './components/FinanceSyncButton';
 import { FinanceModal } from './FinanceModal';
+import { FinanceSettingsModal } from './components/FinanceSettingsModal';
 import { InboxModal } from './components/InboxModal';
 import { FinanceRecord } from './types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useSearchParams, useRouter } from 'next/navigation';
 
+import { useFinanceSettings } from './hooks/useFinanceSettings';
+
 export function FinancesView() {
   const { records, allRecords, importRecords, loading, addRecord, updateRecord, deleteRecord, stats } = useFinances();
+  const { settings, updateSettings, importSettings } = useFinanceSettings();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isInboxOpen, setIsInboxOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [editingRecord, setEditingRecord] = useState<FinanceRecord | null>(null);
   
   const searchParams = useSearchParams();
@@ -96,6 +101,16 @@ export function FinancesView() {
         </div>
         <div className="flex gap-3">
           <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={() => setIsSettingsOpen(true)}
+            className="text-muted-foreground hover:text-foreground"
+            title="Configuración de Costos"
+          >
+            <Settings className="w-5 h-5" />
+          </Button>
+
+          <Button 
             variant="outline" 
             onClick={() => setIsInboxOpen(true)}
             className="gap-2 border-dashed border-primary/50 hover:border-primary text-primary hover:bg-primary/5"
@@ -106,7 +121,9 @@ export function FinancesView() {
           <FinanceSyncButton 
             records={allRecords} 
             onSyncComplete={importRecords} 
-            storageKey="finance_records" 
+            storageKey="finance_records"
+            settings={settings}
+            onSettingsSyncComplete={importSettings}
           />
           <Button onClick={handleCreate} className="gap-2 shadow-lg hover:shadow-xl transition-all">
             <Plus className="w-4 h-4" /> Nuevo Registro
@@ -183,8 +200,16 @@ export function FinancesView() {
         onClose={() => setIsModalOpen(false)}
         record={editingRecord}
         onSave={handleSave}
+        settings={settings}
       />
       
+      <FinanceSettingsModal 
+        isOpen={isSettingsOpen} 
+        onClose={() => setIsSettingsOpen(false)} 
+        settings={settings}
+        onUpdate={updateSettings}
+      />
+
       <InboxModal
         isOpen={isInboxOpen}
         onClose={() => setIsInboxOpen(false)}

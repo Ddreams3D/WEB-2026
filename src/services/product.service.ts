@@ -267,6 +267,14 @@ export const ProductService = {
     return sortedCategories;
   },
 
+  // Check if slug is unique
+  async isSlugUnique(slug: string, excludeId?: string): Promise<boolean> {
+    // Check against all products, including deleted ones to prevent conflicts upon restoration
+    const allProducts = await this.getAllProducts(false, true);
+    const existing = allProducts.find(p => p.slug === slug && p.id !== excludeId);
+    return !existing;
+  },
+
   // Save (Create or Update) a product to Firestore
   async saveProduct(product: StoreProduct): Promise<void> {
     const dbInstance = db;

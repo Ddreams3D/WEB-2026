@@ -2,7 +2,7 @@ import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Settings, Sparkles, Globe } from 'lucide-react';
+import { Settings, Sparkles, Globe, Palette } from 'lucide-react';
 import { UnifiedLandingData } from '../types';
 
 interface GeneralSectionProps {
@@ -110,6 +110,26 @@ export function GeneralSection({ data, updateField, automationEnabled }: General
               <span className="opacity-70 italic">(Componente de fechas simplificado para esta vista unificada)</span>
             </div>
             {/* TODO: Add DateRange picker */}
+
+            {/* Configuración de Alcance Global */}
+            <div className="bg-gradient-to-br from-card to-muted/30 border rounded-xl p-5 shadow-sm flex items-center justify-between hover:border-primary/20 transition-colors mt-4">
+              <div className="space-y-1">
+                <Label className="text-base font-medium flex items-center gap-2">
+                  <Palette className="w-4 h-4 text-primary" />
+                  Aplicar Tema a Toda la Web
+                </Label>
+                <p className="text-sm text-muted-foreground max-w-md">
+                  Si está activo, al lanzarse la campaña, <strong>toda la web (Home, Catálogo)</strong> cambiará de colores.
+                  <br/>
+                  Si está desactivado, la landing existirá pero la web mantendrá su aspecto estándar.
+                </p>
+              </div>
+              <Switch 
+                checked={data.applyThemeToGlobal !== false} // Default true
+                onCheckedChange={(checked) => updateField('applyThemeToGlobal', checked)}
+                className="data-[state=checked]:bg-primary"
+              />
+            </div>
           </div>
         )}
 

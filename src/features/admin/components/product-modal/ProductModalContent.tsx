@@ -36,7 +36,7 @@ export const ProductModalContent: React.FC<ProductModalContentProps> = ({
                         Título de la Sección de Pestañas
                     </label>
                     <p className="text-xs text-blue-700 dark:text-blue-300 mb-2">
-                        Es el encabezado principal que agrupa todas las pestañas (ej. "Información del Producto" o "Detalles y Garantía").
+                        Es el encabezado principal que agrupa todas las pestañas (ej. &quot;Información del Producto&quot; o &quot;Detalles y Garantía&quot;).
                     </p>
                     <input 
                         type="text" 
@@ -55,7 +55,7 @@ export const ProductModalContent: React.FC<ProductModalContentProps> = ({
                         <div className="text-center py-8 border-2 border-dashed rounded-xl border-muted-foreground/20 bg-muted/5">
                             <p className="text-muted-foreground text-sm mb-2">No has agregado ninguna pestaña aún.</p>
                             <p className="text-xs text-muted-foreground/70 max-w-xs mx-auto">
-                                Agrega pestañas para organizar información extensa como "Proceso de Envío", "Guía de Tallas", o "Preguntas Frecuentes".
+                                Agrega pestañas para organizar información extensa como &quot;Proceso de Envío&quot;, &quot;Guía de Tallas&quot;, o &quot;Preguntas Frecuentes&quot;.
                             </p>
                         </div>
                      )}

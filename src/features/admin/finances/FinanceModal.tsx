@@ -2,10 +2,11 @@
 
 import React from 'react';
 import { Button, Dialog, DialogContent, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui';
-import { FinanceRecord, FINANCE_CATEGORIES, PAYMENT_METHODS } from './types';
+import { FinanceRecord, FINANCE_CATEGORIES, PAYMENT_METHODS, ProductionType, ProductionSnapshot, FinanceSettings } from './types';
 import { useFinanceForm } from './hooks/useFinanceForm';
+// import { useFinanceSettings } from './hooks/useFinanceSettings';
 import { FinanceModalItems } from '@/features/admin/finances/components/FinanceModalItems';
-import { Calendar, CheckCircle2, ChevronDown, ChevronUp, CreditCard, Layers, PieChart, Tag, TrendingDown, TrendingUp } from 'lucide-react';
+import { Calendar, CheckCircle2, ChevronDown, ChevronUp, CreditCard, Layers, PieChart, Tag, TrendingDown, TrendingUp, Factory, Calculator, Plus, Trash2, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -74,25 +75,283 @@ const isReservedCategory = (name: string | undefined) => {
 };
 
 const STATUS_LABELS: Record<string, string> = {
-  paid: 'Pagado / Completado',
-  pending: 'Pendiente',
+  paid: 'Cobrado / Pagado',
+  pending: 'Por Cobrar / Pendiente',
   cancelled: 'Anulado',
 };
 
-interface FinanceModalProps {
+export interface FinanceModalProps {
   isOpen: boolean;
   onClose: () => void;
   record?: Partial<FinanceRecord> | null;
   onSave: (record: Partial<FinanceRecord>) => void;
+  settings?: FinanceSettings;
 }
 
-export function FinanceModal({ isOpen, onClose, record, onSave }: FinanceModalProps) {
+interface TimeInputProps {
+  totalMinutes: number;
+  onChange: (val: number) => void;
+  label?: string;
+  className?: string;
+}
+
+const TimeInput = ({ totalMinutes, onChange, label, className }: TimeInputProps) => {
+  const days = Math.floor(totalMinutes / (24 * 60));
+  const hours = Math.floor((totalMinutes % (24 * 60)) / 60);
+  const minutes = Math.round(totalMinutes % 60);
+
+  const handleChange = (d: number, h: number, m: number) => {
+    // Prevent negative values
+    const validD = Math.max(0, d);
+    const validH = Math.max(0, h);
+    const validM = Math.max(0, m);
+    
+    const total = (validD * 24 * 60) + (validH * 60) + validM;
+    onChange(total);
+  };
+
+  return (
+    <div className={cn("flex flex-col gap-1.5", className)}>
+      {label && <label className="text-[10px] font-medium text-muted-foreground uppercase">{label}</label>}
+      <div className="flex items-start gap-1">
+        <div className="flex flex-col items-center gap-0.5 min-w-0 flex-1">
+           <input 
+             type="number" 
+             min="0"
+             className="w-full p-1.5 rounded-md bg-background border border-input text-xs h-8 text-center px-0 font-mono"
+             value={days === 0 ? '' : days}
+             placeholder="0"
+             onChange={e => handleChange(parseInt(e.target.value) || 0, hours, minutes)}
+           />
+           <span className="text-[9px] text-muted-foreground font-medium">días</span>
+        </div>
+        <span className="py-1.5 text-muted-foreground font-bold">:</span>
+        <div className="flex flex-col items-center gap-0.5 min-w-0 flex-1">
+           <input 
+             type="number" 
+             min="0"
+             className="w-full p-1.5 rounded-md bg-background border border-input text-xs h-8 text-center px-0 font-mono"
+             value={hours === 0 ? '' : hours}
+             placeholder="0"
+             onChange={e => handleChange(days, parseInt(e.target.value) || 0, minutes)}
+           />
+           <span className="text-[9px] text-muted-foreground font-medium">hrs</span>
+        </div>
+        <span className="py-1.5 text-muted-foreground font-bold">:</span>
+        <div className="flex flex-col items-center gap-0.5 min-w-0 flex-1">
+           <input 
+             type="number" 
+             min="0"
+             className="w-full p-1.5 rounded-md bg-background border border-input text-xs h-8 text-center px-0 font-mono"
+             value={minutes === 0 ? '' : minutes}
+             placeholder="0"
+             onChange={e => handleChange(days, hours, parseInt(e.target.value) || 0)}
+           />
+           <span className="text-[9px] text-muted-foreground font-medium">min</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export function FinanceModal({ isOpen, onClose, record, onSave, settings }: FinanceModalProps) {
   const { formData, updateField, addItem, updateItem, removeItem } = useFinanceForm(record);
+  // const { settings } = useFinanceSettings();
   const [showDetails, setShowDetails] = React.useState(false);
+  
+  // Production Snapshot State
+  const [showProduction, setShowProduction] = React.useState(false);
+  const [humanTimeMinutes, setHumanTimeMinutes] = React.useState(0);
+  const [productionComponents, setProductionComponents] = React.useState<Array<{
+    id: string;
+    type: ProductionType;
+    machineId: string;
+    machineTimeMinutes: number;
+    materialWeightG: number;
+  }>>([]);
+
   const [categoriesConfig, setCategoriesConfig] = React.useState<CategoriesConfig>(
     ensureReservedCategories(FINANCE_CATEGORIES),
   );
   const [newCategoryName, setNewCategoryName] = React.useState('');
+
+  const [createPendingBalance, setCreatePendingBalance] = React.useState(false);
+  const [pendingAmount, setPendingAmount] = React.useState('');
+
+  // Reset pending amount when main amount changes (optional convenience, defaulting to same amount for 50% case)
+  React.useEffect(() => {
+    if (createPendingBalance && !pendingAmount && formData.amount) {
+      setPendingAmount(formData.amount.toString());
+    }
+  }, [formData.amount, createPendingBalance, pendingAmount]);
+
+  // Force refresh settings on open if empty machines
+  // This is a safety check if props are stale
+  const [localMachines, setLocalMachines] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    if (isOpen) {
+       // Start with prop settings
+       let machines = settings?.machines || [];
+       
+       // If empty, try to load from localStorage as fallback
+       if (machines.length === 0 && typeof window !== 'undefined') {
+          try {
+             const stored = localStorage.getItem('finance_global_settings_v1');
+             if (stored) {
+                const parsed = JSON.parse(stored);
+                if (parsed.machines && Array.isArray(parsed.machines)) {
+                   machines = parsed.machines;
+                }
+             }
+          } catch (e) {
+             console.error("Error reading local settings fallback", e);
+          }
+       }
+       setLocalMachines(machines);
+    }
+  }, [isOpen, settings]);
+
+  // Reset production form when modal opens/closes or record changes
+  React.useEffect(() => {
+    if (record?.productionSnapshot) {
+      if (record.productionSnapshot.components && record.productionSnapshot.components.length > 0) {
+        setProductionComponents(record.productionSnapshot.components.map(c => ({
+          id: c.id,
+          type: c.type,
+          machineId: c.machineId || '',
+          machineTimeMinutes: c.machineTimeMinutes,
+          materialWeightG: c.materialWeightG
+        })));
+      } else {
+        // Legacy single component migration
+        setProductionComponents([{
+          id: 'legacy',
+          type: (record.productionSnapshot.type as ProductionType) || 'fdm',
+          machineId: record.productionSnapshot.machineId || '',
+          machineTimeMinutes: record.productionSnapshot.machineTimeMinutes || 0,
+          materialWeightG: record.productionSnapshot.materialWeightG || 0
+        }]);
+      }
+      setHumanTimeMinutes(record.productionSnapshot.humanTimeMinutes || 0);
+      setShowProduction(true);
+    } else {
+      setProductionComponents([{
+        id: Math.random().toString(36).substr(2, 9),
+        type: 'fdm',
+        machineId: '',
+        machineTimeMinutes: 0,
+        materialWeightG: 0
+      }]);
+      setHumanTimeMinutes(0);
+      setShowProduction(false);
+    }
+  }, [record, isOpen]);
+
+  // Calculate Snapshot Live
+  const calculatedSnapshot = React.useMemo((): ProductionSnapshot | undefined => {
+    if (!showProduction || productionComponents.length === 0) return undefined;
+    
+    // Safe settings fallback
+    const safeSettings = settings || {
+      electricityPrice: 0,
+      machineDepreciationRate: 0,
+      machineDepreciationRateFdm: 0,
+      machineDepreciationRateResin: 0,
+      materialCostResin: 0,
+      materialCostFdm: 0,
+      humanHourlyRate: 0,
+      machines: []
+    } as unknown as FinanceSettings;
+
+    let totalEnergy = 0;
+    let totalDepreciation = 0;
+    let totalMaterialCost = 0;
+    let totalMachineTime = 0;
+    let totalMaterialWeight = 0;
+
+    // Helper for safe precision
+    const safeFloat = (num: number) => Math.round((num + Number.EPSILON) * 10000) / 10000;
+
+    const computedComponents = productionComponents.map(comp => {
+      const hours = comp.machineTimeMinutes / 60;
+      const powerKw = comp.type === 'resin' ? 0.1 : 0.2; 
+      const energy = safeFloat((powerKw * safeSettings.electricityPrice) * hours); 
+      
+      // Select specific depreciation rate based on machine or type fallback
+      let hourlyDepreciation = 0;
+      let selectedMachineName = undefined;
+
+      if (comp.machineId) {
+        const machine = localMachines.find(m => m.id === comp.machineId);
+        if (machine) {
+          hourlyDepreciation = machine.hourlyRate;
+          selectedMachineName = machine.name;
+        }
+      }
+
+      // Fallback if no machine selected or not found
+      if (hourlyDepreciation === 0) {
+        hourlyDepreciation = comp.type === 'resin' 
+          ? (safeSettings.machineDepreciationRateResin || safeSettings.machineDepreciationRate) 
+          : (safeSettings.machineDepreciationRateFdm || safeSettings.machineDepreciationRate);
+      }
+        
+      const depreciation = safeFloat(hourlyDepreciation * hours);
+
+      const materialUnitCost = comp.type === 'resin' ? safeSettings.materialCostResin : safeSettings.materialCostFdm;
+      const material = safeFloat((comp.materialWeightG / 1000) * materialUnitCost);
+      
+      totalEnergy += energy;
+      totalDepreciation += depreciation;
+      totalMaterialCost += material;
+      totalMachineTime += comp.machineTimeMinutes;
+      totalMaterialWeight += comp.materialWeightG;
+
+      return {
+        id: comp.id,
+        type: comp.type,
+        machineId: comp.machineId,
+        machineName: selectedMachineName,
+        machineTimeMinutes: comp.machineTimeMinutes,
+        materialWeightG: comp.materialWeightG,
+        computedEnergyCost: energy,
+        computedDepreciationCost: depreciation,
+        computedMaterialCost: material,
+        appliedRates: {
+          electricityPrice: safeSettings.electricityPrice,
+          machineDepreciationRate: hourlyDepreciation,
+          materialCostPerUnit: materialUnitCost,
+        }
+      };
+    });
+    
+    const labor = 0; // Labor is profit, not cost in this simplified model
+
+    return {
+      type: computedComponents.length > 1 ? 'mixed' : computedComponents[0].type,
+      machineTimeMinutes: totalMachineTime,
+      humanTimeMinutes: humanTimeMinutes,
+      materialWeightG: totalMaterialWeight,
+      computedEnergyCost: safeFloat(totalEnergy),
+      computedDepreciationCost: safeFloat(totalDepreciation),
+      computedMaterialCost: safeFloat(totalMaterialCost),
+      computedLaborCost: labor,
+      appliedRates: {
+        electricityPrice: safeSettings.electricityPrice,
+        machineDepreciationRate: 0, // Mixed/Aggregate
+        materialCostPerUnit: 0, // Mixed/Aggregate
+        humanHourlyRate: safeSettings.humanHourlyRate
+      },
+      machineId: computedComponents.length === 1 ? computedComponents[0].machineId : undefined,
+      machineName: computedComponents.length === 1 ? computedComponents[0].machineName : 'Múltiples',
+      components: computedComponents
+    };
+  }, [productionComponents, humanTimeMinutes, settings, showProduction, localMachines]);
+
+  const totalProductionCost = calculatedSnapshot 
+    ? (calculatedSnapshot.computedEnergyCost + calculatedSnapshot.computedDepreciationCost + calculatedSnapshot.computedMaterialCost)
+    : 0;
 
   React.useEffect(() => {
     try {
@@ -135,13 +394,71 @@ export function FinanceModal({ isOpen, onClose, record, onSave }: FinanceModalPr
       alert('Por favor seleccione el tipo de gasto (Fijo, Variable o Producción).');
       return;
     }
+
+    // Strict Production Validation
+    if (showProduction && calculatedSnapshot) {
+      if (calculatedSnapshot.components) {
+        for (const comp of calculatedSnapshot.components) {
+          const isMachineRequired = comp.type === 'fdm' || comp.type === 'resin';
+          const machinesForType = localMachines.filter(m => m.type === comp.type) || [];
+          
+          if (isMachineRequired && machinesForType.length > 0 && !comp.machineId) {
+            alert(`Por favor seleccione una máquina válida para la tecnología ${comp.type === 'fdm' ? 'FDM' : 'Resina'}.`);
+            return;
+          }
+          
+          if (comp.machineTimeMinutes <= 0 || isNaN(comp.machineTimeMinutes)) {
+             alert('El tiempo de máquina no puede ser 0 o vacío.');
+             return;
+          }
+        }
+      }
+    }
     
-    // Default payment phase for income if not set
+    // Base data
     const finalData = {
       ...formData,
       paymentPhase: formData.type === 'income' ? (formData.paymentPhase || 'full') : undefined,
-      expenseType: formData.type === 'expense' ? formData.expenseType : undefined
+      expenseType: formData.type === 'expense' ? formData.expenseType : undefined,
+      productionSnapshot: (showProduction && calculatedSnapshot) ? calculatedSnapshot : undefined
     };
+
+    // If Split Payment (Deposit + Pending Balance)
+     if (isIncome && formData.paymentPhase === 'deposit' && createPendingBalance) {
+         // Validation
+         const pAmount = parseFloat(pendingAmount);
+         if (!pAmount || pAmount <= 0) {
+           alert('Por favor ingrese el monto restante (Saldo) válido.');
+           return;
+         }
+
+         // 1. Save Deposit (Paid)
+         onSave(finalData);
+         
+         // 2. Save Pending Balance
+         // We need a small delay or just call onSave again with modified data.
+         // Since onSave might close the modal or refresh data, we should check if we can call it twice.
+         // Assuming onSave handles adding to list.
+         setTimeout(() => {
+             const pendingData = {
+                ...finalData,
+                title: `${finalData.title} (Saldo)`,
+                amount: pAmount, // Use the explicit pending amount
+                status: 'pending' as const,
+                paymentPhase: 'final' as const,
+                // Production cost is already assigned to the deposit (first record)
+                // We prevent double counting by removing it from the balance record
+                productionSnapshot: undefined, 
+                // We also remove items detailed list if it causes confusion, 
+                // but usually items are needed for invoice. 
+                // For cost analysis, snapshot is the key.
+             };
+             onSave(pendingData);
+        }, 100);
+        
+        onClose();
+        return;
+    }
 
     onSave(finalData);
     onClose();
@@ -349,11 +666,51 @@ export function FinanceModal({ isOpen, onClose, record, onSave }: FinanceModalPr
                     <SelectValue placeholder="Seleccionar..." />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="deposit">Adelanto (50%)</SelectItem>
+                    <SelectItem value="deposit">Adelanto / Pago Parcial</SelectItem>
                     <SelectItem value="final">Cancelación (Saldo)</SelectItem>
                     <SelectItem value="full">Pago Completo</SelectItem>
                   </SelectContent>
                 </Select>
+                
+                {/* Auto-create pending balance option */}
+                {formData.paymentPhase === 'deposit' && (
+                  <div className="flex flex-col gap-2 pt-2 px-1 bg-muted/20 rounded-lg p-2 border border-dashed border-primary/20">
+                    <div className="flex items-start gap-2">
+                      <input
+                        type="checkbox"
+                        id="createPendingBalance"
+                        checked={createPendingBalance}
+                        onChange={(e) => setCreatePendingBalance(e.target.checked)}
+                        className="mt-1 w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
+                      />
+                      <label htmlFor="createPendingBalance" className="text-xs text-muted-foreground cursor-pointer leading-tight">
+                        Crear registro automático del <strong>Saldo Pendiente</strong>
+                      </label>
+                    </div>
+
+                    {createPendingBalance && (
+                      <div className="pl-6 space-y-1.5 animation-in slide-in-from-top-2 fade-in duration-200">
+                        <label className="text-[10px] font-medium text-primary uppercase tracking-wider flex items-center gap-1">
+                           Monto Restante (Por Cobrar)
+                        </label>
+                        <div className="relative">
+                          <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground text-xs font-medium">S/.</span>
+                          <input
+                            type="number"
+                            value={pendingAmount}
+                            onChange={(e) => setPendingAmount(e.target.value)}
+                            placeholder="0.00"
+                            className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-primary/20 bg-background text-sm font-bold text-primary focus:ring-1 focus:ring-primary focus:border-primary outline-none"
+                            autoFocus
+                          />
+                        </div>
+                        <p className="text-[10px] text-muted-foreground">
+                          Total del Trabajo: S/. {((parseFloat((formData.amount || 0).toString()) || 0) + (parseFloat(pendingAmount) || 0)).toFixed(2)}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             ) : (
               <div className="space-y-1.5">
@@ -467,13 +824,11 @@ export function FinanceModal({ isOpen, onClose, record, onSave }: FinanceModalPr
               </label>
               <Select value={formData.status} onValueChange={(val) => updateField('status', val)}>
                 <SelectTrigger className="w-full rounded-xl bg-muted/30 border-transparent h-[42px] text-xs sm:text-sm">
-                  <span className="truncate">
-                    {formData.status ? (STATUS_LABELS[formData.status] ?? formData.status) : 'Seleccionar...'}
-                  </span>
+                  <SelectValue placeholder="Seleccionar..." />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="paid">Pagado / Completado</SelectItem>
-                  <SelectItem value="pending">Pendiente</SelectItem>
+                  <SelectItem value="paid">Cobrado / Pagado</SelectItem>
+                  <SelectItem value="pending">Por Cobrar / Pendiente</SelectItem>
                   <SelectItem value="cancelled">Anulado</SelectItem>
                 </SelectContent>
               </Select>
@@ -481,7 +836,192 @@ export function FinanceModal({ isOpen, onClose, record, onSave }: FinanceModalPr
           </div>
 
           {/* Toggle Details */}
-          <div className="pt-2">
+          <div className="pt-2 space-y-4">
+            {/* Production Snapshot Section (Only for Income) */}
+            {isIncome && (
+              <div className="bg-muted/20 rounded-xl border border-border/50 overflow-hidden">
+                <button 
+                  onClick={() => setShowProduction(!showProduction)}
+                  className="w-full flex items-center justify-between p-4 text-sm font-medium hover:bg-muted/30 transition-colors"
+                >
+                  <div className="flex items-center gap-2 text-primary">
+                    <Factory className="w-4 h-4" />
+                    Calculadora de Producción (Snapshot)
+                  </div>
+                  {showProduction ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                </button>
+
+                <AnimatePresence>
+                  {showProduction && (
+                    <motion.div 
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="p-4 pt-0 space-y-4 border-t border-border/50 mt-2">
+                        <div className="space-y-4">
+                          {productionComponents.map((comp, index) => {
+                            // Use localMachines fallback which is more robust
+                            const availableMachines = localMachines.filter((m: any) => m.type === comp.type) || [];
+                            const showMachineSelect = comp.type === 'fdm' || comp.type === 'resin';
+
+                            return (
+                              <div key={comp.id} className="grid grid-cols-12 gap-3 items-start bg-background/50 p-3 rounded-lg border border-border/50 relative group">
+                                <div className="col-span-12 sm:col-span-2 space-y-1.5">
+                                  <label className="text-[10px] font-medium text-muted-foreground uppercase">Tecnología</label>
+                                  <Select 
+                                    value={comp.type} 
+                                    onValueChange={(val) => {
+                                      setProductionComponents(prev => prev.map(c => c.id === comp.id ? { ...c, type: val as ProductionType, machineId: '' } : c));
+                                    }}
+                                  >
+                                    <SelectTrigger className="h-8 text-xs">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="fdm">Impresión FDM</SelectItem>
+                                      <SelectItem value="resin">Impresión Resina</SelectItem>
+                                      <SelectItem value="cnc">CNC / Laser</SelectItem>
+                                      <SelectItem value="other">Otro</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+
+                                <div className="col-span-12 sm:col-span-4 space-y-1.5">
+                                  <label className="text-[10px] font-medium text-muted-foreground uppercase">
+                                    {showMachineSelect ? 'Máquina (Requerido)' : 'Máquina / Detalle'}
+                                  </label>
+                                  {showMachineSelect ? (
+                                     availableMachines.length > 0 ? (
+                                      <Select
+                                        value={comp.machineId}
+                                        onValueChange={(val) => {
+                                          setProductionComponents(prev => prev.map(c => c.id === comp.id ? { ...c, machineId: val } : c));
+                                        }}
+                                      >
+                                        <SelectTrigger className={cn("h-8 text-xs", !comp.machineId && "border-rose-300 ring-1 ring-rose-200")}>
+                                          <SelectValue placeholder="Seleccionar..." />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          {availableMachines.map((m: any) => (
+                                            <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+                                          ))}
+                                        </SelectContent>
+                                      </Select>
+                                     ) : (
+                                       <div className="text-xs text-muted-foreground h-8 flex items-center px-2 bg-muted/50 rounded border border-border">
+                                         Sin máquinas config. (Genérico)
+                                       </div>
+                                     )
+                                  ) : (
+                                    <div className="text-xs text-muted-foreground h-8 flex items-center px-2 bg-muted/50 rounded border border-border">
+                                      N/A
+                                    </div>
+                                  )}
+                                </div>
+
+                                <div className="col-span-6 sm:col-span-2 space-y-1.5">
+                                  <label className="text-[10px] font-medium text-muted-foreground uppercase">Mat. ({comp.type === 'resin' ? 'ml' : 'g'})</label>
+                                  <input 
+                                    type="number" 
+                                    min="0"
+                                    className="w-full p-1.5 rounded-md bg-background border border-input text-xs h-8"
+                                    value={comp.materialWeightG || ''}
+                                    onChange={(e) => {
+                                      const val = parseFloat(e.target.value) || 0;
+                                      setProductionComponents(prev => prev.map(c => c.id === comp.id ? { ...c, materialWeightG: val } : c));
+                                    }}
+                                  />
+                                </div>
+
+                                <div className="col-span-6 sm:col-span-3 space-y-1.5">
+                                  <TimeInput 
+                                    label="Tiempo de Máquina"
+                                    totalMinutes={comp.machineTimeMinutes}
+                                    onChange={(val) => setProductionComponents(prev => prev.map(c => c.id === comp.id ? { ...c, machineTimeMinutes: val } : c))}
+                                  />
+                                </div>
+
+                                <div className="col-span-12 sm:col-span-1 flex justify-end sm:justify-center pt-6">
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                                    onClick={() => {
+                                      if (productionComponents.length > 1) {
+                                        setProductionComponents(prev => prev.filter(c => c.id !== comp.id));
+                                      }
+                                    }}
+                                    disabled={productionComponents.length === 1}
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </Button>
+                                </div>
+                              </div>
+                            );
+                          })}
+
+                          <div className="flex items-center justify-between pt-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setProductionComponents(prev => [...prev, {
+                                id: Math.random().toString(36).substr(2, 9),
+                                type: 'fdm',
+                                machineId: '',
+                                machineTimeMinutes: 0,
+                                materialWeightG: 0
+                              }])}
+                              className="text-xs h-8 gap-1.5"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                              Agregar otra máquina/paso
+                            </Button>
+
+                            <div className="flex items-start gap-3 bg-muted/30 p-2 rounded-lg border border-border/50">
+                               <TimeInput 
+                                  label="Tiempo Humano Total"
+                                  totalMinutes={humanTimeMinutes}
+                                  onChange={(val) => setHumanTimeMinutes(val)}
+                                  className="min-w-[180px]"
+                               />
+                            </div>
+                          </div>
+                        </div>
+
+                        {calculatedSnapshot && (
+                          <div className="bg-background/50 rounded-lg p-3 text-xs space-y-2 border border-border/50">
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Costo Material Total:</span>
+                              <span>S/. {calculatedSnapshot.computedMaterialCost.toFixed(2)}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Energía + Depreciación Total:</span>
+                              <span>S/. {(calculatedSnapshot.computedEnergyCost + calculatedSnapshot.computedDepreciationCost).toFixed(2)}</span>
+                            </div>
+                            {calculatedSnapshot.components && calculatedSnapshot.components.length > 0 && (
+                               <div className="text-[10px] text-muted-foreground/70 text-right -mt-1.5 mb-1">
+                                 {calculatedSnapshot.components.map(c => c.machineName).filter(Boolean).join(' + ')}
+                               </div>
+                            )}
+                            <div className="border-t border-border/50 pt-2 flex justify-between font-bold text-rose-500">
+                              <span>Costo Total Producción:</span>
+                              <span>S/. {totalProductionCost.toFixed(2)}</span>
+                            </div>
+                            <div className="flex justify-between font-bold text-emerald-600 pt-1">
+                              <span>Utilidad Estimada:</span>
+                              <span>S/. {((formData.amount || 0) - totalProductionCost).toFixed(2)}</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
+
             <button 
               onClick={() => setShowDetails(!showDetails)}
               className="flex items-center gap-2 text-sm font-medium text-primary hover:underline"
@@ -489,7 +1029,7 @@ export function FinanceModal({ isOpen, onClose, record, onSave }: FinanceModalPr
               {showDetails ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
               {showDetails ? 'Ocultar detalles avanzados (Items, Cliente)' : 'Agregar items o detalles de cliente'}
             </button>
-
+            
             <AnimatePresence>
               {showDetails && (
                 <motion.div 
