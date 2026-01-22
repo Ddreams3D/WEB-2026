@@ -13,6 +13,7 @@ import { StoragePathBuilder } from '@/shared/constants/storage-paths';
 interface VisualSectionProps {
   data: UnifiedLandingData;
   updateField: (field: keyof UnifiedLandingData, value: any) => void;
+  inheritedPrimaryColor?: string;
 }
 
 const THEME_MODES = [
@@ -21,8 +22,12 @@ const THEME_MODES = [
   { id: 'system', label: 'Automático', icon: Monitor }
 ] as const;
 
-export function VisualSection({ data, updateField }: VisualSectionProps) {
+export function VisualSection({ data, updateField, inheritedPrimaryColor }: VisualSectionProps) {
   const isService = data.type === 'service';
+  
+  // Logic for display: use explicit color or default to Service/Landing default (not main web)
+  const displayColor = data.primaryColor || '#e11d48';
+  const isInherited = false; // Disabled inheritance from main web per user request
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
@@ -72,27 +77,53 @@ export function VisualSection({ data, updateField }: VisualSectionProps) {
               </div>
 
               <div className="bg-card border rounded-xl p-2.5 shadow-sm space-y-1.5">
-                <Label className="text-sm font-medium">Color principal del servicio</Label>
+                <div className="flex items-center justify-between">
+                    <Label className="text-sm font-medium">Color principal</Label>
+                    {isInherited && (
+                        <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full font-medium border border-primary/20">
+                            Heredado
+                        </span>
+                    )}
+                </div>
                 <div className="flex flex-col gap-1.5">
                   <div className="flex items-center gap-3">
-                    <div className="w-7 h-7 rounded-md border overflow-hidden">
+                    <div className="w-7 h-7 rounded-md border overflow-hidden relative group">
                       <Input
                         type="color"
-                        value={data.primaryColor || '#e11d48'}
+                        value={displayColor}
                         onChange={(e) => updateField('primaryColor', e.target.value)}
                         className="w-full h-full p-0 border-none cursor-pointer bg-transparent"
                       />
                     </div>
-                    <span className="text-[10px] text-muted-foreground">
-                      Define el color base para acentos y botones del servicio.
-                    </span>
+                    <div className="flex-1 flex gap-2">
+                        <Input
+                            value={data.primaryColor || ''}
+                            onChange={(e) => updateField('primaryColor', e.target.value)}
+                            placeholder={isInherited ? `(Heredado: ${inheritedPrimaryColor})` : "#c2410c"}
+                            className={cn(
+                                "font-mono text-[10px] h-8",
+                                isInherited && "text-muted-foreground italic"
+                            )}
+                        />
+                        {!isInherited && data.primaryColor && (
+                            <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                                onClick={() => updateField('primaryColor', undefined)}
+                                title="Restablecer a heredado"
+                            >
+                                <span className="sr-only">Reset</span>
+                                ×
+                            </Button>
+                        )}
+                    </div>
                   </div>
-                  <Input
-                    value={data.primaryColor || ''}
-                    onChange={(e) => updateField('primaryColor', e.target.value)}
-                    placeholder="#c2410c"
-                    className="font-mono text-[10px] h-8"
-                  />
+                  <span className="text-[10px] text-muted-foreground">
+                      {isInherited 
+                        ? "Usando color de la landing principal. Haz clic para personalizar." 
+                        : "Color personalizado activo. Borra el valor para heredar."}
+                  </span>
                 </div>
               </div>
             </div>
@@ -173,6 +204,35 @@ export function VisualSection({ data, updateField }: VisualSectionProps) {
                 </button>
               ))}
             </div>
+
+            {data.type === 'main' && (
+              <div className="mt-4 border-t pt-4">
+                <Label className="text-sm font-medium mb-3 block">Color Principal (Heredable)</Label>
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-md border overflow-hidden shadow-sm">
+                      <Input
+                        type="color"
+                        value={data.primaryColor || '#00BFB3'} 
+                        onChange={(e) => updateField('primaryColor', e.target.value)}
+                        className="w-full h-full p-0 border-none cursor-pointer bg-transparent"
+                      />
+                    </div>
+                    <div className="flex-1">
+                        <Input
+                            value={data.primaryColor || ''}
+                            onChange={(e) => updateField('primaryColor', e.target.value)}
+                            placeholder="#00BFB3"
+                            className="font-mono text-sm h-10"
+                        />
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Este color se usará como base para esta landing y como <strong>color por defecto</strong> para todas las landings satélite que no tengan un color personalizado.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
 
           {data.type !== 'service' && (

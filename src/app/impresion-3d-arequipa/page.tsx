@@ -7,6 +7,11 @@ import { ServiceService } from '@/services/service.service';
 import { CatalogItem } from '@/shared/types/catalog';
 import { StoragePathBuilder } from '@/shared/constants/storage-paths';
 
+// Force dynamic rendering to ensure fresh data from Firestore on every request
+// This is critical for the Admin Editor to show changes immediately.
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export const metadata: Metadata = {
   title: {
     absolute: 'Impresión 3D en Arequipa | Servicio Profesional a Medida',

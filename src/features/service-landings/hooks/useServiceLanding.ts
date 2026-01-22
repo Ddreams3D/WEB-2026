@@ -3,7 +3,7 @@ import { ServiceLandingConfig } from '@/shared/types/service-landing';
 import { CatalogItem } from '@/shared/types/catalog';
 import { ProductService } from '@/services/product.service';
 
-export function useServiceLanding(config: ServiceLandingConfig, isPreview: boolean = false) {
+export function useServiceLanding(config: ServiceLandingConfig, isPreview: boolean = false, fallbackColor?: string) {
   const [featuredProducts, setFeaturedProducts] = useState<CatalogItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
@@ -85,8 +85,8 @@ export function useServiceLanding(config: ServiceLandingConfig, isPreview: boole
     ? systemTheme 
     : (config.themeMode === 'dark' ? 'dark' : 'light');
 
-  // Get Primary Color from config or default
-  const primaryColor = config.primaryColor || '#e11d48';
+  // Get Primary Color from config or default (fallback from main landing)
+  const primaryColor = config.primaryColor || fallbackColor || '#00BFB3';
 
   // Extract sections
   const heroSection = config.sections.find(s => s.type === 'hero');

@@ -12,7 +12,24 @@ export function SeasonalThemeController() {
   useEffect(() => {
     const checkSeasonalTheme = async () => {
       try {
-        // Apply seasonal theme to ALL pages including Service Landings, Home, Catalog, Process, Admin, etc.
+        // EXCEPCIÓN DE ARQUITECTURA: Aislamiento de Contexto
+        // Las landings de servicio (ej: /impresion-3d-arequipa, /servicios/*) son "islas" de marca.
+        // No deben ser afectadas por campañas estacionales (Navidad, etc.) de la web principal.
+        const isServiceContext = 
+          pathname?.startsWith('/impresion-3d-arequipa') || 
+          pathname?.startsWith('/servicios/');
+
+        if (isServiceContext) {
+          // Si estamos en contexto de servicio, forzamos "standard" (sin tema estacional)
+          // Esto limpia cualquier tema residual si el usuario viene de la Home
+          if (theme !== 'standard') {
+             console.log(`[Seasonal] Aislamiento de servicio detectado. Restaurando tema base en: ${pathname}`);
+             setTheme('standard'); 
+          }
+          return; // ABORTAR inyección de tema estacional
+        }
+
+        // Apply seasonal theme to Standard Web Context (Home, Catalog, etc.)
         const activeSeasonalConfig = await resolveActiveTheme();
         
         // Always apply the resolved theme

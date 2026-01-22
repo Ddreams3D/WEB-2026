@@ -27,6 +27,7 @@ interface UniversalLandingEditorProps {
   initialData: UnifiedLandingData;
   isSaving?: boolean;
   automationEnabled?: boolean;
+  inheritedPrimaryColor?: string;
 }
 
 export function UniversalLandingEditor({
@@ -35,7 +36,8 @@ export function UniversalLandingEditor({
   onSave,
   initialData,
   isSaving = false,
-  automationEnabled
+  automationEnabled,
+  inheritedPrimaryColor
 }: UniversalLandingEditorProps) {
   const [data, setData] = useState<UnifiedLandingData>(initialData);
 
@@ -57,7 +59,7 @@ export function UniversalLandingEditor({
 
   const getTitle = () => {
     if (data.type === 'campaign') return '✨ Editor de Campaña';
-    if (data.type === 'main') return '🚀 Editor Principal';
+    if (data.type === 'main') return '🚀 Editor Landing SEO (/impresion-3d-arequipa)';
     if (data.type === 'service') return `🛠️ Editor de Servicio: ${data.internalName || 'Nuevo'}`;
     return '✏️ Editor de Landing';
   };
@@ -65,13 +67,56 @@ export function UniversalLandingEditor({
   const showSeoTab = data.type === 'service';
   const isOrganicService = data.type === 'service' && (data.id === 'organic-modeling' || data._originalService?.id === 'organic-modeling');
 
+  // Calculate dynamic styles for the editor container to reflect landing colors
+    const editorStyle = useMemo(() => {
+    const primaryColor = data.primaryColor;
+    // Default base styles (Light Mode forced for readability)
+    const baseStyles = {
+      '--background': '0 0% 100%',
+      '--foreground': '222.2 84% 4.9%',
+      '--card': '0 0% 100%',
+      '--card-foreground': '222.2 84% 4.9%',
+      '--popover': '0 0% 100%',
+      '--popover-foreground': '222.2 84% 4.9%',
+      '--muted': '210 40% 96.1%',
+      '--muted-foreground': '215.4 16.3% 46.9%',
+      '--accent': '210 40% 96.1%',
+      '--accent-foreground': '222.2 47.4% 11.2%',
+      '--destructive': '0 84.2% 60.2%',
+      '--destructive-foreground': '210 40% 98%',
+      '--border': '214.3 31.8% 91.4%',
+      '--input': '214.3 31.8% 91.4%',
+    };
+
+    if (!primaryColor) return baseStyles as React.CSSProperties;
+
+    const hexToRgb = (hex: string): string | null => {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? 
+        `${parseInt(result[1], 16)} ${parseInt(result[2], 16)} ${parseInt(result[3], 16)}` 
+        : null;
+    };
+
+    const rgb = hexToRgb(primaryColor);
+    if (!rgb) return baseStyles as React.CSSProperties;
+
+    return {
+      ...baseStyles,
+      '--primary': rgb,
+      '--primary-500': rgb,
+      '--primary-600': rgb,
+      '--ring': rgb,
+    } as React.CSSProperties;
+  }, [data.primaryColor]);
+
   return (
     <Sheet
       isOpen={isOpen}
       onClose={onClose}
       title={getTitle()}
       description="Personaliza cada detalle de tu página de aterrizaje con estilo."
-      className="max-w-3xl"
+      className="max-w-3xl light text-foreground bg-background"
+      style={editorStyle}
       footer={
         <div className="flex justify-end gap-3 w-full pt-4 border-t">
           <Button variant="ghost" onClick={onClose} disabled={isSaving} className="hover:bg-destructive/10 hover:text-destructive">
@@ -139,7 +184,11 @@ export function UniversalLandingEditor({
                 )}
 
                 <TabsContent value="visual" className="mt-0 focus-visible:outline-none">
-                  <VisualSection data={data} updateField={updateField} />
+                  <VisualSection 
+                    data={data} 
+                    updateField={updateField} 
+                    inheritedPrimaryColor={inheritedPrimaryColor}
+                  />
                 </TabsContent>
 
                 <TabsContent value="content" className="mt-0 focus-visible:outline-none">

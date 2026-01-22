@@ -8,6 +8,7 @@ interface Bubble {
   id: number;
   size: number;
   left: number;
+  mobileLeft: number;
   duration: number;
   delay: number;
   wobbleAmplitude: number;
@@ -39,17 +40,31 @@ export const RealisticBubbles = ({ productImages = [] }: Props) => {
         imagesAssigned++;
       }
 
+      // Responsive positioning logic
+      // Desktop: Images constrained to right half (50-90%), Others full width
+      // Mobile (simulated by random check for now, CSS will handle real responsiveness): 
+      // We want them more centered but random. 
+      // Instead of hardcoding 50-90, we'll use a wider spread that tends towards center
+      
+      let leftPosition;
+      if (hasImage) {
+        // Images: Desktop right side preference, but we'll adjust via CSS classes if needed
+        // For now, let's keep the random logic but make it smarter
+        leftPosition = Math.random() * 40 + 50; 
+      } else {
+        leftPosition = Math.random() * 100;
+      }
+
       return {
         id: i,
-        size: hasImage ? Math.random() * 100 + 150 : Math.random() * 80 + 40, // Image bubbles are larger (150-250px)
-        // If it has an image, constrain to right half (50-90%)
-        // Otherwise use full width (0-100%)
-        left: hasImage ? Math.random() * 40 + 50 : Math.random() * 100, 
-        duration: hasImage ? Math.random() * 20 + 25 : Math.random() * 15 + 10, // Image bubbles are much slower (25-45s)
-        delay: Math.random() * -40, // Longer negative delay for spread
-        wobbleAmplitude: hasImage ? Math.random() * 5 + 2 : Math.random() * 40 + 20, // Minimal wobble for images
-        shouldPop: hasImage ? false : Math.random() > 0.95, // Image bubbles NEVER pop
-        popAt: Math.random() * 0.4 + 0.5, // Pop between 50% and 90% of height
+        size: hasImage ? Math.random() * 100 + 150 : Math.random() * 80 + 40,
+        left: leftPosition, 
+        mobileLeft: Math.random() * 80 + 10, // Mobile specific position (10% to 90%) - Centered spread
+        duration: hasImage ? Math.random() * 20 + 25 : Math.random() * 15 + 10,
+        delay: Math.random() * -40,
+        wobbleAmplitude: hasImage ? Math.random() * 5 + 2 : Math.random() * 40 + 20,
+        shouldPop: hasImage ? false : Math.random() > 0.95,
+        popAt: Math.random() * 0.4 + 0.5,
         image: hasImage ? productImages[Math.floor(Math.random() * productImages.length)] : undefined
       };
     });
@@ -123,6 +138,7 @@ export const RealisticBubbles = ({ productImages = [] }: Props) => {
         .realistic-bubble {
           position: absolute;
           bottom: -250px; /* Start further below for large bubbles */
+          left: var(--left-desktop); /* Default for desktop */
           border-radius: 50%;
           background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0) 70%);
           box-shadow: 
@@ -133,6 +149,12 @@ export const RealisticBubbles = ({ productImages = [] }: Props) => {
           border: 1px solid rgba(255, 255, 255, 0.2);
           will-change: transform, opacity;
           overflow: hidden; /* Important for images */
+        }
+
+        @media (max-width: 768px) {
+          .realistic-bubble {
+            left: var(--left-mobile) !important;
+          }
         }
 
         .realistic-bubble.with-image {
@@ -197,7 +219,8 @@ export const RealisticBubbles = ({ productImages = [] }: Props) => {
             key={bubble.id}
             className={cn("realistic-bubble", isImage && "with-image")}
             style={{
-              left: `${bubble.left}%`,
+              '--left-desktop': `${bubble.left}%`,
+              '--left-mobile': `${bubble.mobileLeft}%`,
               width: `${bubble.size}px`,
               height: `${bubble.size}px`,
               animationName: bubble.shouldPop ? 'riseAndPop' : (isImage ? 'riseSlowFade' : 'rise'),

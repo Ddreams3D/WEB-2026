@@ -31,10 +31,10 @@ export default function LandingMainManager() {
             <div className="relative">
                 <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
                 <LayoutTemplate className="w-6 h-6 text-primary" />
-                Landing Principal
+                Landing SEO Local
                 </h2>
                 <p className="text-muted-foreground mt-1">
-                Configura la página de inicio que ven tus usuarios cuando no hay campañas activas.
+                Configura la landing page optimizada para SEO (/impresion-3d-arequipa). Esta sección NO afecta a la Home Principal.
                 </p>
             </div>
             <div className="flex gap-2 relative">

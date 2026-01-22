@@ -18,5 +18,6 @@ export interface LandingMainConfig {
   bubbleImages?: string[];
   announcement?: AnnouncementBarConfig;
   themeMode?: 'system' | 'light' | 'dark';
+  primaryColor?: string;
 }
 

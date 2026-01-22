@@ -16,6 +16,7 @@ interface SheetProps {
   className?: string;
   underHeader?: boolean;
   footer?: React.ReactNode;
+  style?: React.CSSProperties; // Add style prop support
 }
 
 export function Sheet({ 
@@ -26,7 +27,8 @@ export function Sheet({
   description,
   className,
   underHeader = false,
-  footer
+  footer,
+  style
 }: SheetProps) {
   const [mounted, setMounted] = React.useState(false);
 
@@ -81,7 +83,8 @@ export function Sheet({
             style={{ 
               willChange: 'transform',
               transform: 'translate3d(0,0,0)',
-              backfaceVisibility: 'hidden'
+              backfaceVisibility: 'hidden',
+              ...style // Apply custom styles (e.g., CSS variables)
             }}
             className={cn(
               "fixed right-0 top-0 h-full w-full max-w-2xl border-l bg-background shadow-2xl overflow-hidden flex flex-col",

@@ -43,7 +43,29 @@ export default function LandingMainPageClient({
     setConfig(initialConfig);
   }, [initialConfig]);
 
+  // Helper to convert hex to RGB triplet for Tailwind variables
+  const hexToRgb = (hex: string): string | null => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? 
+      `${parseInt(result[1], 16)} ${parseInt(result[2], 16)} ${parseInt(result[3], 16)}` 
+      : null;
+  };
+
   const themeClass = config?.themeMode === 'dark' ? 'dark' : config?.themeMode === 'light' ? 'light' : '';
+  
+  const primaryRgb = useMemo(() => {
+    return hexToRgb(config?.primaryColor || '') || null; // Use config color or fallback to default theme
+  }, [config?.primaryColor]);
+
+  const style = {
+      '--primary-color': config?.primaryColor,
+      ...(primaryRgb ? {
+        '--primary': primaryRgb,
+        '--primary-500': primaryRgb,
+        '--primary-600': primaryRgb, // Prevent teal flash
+        '--ring': primaryRgb,
+      } : {})
+  } as React.CSSProperties;
 
   const effectiveBubbleImages = useMemo(() => {
     const fromConfig = config?.bubbleImages?.filter(Boolean) || [];
@@ -80,6 +102,7 @@ export default function LandingMainPageClient({
       <div 
         className={cn("min-h-screen bg-background text-foreground overflow-x-hidden selection:bg-primary/20", themeClass)}
         data-theme={themeClass === 'light' ? 'standard' : undefined}
+        style={style}
       >
         <HeroSection initialConfig={config} bubbleImages={effectiveBubbleImages} />
         <BenefitsSection />

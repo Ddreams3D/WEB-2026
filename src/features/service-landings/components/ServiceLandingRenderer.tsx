@@ -17,6 +17,7 @@ import { UniversalLandingEditor } from '@/features/admin/components/universal-la
 import { serviceToUnified, unifiedToService } from '@/features/admin/components/universal-landing/adapters';
 import { UnifiedLandingData } from '@/features/admin/components/universal-landing/types';
 import { ServiceLandingsService } from '@/services/service-landings.service';
+import { fetchLandingMain } from '@/services/landing.service';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
@@ -63,8 +64,28 @@ export default function ServiceLandingRenderer({ config, isPreview = false }: Se
     });
   }, [currentConfig.id, currentConfig.name, isPreview]);
 
+  // Helper to convert hex to RGB triplet for Tailwind variables
+  const hexToRgb = (hex: string): string | null => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? 
+      `${parseInt(result[1], 16)} ${parseInt(result[2], 16)} ${parseInt(result[3], 16)}` 
+      : null;
+  };
+
+  const primaryRgb = useMemo(() => {
+    return hexToRgb(primaryColor) || '0 0 0';
+  }, [primaryColor]);
+
   const style = {
       '--primary-color': primaryColor,
+      // Force override global Tailwind/Shadcn variables to ensure isolation
+      '--primary': primaryRgb,
+      '--primary-500': primaryRgb,
+      // Map other shades to the same color to prevent "Teal Flash" on hover/active
+      // (Ideally we would generate shades, but stability > fancy hovers for now)
+      '--primary-600': primaryRgb, 
+      '--primary-700': primaryRgb,
+      '--ring': primaryRgb,
   } as React.CSSProperties;
 
   if (renderConfig.id === 'organic-modeling') {

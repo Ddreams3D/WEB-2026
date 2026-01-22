@@ -60,17 +60,41 @@ export function unifiedToCampaign(data: UnifiedLandingData): Partial<SeasonalThe
 // --- MAIN LANDING ADAPTERS ---
 
 export function mainToUnified(main: LandingMainConfig): UnifiedLandingData {
-  return {
-    type: 'main',
-    heroTitle: main.heroTitle,
-    heroSubtitle: main.heroSubtitle,
-    heroDescription: main.heroDescription,
+  // CORRECCIÓN DE SINCRONIZACIÓN:
+  // La DB tiene datos antiguos ("Impresión 3D en Arequipa" como título) que no coinciden con la Web real.
+  // Forzamos la "Verdad Visual" de la landing si detectamos datos inconsistentes o vacíos.
+    
+    const visualDefaults = {
+      title: 'Tu imaginación\nno tiene límites.\nNosotros\nle damos forma.',
+      subtitle: 'Impresión 3D en Arequipa',
+      description: 'Impresión 3D personalizada en Arequipa. Diseñamos y fabricamos piezas únicas a partir de tu idea.',
+      cta: 'Cotiza tu idea',
+      link: '/cotizaciones'
+    };
+
+    // Si el título guardado es el badge ("Impresión 3D en Arequipa"), lo movemos a subtítulo y restauramos el título real.
+    // También detectamos el formato antiguo de título (2 o 3 líneas) para actualizarlo al nuevo (4 líneas).
+    const hasLegacyTitle = main.heroTitle === 'Impresión 3D en Arequipa';
+    const hasOldMultilineFormat = main.heroTitle?.includes('Tu imaginación') && !main.heroTitle?.includes('Nosotros\nle damos forma');
+    
+    const shouldUseDefaults = hasLegacyTitle || hasOldMultilineFormat || !main.heroTitle;
+    
+    return {
+      type: 'main',
+      // Si hay datos legacy o no hay título, usar el default visual. Si hay otro dato (edición usuario), respetarlo.
+      heroTitle: shouldUseDefaults ? visualDefaults.title : main.heroTitle,
+      
+      // Si era legacy, el título antiguo pasa a ser subtítulo/gancho. Si no, usar lo que haya o el default.
+      heroSubtitle: hasLegacyTitle ? visualDefaults.subtitle : (main.heroSubtitle || visualDefaults.subtitle),
+      
+      heroDescription: main.heroDescription || visualDefaults.description,
     heroImage: main.heroImage,
     
-    ctaText: main.ctaText,
-    ctaLink: main.ctaLink,
+    ctaText: main.ctaText || visualDefaults.cta,
+    ctaLink: main.ctaLink || visualDefaults.link,
     
     themeMode: main.themeMode || 'system',
+    primaryColor: main.primaryColor,
     
     bubbles: main.bubbleImages,
     announcement: main.announcement,
@@ -89,7 +113,8 @@ export function unifiedToMain(data: UnifiedLandingData): LandingMainConfig {
     ctaLink: data.ctaLink || '',
     bubbleImages: data.bubbles,
     announcement: data.announcement,
-    themeMode: data.themeMode
+    themeMode: data.themeMode,
+    primaryColor: data.primaryColor
   };
 }
 
