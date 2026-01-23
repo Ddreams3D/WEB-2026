@@ -25,7 +25,8 @@ export const AuthService = {
       username: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Usuario',
       email: firebaseUser.email || '',
       photoURL: firebaseUser.photoURL || '',
-      role: isSuperAdmin(firebaseUser.email) ? 'admin' : 'user'
+      role: isSuperAdmin(firebaseUser.email) ? 'admin' : 'user',
+      phoneNumber: firebaseUser.phoneNumber || undefined,
     };
 
     try {
@@ -57,6 +58,7 @@ export const AuthService = {
         userData.role = userRole;
         userData.name = currentData.name || userData.username;
         userData.phone = currentData.phone;
+        userData.phoneNumber = currentData.phoneNumber || userData.phoneNumber;
         userData.address = currentData.address;
         userData.birthDate = currentData.birthDate;
         userData.addresses = currentData.addresses;
@@ -99,17 +101,27 @@ export const AuthService = {
         isNewUser: additionalUserInfo?.isNewUser || false 
       };
     } catch (error: any) {
-      // Handle popup errors/fallbacks here if needed, or propagate
-      if (error.code === 'auth/popup-blocked' || error.code === 'auth/popup-closed-by-user') {
+      console.error('Login error (Popup):', error);
+
+      // 1. Si el usuario cerró el popup explícitamente, no hacemos nada más.
+      if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
          throw error;
       }
-      // Attempt redirect fallback for network/internal errors
-      if (error.code === 'auth/network-request-failed' || error.message?.includes('INTERNAL ASSERTION FAILED')) {
+
+      // 2. Para cualquier otro error (popup bloqueado, error de red, "Unable to open", etc.), intentamos Redirect.
+      // El error "Failed to execute 'open' on 'Window'" es común en entornos restringidos.
+      try {
+         console.log('Falling back to signInWithRedirect...');
          const redirectProvider = new GoogleAuthProvider();
          await signInWithRedirect(auth, redirectProvider);
+         // El navegador redireccionará, por lo que este return no suele alcanzarse, 
+         // pero mantenemos la firma de la función.
          return { success: true, isNewUser: false };
+      } catch (redirectError) {
+         console.error('Login error (Redirect):', redirectError);
+         // Si falla también el redirect, lanzamos el error original para que el UI muestre algo.
+         throw error;
       }
-      throw error;
     }
   },
 

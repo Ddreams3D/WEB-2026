@@ -41,25 +41,17 @@ export function UsersView({ hideHeader = false }: UsersViewProps) {
   });
   const [activeTab, setActiveTab] = useState('customers');
 
-  const fetchUsers = async () => {
-    if (!currentUser) return; // Wait for auth
-    
-    setIsLoading(true);
-    try {
-      const data = await UserService.getAllUsers(true);
-      setUsers(data);
-    } catch (error) {
-      console.error('Error loading users:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    if (currentUser) {
-      fetchUsers();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (!currentUser) return;
+
+    setIsLoading(true);
+    // Subscribe to real-time updates
+    const unsubscribe = UserService.subscribeToUsers((updatedUsers) => {
+      setUsers(updatedUsers);
+      setIsLoading(false);
+    });
+
+    return () => unsubscribe();
   }, [currentUser]);
 
   const getFilteredUsers = (role: 'user' | 'admin') => {
@@ -80,7 +72,6 @@ export function UsersView({ hideHeader = false }: UsersViewProps) {
 
   const handleUpdateUser = async (id: string, updates: Partial<User>) => {
     await UserService.updateUser(id, updates);
-    await fetchUsers(); // Refresh list
   };
 
   const handleDeleteUser = (userId: string) => {
@@ -94,7 +85,6 @@ export function UsersView({ hideHeader = false }: UsersViewProps) {
         try {
           setConfirmation(prev => ({ ...prev, isLoading: true }));
           await UserService.deleteUser(userId);
-          await fetchUsers();
           setConfirmation(prev => ({ ...prev, isOpen: false }));
         } catch (error) {
           console.error('Error deleting user:', error);
@@ -132,13 +122,6 @@ export function UsersView({ hideHeader = false }: UsersViewProps) {
               Administra clientes y personal del equipo
             </p>
           </div>
-          <Button
-            onClick={() => fetchUsers()}
-            variant="outline"
-            className="flex items-center space-x-2"
-          >
-            <span>Refrescar Lista</span>
-          </Button>
         </div>
       )}
 

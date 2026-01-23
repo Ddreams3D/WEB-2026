@@ -20,6 +20,7 @@ export interface User {
   // Campos extendidos de perfil
   name?: string;
   phone?: string;
+  phoneNumber?: string;
   address?: string; // Dirección principal (legacy)
   addresses?: Address[]; // Lista de direcciones
   favorites?: string[]; // Lista de IDs de productos favoritos

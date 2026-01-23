@@ -109,6 +109,11 @@ export function UserTable({ users, role, isLoading, onEdit, onUpdate, onDelete }
                     <div className="text-sm text-muted-foreground">
                       {user.email}
                     </div>
+                    {user.phoneNumber && (
+                       <div className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
+                         <span className="opacity-70">📞</span> {user.phoneNumber}
+                       </div>
+                    )}
                   </div>
                 </div>
               </td>

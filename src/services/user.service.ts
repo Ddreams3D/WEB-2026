@@ -9,6 +9,7 @@ import {
   updateDoc,
   deleteDoc,
   where,
+  onSnapshot,
   DocumentData
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -94,6 +95,20 @@ export const UserService = {
     };
     
     return includeDeleted ? users : users.filter(u => !u.isDeleted);
+  },
+
+  // Subscribe to real-time user updates
+  subscribeToUsers(callback: (users: User[]) => void): () => void {
+    if (!db) return () => {};
+
+    const q = query(collection(db, COLLECTION_NAME), orderBy('createdAt', 'desc'));
+    
+    return onSnapshot(q, (snapshot) => {
+      const users = snapshot.docs.map((doc) => mapToUser(doc.data()));
+      callback(users);
+    }, (error) => {
+      console.error('Error in user subscription:', error);
+    });
   },
 
   // Get user by ID
