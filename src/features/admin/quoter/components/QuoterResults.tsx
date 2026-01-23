@@ -8,6 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import { Zap, Scale, Clock, User, AlertCircle, DollarSign, TrendingUp, Factory, Info, Palette } from 'lucide-react';
 
 interface QuoterResultsProps {
@@ -43,6 +44,8 @@ interface QuoterResultsProps {
 export function QuoterResults({ data, settings }: QuoterResultsProps) {
   const [desiredMargin, setDesiredMargin] = useState(40); // 40% default
   const [customPrice, setCustomPrice] = useState<string>('');
+  const [includeIgv, setIncludeIgv] = useState(false);
+  const IGV_RATE = 0.18;
 
   const costs = useMemo(() => {
     // Factors
@@ -127,24 +130,27 @@ export function QuoterResults({ data, settings }: QuoterResultsProps) {
   }, [data, settings]);
 
   // Pricing Calculations
-  // Formula: Price = (DirectCost + LaborCost) / (1 - Margin%)
-  // This ensures that the Margin% is truly Net Profit AFTER paying labor.
   const totalBaseCost = costs.totalDirect + costs.laborValue;
-  const suggestedPrice = totalBaseCost / (1 - (desiredMargin / 100));
+  const suggestedNetPrice = totalBaseCost / (1 - (desiredMargin / 100));
   
-  // If user enters a custom price
-  const finalPrice = customPrice ? parseFloat(customPrice) : suggestedPrice;
+  // Handling Custom Price input
+  const rawPrice = customPrice ? parseFloat(customPrice) : (includeIgv ? suggestedNetPrice * (1 + IGV_RATE) : suggestedNetPrice);
   
-  // Profit Analysis
+  // Derived Values based on IGV setting
+  const netPrice = includeIgv ? (rawPrice / (1 + IGV_RATE)) : rawPrice;
+  const taxAmount = netPrice * IGV_RATE;
+  const totalBilled = netPrice + taxAmount;
+
+  // Profit Analysis (Always based on Net Price)
   // 1. Gross Profit (Revenue - Direct Costs)
-  const grossProfit = finalPrice - costs.totalDirect;
+  const grossProfit = netPrice - costs.totalDirect;
   
   // 2. Business Net Profit (Gross Profit - Labor)
   const laborCost = costs.laborValue;
   const businessProfit = grossProfit - laborCost;
   
   // 3. Calculate actual margins achieved
-  const finalMargin = finalPrice > 0 ? (businessProfit / finalPrice) * 100 : 0;
+  const finalMargin = netPrice > 0 ? (businessProfit / netPrice) * 100 : 0;
 
   // Reference Prices
   const minViablePrice = totalBaseCost; // Break-even (Company profit = 0, covers Labor)
@@ -296,27 +302,37 @@ export function QuoterResults({ data, settings }: QuoterResultsProps) {
 
       {/* 2. Pricing Simulator */}
       <Card className="border-primary/20 shadow-md">
-        <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+        <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="flex items-center gap-2 text-lg">
                 <DollarSign className="w-5 h-5 text-primary" />
                 Simulador de Precio
             </CardTitle>
+            <div className="flex items-center gap-2 bg-muted/50 p-1.5 rounded-lg border">
+                <Label htmlFor="igv-mode" className="text-xs font-medium cursor-pointer">
+                    {includeIgv ? 'Incluye IGV' : 'Más IGV'}
+                </Label>
+                <Switch id="igv-mode" checked={includeIgv} onCheckedChange={setIncludeIgv} className="scale-75" />
+            </div>
         </CardHeader>
         <CardContent className="space-y-6">
 
-            {/* Reference Prices (Benchmarks) */}
+            {/* Reference Prices (Benchmarks) - Always Net for internal decision */}
             <div className="grid grid-cols-2 gap-3">
                 <div 
                     className="p-3 rounded-lg border bg-orange-50/50 border-orange-100 dark:bg-orange-900/10 dark:border-orange-900/50 cursor-pointer hover:bg-orange-100/50 transition-colors group"
                     onClick={() => {
-                        setCustomPrice(minViablePrice.toFixed(2));
-                        // Calculate implied margin for slider sync (approx)
-                        const impliedMargin = ((minViablePrice - costs.totalDirect) / minViablePrice) * 100;
+                        // Set price as Net always for reference
+                        const targetNet = minViablePrice;
+                        const targetDisplay = includeIgv ? targetNet * (1 + IGV_RATE) : targetNet;
+                        setCustomPrice(targetDisplay.toFixed(2));
+                        
+                        // Calculate implied margin
+                        const impliedMargin = ((targetNet - costs.totalDirect) / targetNet) * 100;
                         setDesiredMargin(Math.round(impliedMargin));
                     }}
                 >
                     <div className="text-[10px] uppercase tracking-wider text-orange-600 font-bold mb-1 flex items-center gap-1">
-                        <AlertCircle className="w-3 h-3" /> Mínimo Viable
+                        <AlertCircle className="w-3 h-3" /> Mínimo Viable (Neto)
                     </div>
                     <div className="text-xl font-bold text-orange-700 dark:text-orange-500">
                         {formatMoney(minViablePrice)}
@@ -331,13 +347,16 @@ export function QuoterResults({ data, settings }: QuoterResultsProps) {
                 <div 
                     className="p-3 rounded-lg border bg-emerald-50/50 border-emerald-100 dark:bg-emerald-900/10 dark:border-emerald-900/50 cursor-pointer hover:bg-emerald-100/50 transition-colors group"
                     onClick={() => {
-                        setCustomPrice(recommendedPrice.toFixed(2));
-                        const impliedMargin = ((recommendedPrice - costs.totalDirect) / recommendedPrice) * 100;
+                        const targetNet = recommendedPrice;
+                        const targetDisplay = includeIgv ? targetNet * (1 + IGV_RATE) : targetNet;
+                        setCustomPrice(targetDisplay.toFixed(2));
+
+                        const impliedMargin = ((targetNet - costs.totalDirect) / targetNet) * 100;
                         setDesiredMargin(Math.round(impliedMargin));
                     }}
                 >
                     <div className="text-[10px] uppercase tracking-wider text-emerald-600 font-bold mb-1 flex items-center gap-1">
-                        <TrendingUp className="w-3 h-3" /> Recomendado
+                        <TrendingUp className="w-3 h-3" /> Recomendado (Neto)
                     </div>
                     <div className="text-xl font-bold text-emerald-700 dark:text-emerald-500">
                         {formatMoney(recommendedPrice)}
@@ -357,7 +376,7 @@ export function QuoterResults({ data, settings }: QuoterResultsProps) {
                         <Label className="flex flex-col gap-1">
                             <span>Nivel de Ganancia (Margen)</span>
                             <span className="text-[10px] font-normal text-muted-foreground">
-                                ¿Qué porcentaje del cobro final será ganancia neta para la empresa?
+                                ¿Qué % del Valor Venta será ganancia neta?
                             </span>
                         </Label>
                         <span className="text-xl font-bold text-primary">{desiredMargin}%</span>
@@ -384,11 +403,11 @@ export function QuoterResults({ data, settings }: QuoterResultsProps) {
                                 <p>
                                     <span className="font-semibold text-primary">Interpretación:</span>
                                     <br/>
-                                    Por cada <strong>S/. 100</strong> que cobres al cliente:
+                                    Por cada <strong>S/. 100 (Neto)</strong> facturado:
                                 </p>
                                 <ul className="list-disc pl-4 space-y-0.5 text-xs">
-                                    <li><strong>S/. {100 - desiredMargin}</strong> se van en cubrir costos y sueldos.</li>
-                                    <li><strong>S/. {desiredMargin}</strong> quedan libres para la empresa (crecimiento).</li>
+                                    <li><strong>S/. {100 - desiredMargin}</strong> cubren costos y sueldos.</li>
+                                    <li><strong>S/. {desiredMargin}</strong> quedan libres para la empresa.</li>
                                 </ul>
                             </div>
                         </div>
@@ -396,13 +415,20 @@ export function QuoterResults({ data, settings }: QuoterResultsProps) {
                 </div>
 
                 <div className="space-y-2">
-                    <Label>O define tú mismo el Precio Final:</Label>
+                    <Label className="flex justify-between">
+                        <span>{includeIgv ? 'Precio Total (con IGV)' : 'Valor Venta (sin IGV)'}:</span>
+                        {customPrice && (
+                            <Badge variant={finalMargin >= 40 ? 'default' : finalMargin >= 30 ? 'secondary' : 'destructive'} className="h-5">
+                                Margen {finalMargin.toFixed(1)}%
+                            </Badge>
+                        )}
+                    </Label>
                     <div className="relative">
                         <span className="absolute left-3 top-2.5 text-muted-foreground font-bold">S/.</span>
                         <Input 
                             type="number" 
                             className="pl-9 font-bold text-lg"
-                            placeholder={suggestedPrice.toFixed(2)}
+                            placeholder={(includeIgv ? suggestedNetPrice * (1 + IGV_RATE) : suggestedNetPrice).toFixed(2)}
                             value={customPrice}
                             onChange={(e) => setCustomPrice(e.target.value)}
                         />
@@ -410,21 +436,21 @@ export function QuoterResults({ data, settings }: QuoterResultsProps) {
                 </div>
             </div>
 
-            {/* Results */}
+            {/* Results Breakdown */}
             <div className="space-y-4">
-                <div className="flex justify-between items-end border-b pb-4">
-                    <div className="space-y-1">
-                        <span className="text-sm text-muted-foreground">Precio Final Sugerido</span>
-                        <div className="flex items-center gap-2">
-                            <h3 className="text-3xl font-bold text-foreground">
-                                {formatMoney(finalPrice)}
-                            </h3>
-                            {customPrice && (
-                                <Badge variant={finalMargin >= 40 ? 'default' : finalMargin >= 30 ? 'secondary' : 'destructive'}>
-                                    Margen {finalMargin.toFixed(1)}%
-                                </Badge>
-                            )}
-                        </div>
+                <div className="bg-card border rounded-lg p-4 space-y-2 shadow-sm">
+                    <div className="flex justify-between text-sm">
+                        <span>Valor Venta (Base Imponible)</span>
+                        <span className="font-mono">{formatMoney(netPrice)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm text-muted-foreground">
+                        <span>IGV (18%)</span>
+                        <span className="font-mono">{formatMoney(taxAmount)}</span>
+                    </div>
+                    <Separator />
+                    <div className="flex justify-between items-end pt-1">
+                        <span className="font-bold text-lg">Total a Cobrar</span>
+                        <span className="font-bold text-2xl text-primary">{formatMoney(totalBilled)}</span>
                     </div>
                 </div>
 
@@ -439,7 +465,7 @@ export function QuoterResults({ data, settings }: QuoterResultsProps) {
                         <div className="flex flex-col">
                             <span className="text-sm font-medium">1. Tu Sueldo (Mano de Obra)</span>
                             <span className="text-[10px] text-muted-foreground">
-                                {formatDuration(data.humanMinutes)} ({data.humanMinutes} min) @ S/. {settings.humanHourlyRate}/h
+                                {formatDuration(data.humanMinutes)} ({data.humanMinutes} min)
                             </span>
                         </div>
                         <span className="font-bold text-blue-600 dark:text-blue-400">

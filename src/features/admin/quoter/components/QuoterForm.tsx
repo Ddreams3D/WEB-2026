@@ -1,12 +1,14 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { FinanceSettings, MachineDefinition } from '../../finances/types';
-import { Clock, Scale, User, DollarSign, AlertCircle, Plus, Trash2, Printer, Palette, Box } from 'lucide-react';
+import { Clock, Scale, User, DollarSign, AlertCircle, Plus, Trash2, Printer, Palette, Box, ChevronDown } from 'lucide-react';
 
 interface QuoterFormProps {
   onCalculate: (data: any) => void;
@@ -47,6 +49,11 @@ export function QuoterForm({ onCalculate, settings }: QuoterFormProps) {
   
   // Available machines from settings
   const availableMachines = settings.machines || [];
+
+  // Collapsible States
+  const [isMachinesOpen, setIsMachinesOpen] = useState(true);
+  const [isLaborOpen, setIsLaborOpen] = useState(false);
+  const [isExtrasOpen, setIsExtrasOpen] = useState(false);
 
   const addMachineLine = () => {
     setMachines([
@@ -132,128 +139,148 @@ export function QuoterForm({ onCalculate, settings }: QuoterFormProps) {
   }, [machines, humanDays, humanHours, humanMinutes, paintHours, paintMinutes, modelHours, modelMinutes, consumablesCost, additionalCost, failureRate, availableMachines]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       
       {/* Machine Lines */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-            <Label className="flex items-center gap-2">
-                <Printer className="w-3.5 h-3.5 text-muted-foreground" />
+      <Collapsible open={isMachinesOpen} onOpenChange={setIsMachinesOpen} className="border rounded-lg bg-card text-card-foreground shadow-sm">
+        <div className="flex items-center justify-between p-4 cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => setIsMachinesOpen(!isMachinesOpen)}>
+            <Label className="flex items-center gap-2 cursor-pointer font-medium text-base">
+                <Printer className="w-4 h-4 text-primary" />
                 Máquinas y Materiales
             </Label>
-            <Button variant="ghost" size="sm" onClick={addMachineLine} className="h-6 text-xs gap-1">
-                <Plus className="w-3 h-3" /> Agregar Máquina
-            </Button>
+            <div className="flex items-center gap-2">
+                <Badge variant="secondary" className="text-[10px] font-normal">
+                    {machines.length} maq.
+                </Badge>
+                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isMachinesOpen ? 'transform rotate-180' : ''}`} />
+            </div>
         </div>
+        
+        <CollapsibleContent className="p-4 pt-0 space-y-3">
+             <div className="flex justify-end mb-2">
+                <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); addMachineLine(); }} className="h-7 text-xs gap-1">
+                    <Plus className="w-3 h-3" /> Agregar Máquina
+                </Button>
+            </div>
 
-        <div className="space-y-3">
-            {machines.map((machine, index) => (
-                <div key={machine.id} className="bg-muted/30 p-3 rounded-lg border border-border/50 space-y-3 relative group">
-                    {machines.length > 1 && (
-                        <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="absolute -right-2 -top-2 h-6 w-6 rounded-full bg-background border shadow-sm opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive"
-                            onClick={() => removeMachineLine(machine.id)}
-                        >
-                            <Trash2 className="w-3 h-3" />
-                        </Button>
-                    )}
-                    
-                    <div className="space-y-1.5">
-                        <Label className="text-xs text-muted-foreground">Máquina</Label>
-                        <Select 
-                            value={machine.machineId} 
-                            onValueChange={(v) => updateMachineLine(machine.id, 'machineId', v)}
-                        >
-                            <SelectTrigger className="h-8">
-                                <span className="truncate text-left">
-                                    {machine.machineId === 'default' 
-                                        ? 'Genérica (Usar config. global)' 
-                                        : (() => {
-                                            const m = availableMachines.find(am => am.id === machine.machineId);
-                                            return m ? `${m.name} (${m.type.toUpperCase()})` : 'Selecciona máquina';
-                                        })()
-                                    }
-                                </span>
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="default">Genérica (Usar config. global)</SelectItem>
-                                {availableMachines.map(m => (
-                                    <SelectItem key={m.id} value={m.id}>
-                                        {m.name} ({m.type.toUpperCase()})
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3">
-                        {/* Time Inputs */}
+            <div className="space-y-3">
+                {machines.map((machine, index) => (
+                    <div key={machine.id} className="bg-muted/30 p-3 rounded-lg border border-border/50 space-y-3 relative group">
+                        {machines.length > 1 && (
+                            <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="absolute -right-2 -top-2 h-6 w-6 rounded-full bg-background border shadow-sm opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive"
+                                onClick={() => removeMachineLine(machine.id)}
+                            >
+                                <Trash2 className="w-3 h-3" />
+                            </Button>
+                        )}
+                        
                         <div className="space-y-1.5">
-                            <Label className="text-xs text-muted-foreground flex items-center gap-1">
-                                <Clock className="w-3 h-3" /> Tiempo
-                            </Label>
-                            <div className="flex gap-1">
-                                <div className="relative flex-1">
-                                    <Input 
-                                        type="number" 
-                                        placeholder="0" 
-                                        value={machine.days}
-                                        onChange={(e) => updateMachineLine(machine.id, 'days', e.target.value)}
-                                        min="0"
-                                        className="h-8 pr-5 text-xs"
-                                    />
-                                    <span className="absolute right-1.5 top-2 text-[10px] text-muted-foreground">d</span>
-                                </div>
-                                <div className="relative flex-1">
-                                    <Input 
-                                        type="number" 
-                                        placeholder="0" 
-                                        value={machine.hours}
-                                        onChange={(e) => updateMachineLine(machine.id, 'hours', e.target.value)}
-                                        min="0"
-                                        className="h-8 pr-5 text-xs"
-                                    />
-                                    <span className="absolute right-1.5 top-2 text-[10px] text-muted-foreground">h</span>
-                                </div>
-                                <div className="relative flex-1">
-                                    <Input 
-                                        type="number" 
-                                        placeholder="0" 
-                                        value={machine.minutes}
-                                        onChange={(e) => updateMachineLine(machine.id, 'minutes', e.target.value)}
-                                        min="0"
-                                        max="59"
-                                        className="h-8 pr-5 text-xs"
-                                    />
-                                    <span className="absolute right-1.5 top-2 text-[10px] text-muted-foreground">m</span>
+                            <Label className="text-xs text-muted-foreground">Máquina</Label>
+                            <Select 
+                                value={machine.machineId} 
+                                onValueChange={(v) => updateMachineLine(machine.id, 'machineId', v)}
+                            >
+                                <SelectTrigger className="h-8">
+                                    <span className="truncate text-left">
+                                        {machine.machineId === 'default' 
+                                            ? 'Genérica (Usar config. global)' 
+                                            : (() => {
+                                                const m = availableMachines.find(am => am.id === machine.machineId);
+                                                return m ? `${m.name} (${m.type.toUpperCase()})` : 'Selecciona máquina';
+                                            })()
+                                        }
+                                    </span>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="default">Genérica (Usar config. global)</SelectItem>
+                                    {availableMachines.map(m => (
+                                        <SelectItem key={m.id} value={m.id}>
+                                            {m.name} ({m.type.toUpperCase()})
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                            {/* Time Inputs */}
+                            <div className="space-y-1.5">
+                                <Label className="text-xs text-muted-foreground flex items-center gap-1">
+                                    <Clock className="w-3 h-3" /> Tiempo
+                                </Label>
+                                <div className="flex gap-1">
+                                    <div className="relative flex-1">
+                                        <Input 
+                                            type="number" 
+                                            placeholder="0" 
+                                            value={machine.days}
+                                            onChange={(e) => updateMachineLine(machine.id, 'days', e.target.value)}
+                                            min="0"
+                                            className="h-8 pr-5 text-xs"
+                                        />
+                                        <span className="absolute right-1.5 top-2 text-[10px] text-muted-foreground">d</span>
+                                    </div>
+                                    <div className="relative flex-1">
+                                        <Input 
+                                            type="number" 
+                                            placeholder="0" 
+                                            value={machine.hours}
+                                            onChange={(e) => updateMachineLine(machine.id, 'hours', e.target.value)}
+                                            min="0"
+                                            className="h-8 pr-5 text-xs"
+                                        />
+                                        <span className="absolute right-1.5 top-2 text-[10px] text-muted-foreground">h</span>
+                                    </div>
+                                    <div className="relative flex-1">
+                                        <Input 
+                                            type="number" 
+                                            placeholder="0" 
+                                            value={machine.minutes}
+                                            onChange={(e) => updateMachineLine(machine.id, 'minutes', e.target.value)}
+                                            min="0"
+                                            max="59"
+                                            className="h-8 pr-5 text-xs"
+                                        />
+                                        <span className="absolute right-1.5 top-2 text-[10px] text-muted-foreground">m</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        {/* Weight Input */}
-                        <div className="space-y-1.5">
-                            <Label className="text-xs text-muted-foreground flex items-center gap-1">
-                                <Scale className="w-3 h-3" /> Peso (g/ml)
-                            </Label>
-                            <Input 
-                                type="number" 
-                                placeholder="0" 
-                                value={machine.weight}
-                                onChange={(e) => updateMachineLine(machine.id, 'weight', e.target.value)}
-                                min="0"
-                                className="h-8 text-xs"
-                            />
+                            {/* Weight Input */}
+                            <div className="space-y-1.5">
+                                <Label className="text-xs text-muted-foreground flex items-center gap-1">
+                                    <Scale className="w-3 h-3" /> Peso (g/ml)
+                                </Label>
+                                <Input 
+                                    type="number" 
+                                    placeholder="0" 
+                                    value={machine.weight}
+                                    onChange={(e) => updateMachineLine(machine.id, 'weight', e.target.value)}
+                                    min="0"
+                                    className="h-8 text-xs"
+                                />
+                            </div>
                         </div>
                     </div>
-                </div>
-            ))}
-        </div>
-      </div>
+                ))}
+            </div>
+        </CollapsibleContent>
+      </Collapsible>
 
       {/* Labor Inputs */}
-      <div className="space-y-4 pt-2 border-t border-border/50">
+      <Collapsible open={isLaborOpen} onOpenChange={setIsLaborOpen} className="border rounded-lg bg-card text-card-foreground shadow-sm">
+        <div className="flex items-center justify-between p-4 cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => setIsLaborOpen(!isLaborOpen)}>
+            <Label className="flex items-center gap-2 cursor-pointer font-medium text-base">
+                <User className="w-4 h-4 text-primary" />
+                Mano de Obra
+            </Label>
+            <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isLaborOpen ? 'transform rotate-180' : ''}`} />
+        </div>
+
+        <CollapsibleContent className="p-4 pt-0 space-y-4">
           {/* General Labor */}
           <div className="space-y-2">
               <Label className="flex items-center gap-2 text-xs">
@@ -366,76 +393,84 @@ export function QuoterForm({ onCalculate, settings }: QuoterFormProps) {
               </div>
               <p className="text-[10px] text-muted-foreground">Blender, CAD, correcciones IA</p>
           </div>
-      </div>
+        </CollapsibleContent>
+      </Collapsible>
 
       {/* Additional Costs */}
-      <div className="space-y-4 pt-2 border-t border-border/50">
-          <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2">
-                  <Label className="flex items-center gap-2 text-xs">
-                      <DollarSign className="w-3.5 h-3.5 text-muted-foreground" />
-                      Insumos (Acabado)
-                  </Label>
-                  <div className="relative">
-                      <Input 
-                      type="number" 
-                      placeholder="0.00" 
-                      value={consumablesCost}
-                      onChange={(e) => setConsumablesCost(e.target.value)}
-                      min="0"
-                      step="0.50"
-                      className="h-8 pl-6 text-xs"
-                      />
-                      <span className="absolute left-2 top-2 text-[10px] text-muted-foreground">S/.</span>
-                  </div>
-                  <p className="text-[9px] text-muted-foreground">Lija, pintura, primer</p>
-              </div>
+      <Collapsible open={isExtrasOpen} onOpenChange={setIsExtrasOpen} className="border rounded-lg bg-card text-card-foreground shadow-sm">
+        <div className="flex items-center justify-between p-4 cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => setIsExtrasOpen(!isExtrasOpen)}>
+            <Label className="flex items-center gap-2 cursor-pointer font-medium text-base">
+                <DollarSign className="w-4 h-4 text-primary" />
+                Costos Extra y Riesgo
+            </Label>
+            <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isExtrasOpen ? 'transform rotate-180' : ''}`} />
+        </div>
 
-              <div className="space-y-2">
-                  <Label className="flex items-center gap-2 text-xs">
-                      <DollarSign className="w-3.5 h-3.5 text-muted-foreground" />
-                      Otros Costos
-                  </Label>
-                  <div className="relative">
-                      <Input 
-                      type="number" 
-                      placeholder="0.00" 
-                      value={additionalCost}
-                      onChange={(e) => setAdditionalCost(e.target.value)}
-                      min="0"
-                      step="0.50"
-                      className="h-8 pl-6 text-xs"
-                      />
-                      <span className="absolute left-2 top-2 text-[10px] text-muted-foreground">S/.</span>
-                  </div>
-                  <p className="text-[9px] text-muted-foreground">Hardware, electrónica</p>
-              </div>
-          </div>
-      </div>
-      
-      <div className="space-y-2 border-t pt-4">
-          <Label className="flex items-center gap-2 text-amber-600 dark:text-amber-500">
-              <AlertCircle className="w-3.5 h-3.5" />
-              Tasa de Fallo / Riesgo (%)
-          </Label>
-          <div className="flex items-center gap-3">
-            <div className="relative flex-1">
-                <Input 
-                type="number" 
-                placeholder="0" 
-                value={failureRate}
-                onChange={(e) => setFailureRate(e.target.value)}
-                min="0"
-                max="100"
-                className="border-amber-200 focus:ring-amber-500"
-                />
-                <span className="absolute right-3 top-2.5 text-xs text-muted-foreground">%</span>
+        <CollapsibleContent className="p-4 pt-0 space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                    <Label className="flex items-center gap-2 text-xs">
+                        <DollarSign className="w-3.5 h-3.5 text-muted-foreground" />
+                        Insumos (Acabado)
+                    </Label>
+                    <div className="relative">
+                        <Input 
+                        type="number" 
+                        placeholder="0.00" 
+                        value={consumablesCost}
+                        onChange={(e) => setConsumablesCost(e.target.value)}
+                        min="0"
+                        step="0.50"
+                        className="h-8 pl-6 text-xs"
+                        />
+                        <span className="absolute left-2 top-2 text-[10px] text-muted-foreground">S/.</span>
+                    </div>
+                    <p className="text-[9px] text-muted-foreground">Lija, pintura, primer</p>
+                </div>
+
+                <div className="space-y-2">
+                    <Label className="flex items-center gap-2 text-xs">
+                        <DollarSign className="w-3.5 h-3.5 text-muted-foreground" />
+                        Otros Costos
+                    </Label>
+                    <div className="relative">
+                        <Input 
+                        type="number" 
+                        placeholder="0.00" 
+                        value={additionalCost}
+                        onChange={(e) => setAdditionalCost(e.target.value)}
+                        min="0"
+                        step="0.50"
+                        className="h-8 pl-6 text-xs"
+                        />
+                        <span className="absolute left-2 top-2 text-[10px] text-muted-foreground">S/.</span>
+                    </div>
+                    <p className="text-[9px] text-muted-foreground">Hardware, electrónica</p>
+                </div>
             </div>
-            <div className="text-xs text-muted-foreground max-w-[180px]">
-                Aumenta materiales y tiempo de máquina para cubrir impresiones fallidas.
+            
+            <div className="space-y-2 border-t pt-4">
+                <Label className="flex items-center gap-2 text-amber-600 dark:text-amber-500">
+                    <AlertCircle className="w-3.5 h-3.5" />
+                    Tasa de Fallo / Riesgo (%)
+                </Label>
+                <div className="flex items-center gap-3">
+                    <div className="relative flex-1">
+                        <Input 
+                        type="number" 
+                        placeholder="0" 
+                        value={failureRate}
+                        onChange={(e) => setFailureRate(e.target.value)}
+                        min="0"
+                        max="100"
+                        className="border-amber-200 focus:ring-amber-500"
+                        />
+                        <span className="absolute right-3 top-2.5 text-xs text-muted-foreground">%</span>
+                    </div>
+                </div>
             </div>
-          </div>
-      </div>
+        </CollapsibleContent>
+      </Collapsible>
 
       <div className="pt-2">
           <Button className="w-full" variant="secondary" onClick={() => {
