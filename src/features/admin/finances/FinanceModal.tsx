@@ -326,7 +326,7 @@ export function FinanceModal({ isOpen, onClose, record, onSave, settings }: Fina
       };
     });
     
-    const labor = 0; // Labor is profit, not cost in this simplified model
+    const labor = safeFloat((humanTimeMinutes / 60) * safeSettings.humanHourlyRate);
 
     return {
       type: computedComponents.length > 1 ? 'mixed' : computedComponents[0].type,

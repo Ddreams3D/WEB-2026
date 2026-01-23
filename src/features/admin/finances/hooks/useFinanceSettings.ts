@@ -10,7 +10,9 @@ export const DEFAULT_SETTINGS: FinanceSettings = {
   machineDepreciationRateResin: 0.80, // Default Resin (Higher due to screen wear)
   materialCostFdm: 80, // S/. per kg
   materialCostResin: 180, // S/. per liter
-  humanHourlyRate: 20, // S/. per hour target
+  humanHourlyRate: 20, // S/. per hour target (General)
+  humanHourlyRatePainting: 30, // S/. per hour (Painting)
+  humanHourlyRateModeling: 50, // S/. per hour (Modeling)
   machines: []
 };
 

@@ -8,7 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Zap, Scale, Clock, User, AlertCircle, DollarSign, TrendingUp, Factory } from 'lucide-react';
+import { Zap, Scale, Clock, User, AlertCircle, DollarSign, TrendingUp, Factory, Info, Palette } from 'lucide-react';
 
 interface QuoterResultsProps {
   data: {
@@ -28,6 +28,14 @@ interface QuoterResultsProps {
       weight: number; // g or ml
       hourlyRate?: number;
     }[];
+
+    // New: Labor Breakdown
+    laborDetails?: {
+        generalMinutes: number;
+        paintingMinutes: number;
+        modelingMinutes: number;
+    };
+    consumablesCost?: number; // Lija, pintura, etc.
   };
   settings: FinanceSettings;
 }
@@ -61,14 +69,6 @@ export function QuoterResults({ data, settings }: QuoterResultsProps) {
         // Depreciation
         let depreciationRate = 0;
         if (m.hourlyRate !== undefined) {
-           // If machine has specific hourly rate (usually rental price or full cost), 
-           // we might want to use that? 
-           // But wait, MachineDefinition.hourlyRate usually implies "Charge to client".
-           // Here we are calculating COST.
-           // So we should stick to depreciation rate.
-           // However, if we have specific machines, maybe we should have specific depreciation?
-           // Current FinanceSettings only has global rates.
-           // Let's stick to global rates based on type for now, as per types.ts
            depreciationRate = m.type === 'resin' 
             ? (settings.machineDepreciationRateResin || settings.machineDepreciationRate)
             : (settings.machineDepreciationRateFdm || settings.machineDepreciationRate);
@@ -89,20 +89,36 @@ export function QuoterResults({ data, settings }: QuoterResultsProps) {
        // ... existing logic ...
     }
 
-    // 3. Human Labor
-    const riskAdjustedHumanMinutes = data.humanMinutes * riskFactor;
+    // 3. Human Labor Calculation
+    let laborValue = 0;
     
-    const directCost = totalElectricityCost + totalDepreciationCost + totalMaterialCost + data.extraCost;
+    if (data.laborDetails) {
+        // Use detailed breakdown
+        const generalHours = (data.laborDetails.generalMinutes * riskFactor) / 60;
+        const paintingHours = (data.laborDetails.paintingMinutes * riskFactor) / 60;
+        const modelingHours = (data.laborDetails.modelingMinutes * riskFactor) / 60;
+
+        laborValue += generalHours * settings.humanHourlyRate;
+        laborValue += paintingHours * (settings.humanHourlyRatePainting || settings.humanHourlyRate * 1.5); // Fallback if not set
+        laborValue += modelingHours * (settings.humanHourlyRateModeling || settings.humanHourlyRate * 2.5); // Fallback if not set
+    } else {
+        // Fallback to simple calculation
+        const riskAdjustedHumanMinutes = data.humanMinutes * riskFactor;
+        const humanHours = riskAdjustedHumanMinutes / 60;
+        laborValue = humanHours * settings.humanHourlyRate;
+    }
     
-    // Calculate implied labor value
-    const humanHours = riskAdjustedHumanMinutes / 60;
-    const laborValue = humanHours * settings.humanHourlyRate;
+    // Consumables (New)
+    const consumables = data.consumablesCost || 0;
+
+    const directCost = totalElectricityCost + totalDepreciationCost + totalMaterialCost + data.extraCost + consumables;
 
     return {
       electricity: totalElectricityCost,
       depreciation: totalDepreciationCost,
       material: totalMaterialCost,
       extra: data.extraCost,
+      consumables,
       totalDirect: directCost,
       laborValue: laborValue,
       riskFactor,
@@ -111,24 +127,28 @@ export function QuoterResults({ data, settings }: QuoterResultsProps) {
   }, [data, settings]);
 
   // Pricing Calculations
-  // Formula: Price = Cost / (1 - Margin%)
-  // Margin here is Gross Margin (Operational Profit Margin)
-  const suggestedPrice = costs.totalDirect / (1 - (desiredMargin / 100));
-  const profit = suggestedPrice - costs.totalDirect;
+  // Formula: Price = (DirectCost + LaborCost) / (1 - Margin%)
+  // This ensures that the Margin% is truly Net Profit AFTER paying labor.
+  const totalBaseCost = costs.totalDirect + costs.laborValue;
+  const suggestedPrice = totalBaseCost / (1 - (desiredMargin / 100));
   
   // If user enters a custom price
   const finalPrice = customPrice ? parseFloat(customPrice) : suggestedPrice;
-  const finalProfit = finalPrice - costs.totalDirect;
-  const finalMargin = finalPrice > 0 ? (finalProfit / finalPrice) * 100 : 0;
   
-  // Split Analysis
-  // From the profit, we pay labor. What remains is Business Net Profit.
+  // Profit Analysis
+  // 1. Gross Profit (Revenue - Direct Costs)
+  const grossProfit = finalPrice - costs.totalDirect;
+  
+  // 2. Business Net Profit (Gross Profit - Labor)
   const laborCost = costs.laborValue;
-  const businessProfit = finalProfit - laborCost;
+  const businessProfit = grossProfit - laborCost;
+  
+  // 3. Calculate actual margins achieved
+  const finalMargin = finalPrice > 0 ? (businessProfit / finalPrice) * 100 : 0;
 
   // Reference Prices
-  const minViablePrice = costs.totalDirect + laborCost; // Break-even (Company profit = 0)
-  const recommendedPrice = minViablePrice / 0.70; // Target 30% Net Profit Margin (after labor)
+  const minViablePrice = totalBaseCost; // Break-even (Company profit = 0, covers Labor)
+  const recommendedPrice = minViablePrice / 0.70; // Target 30% Net Profit Margin
 
   const formatMoney = (val: number) => `S/. ${val.toFixed(2)}`;
 
@@ -207,6 +227,14 @@ export function QuoterResults({ data, settings }: QuoterResultsProps) {
                 </span>
                 <span className="font-mono">{formatMoney(costs.depreciation)}</span>
             </div>
+            {costs.consumables > 0 && (
+                <div className="flex justify-between items-center text-sm">
+                    <span className="flex items-center gap-2 text-muted-foreground">
+                        <Info className="w-4 h-4" /> Insumos
+                    </span>
+                    <span className="font-mono">{formatMoney(costs.consumables)}</span>
+                </div>
+            )}
             {costs.extra > 0 && (
                 <div className="flex justify-between items-center text-sm">
                     <span className="flex items-center gap-2 text-muted-foreground">
@@ -215,13 +243,54 @@ export function QuoterResults({ data, settings }: QuoterResultsProps) {
                     <span className="font-mono">{formatMoney(costs.extra)}</span>
                 </div>
             )}
-            
+
             <Separator className="my-2" />
-            
-            <div className="flex justify-between items-center font-bold">
-                <span>Total Costo Directo</span>
+
+            <div className="flex justify-between items-center text-sm font-medium">
+                <span>Total Directo</span>
                 <span>{formatMoney(costs.totalDirect)}</span>
             </div>
+        </CardContent>
+      </Card>
+
+      {/* 2. Labor Cost */}
+      <Card className="bg-muted/10 border-dashed">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
+            Mano de Obra (Tiempo)
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+            <div className="flex justify-between items-center text-sm">
+                <span className="flex items-center gap-2 text-muted-foreground">
+                    <User className="w-4 h-4" /> Valor del Tiempo
+                </span>
+                <span className="font-mono">{formatMoney(costs.laborValue)}</span>
+            </div>
+            
+            {/* Labor Breakdown */}
+            {data.laborDetails && (
+                <div className="pl-6 border-l-2 border-muted my-2 space-y-1">
+                   {data.laborDetails.generalMinutes > 0 && (
+                       <div className="flex justify-between text-[10px] text-muted-foreground">
+                          <span>General ({formatDuration(data.laborDetails.generalMinutes)})</span>
+                          <span>{formatMoney((data.laborDetails.generalMinutes / 60) * settings.humanHourlyRate)}</span>
+                       </div>
+                   )}
+                   {data.laborDetails.paintingMinutes > 0 && (
+                       <div className="flex justify-between text-[10px] text-muted-foreground">
+                          <span>Pintado ({formatDuration(data.laborDetails.paintingMinutes)})</span>
+                          <span>{formatMoney((data.laborDetails.paintingMinutes / 60) * (settings.humanHourlyRatePainting || settings.humanHourlyRate))}</span>
+                       </div>
+                   )}
+                   {data.laborDetails.modelingMinutes > 0 && (
+                       <div className="flex justify-between text-[10px] text-muted-foreground">
+                          <span>Modelado ({formatDuration(data.laborDetails.modelingMinutes)})</span>
+                          <span>{formatMoney((data.laborDetails.modelingMinutes / 60) * (settings.humanHourlyRateModeling || settings.humanHourlyRate))}</span>
+                       </div>
+                   )}
+                </div>
+            )}
         </CardContent>
       </Card>
 
@@ -283,16 +352,22 @@ export function QuoterResults({ data, settings }: QuoterResultsProps) {
             
             {/* Controls */}
             <div className="grid gap-6 p-4 bg-muted/20 rounded-xl">
-                <div className="space-y-3">
-                    <div className="flex justify-between">
-                        <Label>Margen Deseado</Label>
-                        <span className="text-sm font-bold text-primary">{desiredMargin}%</span>
+                <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                        <Label className="flex flex-col gap-1">
+                            <span>Nivel de Ganancia (Margen)</span>
+                            <span className="text-[10px] font-normal text-muted-foreground">
+                                ¿Qué porcentaje del cobro final será ganancia neta para la empresa?
+                            </span>
+                        </Label>
+                        <span className="text-xl font-bold text-primary">{desiredMargin}%</span>
                     </div>
+                    
                     <input 
                         type="range"
-                        min="0"
-                        max="90"
-                        step="1"
+                        min="10"
+                        max="80"
+                        step="5"
                         value={desiredMargin}
                         onChange={(e) => {
                             setDesiredMargin(Number(e.target.value));
@@ -300,13 +375,28 @@ export function QuoterResults({ data, settings }: QuoterResultsProps) {
                         }}
                         className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
                     />
-                    <p className="text-[10px] text-muted-foreground">
-                        Porcentaje del precio final que será ganancia bruta.
-                    </p>
+                    
+                    {/* Explicación Dinámica Amigable */}
+                    <div className="bg-primary/5 rounded-lg p-3 text-sm text-muted-foreground border border-primary/10">
+                        <div className="flex items-start gap-2">
+                            <Info className="w-4 h-4 mt-0.5 text-primary" />
+                            <div className="space-y-1">
+                                <p>
+                                    <span className="font-semibold text-primary">Interpretación:</span>
+                                    <br/>
+                                    Por cada <strong>S/. 100</strong> que cobres al cliente:
+                                </p>
+                                <ul className="list-disc pl-4 space-y-0.5 text-xs">
+                                    <li><strong>S/. {100 - desiredMargin}</strong> se van en cubrir costos y sueldos.</li>
+                                    <li><strong>S/. {desiredMargin}</strong> quedan libres para la empresa (crecimiento).</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="space-y-2">
-                    <Label>O ingresa un Precio Manual:</Label>
+                    <Label>O define tú mismo el Precio Final:</Label>
                     <div className="relative">
                         <span className="absolute left-3 top-2.5 text-muted-foreground font-bold">S/.</span>
                         <Input 
@@ -342,7 +432,7 @@ export function QuoterResults({ data, settings }: QuoterResultsProps) {
                 <div className="bg-blue-50/50 dark:bg-blue-900/10 p-4 rounded-xl border border-blue-100 dark:border-blue-900/50 space-y-3">
                     <h5 className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-2 flex items-center gap-2">
                         <TrendingUp className="w-3 h-3" />
-                        Reparto de la Ganancia (S/. {finalProfit.toFixed(2)})
+                        Reparto de la Ganancia (S/. {grossProfit.toFixed(2)})
                     </h5>
                     
                     <div className="flex justify-between items-center">

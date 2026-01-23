@@ -169,22 +169,55 @@ export function FinanceSettingsModal({ isOpen, onClose, settings, onUpdate }: Fi
                   <span className="absolute left-3 top-2.5 text-xs text-muted-foreground">S/.</span>
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="human">Tu Meta por Hora (Mano de Obra)</Label>
-                <div className="relative">
-                  <Input 
-                    id="human" 
-                    type="number" 
-                    step="0.01"
-                    value={localSettings.humanHourlyRate}
-                    onChange={(e) => handleChange('humanHourlyRate', e.target.value)}
-                    className="pl-8"
-                  />
-                  <span className="absolute left-3 top-2.5 text-xs text-muted-foreground">S/.</span>
-                </div>
-                <p className="text-[10px] text-muted-foreground">
-                  Cuánto quieres ganar TÚ por cada hora de trabajo manual (pintado, diseño, etc).
-                </p>
+              
+              <div className="col-span-2 grid grid-cols-3 gap-4 bg-muted/20 p-3 rounded-lg border">
+                  <div className="space-y-2">
+                    <Label htmlFor="human">Mano de Obra (General)</Label>
+                    <div className="relative">
+                      <Input 
+                        id="human" 
+                        type="number" 
+                        step="0.01"
+                        value={localSettings.humanHourlyRate}
+                        onChange={(e) => handleChange('humanHourlyRate', e.target.value)}
+                        className="pl-8"
+                      />
+                      <span className="absolute left-3 top-2.5 text-xs text-muted-foreground">S/.</span>
+                    </div>
+                    <p className="text-[9px] text-muted-foreground">Post-procesado básico</p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="human_paint">Pintado / Acabado</Label>
+                    <div className="relative">
+                      <Input 
+                        id="human_paint" 
+                        type="number" 
+                        step="0.01"
+                        value={localSettings.humanHourlyRatePainting || 30}
+                        onChange={(e) => handleChange('humanHourlyRatePainting', e.target.value)}
+                        className="pl-8"
+                      />
+                      <span className="absolute left-3 top-2.5 text-xs text-muted-foreground">S/.</span>
+                    </div>
+                    <p className="text-[9px] text-muted-foreground">Trabajo artístico / detallado</p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="human_model">Modelado / Diseño</Label>
+                    <div className="relative">
+                      <Input 
+                        id="human_model" 
+                        type="number" 
+                        step="0.01"
+                        value={localSettings.humanHourlyRateModeling || 50}
+                        onChange={(e) => handleChange('humanHourlyRateModeling', e.target.value)}
+                        className="pl-8"
+                      />
+                      <span className="absolute left-3 top-2.5 text-xs text-muted-foreground">S/.</span>
+                    </div>
+                    <p className="text-[9px] text-muted-foreground">Diseño 3D / CAD</p>
+                  </div>
               </div>
             </div>
           </div>

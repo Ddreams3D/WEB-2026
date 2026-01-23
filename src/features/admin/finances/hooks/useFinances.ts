@@ -175,12 +175,17 @@ export function useFinances(
       .filter(r => r.type === 'expense' && r.status === 'pending')
       .reduce((sum, r) => sum + r.amount, 0);
 
+    const totalLabor = activeRecords
+      .filter(r => r.type === 'income' && r.status === 'paid')
+      .reduce((sum, r) => sum + (r.productionSnapshot?.computedLaborCost || 0), 0);
+
     return {
       totalIncome,
       totalExpense,
       netProfit: totalIncome - totalExpense,
       pendingIncome,
-      pendingExpense
+      pendingExpense,
+      totalLabor
     };
   };
 

@@ -131,7 +131,9 @@ export interface FinanceSettings {
   machineDepreciationRateResin: number; // New: Specific for Resin
   materialCostFdm: number; // PEN per kg
   materialCostResin: number; // PEN per liter
-  humanHourlyRate: number; // PEN per hour (Target)
+  humanHourlyRate: number; // PEN per hour (Target) - General
+  humanHourlyRatePainting?: number; // PEN per hour - Painting/Finishing
+  humanHourlyRateModeling?: number; // PEN per hour - Design/Modeling
   machines?: MachineDefinition[]; // New: List of specific machines
   updatedAt?: number; // Timestamp for sync
 }

@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { FinanceSettings, MachineDefinition } from '../../finances/types';
-import { Clock, Scale, User, DollarSign, AlertCircle, Plus, Trash2, Printer } from 'lucide-react';
+import { Clock, Scale, User, DollarSign, AlertCircle, Plus, Trash2, Printer, Palette, Box } from 'lucide-react';
 
 interface QuoterFormProps {
   onCalculate: (data: any) => void;
@@ -33,6 +33,15 @@ export function QuoterForm({ onCalculate, settings }: QuoterFormProps) {
   const [humanHours, setHumanHours] = useState('');
   const [humanMinutes, setHumanMinutes] = useState('');
   
+  // Painting Time
+  const [paintHours, setPaintHours] = useState('');
+  const [paintMinutes, setPaintMinutes] = useState('');
+
+  // Modeling Time
+  const [modelHours, setModelHours] = useState('');
+  const [modelMinutes, setModelMinutes] = useState('');
+
+  const [consumablesCost, setConsumablesCost] = useState(''); // Paint, sandpaper, primer
   const [additionalCost, setAdditionalCost] = useState(''); // Extra hardware etc.
   const [failureRate, setFailureRate] = useState('0'); // percentage
   
@@ -92,7 +101,17 @@ export function QuoterForm({ onCalculate, settings }: QuoterFormProps) {
     const hMinutes = parseFloat(humanMinutes) || 0;
     const humanTotalMinutes = (hDays * 24 * 60) + (hHours * 60) + hMinutes;
 
-    const extraCost = parseFloat(additionalCost) || 0;
+    // Painting
+    const pHours = parseFloat(paintHours) || 0;
+    const pMinutes = parseFloat(paintMinutes) || 0;
+    const paintingTotalMinutes = (pHours * 60) + pMinutes;
+
+    // Modeling
+    const mHours = parseFloat(modelHours) || 0;
+    const mMinutes = parseFloat(modelMinutes) || 0;
+    const modelingTotalMinutes = (mHours * 60) + mMinutes;
+
+    const extraCost = (parseFloat(additionalCost) || 0) + (parseFloat(consumablesCost) || 0);
     const risk = parseFloat(failureRate) || 0;
 
     if (totalMinutes > 0 || totalWeight > 0) {
@@ -102,10 +121,15 @@ export function QuoterForm({ onCalculate, settings }: QuoterFormProps) {
         humanMinutes: humanTotalMinutes,
         extraCost,
         failureRate: risk,
-        machineDetails // Detailed breakdown
+        machineDetails, // Detailed breakdown
+        laborDetails: {
+            generalMinutes: humanTotalMinutes,
+            paintingMinutes: paintingTotalMinutes,
+            modelingMinutes: modelingTotalMinutes
+        }
       });
     }
-  }, [machines, humanDays, humanHours, humanMinutes, additionalCost, failureRate, availableMachines]);
+  }, [machines, humanDays, humanHours, humanMinutes, paintHours, paintMinutes, modelHours, modelMinutes, consumablesCost, additionalCost, failureRate, availableMachines]);
 
   return (
     <div className="space-y-6">
@@ -228,64 +252,165 @@ export function QuoterForm({ onCalculate, settings }: QuoterFormProps) {
         </div>
       </div>
 
-      <div className="space-y-2">
-          <Label className="flex items-center gap-2">
-              <User className="w-3.5 h-3.5 text-muted-foreground" />
-              Mano de Obra
-          </Label>
-          <div className="flex gap-2">
-            <div className="relative flex-1">
-              <Input 
-                type="number" 
-                placeholder="0" 
-                value={humanDays}
-                onChange={(e) => setHumanDays(e.target.value)}
-                min="0"
-              />
-              <span className="absolute right-2 top-2 text-xs text-muted-foreground">d</span>
-            </div>
-            <div className="relative flex-1">
-              <Input 
-                type="number" 
-                placeholder="0" 
-                value={humanHours}
-                onChange={(e) => setHumanHours(e.target.value)}
-                min="0"
-              />
-              <span className="absolute right-2 top-2 text-xs text-muted-foreground">h</span>
-            </div>
-            <div className="relative flex-1">
-              <Input 
-                type="number" 
-                placeholder="0" 
-                value={humanMinutes}
-                onChange={(e) => setHumanMinutes(e.target.value)}
-                min="0"
-                max="59"
-              />
-              <span className="absolute right-2 top-2 text-xs text-muted-foreground">m</span>
-            </div>
+      {/* Labor Inputs */}
+      <div className="space-y-4 pt-2 border-t border-border/50">
+          {/* General Labor */}
+          <div className="space-y-2">
+              <Label className="flex items-center gap-2 text-xs">
+                  <User className="w-3.5 h-3.5 text-muted-foreground" />
+                  Mano de Obra (General)
+              </Label>
+              <div className="flex gap-2">
+                  <div className="relative flex-1">
+                      <Input 
+                      type="number" 
+                      placeholder="0" 
+                      value={humanDays}
+                      onChange={(e) => setHumanDays(e.target.value)}
+                      min="0"
+                      className="h-8 pr-5 text-xs"
+                      />
+                      <span className="absolute right-2 top-2 text-[10px] text-muted-foreground">d</span>
+                  </div>
+                  <div className="relative flex-1">
+                      <Input 
+                      type="number" 
+                      placeholder="0" 
+                      value={humanHours}
+                      onChange={(e) => setHumanHours(e.target.value)}
+                      min="0"
+                      className="h-8 pr-5 text-xs"
+                      />
+                      <span className="absolute right-2 top-2 text-[10px] text-muted-foreground">h</span>
+                  </div>
+                  <div className="relative flex-1">
+                      <Input 
+                      type="number" 
+                      placeholder="0" 
+                      value={humanMinutes}
+                      onChange={(e) => setHumanMinutes(e.target.value)}
+                      min="0"
+                      max="59"
+                      className="h-8 pr-5 text-xs"
+                      />
+                      <span className="absolute right-2 top-2 text-[10px] text-muted-foreground">m</span>
+                  </div>
+              </div>
+              <p className="text-[10px] text-muted-foreground">Limpieza, soportes, lijado básico</p>
           </div>
-          <p className="text-[10px] text-muted-foreground">Post-procesado, slicer, pintura</p>
+
+          {/* Painting Labor */}
+          <div className="space-y-2">
+              <Label className="flex items-center gap-2 text-xs">
+                  <Palette className="w-3.5 h-3.5 text-muted-foreground" />
+                  Pintado y Acabado
+              </Label>
+              <div className="flex gap-2">
+                  <div className="relative flex-1">
+                      <Input 
+                      type="number" 
+                      placeholder="0" 
+                      value={paintHours}
+                      onChange={(e) => setPaintHours(e.target.value)}
+                      min="0"
+                      className="h-8 pr-5 text-xs"
+                      />
+                      <span className="absolute right-2 top-2 text-[10px] text-muted-foreground">h</span>
+                  </div>
+                  <div className="relative flex-1">
+                      <Input 
+                      type="number" 
+                      placeholder="0" 
+                      value={paintMinutes}
+                      onChange={(e) => setPaintMinutes(e.target.value)}
+                      min="0"
+                      max="59"
+                      className="h-8 pr-5 text-xs"
+                      />
+                      <span className="absolute right-2 top-2 text-[10px] text-muted-foreground">m</span>
+                  </div>
+              </div>
+              <p className="text-[10px] text-muted-foreground">Pintura detallada, aerógrafo, barniz</p>
+          </div>
+
+          {/* Modeling Labor */}
+          <div className="space-y-2">
+              <Label className="flex items-center gap-2 text-xs">
+                  <Box className="w-3.5 h-3.5 text-muted-foreground" />
+                  Modelado / Diseño 3D
+              </Label>
+              <div className="flex gap-2">
+                  <div className="relative flex-1">
+                      <Input 
+                      type="number" 
+                      placeholder="0" 
+                      value={modelHours}
+                      onChange={(e) => setModelHours(e.target.value)}
+                      min="0"
+                      className="h-8 pr-5 text-xs"
+                      />
+                      <span className="absolute right-2 top-2 text-[10px] text-muted-foreground">h</span>
+                  </div>
+                  <div className="relative flex-1">
+                      <Input 
+                      type="number" 
+                      placeholder="0" 
+                      value={modelMinutes}
+                      onChange={(e) => setModelMinutes(e.target.value)}
+                      min="0"
+                      max="59"
+                      className="h-8 pr-5 text-xs"
+                      />
+                      <span className="absolute right-2 top-2 text-[10px] text-muted-foreground">m</span>
+                  </div>
+              </div>
+              <p className="text-[10px] text-muted-foreground">Blender, CAD, correcciones IA</p>
+          </div>
       </div>
 
-      <div className="space-y-2">
-          <Label className="flex items-center gap-2">
-              <DollarSign className="w-3.5 h-3.5 text-muted-foreground" />
-              Costos Extra
-          </Label>
-          <div className="relative">
-              <span className="absolute left-3 top-2.5 text-xs text-muted-foreground">S/.</span>
-              <Input 
-              type="number" 
-              placeholder="0.00" 
-              className="pl-7"
-              value={additionalCost}
-              onChange={(e) => setAdditionalCost(e.target.value)}
-              min="0"
-              />
+      {/* Additional Costs */}
+      <div className="space-y-4 pt-2 border-t border-border/50">
+          <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                  <Label className="flex items-center gap-2 text-xs">
+                      <DollarSign className="w-3.5 h-3.5 text-muted-foreground" />
+                      Insumos (Acabado)
+                  </Label>
+                  <div className="relative">
+                      <Input 
+                      type="number" 
+                      placeholder="0.00" 
+                      value={consumablesCost}
+                      onChange={(e) => setConsumablesCost(e.target.value)}
+                      min="0"
+                      step="0.50"
+                      className="h-8 pl-6 text-xs"
+                      />
+                      <span className="absolute left-2 top-2 text-[10px] text-muted-foreground">S/.</span>
+                  </div>
+                  <p className="text-[9px] text-muted-foreground">Lija, pintura, primer</p>
+              </div>
+
+              <div className="space-y-2">
+                  <Label className="flex items-center gap-2 text-xs">
+                      <DollarSign className="w-3.5 h-3.5 text-muted-foreground" />
+                      Otros Costos
+                  </Label>
+                  <div className="relative">
+                      <Input 
+                      type="number" 
+                      placeholder="0.00" 
+                      value={additionalCost}
+                      onChange={(e) => setAdditionalCost(e.target.value)}
+                      min="0"
+                      step="0.50"
+                      className="h-8 pl-6 text-xs"
+                      />
+                      <span className="absolute left-2 top-2 text-[10px] text-muted-foreground">S/.</span>
+                  </div>
+                  <p className="text-[9px] text-muted-foreground">Hardware, electrónica</p>
+              </div>
           </div>
-          <p className="text-[10px] text-muted-foreground">Hardware, lija, pintura, etc.</p>
       </div>
       
       <div className="space-y-2 border-t pt-4">
@@ -318,6 +443,11 @@ export function QuoterForm({ onCalculate, settings }: QuoterFormProps) {
               setHumanDays('');
               setHumanHours('');
               setHumanMinutes('');
+              setPaintHours('');
+              setPaintMinutes('');
+              setModelHours('');
+              setModelMinutes('');
+              setConsumablesCost('');
               setAdditionalCost('');
               setFailureRate('0');
               onCalculate(null);
