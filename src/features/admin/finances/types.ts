@@ -48,6 +48,9 @@ export interface FinanceRecord {
   // Sync Metadata
   _deleted?: boolean;
   _synced?: boolean;
+  
+  // Grouping
+  groupId?: string; // For linking Deposit + Balance transactions
 
   // Bot Integration
   originInboxId?: string; // Deterministic ID from Telegram (chatId_messageId)

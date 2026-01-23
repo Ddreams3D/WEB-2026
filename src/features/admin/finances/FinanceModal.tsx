@@ -432,8 +432,11 @@ export function FinanceModal({ isOpen, onClose, record, onSave, settings }: Fina
            return;
          }
 
+         // Generate a common Group ID for these linked transactions
+         const groupId = crypto.randomUUID();
+
          // 1. Save Deposit (Paid)
-         onSave(finalData);
+         onSave({ ...finalData, groupId });
          
          // 2. Save Pending Balance
          // We need a small delay or just call onSave again with modified data.
@@ -452,6 +455,7 @@ export function FinanceModal({ isOpen, onClose, record, onSave, settings }: Fina
                 // We also remove items detailed list if it causes confusion, 
                 // but usually items are needed for invoice. 
                 // For cost analysis, snapshot is the key.
+                groupId, // Link to the deposit
              };
              onSave(pendingData);
         }, 100);
@@ -877,7 +881,10 @@ export function FinanceModal({ isOpen, onClose, record, onSave, settings }: Fina
                                     }}
                                   >
                                     <SelectTrigger className="h-8 text-xs">
-                                      <SelectValue />
+                                      {comp.type === 'fdm' ? 'Impresión FDM' : 
+                                       comp.type === 'resin' ? 'Impresión Resina' : 
+                                       comp.type === 'cnc' ? 'CNC / Laser' : 
+                                       comp.type === 'other' ? 'Otro' : comp.type}
                                     </SelectTrigger>
                                     <SelectContent>
                                       <SelectItem value="fdm">Impresión FDM</SelectItem>
@@ -901,7 +908,7 @@ export function FinanceModal({ isOpen, onClose, record, onSave, settings }: Fina
                                         }}
                                       >
                                         <SelectTrigger className={cn("h-8 text-xs", !comp.machineId && "border-rose-300 ring-1 ring-rose-200")}>
-                                          <SelectValue placeholder="Seleccionar..." />
+                                          {availableMachines.find((m: any) => m.id === comp.machineId)?.name || "Seleccionar..."}
                                         </SelectTrigger>
                                         <SelectContent>
                                           {availableMachines.map((m: any) => (

@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useFinanceSettings } from '../hooks/useFinanceSettings';
-import { Settings, Save, RefreshCw, Calculator, ChevronDown, ChevronUp, Info, Plus, Trash2, Printer } from 'lucide-react';
+import { Settings, Save, RefreshCw, Calculator, ChevronDown, ChevronUp, Info, Plus, Trash2, Printer, Edit } from 'lucide-react';
 import { FinanceSettings, MachineDefinition } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 import { cn } from '@/lib/utils';
@@ -27,6 +27,7 @@ export function FinanceSettingsModal({ isOpen, onClose, settings, onUpdate }: Fi
   const [calcCost, setCalcCost] = React.useState<string>('');
   const [calcYears, setCalcYears] = React.useState<string>('3');
   const [calcDailyHours, setCalcDailyHours] = React.useState<string>('8');
+  const [editingId, setEditingId] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     if (isOpen) {
@@ -49,32 +50,72 @@ export function FinanceSettingsModal({ isOpen, onClose, settings, onUpdate }: Fi
     return 0;
   };
 
-  const handleAddMachine = () => {
+  const handleEditMachine = (machine: MachineDefinition) => {
+    setEditingId(machine.id);
+    setCalcName(machine.name);
+    setCalcCost(machine.purchaseCost.toString());
+    setCalcYears(machine.lifeYears.toString());
+    setCalcDailyHours(machine.dailyHours.toString());
+    setShowDepreciationCalc(true);
+    // Optional: Switch tab if needed, though usually user clicks from correct tab
+    // setActiveTab(machine.type); 
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setCalcName('');
+    setCalcCost('');
+    setCalcYears('3');
+    setCalcDailyHours('8');
+    setShowDepreciationCalc(false);
+  };
+
+  const handleSaveMachine = () => {
     const cost = parseFloat(calcCost) || 0;
     const years = parseFloat(calcYears) || 0;
     const hours = parseFloat(calcDailyHours) || 0;
     const rate = calculateRate(cost, years, hours);
     
     if (rate > 0 && calcName.trim()) {
-      const newMachine: MachineDefinition = {
-        id: uuidv4(),
-        name: calcName.trim(),
-        type: activeTab as 'fdm' | 'resin',
-        purchaseCost: cost,
-        lifeYears: years,
-        dailyHours: hours,
-        hourlyRate: parseFloat(rate.toFixed(4))
-      };
-
-      setLocalSettings(prev => ({
-        ...prev,
-        machines: [...(prev.machines || []), newMachine]
-      }));
+      if (editingId) {
+        // Update existing
+        setLocalSettings(prev => ({
+          ...prev,
+          machines: (prev.machines || []).map(m => 
+            m.id === editingId 
+            ? { 
+                ...m, 
+                name: calcName.trim(), 
+                purchaseCost: cost, 
+                lifeYears: years, 
+                dailyHours: hours, 
+                hourlyRate: parseFloat(rate.toFixed(4)),
+                // Ensure type remains consistent or updates if we want to allow type change
+                type: activeTab as 'fdm' | 'resin' 
+              } 
+            : m
+          )
+        }));
+      } else {
+        // Create new
+        const newMachine: MachineDefinition = {
+          id: uuidv4(),
+          name: calcName.trim(),
+          type: activeTab as 'fdm' | 'resin',
+          purchaseCost: cost,
+          lifeYears: years,
+          dailyHours: hours,
+          hourlyRate: parseFloat(rate.toFixed(4))
+        };
+  
+        setLocalSettings(prev => ({
+          ...prev,
+          machines: [...(prev.machines || []), newMachine]
+        }));
+      }
 
       // Reset form
-      setCalcName('');
-      setCalcCost('');
-      setShowDepreciationCalc(false);
+      handleCancelEdit();
     }
   };
 
@@ -129,7 +170,7 @@ export function FinanceSettingsModal({ isOpen, onClose, settings, onUpdate }: Fi
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="human">Hora Hombre Objetivo</Label>
+                <Label htmlFor="human">Tu Meta por Hora (Mano de Obra)</Label>
                 <div className="relative">
                   <Input 
                     id="human" 
@@ -141,6 +182,9 @@ export function FinanceSettingsModal({ isOpen, onClose, settings, onUpdate }: Fi
                   />
                   <span className="absolute left-3 top-2.5 text-xs text-muted-foreground">S/.</span>
                 </div>
+                <p className="text-[10px] text-muted-foreground">
+                  Cuánto quieres ganar TÚ por cada hora de trabajo manual (pintado, diseño, etc).
+                </p>
               </div>
             </div>
           </div>
@@ -195,6 +239,9 @@ export function FinanceSettingsModal({ isOpen, onClose, settings, onUpdate }: Fi
                               <div className="font-bold text-sm text-emerald-600">S/. {machine.hourlyRate.toFixed(2)}/h</div>
                               <div className="text-[10px] text-muted-foreground">Depreciación</div>
                             </div>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-500/10" onClick={() => handleEditMachine(machine)}>
+                                <Edit className="w-4 h-4" />
+                            </Button>
                             <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:bg-destructive/10" onClick={() => handleDeleteMachine(machine.id)}>
                               <Trash2 className="w-4 h-4" />
                             </Button>
@@ -247,6 +294,9 @@ export function FinanceSettingsModal({ isOpen, onClose, settings, onUpdate }: Fi
                               <div className="font-bold text-sm text-purple-600">S/. {machine.hourlyRate.toFixed(2)}/h</div>
                               <div className="text-[10px] text-muted-foreground">Depreciación</div>
                             </div>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:bg-blue-500/10" onClick={() => handleEditMachine(machine)}>
+                                <Edit className="w-4 h-4" />
+                            </Button>
                             <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:bg-destructive/10" onClick={() => handleDeleteMachine(machine.id)}>
                               <Trash2 className="w-4 h-4" />
                             </Button>
@@ -265,11 +315,17 @@ export function FinanceSettingsModal({ isOpen, onClose, settings, onUpdate }: Fi
                 variant="ghost"
                 size="sm"
                 className="w-full flex justify-between items-center mb-2"
-                onClick={() => setShowDepreciationCalc(!showDepreciationCalc)}
+                onClick={() => {
+                    if (editingId) {
+                        handleCancelEdit();
+                    } else {
+                        setShowDepreciationCalc(!showDepreciationCalc);
+                    }
+                }}
               >
                 <span className="flex items-center gap-2 font-semibold">
-                  <Plus className="w-4 h-4" /> 
-                  Agregar Nueva Impresora ({activeTab === 'fdm' ? 'FDM' : 'Resina'})
+                  {editingId ? <Edit className="w-4 h-4" /> : <Plus className="w-4 h-4" />} 
+                  {editingId ? 'Editar Impresora' : `Agregar Nueva Impresora (${activeTab === 'fdm' ? 'FDM' : 'Resina'})`}
                 </span>
                 {showDepreciationCalc ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
               </Button>
@@ -336,14 +392,26 @@ export function FinanceSettingsModal({ isOpen, onClose, settings, onUpdate }: Fi
                     </div>
                   </div>
 
-                  <Button 
-                    size="sm" 
-                    className="w-full bg-primary text-primary-foreground shadow-sm"
-                    onClick={handleAddMachine}
-                    disabled={!calcName || !calcCost}
-                  >
-                    Guardar Impresora
-                  </Button>
+                  <div className="flex gap-2">
+                    {editingId && (
+                        <Button 
+                            variant="outline"
+                            size="sm" 
+                            className="w-1/3"
+                            onClick={handleCancelEdit}
+                        >
+                            Cancelar
+                        </Button>
+                    )}
+                    <Button 
+                        size="sm" 
+                        className={cn("bg-primary text-primary-foreground shadow-sm", editingId ? "w-2/3" : "w-full")}
+                        onClick={handleSaveMachine}
+                        disabled={!calcName || !calcCost}
+                    >
+                        {editingId ? 'Actualizar Impresora' : 'Guardar Impresora'}
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>

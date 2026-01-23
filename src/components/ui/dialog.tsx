@@ -163,6 +163,40 @@ const DialogDescription = React.forwardRef<
 })
 DialogDescription.displayName = "DialogDescription"
 
+const DialogClose = React.forwardRef<
+  HTMLButtonElement,
+  React.ButtonHTMLAttributes<HTMLButtonElement> & { asChild?: boolean }
+>(({ className, onClick, children, asChild, ...props }, ref) => {
+  const { onOpenChange } = useDialogContext()
+
+  if (asChild && React.isValidElement(children)) {
+    return React.cloneElement(children as React.ReactElement<any>, {
+      ...props,
+      onClick: (e: React.MouseEvent<HTMLButtonElement>) => {
+        (children.props as any).onClick?.(e)
+        onClick?.(e)
+        onOpenChange?.(false)
+      },
+      ref
+    })
+  }
+
+  return (
+    <button
+      ref={ref}
+      className={className}
+      onClick={(e) => {
+        onClick?.(e)
+        onOpenChange?.(false)
+      }}
+      {...props}
+    >
+      {children}
+    </button>
+  )
+})
+DialogClose.displayName = "DialogClose"
+
 export {
   Dialog,
   DialogTrigger,
@@ -171,4 +205,5 @@ export {
   DialogFooter,
   DialogTitle,
   DialogDescription,
+  DialogClose,
 }

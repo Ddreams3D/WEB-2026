@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Plus, List, BarChart3, TrendingUp, TrendingDown, Landmark, PieChart, Inbox, Settings } from 'lucide-react';
+import { Plus, List, BarChart3, TrendingUp, TrendingDown, Landmark, PieChart, Inbox, Settings, Calculator, Receipt } from 'lucide-react';
 import { useFinances } from './hooks/useFinances';
 import { FinanceTable } from './components/FinanceTable';
 import { FinanceStats } from './components/FinanceStats';
@@ -16,6 +16,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useSearchParams, useRouter } from 'next/navigation';
 
 import { useFinanceSettings } from './hooks/useFinanceSettings';
+import { QuoterForm } from '../quoter/components/QuoterForm';
+import { QuoterResults } from '../quoter/components/QuoterResults';
 
 export function FinancesView() {
   const { records, allRecords, importRecords, loading, addRecord, updateRecord, deleteRecord, stats } = useFinances();
@@ -25,8 +27,15 @@ export function FinancesView() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [editingRecord, setEditingRecord] = useState<FinanceRecord | null>(null);
   
+  // Quoter state
+  const [quoteData, setQuoteData] = useState<any>(null);
+
   const searchParams = useSearchParams();
   const router = useRouter();
+
+  const handleCalculateQuote = (data: any) => {
+    setQuoteData(data);
+  };
 
   // Check for URL param to open inbox
   useEffect(() => {
@@ -131,9 +140,12 @@ export function FinancesView() {
         </div>
       </div>
 
-      <Tabs defaultValue="incomes" className="w-full">
+      <Tabs defaultValue="quoter" className="w-full">
         <div className="flex items-center justify-between mb-4">
           <TabsList className="bg-muted/50 p-1 w-full sm:w-auto grid grid-cols-2 sm:flex">
+            <TabsTrigger value="quoter" className="gap-2">
+              <Calculator className="w-4 h-4" /> Cotizador
+            </TabsTrigger>
             <TabsTrigger value="incomes" className="gap-2">
               <TrendingUp className="w-4 h-4" /> Ingresos
             </TabsTrigger>
@@ -149,6 +161,34 @@ export function FinancesView() {
           </TabsList>
         </div>
 
+        <TabsContent value="quoter" className="mt-0">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-in fade-in slide-in-from-left-4 duration-300">
+            <div className="lg:col-span-5 space-y-6">
+                <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
+                    <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                        <Receipt className="w-5 h-5 text-muted-foreground" />
+                        Parámetros del Trabajo
+                    </h2>
+                    <QuoterForm onCalculate={handleCalculateQuote} settings={settings} />
+                </div>
+            </div>
+
+            <div className="lg:col-span-7">
+                  {quoteData ? (
+                      <QuoterResults data={quoteData} settings={settings} />
+                  ) : (
+                      <div className="h-full min-h-[400px] flex flex-col items-center justify-center text-muted-foreground bg-muted/10 border border-dashed border-border rounded-xl p-8 text-center">
+                          <Calculator className="w-12 h-12 mb-4 opacity-20" />
+                          <h3 className="text-lg font-medium mb-1">Listo para calcular</h3>
+                          <p className="max-w-xs mx-auto text-sm">
+                              Ingresa los detalles del modelo (tiempo, peso) para ver el desglose de costos y precio sugerido.
+                          </p>
+                      </div>
+                  )}
+            </div>
+          </div>
+        </TabsContent>
+
         <TabsContent value="incomes" className="mt-0">
           <div className="grid gap-6">
             <FinanceStats stats={stats} />
@@ -156,6 +196,7 @@ export function FinancesView() {
               records={incomeRecords} 
               onEdit={handleEdit} 
               onDelete={handleDelete} 
+              onUpdate={updateRecord}
             />
           </div>
         </TabsContent>
@@ -167,6 +208,7 @@ export function FinancesView() {
               records={expenseRecords} 
               onEdit={handleEdit} 
               onDelete={handleDelete} 
+              onUpdate={updateRecord}
             />
           </div>
         </TabsContent>
@@ -186,6 +228,7 @@ export function FinancesView() {
               records={financingRecords} 
               onEdit={handleEdit} 
               onDelete={handleDelete} 
+              onUpdate={updateRecord}
             />
           </div>
         </TabsContent>

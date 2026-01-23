@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ShoppingBag, Package, Briefcase, CreditCard, ArrowRight, Activity, FolderOpen, DollarSign, Wallet } from 'lucide-react';
+import { ShoppingBag, Package, Briefcase, CreditCard, ArrowRight, Activity, FolderOpen, DollarSign, Wallet, Calculator } from 'lucide-react';
 
 export function DashboardSidebar() {
   const quickAccess = [

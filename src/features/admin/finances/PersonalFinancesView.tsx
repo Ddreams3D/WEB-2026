@@ -605,7 +605,7 @@ export function PersonalFinancesView() {
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-semibold">Ingresos</h2>
             </div>
-            <FinanceTable records={incomeRecords} onEdit={handleEdit} onDelete={handleDelete} />
+            <FinanceTable records={incomeRecords} onEdit={handleEdit} onDelete={handleDelete} onUpdate={updateRecord} />
           </div>
         </TabsContent>
 
@@ -614,7 +614,7 @@ export function PersonalFinancesView() {
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-semibold">Gastos</h2>
             </div>
-            <FinanceTable records={expenseRecords} onEdit={handleEdit} onDelete={handleDelete} />
+            <FinanceTable records={expenseRecords} onEdit={handleEdit} onDelete={handleDelete} onUpdate={updateRecord} />
           </div>
         </TabsContent>
 
@@ -623,7 +623,7 @@ export function PersonalFinancesView() {
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-semibold">Financiamiento (Préstamos y Deudas)</h2>
             </div>
-            <FinanceTable records={financingRecords} onEdit={handleEdit} onDelete={handleDelete} />
+            <FinanceTable records={financingRecords} onEdit={handleEdit} onDelete={handleDelete} onUpdate={updateRecord} />
           </div>
         </TabsContent>
 
