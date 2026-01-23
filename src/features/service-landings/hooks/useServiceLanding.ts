@@ -65,7 +65,7 @@ export function useServiceLanding(config: ServiceLandingConfig, isPreview: boole
     }
 
     loadProducts();
-  }, [config.id, config.featuredTag, isPreview]);
+  }, [config.id, config.featuredTag, config.slug, isPreview]);
 
   // Determine theme class override
   const [systemTheme, setSystemTheme] = useState<'dark' | 'light'>('light');

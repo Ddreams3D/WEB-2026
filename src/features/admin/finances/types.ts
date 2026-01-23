@@ -118,24 +118,34 @@ export interface MachineDefinition {
   id: string;
   name: string;
   type: 'fdm' | 'resin';
-  purchaseCost: number;
+  purchaseCost: number; // S/
   lifeYears: number;
   dailyHours: number;
-  hourlyRate: number;
+  hourlyRate: number; // Calculated: Cost / (Years * 365 * Hours)
 }
 
 export interface FinanceSettings {
-  electricityPrice: number; // PEN per kWh
-  machineDepreciationRate: number; // Deprecated, kept for backward compatibility
-  machineDepreciationRateFdm: number; // New: Specific for FDM
-  machineDepreciationRateResin: number; // New: Specific for Resin
-  materialCostFdm: number; // PEN per kg
-  materialCostResin: number; // PEN per liter
-  humanHourlyRate: number; // PEN per hour (Target) - General
-  humanHourlyRatePainting?: number; // PEN per hour - Painting/Finishing
-  humanHourlyRateModeling?: number; // PEN per hour - Design/Modeling
-  machines?: MachineDefinition[]; // New: List of specific machines
-  updatedAt?: number; // Timestamp for sync
+  electricityPrice: number; // S/ per kWh
+  humanHourlyRate: number; // S/ per hour
+  humanHourlyRatePainting?: number; // S/ per hour (Painting)
+  humanHourlyRateModeling?: number; // S/ per hour (Modeling)
+  startupFee?: number; // Fixed cost per print job
+  
+  // Wholesale Settings
+  wholesaleThreshold?: number; // Minimum quantity for wholesale pricing
+  wholesaleMargin?: number; // Percentage margin for wholesale (e.g., 30%)
+  
+  machines: MachineDefinition[];
+  
+  // Material Costs (Simplified for now)
+  filamentCostPerKg: number;
+  resinCostPerKg: number;
+  
+  // Margins
+  profitMargin: number; // Percentage (e.g., 50%)
+  taxRate: number; // IGV (e.g., 18%)
+  
+  updatedAt?: number;
 }
 
 export interface InboxItem {

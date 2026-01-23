@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useFinanceSettings } from '../hooks/useFinanceSettings';
-import { Settings, Save, RefreshCw, Calculator, ChevronDown, ChevronUp, Info, Plus, Trash2, Printer, Edit } from 'lucide-react';
+import { Settings, Save, RefreshCw, Calculator, ChevronDown, ChevronUp, Info, Plus, Trash2, Printer, Edit, Zap, User, Scale } from 'lucide-react';
 import { FinanceSettings, MachineDefinition } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 import { cn } from '@/lib/utils';
@@ -152,74 +152,151 @@ export function FinanceSettingsModal({ isOpen, onClose, settings, onUpdate }: Fi
         </DialogHeader>
         
         <div className="grid gap-6 py-4">
-          <div className="space-y-4">
-            <h4 className="text-sm font-medium text-muted-foreground border-b pb-2">Costos Globales</h4>
-            <div className="grid grid-cols-2 gap-4">
-               <div className="space-y-2">
-                <Label htmlFor="electricity">Energía (S/. / kWh)</Label>
-                <div className="relative">
-                  <Input 
-                    id="electricity" 
-                    type="number" 
-                    step="0.01"
-                    value={localSettings.electricityPrice}
-                    onChange={(e) => handleChange('electricityPrice', e.target.value)}
-                    className="pl-8"
-                  />
-                  <span className="absolute left-3 top-2.5 text-xs text-muted-foreground">S/.</span>
+          
+          {/* Section 1: Basic Operational Costs */}
+          <div className="space-y-3">
+            <h4 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+              <Zap className="w-4 h-4" /> Costos Operativos Básicos
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+               {/* Electricity */}
+               <div className="space-y-2 p-3 bg-muted/20 border rounded-lg">
+                <Label htmlFor="electricity" className="text-xs font-semibold uppercase text-muted-foreground">Energía Eléctrica</Label>
+                <div className="flex items-center gap-2">
+                    <div className="relative flex-1">
+                      <Input 
+                        id="electricity" 
+                        type="number" 
+                        step="0.01"
+                        value={localSettings.electricityPrice}
+                        onChange={(e) => handleChange('electricityPrice', e.target.value)}
+                        className="pl-8 h-9"
+                      />
+                      <span className="absolute left-3 top-2.5 text-xs text-muted-foreground">S/.</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground font-medium">/ kWh</span>
                 </div>
               </div>
               
-              <div className="col-span-2 grid grid-cols-3 gap-4 bg-muted/20 p-3 rounded-lg border">
-                  <div className="space-y-2">
-                    <Label htmlFor="human">Mano de Obra (General)</Label>
-                    <div className="relative">
+              {/* Startup Fee (Renamed) */}
+              <div className="space-y-2 p-3 bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 rounded-lg">
+                <Label htmlFor="startup_fee" className="text-xs font-semibold uppercase text-blue-600 dark:text-blue-400">Preparación y Control</Label>
+                <div className="flex items-center gap-2">
+                    <div className="relative flex-1">
                       <Input 
+                        id="startup_fee" 
+                        type="number" 
+                        step="0.01"
+                        value={localSettings.startupFee || 0}
+                        onChange={(e) => handleChange('startupFee', e.target.value)}
+                        className="pl-8 h-9 border-blue-200 dark:border-blue-800 focus-visible:ring-blue-500"
+                      />
+                      <span className="absolute left-3 top-2.5 text-xs text-muted-foreground">S/.</span>
+                    </div>
+                    <div title="Costo fijo por pedido (Gestión, Limpieza, Slicing)">
+                      <Info className="w-4 h-4 text-blue-400" />
+                    </div>
+                </div>
+                <p className="text-[10px] text-blue-600/70 dark:text-blue-400/70">Tarifa base por servicio (&quot;Bajada de bandera&quot;)</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Section 2: Human Labor Rates */}
+          <div className="space-y-3">
+            <h4 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+               <User className="w-4 h-4" /> Valor de Mano de Obra (por Hora)
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {/* General Labor */}
+                <div className="space-y-2 p-3 border rounded-lg hover:bg-muted/30 transition-colors">
+                    <Label htmlFor="human" className="text-xs font-medium">General / Post-proceso</Label>
+                    <div className="relative">
+                        <Input 
                         id="human" 
                         type="number" 
                         step="0.01"
                         value={localSettings.humanHourlyRate}
                         onChange={(e) => handleChange('humanHourlyRate', e.target.value)}
-                        className="pl-8"
-                      />
-                      <span className="absolute left-3 top-2.5 text-xs text-muted-foreground">S/.</span>
+                        className="pl-8 h-9"
+                        />
+                        <span className="absolute left-3 top-2.5 text-xs text-muted-foreground">S/.</span>
                     </div>
-                    <p className="text-[9px] text-muted-foreground">Post-procesado básico</p>
-                  </div>
+                </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="human_paint">Pintado / Acabado</Label>
+                {/* Painting Labor */}
+                <div className="space-y-2 p-3 border rounded-lg hover:bg-muted/30 transition-colors">
+                    <Label htmlFor="human_paint" className="text-xs font-medium">Pintado / Acabado</Label>
                     <div className="relative">
-                      <Input 
+                        <Input 
                         id="human_paint" 
                         type="number" 
                         step="0.01"
                         value={localSettings.humanHourlyRatePainting || 30}
                         onChange={(e) => handleChange('humanHourlyRatePainting', e.target.value)}
-                        className="pl-8"
-                      />
-                      <span className="absolute left-3 top-2.5 text-xs text-muted-foreground">S/.</span>
+                        className="pl-8 h-9"
+                        />
+                        <span className="absolute left-3 top-2.5 text-xs text-muted-foreground">S/.</span>
                     </div>
-                    <p className="text-[9px] text-muted-foreground">Trabajo artístico / detallado</p>
-                  </div>
+                </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="human_model">Modelado / Diseño</Label>
+                {/* Modeling Labor */}
+                <div className="space-y-2 p-3 border rounded-lg hover:bg-muted/30 transition-colors">
+                    <Label htmlFor="human_model" className="text-xs font-medium">Modelado 3D / CAD</Label>
                     <div className="relative">
-                      <Input 
+                        <Input 
                         id="human_model" 
                         type="number" 
                         step="0.01"
                         value={localSettings.humanHourlyRateModeling || 50}
                         onChange={(e) => handleChange('humanHourlyRateModeling', e.target.value)}
-                        className="pl-8"
-                      />
-                      <span className="absolute left-3 top-2.5 text-xs text-muted-foreground">S/.</span>
+                        className="pl-8 h-9"
+                        />
+                        <span className="absolute left-3 top-2.5 text-xs text-muted-foreground">S/.</span>
                     </div>
-                    <p className="text-[9px] text-muted-foreground">Diseño 3D / CAD</p>
-                  </div>
-              </div>
+                </div>
             </div>
+          </div>
+
+          {/* Section 3: Wholesale Margin */}
+          <div className="space-y-3">
+             <h4 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+               <Scale className="w-4 h-4" /> Margen Mayorista (Producción en Serie)
+             </h4>
+             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2 p-3 bg-green-50/50 dark:bg-green-900/10 border border-green-100 dark:border-green-900/30 rounded-lg">
+                  <Label htmlFor="wholesale_threshold" className="text-xs font-semibold uppercase text-green-600 dark:text-green-400">Cantidad Mínima</Label>
+                  <div className="flex items-center gap-2">
+                      <Input 
+                        id="wholesale_threshold" 
+                        type="number" 
+                        step="1"
+                        min="2"
+                        value={localSettings.wholesaleThreshold || 10}
+                        onChange={(e) => handleChange('wholesaleThreshold', e.target.value)}
+                        className="h-9 border-green-200 dark:border-green-800 focus-visible:ring-green-500"
+                      />
+                      <span className="text-xs text-muted-foreground font-medium">unidades</span>
+                  </div>
+                  <p className="text-[10px] text-green-600/70 dark:text-green-400/70">A partir de esta cantidad se aplica el descuento.</p>
+                </div>
+
+                <div className="space-y-2 p-3 bg-green-50/50 dark:bg-green-900/10 border border-green-100 dark:border-green-900/30 rounded-lg">
+                  <Label htmlFor="wholesale_margin" className="text-xs font-semibold uppercase text-green-600 dark:text-green-400">Margen Mayorista (%)</Label>
+                  <div className="flex items-center gap-2">
+                      <Input 
+                        id="wholesale_margin" 
+                        type="number" 
+                        step="1"
+                        value={localSettings.wholesaleMargin || 30}
+                        onChange={(e) => handleChange('wholesaleMargin', e.target.value)}
+                        className="h-9 border-green-200 dark:border-green-800 focus-visible:ring-green-500"
+                      />
+                      <span className="text-xs text-muted-foreground font-medium">%</span>
+                  </div>
+                  <p className="text-[10px] text-green-600/70 dark:text-green-400/70">Margen de ganancia reducido para lotes.</p>
+                </div>
+             </div>
           </div>
 
           <div className="space-y-4">
@@ -238,8 +315,8 @@ export function FinanceSettingsModal({ isOpen, onClose, settings, onUpdate }: Fi
                     <div className="relative">
                       <Input 
                         type="number" 
-                        value={localSettings.materialCostFdm}
-                        onChange={(e) => handleChange('materialCostFdm', e.target.value)}
+                        value={localSettings.filamentCostPerKg}
+                        onChange={(e) => handleChange('filamentCostPerKg', e.target.value)}
                         className="pl-8"
                       />
                       <span className="absolute left-3 top-2.5 text-xs text-muted-foreground">S/.</span>
@@ -293,8 +370,8 @@ export function FinanceSettingsModal({ isOpen, onClose, settings, onUpdate }: Fi
                     <div className="relative">
                       <Input 
                         type="number" 
-                        value={localSettings.materialCostResin}
-                        onChange={(e) => handleChange('materialCostResin', e.target.value)}
+                        value={localSettings.resinCostPerKg}
+                        onChange={(e) => handleChange('resinCostPerKg', e.target.value)}
                         className="pl-8"
                       />
                       <span className="absolute left-3 top-2.5 text-xs text-muted-foreground">S/.</span>

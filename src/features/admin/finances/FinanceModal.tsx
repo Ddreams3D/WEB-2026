@@ -292,14 +292,19 @@ export function FinanceModal({ isOpen, onClose, record, onSave, settings }: Fina
 
       // Fallback if no machine selected or not found
       if (hourlyDepreciation === 0) {
-        hourlyDepreciation = comp.type === 'resin' 
-          ? (safeSettings.machineDepreciationRateResin || safeSettings.machineDepreciationRate) 
-          : (safeSettings.machineDepreciationRateFdm || safeSettings.machineDepreciationRate);
+        // Calculate average rate for the type from available machines
+        const typeMachines = safeSettings.machines.filter(m => m.type === comp.type);
+        if (typeMachines.length > 0) {
+            const avgRate = typeMachines.reduce((acc, m) => acc + m.hourlyRate, 0) / typeMachines.length;
+            hourlyDepreciation = avgRate;
+        } else {
+            hourlyDepreciation = 0;
+        }
       }
         
       const depreciation = safeFloat(hourlyDepreciation * hours);
 
-      const materialUnitCost = comp.type === 'resin' ? safeSettings.materialCostResin : safeSettings.materialCostFdm;
+      const materialUnitCost = comp.type === 'resin' ? safeSettings.resinCostPerKg : safeSettings.filamentCostPerKg;
       const material = safeFloat((comp.materialWeightG / 1000) * materialUnitCost);
       
       totalEnergy += energy;

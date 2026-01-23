@@ -79,7 +79,7 @@ export function InboxModal({ isOpen, onClose, onSave, mode = 'all' }: InboxModal
 
       load();
     }
-  }, [isOpen, mode]);
+  }, [isOpen, mode, addLocalNotification]);
 
   const handleApproveClick = (item: InboxItem) => {
     setSelectedItem(item);

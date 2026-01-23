@@ -128,7 +128,7 @@ export function useSeasonalLanding(config: SeasonalThemeConfig) {
     }
 
     loadProducts();
-  }, [config.landing.featuredTag]);
+  }, [config.landing.featuredTag, config.id]);
 
   return {
     featuredProducts,

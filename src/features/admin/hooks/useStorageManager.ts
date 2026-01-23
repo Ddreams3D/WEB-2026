@@ -166,7 +166,7 @@ export function useStorageManager() {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [showError]);
 
     useEffect(() => {
         setNextPageToken(undefined); // Reset token on path change

@@ -221,7 +221,7 @@ const ProfitDetailsContent = ({ record, totalIncome, onEdit }: { record: Finance
           <span className="text-right text-muted-foreground">S/. {targetHourly.toFixed(2)}</span>
         </div>
         <p className="text-[10px] text-muted-foreground mt-2 text-center">
-          * "Valor Real" es tu ganancia/hora actual. "Meta" es el valor que configuraste al crear este registro.
+          * &quot;Valor Real&quot; es tu ganancia/hora actual. &quot;Meta&quot; es el valor que configuraste al crear este registro.
         </p>
       </DetailSection>
     </div>

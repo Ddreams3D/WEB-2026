@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -16,11 +16,7 @@ export function WhatsAppSettings() {
   const [saving, setSaving] = useState(false);
   const { showSuccess, showError } = useToast();
 
-  useEffect(() => {
-    loadTemplates();
-  }, []);
-
-  const loadTemplates = async () => {
+  const loadTemplates = useCallback(async () => {
     setLoading(true);
     try {
       // Load directly from persistence to get latest
@@ -34,7 +30,11 @@ export function WhatsAppSettings() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [showError]);
+
+  useEffect(() => {
+    loadTemplates();
+  }, [loadTemplates]);
 
   const handleMessageChange = (id: WhatsAppTemplateId, newMessage: string) => {
     if (!templates) return;
