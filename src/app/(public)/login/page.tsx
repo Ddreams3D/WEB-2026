@@ -7,6 +7,7 @@ import { useToast } from '@/components/ui/ToastManager';
 import { Button } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import GoogleLoginButton from '@/components/auth/GoogleLoginButton';
+import { isSuperAdmin } from '@/config/roles';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -15,16 +16,22 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const { login, register, isAuthenticated, isLoading } = useAuth();
+  const { login, register, isAuthenticated, isLoading, user } = useAuth();
   const { showSuccess, showError } = useToast();
   const router = useRouter();
 
   // Redirigir si ya está autenticado
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
-      router.push('/');
+      // Si es admin, redirigir al dashboard
+      if (user?.email && isSuperAdmin(user.email)) {
+        router.push('/admin');
+      } else {
+        // Si es usuario normal, redirigir al home
+        router.push('/');
+      }
     }
-  }, [isAuthenticated, isLoading, router]);
+  }, [isAuthenticated, isLoading, router, user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

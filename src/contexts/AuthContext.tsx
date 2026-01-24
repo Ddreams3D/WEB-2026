@@ -105,7 +105,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }
 
           // 1. Intentar obtener datos del usuario desde Firestore
-          // Pasamos el claim para que syncUserWithFirestore sepa que ya somos admin "oficiales"
+          // Pasamos el claim (3er argumento) para que syncUserWithFirestore sepa que ya somos admin "oficiales"
           const userData = await AuthService.syncUserWithFirestore(firebaseUser, false, hasAdminClaim);
           
           // 2. Actualizar estado
