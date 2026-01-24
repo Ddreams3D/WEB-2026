@@ -1,0 +1,9 @@
+[DEV] Running: python "g:\WEB 2026\nueva-p-gina-Ddream-3D-trae\scripts\main.py" C:\Users\dream\AppData\Local\Temp/bamboo_model/Sat_Jan_24/03_05_52#50892#66/Metadata\.50892.0.gcode 
+Traceback (most recent call last):
+  File "g:\WEB 2026\nueva-p-gina-Ddream-3D-trae\scripts\main.py", line 14, in <module>
+    from core.parser import GCodeParser
+  File "g:\WEB 2026\nueva-p-gina-Ddream-3D-trae\scripts\core\parser.py", line 168
+    elif ':' in val:
+                    ^
+IndentationError: unindent does not match any outer indentation level
+[ERROR] Python script failed with error level 1 

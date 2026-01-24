@@ -104,7 +104,9 @@ export const UserService = {
     const q = query(collection(db, COLLECTION_NAME), orderBy('createdAt', 'desc'));
     
     return onSnapshot(q, (snapshot) => {
-      const users = snapshot.docs.map((doc) => mapToUser(doc.data()));
+      const users = snapshot.docs
+        .map((doc) => mapToUser(doc.data()))
+        .filter(u => !u.isDeleted); // Filter soft-deleted users
       callback(users);
     }, (error) => {
       console.error('Error in user subscription:', error);
@@ -233,65 +235,38 @@ export const UserService = {
   async seedInitialUsers(): Promise<void> {
     if (!db) return;
     
-    // We force upsert of dummy users to ensure latest data structure (stats in Soles)
-    // In a real app, this would be a migration script
-    const dummyUsers: User[] = [
-      {
-        id: 'admin-user-1',
-        email: 'admin@ddreams3d.com',
-        username: 'Admin Principal',
-        role: 'admin',
-        status: 'active',
-        totalOrders: 0,
-        totalSpent: 0,
-        createdAt: new Date('2023-01-01'),
-        updatedAt: new Date(),
-        lastLogin: new Date(),
-        phoneNumber: '+51 900 000 000'
-      },
-      {
-        id: 'user-demo-1',
-        email: 'cliente@ejemplo.com',
-        username: 'Cliente Demo',
-        role: 'user',
-        status: 'active',
-        totalOrders: 5,
-        totalSpent: 450.50, // S/. 450.50
-        lastOrderDate: new Date('2024-02-15'),
-        createdAt: new Date('2023-06-15'),
-        updatedAt: new Date(),
-        lastLogin: new Date(),
-      },
-       {
-        id: 'user-banned-1',
-        email: 'spammer@malicioso.com',
-        username: 'Spammer',
-        role: 'user',
-        status: 'banned',
-        totalOrders: 0,
-        totalSpent: 0,
-        createdAt: new Date('2024-01-01'),
-        updatedAt: new Date(),
-        lastLogin: new Date('2024-01-01')
-      },
-      {
-        id: 'user-vip-1',
-        email: 'vip@cliente.com',
-        username: 'Cliente VIP',
-        role: 'user',
-        status: 'active',
-        totalOrders: 25,
-        totalSpent: 3500.00, // S/. 3500.00
-        lastOrderDate: new Date('2024-03-01'),
-        createdAt: new Date('2023-03-10'),
-        updatedAt: new Date(),
-        lastLogin: new Date(),
-      }
-    ];
-
-    for (const user of dummyUsers) {
-      await setDoc(doc(db, COLLECTION_NAME, user.id), user);
+    // Disable seeding in production to prevent overwriting live data
+    if (process.env.NODE_ENV === 'production') {
+      return;
     }
+
+    console.log('[UserService] Seeding initial users...');
+
+    // 1. Cleanup old dummy users (Fix for "Cliente VIP" reappearing)
+    try {
+      await deleteDoc(doc(db, COLLECTION_NAME, 'user-vip-1'));
+      console.log('[UserService] Cleaned up legacy user-vip-1');
+    } catch (e) {
+      console.warn('[UserService] Failed to cleanup user-vip-1', e);
+    }
+    
+    // 2. Ensure Admin exists
+    const adminUser: User = {
+      id: 'admin-user-1',
+      email: 'admin@ddreams3d.com',
+      username: 'Admin Principal',
+      role: 'admin',
+      status: 'active',
+      totalOrders: 0,
+      totalSpent: 0,
+      createdAt: new Date('2023-01-01'),
+      updatedAt: new Date(),
+      lastLogin: new Date(),
+      phoneNumber: '+51 900 000 000'
+    };
+
+    // Use setDoc with merge to preserve existing data (like profile changes)
+    await setDoc(doc(db, COLLECTION_NAME, adminUser.id), adminUser, { merge: true });
     
     usersCache = null;
   }

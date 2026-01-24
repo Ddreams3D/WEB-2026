@@ -1,10 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { ScrollToTopButton } from './footer/ScrollToTopButton';
-import { SecretAdminModal } from './footer/SecretAdminModal';
 import { FooterLegal } from './footer/FooterLegal';
 import { 
   ArrowRight, 
@@ -33,13 +31,6 @@ interface FooterProps {
 }
 
 const Footer = ({ services = [], campaigns = [] }: FooterProps) => {
-  const [showSecretModal, setShowSecretModal] = useState(false);
-
-  const handleSecretClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setShowSecretModal(true);
-  };
-
   return (
     <footer className={cn("bg-black text-white relative overflow-hidden")}>
       {/* Patrón de fondo decorativo */}
@@ -251,20 +242,8 @@ const Footer = ({ services = [], campaigns = [] }: FooterProps) => {
 
           <div className="flex items-center gap-6">
             <p>
-              © 2026{' '}
-              <button 
-                onClick={handleSecretClick}
-                className="hover:text-white transition-colors cursor-pointer"
-                type="button"
-              >
-                Ddreams 3D
-              </button>
+              © 2026 Ddreams 3D
             </p>
-            
-            <SecretAdminModal 
-              isOpen={showSecretModal} 
-              onClose={() => setShowSecretModal(false)} 
-            />
             
             <ScrollToTopButton />
           </div>

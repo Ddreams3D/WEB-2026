@@ -440,46 +440,6 @@ export const OrderService = {
             { status: 'paid', timestamp: new Date('2024-03-01T10:15:00'), note: 'Pago recibido por Yape', updatedBy: 'system' },
             { status: 'processing', timestamp: new Date('2024-03-01T12:00:00'), note: 'Iniciando producción', updatedBy: 'admin-user-1' }
         ]
-      },
-      {
-        userId: 'user-vip-1',
-        userEmail: 'vip@cliente.com',
-        userName: 'Cliente VIP',
-        items: [
-          {
-            id: 'item-3',
-            type: 'product',
-            name: 'Lámpara Voronoi',
-            quantity: 2,
-            price: 120.00,
-            total: 240.00
-          }
-        ],
-        subtotal: 240.00,
-        tax: 0,
-        shippingCost: 0, // Free shipping for VIP
-        discount: 24.00, // 10% off
-        total: 216.00,
-        currency: 'PEN',
-        status: 'completed',
-        paymentStatus: 'paid',
-        paymentMethod: 'transfer',
-        shippingMethod: 'delivery',
-        shippingAddress: {
-          street: 'Calle Los Pinos 456',
-          city: 'San Isidro',
-          state: 'Lima',
-          zip: '15073',
-          country: 'Peru'
-        },
-        createdAt: new Date('2024-02-15T09:00:00'),
-        updatedAt: new Date('2024-02-20T16:00:00'),
-        history: [
-            { status: 'pending_payment', timestamp: new Date('2024-02-15T09:00:00'), note: 'Pedido creado', updatedBy: 'user-vip-1' },
-            { status: 'paid', timestamp: new Date('2024-02-15T09:30:00'), note: 'Transferencia confirmada', updatedBy: 'admin-user-1' },
-            { status: 'shipped', timestamp: new Date('2024-02-18T10:00:00'), note: 'Enviado con Olva Courier', updatedBy: 'admin-user-1' },
-            { status: 'completed', timestamp: new Date('2024-02-20T16:00:00'), note: 'Entregado', updatedBy: 'system' }
-        ]
       }
     ];
 

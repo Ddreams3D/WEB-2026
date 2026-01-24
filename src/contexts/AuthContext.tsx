@@ -103,108 +103,68 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Verificar autenticación al cargar la aplicación con Firebase
   useEffect(() => {
-    const safetyTimeout = setTimeout(() => {
-        if (isLoading) {
-            console.warn('[AuthContext] Safety timeout triggered. Forcing isLoading=false');
-            setIsLoading(false);
-        }
-    }, 5000);
-
-    console.log('[AuthContext] Initializing auth check...');
+    // Escuchar cambios de autenticación directamente desde Firebase
+    // Eliminamos la lógica compleja de caché que causaba inconsistencias
     if (!auth) {
-      console.log('[AuthContext] No auth instance, checking stored auth');
+      console.warn('[AuthContext] Auth not initialized, checking stored mock data');
       checkStoredAuth();
       setIsLoading(false);
-      clearTimeout(safetyTimeout);
       return;
     }
 
-    setPersistence(auth, browserLocalPersistence)
-      .then(() => console.log('[AuthContext] Persistence set'))
-      .catch((err) => console.error("Error setting persistence:", err));
+    // Configurar persistencia
+    setPersistence(auth, browserLocalPersistence).catch(console.error);
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      console.log('[AuthContext] Auth state changed:', firebaseUser ? 'User logged in' : 'No user');
-      clearTimeout(safetyTimeout);
+      console.log('[AuthContext] Auth state changed:', firebaseUser ? `User: ${firebaseUser.email}` : 'No user');
       
       try {
         if (firebaseUser) {
-          if (globalIsSyncing) return;
+          // Usuario autenticado en Firebase
+          // 1. Intentar obtener datos del usuario desde Firestore
+          const userData = await AuthService.syncUserWithFirestore(firebaseUser, false);
           
-          const now = Date.now();
-          if (now - globalLastSync < 5000) {
-             setIsLoading(false);
-             return;
-          }
-
-          const lastSyncTimeStr = localStorage.getItem('last_auth_sync');
-          const lastSyncTime = lastSyncTimeStr ? parseInt(lastSyncTimeStr) : 0;
-          const shouldSync = !lastSyncTime || (now - lastSyncTime > 5 * 60 * 1000);
+          // 2. Actualizar estado
+          setUserIfChanged(userData);
           
-          const storedUserJson = localStorage.getItem(AUTH_USER_KEY);
-          let storedUser: User | null = null;
-          try {
-            if (storedUserJson) storedUser = JSON.parse(storedUserJson);
-          } catch (e) { console.error(e); }
-
-          if (storedUser && storedUser.id === firebaseUser.uid && !shouldSync) {
-              setUserIfChanged(storedUser);
-              setIsLoading(false);
-              return;
-          }
-
-          globalIsSyncing = true;
-
-          try {
-            if (shouldSync) {
-              globalLastSync = now;
-              localStorage.setItem('last_auth_sync', now.toString());
-            }
-
-            const userData = await AuthService.syncUserWithFirestore(firebaseUser, shouldSync);
-            
-            setUserIfChanged(userData);
-            localStorage.setItem(AUTH_USER_KEY, JSON.stringify(userData));
-            localStorage.setItem(AUTH_TOKEN_KEY, await firebaseUser.getIdToken());
-            
-            if (userData.role === 'admin' || isSuperAdmin(userData.email)) {
-               // Admin check handled server-side
-            }
-          } catch (error) {
-            console.error('Error syncing user:', error);
-            showError('Conexión inestable', 'No se pudieron sincronizar todos los datos.');
-          } finally {
-            globalIsSyncing = false;
-          }
+          // 3. Guardar en localStorage para persistencia básica offline (opcional, pero útil)
+          localStorage.setItem(AUTH_USER_KEY, JSON.stringify(userData));
+          localStorage.setItem(AUTH_TOKEN_KEY, await firebaseUser.getIdToken());
+          
         } else {
-          // No user
+          // Usuario NO autenticado (Logout o sesión expirada)
+          // Limpiar todo el estado local
           const token = localStorage.getItem(AUTH_TOKEN_KEY);
-          if (token && token.startsWith('mock_token_')) {
-            checkStoredAuth();
+          
+          // Excepción: Si estamos en modo desarrollo con token mock, no borrar
+          if (token && token.startsWith('mock_token_') && process.env.NODE_ENV === 'development') {
+             // Mantener mock
           } else {
-            if (user) { 
-              localStorage.removeItem(AUTH_TOKEN_KEY);
-              localStorage.removeItem(AUTH_USER_KEY);
-              setUserIfChanged(null);
-            }
+             localStorage.removeItem(AUTH_TOKEN_KEY);
+             localStorage.removeItem(AUTH_USER_KEY);
+             setUserIfChanged(null);
           }
         }
-      } catch (globalError) {
-          console.error('Critical Auth Error:', globalError);
-          setIsLoading(false);
+      } catch (error) {
+        console.error('[AuthContext] Error processing auth state change:', error);
+        
+        // Notify user of critical sync error
+        if (firebaseUser) {
+          showError('Error de sistema', 'No se pudo sincronizar el perfil de usuario. Por favor recarga la página.');
+        }
+
+        // En caso de error crítico, intentamos limpiar para no dejar estados corruptos
+        if (!firebaseUser) {
+             localStorage.removeItem(AUTH_USER_KEY);
+             setUserIfChanged(null);
+        }
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
-    }, (error) => {
-         console.error('Firebase Auth Observer Error:', error);
-         setIsLoading(false);
-         const firebaseError = error as { code?: string; message?: string };
-         if (firebaseError.code === 'auth/network-request-failed') {
-              showError('Error de red', 'Verifica tu conexión a internet.');
-         }
-     });
+    });
 
     return () => unsubscribe();
-  }, [checkStoredAuth, showError, isLoading, user]); // Incluye dependencias para satisfacer linter
+  }, [checkStoredAuth]);
 
   const login = async (username: string, password: string): Promise<boolean> => {
     try {

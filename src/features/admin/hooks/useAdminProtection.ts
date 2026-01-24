@@ -12,7 +12,7 @@ interface UseAdminProtectionProps {
 export function useAdminProtection({ 
   requiredRole = 'admin', 
   redirectOnFail = true,
-  redirectPath = '/admin/login' 
+  redirectPath = '/login' 
 }: UseAdminProtectionProps = {}) {
   const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
@@ -23,22 +23,10 @@ export function useAdminProtection({
     let mounted = true;
 
     const verifyAccess = async () => {
-      // 1. Check for secret access (Development/Theme backdoor)
-      if (typeof window !== 'undefined') {
-        const secretAccess = localStorage.getItem('theme_secret_access');
-        if (secretAccess === 'granted') {
-          if (mounted) {
-            setHasAccess(true);
-            setChecking(false);
-          }
-          return;
-        }
-      }
-
-      // 2. Wait for Auth to be ready
+      // 1. Wait for Auth to be ready
       if (authLoading) return;
 
-      // 3. Try Firebase Auth (Client Side)
+      // 2. Try Firebase Auth (Client Side)
       if (user) {
         try {
           const isAdmin = await AdminService.checkIsAdmin(user.id, user.email);
@@ -48,28 +36,11 @@ export function useAdminProtection({
             return;
           }
         } catch (error) {
-          console.warn('Firebase admin check failed, trying server session...', error);
+          console.warn('Firebase admin check failed', error);
         }
       }
 
-      // 4. Try Server Session (Cookie/Master Password)
-      try {
-        const response = await fetch('/api/admin/check');
-        if (response.ok) {
-          const data = await response.json();
-          if (data.authenticated) {
-            if (mounted) {
-              setHasAccess(true);
-              setChecking(false);
-            }
-            return;
-          }
-        }
-      } catch (error) {
-        console.warn('Server session check failed', error);
-      }
-
-      // 5. Access Denied
+      // 3. Access Denied
       if (mounted) {
         if (redirectOnFail) router.push(redirectPath);
         setHasAccess(false);

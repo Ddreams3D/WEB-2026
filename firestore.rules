@@ -74,14 +74,15 @@ service cloud.firestore {
                       || 
                       (request.resource.data.role == 'admin' && isSuperAdmin())
                     )
-                    && request.resource.data.keys().hasOnly(['name', 'email', 'username', 'photoURL', 'phone', 'address', 'birthDate', 'createdAt', 'updatedAt', 'role', 'lastLogin', 'favorites', 'addresses', 'isActive'])
+                    // Added 'id' and 'phoneNumber' to allowed keys to fix registration failure
+                    && request.resource.data.keys().hasOnly(['id', 'name', 'email', 'username', 'photoURL', 'phone', 'phoneNumber', 'address', 'birthDate', 'createdAt', 'updatedAt', 'role', 'lastLogin', 'favorites', 'addresses', 'isActive', 'notificationPreferences'])
                     && isValidTimestamp(request.resource.data, 'createdAt');
 
       // Update: Owner (can edit profile but NOT role or stats) or Admin (can edit everything)
       allow update: if (isOwner(userId) 
                         && (
                           // Standard User Update
-                          (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'username', 'photoURL', 'phone', 'address', 'birthDate', 'updatedAt', 'lastLogin', 'favorites', 'addresses', 'status'])
+                          (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'username', 'photoURL', 'phone', 'phoneNumber', 'address', 'birthDate', 'updatedAt', 'lastLogin', 'favorites', 'addresses', 'status', 'notificationPreferences'])
                            && notUpdating('role') 
                            && notUpdating('createdAt')
                            && notUpdating('totalOrders') 

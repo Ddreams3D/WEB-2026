@@ -65,3 +65,9 @@ Thumbs.db
 playwright-report/
 test-results/
 build.log
+
+# Desktop App Artifacts (Too large for GitHub)
+desktop_app/build/
+desktop_app/dist/
+desktop_app/__pycache__/
+*.spec

@@ -119,6 +119,21 @@ export interface StoreProduct {
   materials?: string[];
   weight?: number;
   printTime?: number;
+  
+  // Production / Slicing Data
+  productionData?: {
+    lastSliced?: string;
+    grams?: number;
+    printTimeMinutes?: number;
+    machineType?: string;
+    filamentType?: string;
+    fileName?: string;
+    printerModel?: string; // e.g. "Bambu Lab A1"
+    nozzleDiameter?: string; // e.g. "0.4mm"
+    totalLayers?: number;
+    filamentLengthMeters?: number;
+  };
+
   complexity?: 'low' | 'medium' | 'high';
   format?: string;
   fileSize?: string;
