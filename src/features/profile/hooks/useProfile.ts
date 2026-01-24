@@ -28,8 +28,8 @@ export const useProfile = () => {
   // Calculate stats
   const activeOrders = orders.filter(o => !['completed', 'cancelled', 'refunded'].includes(o.status)).length;
   const completedOrders = orders.filter(o => o.status === 'completed').length;
-  // Mock favorites count for now
-  const favoritesCount = 12;
+  // Initialize with 0 for new users
+  const favoritesCount = user?.favorites?.length || 0;
 
   // Local state for form data
   const [formData, setFormData] = useState<ProfileFormData>({

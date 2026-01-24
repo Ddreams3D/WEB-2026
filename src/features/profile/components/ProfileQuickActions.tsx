@@ -12,12 +12,6 @@ export const ProfileQuickActions: React.FC = () => {
       </CardHeader>
       <CardContent className="space-y-2">
         <Button variant="outline" className="w-full justify-start" asChild>
-          <Link href="/cotizaciones/nueva">
-            <CreditCard className="mr-2 h-4 w-4" />
-            Nueva Cotización
-          </Link>
-        </Button>
-        <Button variant="outline" className="w-full justify-start" asChild>
           <Link href="/catalogo-impresion-3d">
             <ShoppingBag className="mr-2 h-4 w-4" />
             Ir al Catálogo
