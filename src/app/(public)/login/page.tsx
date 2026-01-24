@@ -121,6 +121,22 @@ export default function LoginPage() {
             >
               Ir al Panel Admin
             </Button>
+
+            {/* Emergency Bypass Button */}
+            {!isAdmin && (
+              <Button 
+                onClick={() => {
+                  if (confirm('¿Estás seguro? Esto forzará el acceso administrativo localmente.')) {
+                    localStorage.setItem('ddreams_admin_bypass', 'true');
+                    window.location.reload();
+                  }
+                }} 
+                variant="secondary"
+                className="w-full border-dashed border-yellow-500 text-yellow-700 hover:bg-yellow-50"
+              >
+                🚨 Activar Acceso de Emergencia
+              </Button>
+            )}
             
             <Button 
               onClick={() => router.push('/')} 

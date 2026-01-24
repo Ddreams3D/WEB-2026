@@ -10,6 +10,12 @@ export const AdminService = {
   async checkIsAdmin(uid: string, email: string | null): Promise<boolean> {
     console.log(`[AdminService] Checking admin status for: ${email} (uid: ${uid})`);
     
+    // 0. Emergency Bypass (Local Only)
+    if (typeof window !== 'undefined' && localStorage.getItem('ddreams_admin_bypass') === 'true') {
+      console.warn('[AdminService] 🚨 Access granted via Emergency Bypass (localStorage)');
+      return true;
+    }
+
     // 1. Check Hardcoded List (Bootstrap/Emergency Access)
     if (isSuperAdmin(email)) {
       console.debug(`[AdminService] Access granted via hardcoded email: ${email}`);
