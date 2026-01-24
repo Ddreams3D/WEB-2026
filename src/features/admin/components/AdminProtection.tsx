@@ -14,6 +14,13 @@ interface AdminProtectionProps {
 
 export default function AdminProtection({ children, requiredRole = 'admin' }: AdminProtectionProps) {
   const router = useRouter();
+
+  // 0. BYPASS DE EMERGENCIA SÍNCRONO (Directo al localStorage)
+  // Esto se ejecuta antes de cualquier hook de auth para evitar parpadeos o bloqueos por latencia
+  if (typeof window !== 'undefined' && localStorage.getItem('ddreams_admin_bypass') === 'true') {
+    return <>{children}</>;
+  }
+
   // Desactivamos la redirección automática para evitar bucles infinitos y mostrar la pantalla de error/debug
   const { checking, hasAccess, user, isLoading } = useAdminProtection({ 
     requiredRole,
