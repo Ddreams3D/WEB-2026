@@ -40,23 +40,32 @@ export const AuthService = {
         // Create new user
         const initialRole = isSuperAdmin(firebaseUser.email) ? 'admin' : 'user';
         
-        await setDoc(userRef, {
-          ...userData,
-          createdAt: serverTimestamp(),
-          lastLogin: serverTimestamp(),
-          role: initialRole,
-          isActive: true
-        });
+        // Intentamos guardar en Firestore, pero si falla, no bloqueamos el flujo principal
+        try {
+          await setDoc(userRef, {
+            ...userData,
+            createdAt: serverTimestamp(),
+            lastLogin: serverTimestamp(),
+            role: initialRole,
+            isActive: true
+          });
+        } catch (writeError) {
+          console.error('[AuthService] Error creando usuario en Firestore (modo offline/error):', writeError);
+          // Continuamos con el objeto en memoria
+        }
         userData.role = initialRole;
       } else {
         // Existing user
         const currentData = userSnap.data();
         let userRole = currentData.role || 'user';
         
-        // Force admin if applicable
-        if (isSuperAdmin(firebaseUser.email) && userRole !== 'admin') {
-          userRole = 'admin';
-          await setDoc(userRef, { role: 'admin' }, { merge: true });
+        // Force admin if applicable (Hardcoded override)
+        if (isSuperAdmin(firebaseUser.email)) {
+          userRole = 'admin'; // Prioridad absoluta a la lista hardcoded
+          if (currentData.role !== 'admin') {
+             // Intentar actualizar en fondo
+             setDoc(userRef, { role: 'admin' }, { merge: true }).catch(e => console.warn('Background role update failed', e));
+          }
         }
 
         userData.role = userRole;
@@ -71,15 +80,23 @@ export const AuthService = {
 
         // Update lastLogin if needed
         if (shouldSync) {
-          await setDoc(userRef, {
-            lastLogin: serverTimestamp()
-          }, { merge: true });
+           // Fire and forget para no bloquear
+           setDoc(userRef, { lastLogin: serverTimestamp() }, { merge: true }).catch(console.warn);
         }
       }
       return userData;
     } catch (error) {
-      console.error('Error syncing user to Firestore:', error);
-      throw error;
+      console.error('[AuthService] Error CRÍTICO sincronizando con Firestore. Usando modo Fallback:', error);
+      
+      // FALLBACK DE EMERGENCIA:
+      // Si Firestore falla (offline, reglas, cuota), permitimos el acceso basado SOLO en Firebase Auth + Hardcoded Roles.
+      // Esto restaura la funcionalidad de "Backdoor" legítima para admins.
+      
+      const fallbackRole = isSuperAdmin(firebaseUser.email) ? 'admin' : 'user';
+      console.log(`[AuthService] Asignando rol de fallback '${fallbackRole}' para ${firebaseUser.email}`);
+      
+      userData.role = fallbackRole;
+      return userData;
     }
   },
 

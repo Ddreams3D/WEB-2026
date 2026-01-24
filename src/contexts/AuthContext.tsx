@@ -115,15 +115,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } catch (error) {
         console.error('[AuthContext] Error processing auth state change:', error);
         
-        // Notify user of critical sync error
+        // Notify user of critical sync error BUT DO NOT LOGOUT
         if (firebaseUser) {
-          showError('Error de sistema', 'No se pudo sincronizar el perfil de usuario. Por favor recarga la página.');
-        }
-
-        // En caso de error crítico, intentamos limpiar para no dejar estados corruptos
-        if (!firebaseUser) {
-             localStorage.removeItem(AUTH_USER_KEY);
-             setUserIfChanged(null);
+          // Si falló la sincronización pero tenemos usuario de Firebase, intentamos recuperar
+          // el estado básico para no echar al usuario.
+          // El AuthService.syncUserWithFirestore ya debería manejar el fallback, pero por si acaso:
+           console.warn('[AuthContext] Manteniendo sesión activa en modo degradado pese a error.');
+        } else {
+           // Solo si no hay usuario firebase limpiamos
+           localStorage.removeItem(AUTH_USER_KEY);
+           setUserIfChanged(null);
         }
       } finally {
         setIsLoading(false);
