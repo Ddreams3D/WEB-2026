@@ -22,14 +22,18 @@ export default function LoginPage() {
 
   // Redirigir si ya está autenticado
   useEffect(() => {
+    // Solo redirigir si ya estamos seguros del estado (isLoading = false)
     if (!isLoading && isAuthenticated) {
-      // Si es admin, redirigir al dashboard
+      // 1. Prioridad Admin: Si es admin, forzar dashboard
       if (user?.email && isSuperAdmin(user.email)) {
-        router.push('/admin');
-      } else {
-        // Si es usuario normal, redirigir al home
-        router.push('/');
-      }
+        console.log('[LoginPage] Admin detectado, redirigiendo a /admin');
+        router.replace('/admin'); // Usar replace para evitar historial
+        return;
+      } 
+      
+      // 2. Usuarios normales a Home
+      console.log('[LoginPage] Usuario autenticado, redirigiendo a /');
+      router.replace('/');
     }
   }, [isAuthenticated, isLoading, router, user]);
 
