@@ -1,6 +1,6 @@
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { ADMIN_EMAILS } from '@/config/roles';
+import { isSuperAdmin } from '@/config/roles';
 
 export const AdminService = {
   /**
@@ -9,7 +9,7 @@ export const AdminService = {
    */
   async checkIsAdmin(uid: string, email: string | null): Promise<boolean> {
     // 1. Check Hardcoded List (Bootstrap/Emergency Access)
-    if (email && ADMIN_EMAILS.includes(email.toLowerCase())) {
+    if (isSuperAdmin(email)) {
       console.debug(`[AdminService] Access granted via hardcoded email: ${email}`);
       return true;
     }
