@@ -14,7 +14,7 @@ import { User } from '../types/auth.types';
 import { isSuperAdmin } from '@/config/roles';
 
 export const AuthService = {
-  async syncUserWithFirestore(firebaseUser: FirebaseUser, shouldSync: boolean): Promise<User> {
+  async syncUserWithFirestore(firebaseUser: FirebaseUser, shouldSync: boolean, hasAdminClaim: boolean = false): Promise<User> {
     if (!db) throw new Error('Firestore is not initialized');
 
     const userRef = doc(db, 'users', firebaseUser.uid);
@@ -26,7 +26,7 @@ export const AuthService = {
       username: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Usuario',
       email: firebaseUser.email || '',
       photoURL: firebaseUser.photoURL || '',
-      role: isSuperAdmin(firebaseUser.email) ? 'admin' : 'user',
+      role: (hasAdminClaim || isSuperAdmin(firebaseUser.email)) ? 'admin' : 'user',
     };
 
     if (firebaseUser.phoneNumber) {
@@ -89,10 +89,10 @@ export const AuthService = {
       console.error('[AuthService] Error CRÍTICO sincronizando con Firestore. Usando modo Fallback:', error);
       
       // FALLBACK DE EMERGENCIA:
-      // Si Firestore falla (offline, reglas, cuota), permitimos el acceso basado SOLO en Firebase Auth + Hardcoded Roles.
+      // Si Firestore falla (offline, reglas, cuota), permitimos el acceso basado SOLO en Firebase Auth + Hardcoded Roles + Claims.
       // Esto restaura la funcionalidad de "Backdoor" legítima para admins.
       
-      const fallbackRole = isSuperAdmin(firebaseUser.email) ? 'admin' : 'user';
+      const fallbackRole = (hasAdminClaim || isSuperAdmin(firebaseUser.email)) ? 'admin' : 'user';
       console.log(`[AuthService] Asignando rol de fallback '${fallbackRole}' para ${firebaseUser.email}`);
       
       userData.role = fallbackRole;

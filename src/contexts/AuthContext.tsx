@@ -94,9 +94,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       try {
         if (firebaseUser) {
-          // Usuario autenticado en Firebase
+          // 0. TOP GLOBAL ARCHITECTURE: Custom Claims Check
+          // Verificamos si el token ya trae el permiso 'admin' incrustado.
+          // Esto es "Zero Latency" y funciona offline sin consultar Firestore.
+          const tokenResult = await firebaseUser.getIdTokenResult();
+          const hasAdminClaim = !!tokenResult.claims.admin;
+          
+          if (hasAdminClaim) {
+             console.log('[AuthContext] 🛡️ Acceso Admin validado vía Custom Claims (Top Tier Security)');
+          }
+
           // 1. Intentar obtener datos del usuario desde Firestore
-          const userData = await AuthService.syncUserWithFirestore(firebaseUser, false);
+          // Pasamos el claim para que syncUserWithFirestore sepa que ya somos admin "oficiales"
+          const userData = await AuthService.syncUserWithFirestore(firebaseUser, false, hasAdminClaim);
           
           // 2. Actualizar estado
           setUserIfChanged(userData);
