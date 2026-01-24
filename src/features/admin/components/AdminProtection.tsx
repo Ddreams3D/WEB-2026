@@ -14,7 +14,11 @@ interface AdminProtectionProps {
 
 export default function AdminProtection({ children, requiredRole = 'admin' }: AdminProtectionProps) {
   const router = useRouter();
-  const { checking, hasAccess, user, isLoading } = useAdminProtection({ requiredRole });
+  // Desactivamos la redirección automática para evitar bucles infinitos y mostrar la pantalla de error/debug
+  const { checking, hasAccess, user, isLoading } = useAdminProtection({ 
+    requiredRole,
+    redirectOnFail: false 
+  });
 
   // Mostrar loading mientras se verifica la autenticación
   if (isLoading || checking) {
