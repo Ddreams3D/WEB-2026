@@ -20,14 +20,18 @@ export const AuthService = {
     const userRef = doc(db, 'users', firebaseUser.uid);
     
     // Base user data from Firebase Auth
+    // Ensure no undefined values are passed to Firestore (though ignoreUndefinedProperties is now enabled)
     const userData: User = {
       id: firebaseUser.uid,
       username: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Usuario',
       email: firebaseUser.email || '',
       photoURL: firebaseUser.photoURL || '',
       role: isSuperAdmin(firebaseUser.email) ? 'admin' : 'user',
-      phoneNumber: firebaseUser.phoneNumber || undefined,
     };
+
+    if (firebaseUser.phoneNumber) {
+      userData.phoneNumber = firebaseUser.phoneNumber;
+    }
 
     try {
       const userSnap = await getDoc(userRef);

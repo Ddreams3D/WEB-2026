@@ -1,5 +1,5 @@
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
-import { getFirestore, Firestore } from 'firebase/firestore';
+import { getFirestore, Firestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from 'firebase/firestore';
 import { getAuth, Auth } from 'firebase/auth';
 import { getStorage, FirebaseStorage } from 'firebase/storage';
 import { getAnalytics, isSupported, Analytics } from 'firebase/analytics';
@@ -28,7 +28,13 @@ if (isFirebaseConfigured && getApps().length === 0) {
   // Check if apps are already initialized to avoid "Firebase: Firebase App named '[DEFAULT]' already exists" error
   try {
     app = initializeApp(firebaseConfig);
-    db = getFirestore(app);
+    // Initialize Firestore with settings to ignore undefined properties and enable multi-tab persistence
+    db = initializeFirestore(app, {
+      ignoreUndefinedProperties: true,
+      localCache: persistentLocalCache({
+        tabManager: persistentMultipleTabManager()
+      })
+    });
     auth = getAuth(app);
     storage = getStorage(app);
     

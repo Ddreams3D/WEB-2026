@@ -61,6 +61,7 @@ const navigation = [
 import dynamic from 'next/dynamic';
 import { QuickAccessBar } from '@/features/admin/components/QuickAccessBar';
 import { IgnitionButton } from '@/features/admin/components/IgnitionButton';
+import { AdminDebugInfo } from '@/features/admin/components/AdminDebugInfo';
 const NotificationsDropdown = dynamic(() => import('@/features/admin/components/NotificationsDropdown').then(m => m.NotificationsDropdown), { ssr: false });
 const RealtimeClock = dynamic(() => import('@/features/admin/components/RealtimeClock').then(m => m.RealtimeClock), { ssr: false });
 const ConnectionStatus = dynamic(() => import('@/features/admin/components/ConnectionStatus'), { ssr: false });
@@ -304,6 +305,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           "flex-1 flex flex-col min-h-screen transition-all duration-300",
           !isFullscreen ? (collapsed ? "lg:pl-20" : "lg:pl-72") : "pl-0"
         )}>
+          <AdminDebugInfo />
           {/* Top Header */}
           {!isFullscreen && (
             <header className="sticky top-0 z-[40] bg-background/80 backdrop-blur-md border-b border-border shadow-sm h-16">

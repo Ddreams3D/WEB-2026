@@ -10,6 +10,7 @@ export const AdminService = {
   async checkIsAdmin(uid: string, email: string | null): Promise<boolean> {
     // 1. Check Hardcoded List (Bootstrap/Emergency Access)
     if (email && ADMIN_EMAILS.includes(email.toLowerCase())) {
+      console.debug(`[AdminService] Access granted via hardcoded email: ${email}`);
       return true;
     }
 
@@ -27,7 +28,9 @@ export const AdminService = {
 
       if (userSnap.exists()) {
         const userData = userSnap.data();
-        return userData.role === 'admin';
+        const isAdmin = userData.role === 'admin';
+        if (isAdmin) console.debug(`[AdminService] Access granted via Firestore role for uid: ${uid}`);
+        return isAdmin;
       }
     } catch (error) {
       console.error('Error checking admin status in Firestore:', error);

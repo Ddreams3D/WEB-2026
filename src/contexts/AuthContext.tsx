@@ -15,20 +15,6 @@ import { AuthService } from '@/features/auth/services/auth.service';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Credenciales simuladas para fallback (admin legacy)
-const MOCK_CREDENTIALS = [
-  {
-    username: 'admin',
-    password: 'admin123',
-    user: {
-      id: 'admin-legacy',
-      username: 'Admin User',
-      email: 'admin@ddreams3d.com',
-      role: 'admin'
-    } as User
-  }
-];
-
 const AUTH_TOKEN_KEY = 'ddreams_auth_token';
 const AUTH_USER_KEY = 'ddreams_auth_user';
 
@@ -65,21 +51,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const token = localStorage.getItem(AUTH_TOKEN_KEY);
       
       if (storedUser && token) {
-        if (token.startsWith('mock_token_')) {
-          // Solo permitir tokens mock en desarrollo
-          if (process.env.NODE_ENV === 'development') {
-            setUserIfChanged(JSON.parse(storedUser));
-          } else {
-            console.warn('[AuthContext] Mock token detected in production. Clearing session.');
-            localStorage.removeItem(AUTH_TOKEN_KEY);
-            localStorage.removeItem(AUTH_USER_KEY);
-            setUserIfChanged(null);
-          }
-        } else {
-          localStorage.removeItem(AUTH_TOKEN_KEY);
-          localStorage.removeItem(AUTH_USER_KEY);
-          setUser(null);
-        }
+        localStorage.removeItem(AUTH_TOKEN_KEY);
+        localStorage.removeItem(AUTH_USER_KEY);
+        setUser(null);
       } else {
         setUser(null);
       }
@@ -134,16 +108,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } else {
           // Usuario NO autenticado (Logout o sesión expirada)
           // Limpiar todo el estado local
-          const token = localStorage.getItem(AUTH_TOKEN_KEY);
-          
-          // Excepción: Si estamos en modo desarrollo con token mock, no borrar
-          if (token && token.startsWith('mock_token_') && process.env.NODE_ENV === 'development') {
-             // Mantener mock
-          } else {
-             localStorage.removeItem(AUTH_TOKEN_KEY);
-             localStorage.removeItem(AUTH_USER_KEY);
-             setUserIfChanged(null);
-          }
+          localStorage.removeItem(AUTH_TOKEN_KEY);
+          localStorage.removeItem(AUTH_USER_KEY);
+          setUserIfChanged(null);
         }
       } catch (error) {
         console.error('[AuthContext] Error processing auth state change:', error);
@@ -179,24 +146,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           if (firebaseError.code === 'auth/network-request-failed') {
              showError('Error de conexión', 'No se pudo conectar con el servidor.');
           }
-        }
-      }
-      
-      // Mock Credentials (DEV ONLY)
-      if (process.env.NODE_ENV === 'development') {
-        const validCredential = MOCK_CREDENTIALS.find(
-          cred => (cred.username === username || cred.user.email === username) && cred.password === password
-        );
-        
-        if (validCredential) {
-          console.warn('[AuthContext] Using MOCK credentials (DEV ONLY)');
-          const token = `mock_token_${Date.now()}`;
-          const userData = validCredential.user;
-          
-          localStorage.setItem(AUTH_TOKEN_KEY, token);
-          localStorage.setItem(AUTH_USER_KEY, JSON.stringify(userData));
-          setUser(userData);
-          return true;
         }
       }
       
@@ -250,15 +199,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     try {
       setIsLoading(true);
-      // Mock user
-      if (user.id === 'admin-legacy' || user.id.startsWith('mock_')) {
-        const updatedUser = { ...user, ...data };
-        setUser(updatedUser);
-        localStorage.setItem(AUTH_USER_KEY, JSON.stringify(updatedUser));
-        showSuccess('Perfil actualizado', 'Datos guardados localmente (Modo Mock)');
-        return true;
-      }
-
       await AuthService.updateUserProfile(user.id, data);
       
       // Update local state
