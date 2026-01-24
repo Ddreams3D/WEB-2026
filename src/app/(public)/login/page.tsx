@@ -25,11 +25,14 @@ export default function LoginPage() {
     // Solo redirigir si ya estamos seguros del estado (isLoading = false)
     if (!isLoading && isAuthenticated) {
       // 1. Prioridad Admin: Si es admin, forzar dashboard
+      // [DEBUG] Desactivado temporalmente para romper bucles de redirección
+      /* 
       if (user?.email && isSuperAdmin(user.email)) {
         console.log('[LoginPage] Admin detectado, redirigiendo a /admin');
         router.replace('/admin'); // Usar replace para evitar historial
         return;
       } 
+      */ 
       
       // 2. Usuarios normales a Home
       // console.log('[LoginPage] Usuario autenticado, redirigiendo a /');
@@ -115,28 +118,27 @@ export default function LoginPage() {
 
           <div className="grid gap-3">
             <Button 
+              onClick={() => {
+                 // Activar bypass de emergencia (siempre visible)
+                 if (typeof window !== 'undefined') {
+                   localStorage.setItem('ddreams_admin_bypass', 'true');
+                   alert('✅ Acceso de Emergencia Activado. Intentando ingresar...');
+                   router.push('/admin');
+                 }
+              }}
+              variant="destructive"
+              className="w-full bg-yellow-600 hover:bg-yellow-700 text-white border-none animate-pulse"
+            >
+              🚨 Activar Acceso de Emergencia
+            </Button>
+
+            <Button 
               onClick={() => router.push('/admin')} 
               variant={isAdmin ? "default" : "secondary"}
               className="w-full"
             >
               Ir al Panel Admin
             </Button>
-
-            {/* Emergency Bypass Button */}
-            {!isAdmin && (
-              <Button 
-                onClick={() => {
-                  if (confirm('¿Estás seguro? Esto forzará el acceso administrativo localmente.')) {
-                    localStorage.setItem('ddreams_admin_bypass', 'true');
-                    window.location.reload();
-                  }
-                }} 
-                variant="secondary"
-                className="w-full border-dashed border-yellow-500 text-yellow-700 hover:bg-yellow-50"
-              >
-                🚨 Activar Acceso de Emergencia
-              </Button>
-            )}
             
             <Button 
               onClick={() => router.push('/')} 
@@ -148,8 +150,9 @@ export default function LoginPage() {
             
             <Button 
               onClick={() => {
-                // Logout manual usando el hook
-                logout();
+                // Logout manual safe check
+                import('@/lib/firebase').then(({ auth }) => auth?.signOut());
+                window.location.reload();
               }} 
               variant="destructive" 
               className="w-full"
