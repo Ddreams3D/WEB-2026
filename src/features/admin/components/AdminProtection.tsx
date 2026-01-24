@@ -29,8 +29,21 @@ export default function AdminProtection({ children, requiredRole = 'admin' }: Ad
     redirectOnFail: false 
   });
 
+  // [SUPER ADMIN FAST-TRACK]
+  // Verificación directa de emails hardcodeados para evitar latencia o fallos de Firestore/Service
+  const isHardcodedAdmin = React.useMemo(() => {
+    if (!user?.email) return false;
+    return ADMIN_EMAILS.includes(user.email.toLowerCase().trim());
+  }, [user?.email]);
+
   // 0. BYPASS DE EMERGENCIA (Estado controlado)
   if (isBypassed) {
+    return <>{children}</>;
+  }
+
+  // 0.5. ACCESO INMEDIATO PARA SUPER ADMINS
+  // Si el email está en la lista blanca, entramos directo ignorando el estado de 'checking' del servicio
+  if (isHardcodedAdmin) {
     return <>{children}</>;
   }
 

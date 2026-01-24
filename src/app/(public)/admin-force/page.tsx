@@ -18,7 +18,9 @@ export default function AdminForcePage() {
         setStatus('success');
         
         setTimeout(() => {
-          router.push('/admin');
+          // Usar window.location.href para forzar una recarga completa y asegurar que
+          // AdminProtection lea el localStorage desde cero
+          window.location.href = '/admin';
         }, 1500);
       } catch (e) {
         setStatus('error');

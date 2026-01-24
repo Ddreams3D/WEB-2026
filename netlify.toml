@@ -4,3 +4,10 @@
 
 [context.production.environment]
   NEXT_PUBLIC_APP_URL = "https://ddreams3d.com"
+
+# Redirección SPA/Dynamic Routes fallback para Netlify
+# Esto asegura que si se accede directamente a una ruta dinámica, no de 404
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
