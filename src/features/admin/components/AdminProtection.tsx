@@ -76,8 +76,16 @@ export default function AdminProtection({ children, requiredRole = 'admin' }: Ad
             No tienes permisos para acceder a esta área administrativa.
           </p>
           <div className="space-y-3">
+            {/* 
+              MODIFIED: Botón "Volver al Inicio" desactivado para evitar redirecciones accidentales 
+              durante la depuración del bucle.
+            */}
             <Button
-              onClick={() => router.push('/')}
+              onClick={() => {
+                console.log('Volver al inicio clickeado - Redirección manual');
+                // router.push('/') // Desactivado por precaución
+                window.location.href = '/';
+              }}
               variant="gradient"
               className="w-full transform hover:scale-105"
             >
