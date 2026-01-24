@@ -14,6 +14,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { SlicingInboxService } from '../services/slicing-inbox.service';
+import { ProductImage } from '@/shared/components/ui/DefaultImage';
 
 interface LinkProductModalProps {
   isOpen: boolean;
@@ -39,7 +40,7 @@ export function LinkProductModal({ isOpen, onClose, inboxItem, onSuccess }: Link
     }
 
     // Auto-search inicial con el nombre del inbox item
-    if (inboxItem && !searchTerm) {
+    if (inboxItem) {
       setSearchTerm(inboxItem.name);
     }
   }, [isOpen, inboxItem]);
@@ -183,10 +184,12 @@ export function LinkProductModal({ isOpen, onClose, inboxItem, onSuccess }: Link
               {selectedProduct ? (
                 <div className="space-y-4 text-sm">
                   <div className="flex items-center gap-2">
-                     <img 
-                        src={selectedProduct.images?.[0]?.url || '/placeholder.png'} 
+                     <ProductImage 
+                        src={selectedProduct.images?.[0]?.url} 
                         alt={selectedProduct.name}
                         className="w-10 h-10 rounded object-cover bg-white"
+                        width={40}
+                        height={40}
                      />
                      <span className="font-medium truncate">{selectedProduct.name}</span>
                   </div>

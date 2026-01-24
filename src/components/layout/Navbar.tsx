@@ -145,9 +145,6 @@ const Navbar: React.FC = () => {
             />
           </div>
         </div>
-
-        {/* Cart Drawer */}
-        <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
       </nav>
 
       <NavbarMobileMenu 
@@ -172,6 +169,9 @@ const Navbar: React.FC = () => {
         isNavbarSolid={isNavbarSolid}
         darkMode={darkMode}
       />
+
+      {/* Cart Drawer */}
+      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </>
   );
 };

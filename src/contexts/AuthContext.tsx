@@ -131,7 +131,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     return () => unsubscribe();
-  }, [checkStoredAuth]);
+  }, [checkStoredAuth, showError]);
 
   const login = async (username: string, password: string): Promise<boolean> => {
     try {

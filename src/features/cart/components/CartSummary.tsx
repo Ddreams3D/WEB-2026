@@ -5,6 +5,7 @@ import { MessageSquare } from '@/lib/icons';
 import { CartItem, CartItemCustomization } from '@/shared/types';
 import { PHONE_BUSINESS } from '@/shared/constants/contactInfo';
 import { trackEvent } from '@/lib/analytics';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface CartSummaryProps {
   items: CartItem[];
@@ -15,6 +16,8 @@ interface CartSummaryProps {
 }
 
 export function CartSummary({ items, itemCount, subtotal, total, isLoading }: CartSummaryProps) {
+  const { user } = useAuth();
+
   const handleWhatsAppCheckout = () => {
     trackEvent('whatsapp_click', { location: 'cart_page', type: 'checkout', value: total });
     let message = "Hola Ddreams3D, me gustaría realizar el siguiente pedido:\n\n";
@@ -34,6 +37,17 @@ export function CartSummary({ items, itemCount, subtotal, total, isLoading }: Ca
       }
     });
     message += `\n*Total a pagar: S/ ${total.toFixed(2)}*\n\n`;
+
+    // Incluir datos del usuario si están disponibles
+    if (user) {
+      message += "*Datos de Contacto:*\n";
+      if (user.name) message += `Nombre: ${user.name}\n`;
+      if (user.email) message += `Email: ${user.email}\n`;
+      if (user.phone || user.phoneNumber) message += `Teléfono: ${user.phone || user.phoneNumber}\n`;
+      if (user.address) message += `Dirección: ${user.address}\n`;
+      message += "\n";
+    }
+
     message += "Quedo atento para coordinar el pago y envío. ¡Gracias!";
 
     const encodedMessage = encodeURIComponent(message);

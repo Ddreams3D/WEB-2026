@@ -7,6 +7,7 @@ import { MessageSquare, ArrowRight } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import { PHONE_BUSINESS } from '@/shared/constants/contactInfo';
 import { CartItem } from '@/shared/types';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface CartDrawerFooterProps {
   items: CartItem[];
@@ -16,6 +17,8 @@ interface CartDrawerFooterProps {
 }
 
 export function CartDrawerFooter({ items, itemCount, total, onClose }: CartDrawerFooterProps) {
+  const { user } = useAuth();
+
   const handleWhatsAppCheckout = () => {
     let message = "Hola Ddreams3D, me gustaría realizar el siguiente pedido:\n\n";
     items.forEach(item => {
@@ -34,6 +37,17 @@ export function CartDrawerFooter({ items, itemCount, total, onClose }: CartDrawe
       }
     });
     message += `\n*Total a pagar: S/ ${total.toFixed(2)}*\n\n`;
+
+    // Incluir datos del usuario si están disponibles
+    if (user) {
+      message += "*Datos de Contacto:*\n";
+      if (user.name) message += `Nombre: ${user.name}\n`;
+      if (user.email) message += `Email: ${user.email}\n`;
+      if (user.phone || user.phoneNumber) message += `Teléfono: ${user.phone || user.phoneNumber}\n`;
+      if (user.address) message += `Dirección: ${user.address}\n`;
+      message += "\n";
+    }
+
     message += "Quedo atento para coordinar el pago y envío. ¡Gracias!";
 
     const encodedMessage = encodeURIComponent(message);
@@ -41,7 +55,7 @@ export function CartDrawerFooter({ items, itemCount, total, onClose }: CartDrawe
   };
 
   return (
-    <div className={cn("p-6 space-y-6", "bg-muted/50")}>
+    <div className={cn("p-4 sm:p-6 space-y-4 sm:space-y-6 pb-8 sm:pb-6", "bg-muted/50")}>
       {/* Price Summary */}
       <div className={cn(
         "rounded-xl p-4 shadow-sm border border-border space-y-3",

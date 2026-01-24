@@ -221,6 +221,8 @@ export const QuotePDF = ({ data, settings, clientInfo, projectName, pricing, opt
                 style={styles.logo} 
                 src={`${typeof window !== 'undefined' ? window.location.origin : ''}/images/ui/brand/logo-ddreams-3d.jpg?v=${new Date().getTime()}`} 
                 cache={false}
+                // @ts-ignore
+                alt="Ddreams 3D Logo"
              />
              <Text style={styles.slogan}>Impresión 3D personalizada – Arequipa, Perú</Text>
           </View>

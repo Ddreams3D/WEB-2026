@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useCart } from '../../../contexts/CartContext';
-import { cn } from '@/lib/utils';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { CartDrawerHeader } from './cart-drawer/CartDrawerHeader';
 import { CartDrawerEmpty } from './cart-drawer/CartDrawerEmpty';
 import { CartDrawerItem } from './cart-drawer/CartDrawerItem';
@@ -24,43 +24,22 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <>
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 z-40 transition-all duration-300"
-        style={{
-          backgroundColor: 'rgba(0, 0, 0, 0.3)',
-          backdropFilter: 'blur(2px)',
-          WebkitBackdropFilter: 'blur(2px)',
-        }}
-        onClick={onClose}
-      />
-
-      {/* Drawer */}
-      <div
-        className={cn(
-          "fixed right-0 top-0 h-full w-full max-w-md shadow-2xl z-50 transform transition-all duration-300 ease-out border-l flex flex-col",
-          "bg-card",
-          "border-l-border",
-          isOpen ? 'translate-x-0' : 'translate-x-full'
-        )}
+    <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <SheetContent 
+        side="right" 
+        className="flex flex-col w-full sm:max-w-md p-0 gap-0 border-l border-border bg-card [&>button]:hidden"
       >
         {/* Header */}
         <CartDrawerHeader itemCount={itemCount} onClose={onClose} />
 
         {/* Content */}
-        <div className="flex-1 flex flex-col min-h-[55vh] bg-muted">
-          <div
-            className="flex-1 overflow-y-auto min-h-100"
-            style={{ scrollbarWidth: 'thin' }}
-          >
+        <div className="flex-1 flex flex-col min-h-0 bg-muted/30">
+          <div className="flex-1 overflow-y-auto" style={{ scrollbarWidth: 'thin' }}>
             {items.length === 0 ? (
               <CartDrawerEmpty onClose={onClose} />
             ) : (
-              <div className="p-6 space-y-4">
+              <div className="p-4 space-y-4">
                 {items.map((item) => (
                   <CartDrawerItem
                     key={item.id}
@@ -77,14 +56,16 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
         {/* Footer */}
         {items.length > 0 && (
-          <CartDrawerFooter
-            items={items}
-            itemCount={itemCount}
-            total={total}
-            onClose={onClose}
-          />
+          <div className="border-t border-border bg-card">
+             <CartDrawerFooter
+               items={items}
+               itemCount={itemCount}
+               total={total}
+               onClose={onClose}
+             />
+          </div>
         )}
-      </div>
-    </>
+      </SheetContent>
+    </Sheet>
   );
 }

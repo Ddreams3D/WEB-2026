@@ -3,6 +3,7 @@
 import React from 'react';
 import { ShoppingBag, X } from '@/lib/icons';
 import { Button } from '@/components/ui/button';
+import { SheetTitle } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 
 interface CartDrawerHeaderProps {
@@ -18,9 +19,9 @@ export function CartDrawerHeader({ itemCount, onClose }: CartDrawerHeaderProps) 
           <ShoppingBag className="h-5 w-5 text-primary" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-foreground">
+          <SheetTitle className="text-xl font-bold text-foreground">
             Mi Carrito
-          </h2>
+          </SheetTitle>
           <p className="text-sm text-muted-foreground">
             {itemCount} {itemCount === 1 ? 'producto' : 'productos'}
           </p>
