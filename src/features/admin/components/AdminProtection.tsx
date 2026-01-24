@@ -61,22 +61,28 @@ export default function AdminProtection({ children, requiredRole = 'admin' }: Ad
             </Button>
           </div>
           
-          {/* Información para desarrollo */}
-          {process.env.NODE_ENV === 'development' && (
-            <div className="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+          {/* Información para desarrollo y depuración */}
+          {(process.env.NODE_ENV === 'development' || !hasAccess) && (
+            <div className="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800 text-left">
               <p className="text-xs text-yellow-800 dark:text-yellow-200 font-medium mb-2">
-                Modo Desarrollo - Información de Acceso:
+                Información de Depuración (Admin):
               </p>
               <div className="text-xs text-yellow-700 dark:text-yellow-300 space-y-1">
-                <p>Email actual: {user?.email}</p>
-                <p>Emails de admin permitidos:</p>
-                <ul className="list-disc list-inside ml-2">
-                  {ADMIN_EMAILS.map(email => (
-                    <li key={email}>{email}</li>
-                  ))}
-                </ul>
-                <p className="mt-2 text-yellow-600 dark:text-yellow-400">
-                  Puedes cambiar tu email en el perfil o agregar tu email actual a la lista de administradores.
+                <p><strong>Email actual:</strong> {user?.email || 'No detectado'}</p>
+                <p><strong>UID:</strong> {user?.id || 'No detectado'}</p>
+                <p><strong>Estado:</strong> {checking ? 'Verificando...' : (hasAccess ? 'Acceso Permitido' : 'Acceso Denegado')}</p>
+                
+                <details className="mt-2">
+                  <summary className="cursor-pointer font-medium hover:underline">Ver emails permitidos</summary>
+                  <ul className="list-disc list-inside ml-2 mt-1">
+                    {ADMIN_EMAILS.map(email => (
+                      <li key={email}>{email}</li>
+                    ))}
+                  </ul>
+                </details>
+                
+                <p className="mt-2 text-yellow-600 dark:text-yellow-400 italic">
+                  Si tu correo no está en la lista, contacta al desarrollador o usa una cuenta autorizada.
                 </p>
               </div>
             </div>
