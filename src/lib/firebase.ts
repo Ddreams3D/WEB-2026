@@ -28,13 +28,18 @@ if (isFirebaseConfigured && getApps().length === 0) {
   // Check if apps are already initialized to avoid "Firebase: Firebase App named '[DEFAULT]' already exists" error
   try {
     app = initializeApp(firebaseConfig);
-    // Initialize Firestore with settings to ignore undefined properties and enable multi-tab persistence
-    db = initializeFirestore(app, {
+    // Initialize Firestore with settings to ignore undefined properties and enable multi-tab persistence only in browser
+    const firestoreSettings: any = {
       ignoreUndefinedProperties: true,
-      localCache: persistentLocalCache({
+    };
+
+    if (typeof window !== 'undefined') {
+      firestoreSettings.localCache = persistentLocalCache({
         tabManager: persistentMultipleTabManager()
-      })
-    });
+      });
+    }
+
+    db = initializeFirestore(app, firestoreSettings);
     auth = getAuth(app);
     storage = getStorage(app);
     
