@@ -11,5 +11,10 @@ export const ADMIN_EMAILS = [
 export const isSuperAdmin = (email?: string | null): boolean => {
   if (!email) return false;
   const normalizedEmail = email.toLowerCase().trim();
-  return ADMIN_EMAILS.includes(normalizedEmail);
+  const isMatch = ADMIN_EMAILS.includes(normalizedEmail);
+  // Debug para identificar fallos de acceso
+  if (!isMatch && (email.includes('dream') || email.includes('admin'))) {
+      console.warn(`[isSuperAdmin] Fallo de coincidencia: '${normalizedEmail}' no está en la lista:`, ADMIN_EMAILS);
+  }
+  return isMatch;
 };
