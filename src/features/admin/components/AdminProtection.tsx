@@ -65,32 +65,28 @@ export default function AdminProtection({ children, requiredRole = 'admin' }: Ad
             </Button>
           </div>
           
-          {/* Información para desarrollo y depuración */}
-          {(process.env.NODE_ENV === 'development' || !hasAccess) && (
-            <div className="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800 text-left">
-              <p className="text-xs text-yellow-800 dark:text-yellow-200 font-medium mb-2">
-                Información de Depuración (Admin):
+          {/* Información para desarrollo y depuración - SIEMPRE VISIBLE POR AHORA */}
+          <div className="mt-6 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800 text-left animate-pulse">
+              <p className="text-xs text-red-800 dark:text-red-200 font-bold mb-2 uppercase">
+                ⚠️ MODO DEPURACIÓN ACTIVO v2.0 (NO REDIRECT)
               </p>
-              <div className="text-xs text-yellow-700 dark:text-yellow-300 space-y-1">
-                <p><strong>Email actual:</strong> {user?.email || 'No detectado'}</p>
-                <p><strong>UID:</strong> {user?.id || 'No detectado'}</p>
-                <p><strong>Estado:</strong> {checking ? 'Verificando...' : (hasAccess ? 'Acceso Permitido' : 'Acceso Denegado')}</p>
+              <div className="text-xs text-red-700 dark:text-red-300 space-y-1">
+                <p><strong>Tu Email:</strong> "{user?.email}"</p>
+                <p><strong>Tu UID:</strong> {user?.id}</p>
+                <p><strong>Estado Auth:</strong> {checking ? 'Verificando...' : (hasAccess ? 'Acceso Permitido' : 'DENEGADO')}</p>
+                <p><strong>Timestamp:</strong> {new Date().toISOString()}</p>
+                <p><strong>Causa probable:</strong> Tu email no coincide exactamente con la lista autorizada o Firestore no tiene el rol 'admin'.</p>
                 
-                <details className="mt-2">
-                  <summary className="cursor-pointer font-medium hover:underline">Ver emails permitidos</summary>
-                  <ul className="list-disc list-inside ml-2 mt-1">
+                <details className="mt-2" open>
+                  <summary className="cursor-pointer font-medium hover:underline">Lista de Emails Autorizados:</summary>
+                  <ul className="list-disc list-inside ml-2 mt-1 font-mono">
                     {ADMIN_EMAILS.map(email => (
-                      <li key={email}>{email}</li>
+                      <li key={email} className={email === user?.email ? "font-bold text-green-600 border border-green-500 bg-green-100 dark:bg-green-900 px-1" : ""}>{email}</li>
                     ))}
                   </ul>
                 </details>
-                
-                <p className="mt-2 text-yellow-600 dark:text-yellow-400 italic">
-                  Si tu correo no está en la lista, contacta al desarrollador o usa una cuenta autorizada.
-                </p>
               </div>
             </div>
-          )}
         </div>
       </div>
     );

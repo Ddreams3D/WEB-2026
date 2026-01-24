@@ -8,11 +8,15 @@ export const AdminService = {
    * Checks both the hardcoded list (bootstrap) and the Firestore 'users' collection.
    */
   async checkIsAdmin(uid: string, email: string | null): Promise<boolean> {
+    console.log(`[AdminService] Checking admin status for: ${email} (uid: ${uid})`);
+    
     // 1. Check Hardcoded List (Bootstrap/Emergency Access)
     if (isSuperAdmin(email)) {
       console.debug(`[AdminService] Access granted via hardcoded email: ${email}`);
       return true;
     }
+
+    console.log(`[AdminService] Hardcoded check failed for: ${email}. Checking Firestore...`);
 
     // 2. Check Firestore Role
     if (!uid) return false;

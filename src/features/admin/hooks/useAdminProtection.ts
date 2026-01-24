@@ -11,7 +11,7 @@ interface UseAdminProtectionProps {
 
 export function useAdminProtection({ 
   requiredRole = 'admin', 
-  redirectOnFail = true,
+  redirectOnFail = false, // DISABLED BY DEFAULT TO PREVENT LOOPS
   redirectPath = '/login' 
 }: UseAdminProtectionProps = {}) {
   const { user, isLoading: authLoading } = useAuth();
@@ -29,7 +29,10 @@ export function useAdminProtection({
       // 2. Try Firebase Auth (Client Side)
       if (user) {
         try {
+          console.log('[useAdminProtection] Checking admin access for:', user.email);
           const isAdmin = await AdminService.checkIsAdmin(user.id, user.email);
+          console.log('[useAdminProtection] Access result:', isAdmin);
+          
           if (mounted && isAdmin) {
             setHasAccess(true);
             setChecking(false);
@@ -38,11 +41,19 @@ export function useAdminProtection({
         } catch (error) {
           console.warn('Firebase admin check failed', error);
         }
+      } else {
+         console.log('[useAdminProtection] No user found in AuthContext');
       }
 
       // 3. Access Denied
       if (mounted) {
-        if (redirectOnFail) router.push(redirectPath);
+        console.warn('[useAdminProtection] Access Denied. Redirect enabled:', redirectOnFail);
+        if (redirectOnFail) {
+           console.warn('[useAdminProtection] Redirecting to:', redirectPath);
+           // NUCLEAR OPTION: Desactivamos redirección forzosa temporalmente incluso si se solicita
+           // router.push(redirectPath);
+           console.warn('[useAdminProtection] Redirect BLOCKED by debug mode');
+        }
         setHasAccess(false);
         setChecking(false);
       }
