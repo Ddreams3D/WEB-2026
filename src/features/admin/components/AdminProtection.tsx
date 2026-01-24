@@ -94,6 +94,50 @@ export default function AdminProtection({ children, requiredRole = 'admin' }: Ad
                 </details>
               </div>
             </div>
+
+            {/* Emergency Password Access - Restaurando la "ventana de contraseña" solicitada */}
+            <div className="mt-8 pt-4 border-t border-neutral-200 dark:border-neutral-700">
+              <p className="text-sm text-neutral-500 mb-2">¿Eres el administrador y tienes problemas de acceso?</p>
+              <details className="cursor-pointer">
+                <summary className="text-sm font-medium text-primary hover:underline select-none">
+                  Ingresar Clave Maestra de Recuperación
+                </summary>
+                <div className="mt-3 flex gap-2">
+                  <input 
+                    type="password" 
+                    placeholder="Clave de admin..." 
+                    className="flex-1 px-3 py-2 text-sm rounded-md border border-input bg-background"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        const val = (e.target as HTMLInputElement).value;
+                        if (val === 'ddreams2026' || val === 'admin123') { // Claves de emergencia
+                          localStorage.setItem('ddreams_admin_bypass', 'true');
+                          localStorage.setItem('adminDarkMode', 'true');
+                          window.location.reload();
+                        } else {
+                          alert('Clave incorrecta');
+                        }
+                      }
+                    }}
+                  />
+                  <Button 
+                    size="sm"
+                    onClick={(e) => {
+                      const input = (e.currentTarget.previousElementSibling as HTMLInputElement);
+                      if (input.value === 'ddreams2026' || input.value === 'admin123') {
+                        localStorage.setItem('ddreams_admin_bypass', 'true');
+                        localStorage.setItem('adminDarkMode', 'true');
+                        window.location.reload();
+                      } else {
+                        alert('Clave incorrecta');
+                      }
+                    }}
+                  >
+                    Entrar
+                  </Button>
+                </div>
+              </details>
+            </div>
         </div>
       </div>
     );
