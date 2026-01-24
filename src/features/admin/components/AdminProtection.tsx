@@ -14,18 +14,25 @@ interface AdminProtectionProps {
 
 export default function AdminProtection({ children, requiredRole = 'admin' }: AdminProtectionProps) {
   const router = useRouter();
+  const [isBypassed, setIsBypassed] = React.useState(false);
 
-  // 0. BYPASS DE EMERGENCIA SÍNCRONO (Directo al localStorage)
-  // Esto se ejecuta antes de cualquier hook de auth para evitar parpadeos o bloqueos por latencia
-  if (typeof window !== 'undefined' && localStorage.getItem('ddreams_admin_bypass') === 'true') {
-    return <>{children}</>;
-  }
+  // Verificación de bypass segura para hidratación
+  React.useEffect(() => {
+    if (typeof window !== 'undefined' && localStorage.getItem('ddreams_admin_bypass') === 'true') {
+      setIsBypassed(true);
+    }
+  }, []);
 
   // Desactivamos la redirección automática para evitar bucles infinitos y mostrar la pantalla de error/debug
   const { checking, hasAccess, user, isLoading } = useAdminProtection({ 
     requiredRole,
     redirectOnFail: false 
   });
+
+  // 0. BYPASS DE EMERGENCIA (Estado controlado)
+  if (isBypassed) {
+    return <>{children}</>;
+  }
 
   // Mostrar loading mientras se verifica la autenticación
   if (isLoading || checking) {
