@@ -42,4 +42,5 @@ export interface AuthContextType {
   logout: () => void;
   checkAuth: () => boolean;
   updateUser: (data: Partial<User>) => Promise<boolean>;
+  isAuthReady: boolean; // Indicates if Firebase Auth initial check is complete
 }

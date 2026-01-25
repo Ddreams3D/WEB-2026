@@ -29,7 +29,8 @@ let globalIsSyncing = false;
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); // Global loading (includes profile sync)
+  const [isAuthReady, setIsAuthReady] = useState(false); // Strict Firebase Auth ready state
   const router = useRouter();
   const { showSuccess, showError } = useToast();
 
@@ -83,6 +84,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.warn('[AuthContext] Auth not initialized, checking stored mock data');
       checkStoredAuth();
       setIsLoading(false);
+      setIsAuthReady(true);
       return;
     }
 
@@ -107,7 +109,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           
           // Set optimistic state
           setUserIfChanged(tempUser);
-          setIsLoading(false); // <--- CRITICAL: Unblock UI immediately
+          
+          // Unblock global loading immediately too for optimistic UX
+          setIsLoading(false); 
+          
+          // Marcar Auth como listo AHORA que tenemos usuario (evita race condition en AdminProtection)
+          setIsAuthReady(true);
 
           // 0. TOP GLOBAL ARCHITECTURE: Custom Claims Check
           const tokenResult = await firebaseUser.getIdTokenResult();
@@ -118,9 +125,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }
 
           // 1. Intentar obtener datos del usuario desde Firestore (Background Sync)
+          // Esto sucede en segundo plano sin bloquear la UI
           const userData = await AuthService.syncUserWithFirestore(firebaseUser, false, hasAdminClaim);
           
-          // 2. Actualizar estado con datos reales
+          // 2. Actualizar estado con datos reales cuando lleguen
           setUserIfChanged(userData);
           
           // 3. Guardar en localStorage
@@ -133,6 +141,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           localStorage.removeItem(AUTH_USER_KEY);
           setUserIfChanged(null);
           setIsLoading(false);
+          // Marcar Auth como listo (estado final: anonimo)
+          setIsAuthReady(true);
         }
       } catch (error) {
         console.error('[AuthContext] Error processing auth state change:', error);
@@ -141,6 +151,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
            setUserIfChanged(null);
         }
         setIsLoading(false);
+        setIsAuthReady(true); // Ensure ready even on error
       }
     });
 
@@ -256,7 +267,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loginWithGoogle,
     logout,
     checkAuth,
-    updateUser
+    updateUser,
+    isAuthReady
   };
 
   return (

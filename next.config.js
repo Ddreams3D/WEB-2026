@@ -79,12 +79,8 @@ const nextConfig = {
   // Configuración de redirecciones para SEO (Migración de rutas antiguas)
   async redirects() {
     return [
-      // Redirección de seguridad para admin login (evita 404)
-      {
-        source: '/admin/login',
-        destination: '/login',
-        permanent: true,
-      },
+      // Redirección de seguridad para admin login (evita 404) - ELIMINADA
+
       {
         source: '/catalogo-impresion-3d/general/premio-estilo-oscar-impreso-en-3d-reconocimiento-personalizado',
         destination: '/catalogo-impresion-3d/arte-diseno/premio-oscar-impreso-3d',

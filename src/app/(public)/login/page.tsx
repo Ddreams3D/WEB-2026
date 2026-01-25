@@ -24,23 +24,10 @@ export default function LoginPage() {
   useEffect(() => {
     // Solo redirigir si ya estamos seguros del estado (isLoading = false)
     if (!isLoading && isAuthenticated) {
-      // 1. Prioridad Admin: Si es admin, forzar dashboard
-      // [DEBUG] Desactivado temporalmente para romper bucles de redirección
-      /* 
-      if (user?.email && isSuperAdmin(user.email)) {
-        console.log('[LoginPage] Admin detectado, redirigiendo a /admin');
-        router.replace('/admin'); // Usar replace para evitar historial
-        return;
-      } 
-      */ 
-      
-      // 2. Usuarios normales a Home
-      // console.log('[LoginPage] Usuario autenticado, redirigiendo a /');
-      // router.replace('/');
-      // DEBUG: No redirigir automáticamente para evitar bucles. Mostrar botón.
+       router.replace('/');
       return;
     }
-  }, [isAuthenticated, isLoading, router, user]);
+  }, [isAuthenticated, isLoading, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,78 +75,6 @@ export default function LoginPage() {
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-muted-foreground">Cargando...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // DEBUG MODE: Mostrar estado de autenticación si ya está logueado
-  if (isAuthenticated && user) {
-    const isAdmin = isSuperAdmin(user.email);
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-muted/30 px-4 pt-20">
-        <div className="max-w-md w-full bg-card rounded-xl shadow-lg border border-border p-8 text-center space-y-6">
-          <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto">
-             <span className="text-2xl">👤</span>
-          </div>
-          
-          <div>
-            <h2 className="text-2xl font-bold mb-2">Ya has iniciado sesión</h2>
-            <p className="text-muted-foreground mb-4">
-              Sesión activa como: <br/>
-              <span className="font-mono text-foreground font-bold">{user.email}</span>
-            </p>
-            
-            <div className={`p-3 rounded-lg border ${isAdmin ? 'bg-green-50 border-green-200 text-green-800' : 'bg-yellow-50 border-yellow-200 text-yellow-800'}`}>
-              <p className="font-bold text-sm">Estado Admin: {isAdmin ? '✅ ES ADMIN' : '❌ NO ES ADMIN'}</p>
-              {!isAdmin && <p className="text-xs mt-1">Tu correo no coincide con la lista de admins.</p>}
-            </div>
-          </div>
-
-          <div className="grid gap-3">
-            <Button 
-              onClick={() => {
-                 // Activar bypass de emergencia (siempre visible)
-                 if (typeof window !== 'undefined') {
-                   localStorage.setItem('ddreams_admin_bypass', 'true');
-                   alert('✅ Acceso de Emergencia Activado. Intentando ingresar...');
-                   router.push('/admin');
-                 }
-              }}
-              variant="destructive"
-              className="w-full bg-yellow-600 hover:bg-yellow-700 text-white border-none animate-pulse"
-            >
-              🚨 Activar Acceso de Emergencia
-            </Button>
-
-            <Button 
-              onClick={() => router.push('/admin')} 
-              variant={isAdmin ? "default" : "secondary"}
-              className="w-full"
-            >
-              Ir al Panel Admin
-            </Button>
-            
-            <Button 
-              onClick={() => router.push('/')} 
-              variant="outline" 
-              className="w-full"
-            >
-              Ir al Inicio
-            </Button>
-            
-            <Button 
-              onClick={() => {
-                // Logout manual safe check
-                import('@/lib/firebase').then(({ auth }) => auth?.signOut());
-                window.location.reload();
-              }} 
-              variant="destructive" 
-              className="w-full"
-            >
-              Cerrar Sesión
-            </Button>
-          </div>
         </div>
       </div>
     );

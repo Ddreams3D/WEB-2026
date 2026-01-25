@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { ADMIN_EMAILS } from '@/config/roles';
 import { ShieldAlert } from '@/lib/icons';
-import { useAdminProtection, useAdminPermissions, grantAdminPermissions, revokeAdminPermissions } from '../hooks/useAdminProtection';
+import { useAdminProtection, useAdminPermissions } from '../hooks/useAdminProtection';
 
 interface AdminProtectionProps {
   children: React.ReactNode;
@@ -24,7 +24,7 @@ export default function AdminProtection({ children, requiredRole = 'admin' }: Ad
   }, []);
 
   // Desactivamos la redirección automática para evitar bucles infinitos y mostrar la pantalla de error/debug
-  const { checking, hasAccess, user, isLoading } = useAdminProtection({ 
+  const { checking, hasAccess, user, isAuthReady } = useAdminProtection({ 
     requiredRole,
     redirectOnFail: false 
   });
@@ -49,8 +49,8 @@ export default function AdminProtection({ children, requiredRole = 'admin' }: Ad
   }
 
   // 1. ESPERA DE AUTH (Solo Firebase Auth, no Firestore)
-  // isLoading viene del AuthContext. Gracias al fix "Optimistic UI", esto debería ser false casi inmediato.
-  if (isLoading) {
+  // isAuthReady indica que onAuthStateChanged ya disparó.
+  if (!isAuthReady) {
     return (
       <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center">
         <div className="text-center">
@@ -64,13 +64,48 @@ export default function AdminProtection({ children, requiredRole = 'admin' }: Ad
   }
 
   // 2. REDIRECCIÓN SI NO HAY USUARIO (Anon)
-  // Si terminó de cargar y no hay user, adiós.
+  // Si terminó de cargar y no hay user, mostramos debug en lugar de redirigir
   if (!user) {
-    // Usamos useEffect para redirect seguro (evita warnings de render)
-    if (typeof window !== 'undefined') {
-       window.location.href = '/login'; // Force full reload to clean state
-    }
-    return null; 
+    return (
+      <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center">
+        <div className="max-w-md w-full bg-white dark:bg-neutral-800 rounded-xl shadow-lg p-8 text-center">
+          <div className="w-16 h-16 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+             <ShieldAlert className="w-8 h-8 text-yellow-600 dark:text-yellow-400" />
+          </div>
+          <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">
+            Sesión No Detectada
+          </h1>
+          <p className="text-neutral-600 dark:text-neutral-400 mb-6">
+            La aplicación no detecta ningún usuario conectado.
+          </p>
+          
+          <div className="bg-neutral-100 dark:bg-neutral-900 p-4 rounded text-left text-xs font-mono mb-4 overflow-auto max-h-40">
+            <p><strong>isAuthReady:</strong> {String(isAuthReady)}</p>
+            <p><strong>User:</strong> null</p>
+            <p><strong>Checking:</strong> {String(checking)}</p>
+          </div>
+
+          <div className="space-y-3">
+            <Button
+              onClick={() => {
+                window.location.href = '/login';
+              }}
+              variant="default"
+              className="w-full"
+            >
+              Ir al Login
+            </Button>
+            <Button
+              onClick={() => window.location.reload()}
+              variant="outline"
+              className="w-full"
+            >
+              Reintentar
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   // 3. CHECKING DE PERMISOS (Firestore / Custom Claims)
@@ -105,27 +140,12 @@ export default function AdminProtection({ children, requiredRole = 'admin' }: Ad
             No tienes permisos para acceder a esta área administrativa.
           </p>
           <div className="space-y-3">
-            {/* 
-              MODIFIED: Botón "Volver al Inicio" desactivado para evitar redirecciones accidentales 
-              durante la depuración del bucle.
-            */}
-            <Button
-              onClick={() => {
-                console.log('Volver al inicio clickeado - Redirección manual');
-                // router.push('/') // Desactivado por precaución
-                window.location.href = '/';
-              }}
-              variant="gradient"
-              className="w-full transform hover:scale-105"
-            >
-              Volver al Inicio
-            </Button>
-            <Button
-              onClick={() => router.back()}
-              variant="outline"
+            <Button 
+              onClick={() => router.push('/admin')} 
+              variant={hasAccess ? "default" : "secondary"}
               className="w-full"
             >
-              Regresar
+              Ir al Panel Admin
             </Button>
           </div>
           
@@ -205,4 +225,4 @@ export default function AdminProtection({ children, requiredRole = 'admin' }: Ad
 }
 
 // Re-exportamos para mantener compatibilidad si se importa desde aquí
-export { useAdminPermissions, grantAdminPermissions, revokeAdminPermissions };
+export { useAdminPermissions };
