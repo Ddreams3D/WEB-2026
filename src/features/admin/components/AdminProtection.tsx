@@ -41,15 +41,43 @@ export default function AdminProtection({ children, requiredRole = 'admin' }: Ad
     return <>{children}</>;
   }
 
-  // 0.5. ACCESO INMEDIATO PARA SUPER ADMINS
-  // Si el email está en la lista blanca, entramos directo ignorando el estado de 'checking' del servicio
+  // 0.5. ACCESO INMEDIATO PARA SUPER ADMINS (Validación Cliente 100%)
+  // Si el email está en la lista blanca, entramos directo.
+  // Esta validación NO depende de Firestore, solo de Firebase Auth (email).
   if (isHardcodedAdmin) {
     return <>{children}</>;
   }
 
-  // Mostrar loading mientras se verifica la autenticación
-  if (isLoading || checking) {
+  // 1. ESPERA DE AUTH (Solo Firebase Auth, no Firestore)
+  // isLoading viene del AuthContext. Gracias al fix "Optimistic UI", esto debería ser false casi inmediato.
+  if (isLoading) {
     return (
+      <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+          <p className="text-neutral-600 dark:text-neutral-400">
+            Cargando sesión...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // 2. REDIRECCIÓN SI NO HAY USUARIO (Anon)
+  // Si terminó de cargar y no hay user, adiós.
+  if (!user) {
+    // Usamos useEffect para redirect seguro (evita warnings de render)
+    if (typeof window !== 'undefined') {
+       window.location.href = '/login'; // Force full reload to clean state
+    }
+    return null; 
+  }
+
+  // 3. CHECKING DE PERMISOS (Firestore / Custom Claims)
+  // Si llegamos aquí, hay usuario pero no es hardcoded admin.
+  // Esperamos la validación "fina" (checking = true).
+  if (checking) {
+     return (
       <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
@@ -61,7 +89,8 @@ export default function AdminProtection({ children, requiredRole = 'admin' }: Ad
     );
   }
 
-  // Mostrar error de acceso denegado
+  // 4. ACCESO DENEGADO (Final state)
+  // Terminó checking y hasAccess es false.
   if (!hasAccess) {
     return (
       <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center">
