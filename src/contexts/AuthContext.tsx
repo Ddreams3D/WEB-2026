@@ -94,9 +94,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       try {
         if (firebaseUser) {
+          // [OPTIMISTIC UI] 
+          // Set user IMMEDIATELY to unblock UI (Fast-Track for AdminProtection)
+          // We don't wait for Firestore to confirm identity.
+          const tempUser: User = {
+            id: firebaseUser.uid,
+            username: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Usuario',
+            email: firebaseUser.email || '',
+            photoURL: firebaseUser.photoURL || '',
+            role: 'user', // Default safe until Firestore confirms
+          };
+          
+          // Set optimistic state
+          setUserIfChanged(tempUser);
+          setIsLoading(false); // <--- CRITICAL: Unblock UI immediately
+
           // 0. TOP GLOBAL ARCHITECTURE: Custom Claims Check
-          // Verificamos si el token ya trae el permiso 'admin' incrustado.
-          // Esto es "Zero Latency" y funciona offline sin consultar Firestore.
           const tokenResult = await firebaseUser.getIdTokenResult();
           const hasAdminClaim = !!tokenResult.claims.admin;
           
@@ -104,39 +117,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
              console.log('[AuthContext] 🛡️ Acceso Admin validado vía Custom Claims (Top Tier Security)');
           }
 
-          // 1. Intentar obtener datos del usuario desde Firestore
-          // Pasamos el claim (3er argumento) para que syncUserWithFirestore sepa que ya somos admin "oficiales"
+          // 1. Intentar obtener datos del usuario desde Firestore (Background Sync)
           const userData = await AuthService.syncUserWithFirestore(firebaseUser, false, hasAdminClaim);
           
-          // 2. Actualizar estado
+          // 2. Actualizar estado con datos reales
           setUserIfChanged(userData);
           
-          // 3. Guardar en localStorage para persistencia básica offline (opcional, pero útil)
+          // 3. Guardar en localStorage
           localStorage.setItem(AUTH_USER_KEY, JSON.stringify(userData));
           localStorage.setItem(AUTH_TOKEN_KEY, await firebaseUser.getIdToken());
           
         } else {
-          // Usuario NO autenticado (Logout o sesión expirada)
-          // Limpiar todo el estado local
+          // Usuario NO autenticado
           localStorage.removeItem(AUTH_TOKEN_KEY);
           localStorage.removeItem(AUTH_USER_KEY);
           setUserIfChanged(null);
+          setIsLoading(false);
         }
       } catch (error) {
         console.error('[AuthContext] Error processing auth state change:', error);
-        
-        // Notify user of critical sync error BUT DO NOT LOGOUT
-        if (firebaseUser) {
-          // Si falló la sincronización pero tenemos usuario de Firebase, intentamos recuperar
-          // el estado básico para no echar al usuario.
-          // El AuthService.syncUserWithFirestore ya debería manejar el fallback, pero por si acaso:
-           console.warn('[AuthContext] Manteniendo sesión activa en modo degradado pese a error.');
-        } else {
-           // Solo si no hay usuario firebase limpiamos
+        if (!firebaseUser) {
            localStorage.removeItem(AUTH_USER_KEY);
            setUserIfChanged(null);
         }
-      } finally {
         setIsLoading(false);
       }
     });
