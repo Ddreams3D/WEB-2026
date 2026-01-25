@@ -190,9 +190,15 @@ export const NavbarMobileMenu = ({
 
             {/* Admin Panel (Only if admin) */}
             {isAdmin && (
-              <Link
+              <a
                 href="/admin"
-                onClick={() => handleLinkClick('/admin')}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsOpen(false);
+                  if (typeof window !== 'undefined') {
+                    window.location.href = '/admin';
+                  }
+                }}
                 className={cn(
                   "group flex items-center justify-between p-3 rounded-2xl transition-all duration-300",
                   "border border-transparent hover:border-primary/10",
@@ -216,7 +222,7 @@ export const NavbarMobileMenu = ({
                   "w-4 h-4 text-muted-foreground transition-transform duration-300",
                   "group-hover:text-primary group-hover:translate-x-0.5"
                 )} />
-              </Link>
+              </a>
             )}
 
             {/* Proceso */}

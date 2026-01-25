@@ -130,8 +130,13 @@ export const UserMenu = ({ user, isAdmin, logout, isNavbarSolid, darkMode, isOpe
                 className="w-full justify-start px-4 py-3 h-auto hover:bg-muted rounded-none"
                 onClick={() => setIsOpen(false)}
               >
-                <Link
+                <a
                   href="/admin"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsOpen(false);
+                    window.location.href = '/admin';
+                  }}
                   role="menuitem"
                   tabIndex={0}
                 >
@@ -142,7 +147,7 @@ export const UserMenu = ({ user, isAdmin, logout, isNavbarSolid, darkMode, isOpe
                       Panel de administrador
                     </p>
                   </div>
-                </Link>
+                </a>
               </Button>
             )}
 
