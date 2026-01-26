@@ -335,8 +335,11 @@ export function FinanceModal({ isOpen, onClose, record, onSave, settings }: Fina
     
     const labor = safeFloat((humanTimeMinutes / 60) * safeSettings.humanHourlyRate);
 
+    const uniqueTypes = new Set(computedComponents.map(c => c.type));
+    const mainType = uniqueTypes.size === 1 ? Array.from(uniqueTypes)[0] : 'mixed';
+
     return {
-      type: computedComponents.length > 1 ? 'mixed' : computedComponents[0].type,
+      type: mainType as any,
       machineTimeMinutes: totalMachineTime,
       humanTimeMinutes: humanTimeMinutes,
       materialWeightG: totalMaterialWeight,

@@ -48,6 +48,8 @@ export function QuoteToSaleModal({ isOpen, onClose, quote, onConfirm }: QuoteToS
     }
   }, [paymentPhase, quote]);
 
+  const remaining = quote ? (quote.totalBilled - (parseFloat(amount) || 0)) : 0;
+
   const handleSubmit = async () => {
     if (!quote) return;
 
@@ -133,20 +135,35 @@ export function QuoteToSaleModal({ isOpen, onClose, quote, onConfirm }: QuoteToS
             </div>
 
             {/* 4. Amount */}
-            <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="amount" className="text-right">
+            <div className="grid grid-cols-4 items-start gap-4">
+                <Label htmlFor="amount" className="text-right pt-2">
                     Monto
                 </Label>
-                <div className="col-span-3 relative">
-                    <DollarSign className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                        id="amount"
-                        type="number"
-                        step="0.10"
-                        className="pl-8"
-                        value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
-                    />
+                <div className="col-span-3 space-y-2">
+                    <div className="relative">
+                        <DollarSign className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Input
+                            id="amount"
+                            type="number"
+                            step="0.10"
+                            className="pl-8"
+                            value={amount}
+                            onChange={(e) => setAmount(e.target.value)}
+                        />
+                    </div>
+                    
+                    {paymentPhase === 'deposit' && (
+                        <div className="text-xs text-muted-foreground bg-muted/50 p-2 rounded border border-border/50">
+                            <div className="flex justify-between">
+                                <span>Total Cotizado:</span>
+                                <span className="font-medium">S/. {quote.totalBilled.toFixed(2)}</span>
+                            </div>
+                            <div className="flex justify-between text-orange-600 mt-1 font-medium">
+                                <span>Saldo Pendiente:</span>
+                                <span>S/. {remaining > 0 ? remaining.toFixed(2) : '0.00'}</span>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
