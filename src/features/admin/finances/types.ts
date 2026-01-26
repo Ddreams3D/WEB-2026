@@ -40,10 +40,17 @@ export interface FinanceRecord {
   createdAt: number;
   updatedAt: number;
   relatedOrderId?: string; // If linked to an actual system order
+  relatedQuoteId?: string; // If linked to a Quote
+
 
   // New Fields for Tracking
   expenseType?: 'production' | 'fixed' | 'variable';
   paymentPhase?: 'deposit' | 'final' | 'full';
+
+  // Deal Context (for Partial Payments & Margin Calculation)
+  totalSaleAmount?: number; // The full price of the deal/project
+  remainingBalance?: number; // How much is left to pay
+  depositAmount?: number; // Initial payment amount
 
   // Sync Metadata
   _deleted?: boolean;

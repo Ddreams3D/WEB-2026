@@ -20,6 +20,7 @@ import { QuoterForm } from '../quoter/components/QuoterForm';
 import { QuoterResults } from '../quoter/components/QuoterResults';
 import { QuoteHistorySheet } from '../quoter/components/QuoteHistorySheet';
 import { SlicingInboxService } from '../production/services/slicing-inbox.service';
+import { QuotesService } from '../quoter/services/quotes.service';
 import { toast } from 'sonner';
 
 export function FinancesView() {
@@ -109,8 +110,20 @@ export function FinancesView() {
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm('¿Estás seguro de que quieres eliminar este registro? Esta acción afectará los cálculos financieros.')) {
+      // Check for linked quote to revert status
+      const record = allRecords.find(r => r.id === id);
+      if (record?.relatedQuoteId) {
+          try {
+              // Revert quote status to 'sent' so it can be sold again
+              await QuotesService.updateStatus(record.relatedQuoteId, 'sent');
+              toast.success("Cotización vinculada reactivada para venta.");
+          } catch (error) {
+              console.error("Error reverting quote status:", error);
+              // We don't block deletion if this fails, but we warn
+          }
+      }
       deleteRecord(id);
     }
   };

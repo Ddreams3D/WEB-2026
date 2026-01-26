@@ -538,7 +538,7 @@ export function FinanceTable({ records, onEdit, onDelete, onUpdate }: FinanceTab
                     {main.type === 'expense' && '- '}{formatMoney(main.amount, main.currency)}
                     <ProfitBadge 
                       record={main} 
-                      totalAmount={main.amount + subs.reduce((acc, sub) => acc + (sub.type === 'income' ? sub.amount : 0), 0)}
+                      totalAmount={main.totalSaleAmount || (main.amount + subs.reduce((acc, sub) => acc + (sub.type === 'income' ? sub.amount : 0), 0))}
                       onEdit={onEdit}
                     />
                   </TableCell>

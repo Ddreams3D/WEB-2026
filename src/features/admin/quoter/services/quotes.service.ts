@@ -93,14 +93,47 @@ export const QuotesService = {
 
         // 2. Prepare Production Snapshot
         const costs = quote.data.calculatedCosts || {};
+        const machineDetails = quote.data.machineDetails || [];
+
+        const productionSnapshot = {
+             type: 'mixed' as const,
+             machineTimeMinutes: quote.data.totalMinutes || 0,
+             humanTimeMinutes: quote.data.humanMinutes || 0,
+             materialWeightG: quote.data.materialWeight || 0,
+             computedEnergyCost: costs.electricity || 0,
+             computedDepreciationCost: costs.depreciation || 0,
+             computedMaterialCost: costs.material || 0,
+             computedLaborCost: costs.laborValue || 0,
+             appliedRates: {
+                 electricityPrice: 0,
+                 machineDepreciationRate: 0,
+                 materialCostPerUnit: 0,
+                 humanHourlyRate: 0
+             },
+             components: machineDetails.map((m: any) => ({
+                 id: uuidv4(),
+                 type: (m.type === 'resin' ? 'resin' : 'fdm') as any,
+                 machineId: m.machineId === 'default' ? '' : m.machineId,
+                 machineName: m.machineName,
+                 machineTimeMinutes: m.duration || 0,
+                 materialWeightG: m.weight || 0
+             }))
+        };
         
-        // 3. Create Record
+        // 3. Create Records
         const finalAmount = details ? details.amount : quote.totalBilled;
-        const title = details?.paymentPhase === 'deposit' 
+        const totalSaleAmount = quote.totalBilled;
+        const isDeposit = details?.paymentPhase === 'deposit';
+        
+        const title = isDeposit
             ? `Adelanto Cotización: ${quote.projectName}` 
             : `Venta Cotización: ${quote.projectName}`;
 
-        const newRecord: FinanceRecord = {
+        const remainingBalance = isDeposit ? (totalSaleAmount - finalAmount) : 0;
+        const groupId = isDeposit ? uuidv4() : undefined;
+
+        // Record 1: The Payment (Deposit or Full)
+        const paymentRecord: FinanceRecord = {
             id: uuidv4(),
             date: new Date().toISOString(),
             type: 'income',
@@ -113,10 +146,18 @@ export const QuotesService = {
             paymentMethod: details ? details.paymentMethod : 'transfer', 
             category: 'Servicio de Impresión 3D',
             source: 'manual',
+            
+            // Deal Context
+            totalSaleAmount: totalSaleAmount,
+            remainingBalance: remainingBalance > 0 ? remainingBalance : undefined,
+            depositAmount: isDeposit ? finalAmount : undefined,
+            groupId: groupId,
+            relatedQuoteId: quote.id,
+
             items: [
                 {
                     id: uuidv4(),
-                    description: `Servicio de Impresión 3D - ${quote.projectName}`,
+                    description: `Servicio de Impresión 3D - ${quote.projectName} (${isDeposit ? 'Adelanto' : 'Total'})`,
                     quantity: 1,
                     unitPrice: finalAmount,
                     total: finalAmount
@@ -125,26 +166,49 @@ export const QuotesService = {
             createdAt: Date.now(),
             updatedAt: Date.now(),
             paymentPhase: details?.paymentPhase || 'full',
-            productionSnapshot: {
-                 type: 'mixed',
-                 machineTimeMinutes: quote.data.totalMinutes || 0,
-                 humanTimeMinutes: quote.data.humanMinutes || 0,
-                 materialWeightG: quote.data.materialWeight || 0,
-                 computedEnergyCost: costs.electricity || 0,
-                 computedDepreciationCost: costs.depreciation || 0,
-                 computedMaterialCost: costs.material || 0,
-                 computedLaborCost: costs.laborValue || 0,
-                 appliedRates: {
-                     electricityPrice: 0,
-                     machineDepreciationRate: 0,
-                     materialCostPerUnit: 0,
-                     humanHourlyRate: 0
-                 }
-            }
+            productionSnapshot: productionSnapshot
         };
 
+        records.unshift(paymentRecord);
+
+        // Record 2: The Pending Balance (if Deposit)
+        if (isDeposit && remainingBalance > 0) {
+             const pendingRecord: FinanceRecord = {
+                id: uuidv4(),
+                date: new Date().toISOString(), // Same date
+                type: 'income',
+                title: `Saldo Cotización: ${quote.projectName}`,
+                clientName: details ? details.clientName : quote.clientName,
+                clientContact: quote.clientPhone || quote.clientEmail,
+                amount: remainingBalance,
+                currency: quote.currency,
+                status: 'pending',
+                paymentMethod: 'transfer', // Default, will be updated when paid
+                category: 'Servicio de Impresión 3D',
+                source: 'manual',
+                
+                // Deal Context
+                totalSaleAmount: totalSaleAmount,
+                groupId: groupId, // Link to deposit
+
+                items: [
+                    {
+                        id: uuidv4(),
+                        description: `Saldo Pendiente - ${quote.projectName}`,
+                        quantity: 1,
+                        unitPrice: remainingBalance,
+                        total: remainingBalance
+                    }
+                ],
+                createdAt: Date.now() + 1, // Ensure it's slightly newer/distinct
+                updatedAt: Date.now(),
+                paymentPhase: 'final',
+                productionSnapshot: undefined // Costs are attached to the deposit/main record
+            };
+            records.unshift(pendingRecord);
+        }
+
         // 4. Save
-        records.unshift(newRecord);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
 
         // 5. Update Quote

@@ -214,6 +214,8 @@ export function FinanceModal({ isOpen, onClose, record, onSave, settings }: Fina
 
   // Reset production form when modal opens/closes or record changes
   React.useEffect(() => {
+    if (!isOpen) return;
+
     if (record?.productionSnapshot) {
       if (record.productionSnapshot.components && record.productionSnapshot.components.length > 0) {
         setProductionComponents(record.productionSnapshot.components.map(c => ({
@@ -246,7 +248,7 @@ export function FinanceModal({ isOpen, onClose, record, onSave, settings }: Fina
       setHumanTimeMinutes(0);
       setShowProduction(false);
     }
-  }, [record, isOpen]);
+  }, [record?.id, isOpen]);
 
   // Calculate Snapshot Live
   const calculatedSnapshot = React.useMemo((): ProductionSnapshot | undefined => {
@@ -423,6 +425,7 @@ export function FinanceModal({ isOpen, onClose, record, onSave, settings }: Fina
     // Base data
     const finalData = {
       ...formData,
+      totalSaleAmount: record?.totalSaleAmount, // Preserve total sale amount context
       paymentPhase: formData.type === 'income' ? (formData.paymentPhase || 'full') : undefined,
       expenseType: formData.type === 'expense' ? formData.expenseType : undefined,
       productionSnapshot: (showProduction && calculatedSnapshot) ? calculatedSnapshot : undefined
