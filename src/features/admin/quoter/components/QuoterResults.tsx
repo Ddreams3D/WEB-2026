@@ -13,7 +13,6 @@ import { Button } from '@/components/ui/button';
 import { Zap, Scale, Clock, User, AlertCircle, DollarSign, TrendingUp, Factory, Info, Receipt, Wallet, Calculator, FileText, Send, Save, History } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { QuotePreviewModal } from './QuotePreviewModal';
-import { QuoteHistorySheet } from './QuoteHistorySheet';
 import { toast } from 'sonner';
 import { QuotesService } from '../services/quotes.service';
 
@@ -50,14 +49,14 @@ interface QuoterResultsProps {
     projectName?: string;
   };
   settings: FinanceSettings;
+  onOpenHistory?: () => void;
 }
 
-export function QuoterResults({ data, settings }: QuoterResultsProps) {
+export function QuoterResults({ data, settings, onOpenHistory }: QuoterResultsProps) {
   const [desiredMargin, setDesiredMargin] = useState(40); // 40% default
   const [customPrice, setCustomPrice] = useState<string>('');
   const [includeIgv, setIncludeIgv] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const IGV_RATE = 0.18;
   
@@ -360,7 +359,7 @@ export function QuoterResults({ data, settings }: QuoterResultsProps) {
                         variant="ghost" 
                         size="icon" 
                         className="h-8 w-8 text-muted-foreground hover:text-primary"
-                        onClick={() => setIsHistoryOpen(true)}
+                        onClick={onOpenHistory}
                         title="Ver Historial"
                     >
                         <History className="w-4 h-4" />
@@ -510,11 +509,6 @@ export function QuoterResults({ data, settings }: QuoterResultsProps) {
             includeIgv: includeIgv
         }}
         onSendWhatsApp={handleSendWhatsApp}
-      />
-
-      <QuoteHistorySheet 
-        isOpen={isHistoryOpen} 
-        onClose={() => setIsHistoryOpen(false)} 
       />
     </div>
   );

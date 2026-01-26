@@ -136,47 +136,42 @@ class GCodeParser:
                     setattr(stats, key, cleaned_val)
 
     def _calculate_time(self, content: str, stats: GCodeStats):
-        # Try to find "total estimated time" first (more accurate)
-        total_time_match = re.search(r"; total estimated time:\s*([^\n\r]*)", content, re.IGNORECASE)
         val = None
-        
-        if total_time_match:
-            val = total_time_match.group(1)
-        else:
-            # Fallback to model printing time
-            match = re.search(self.patterns['time'], content, re.IGNORECASE)
-            if match:
-                val = next((g for g in match.groups() if g is not None), None)
+
+        # Single source of truth: user-calibrated pattern for "time"
+        match = re.search(self.patterns['time'], content, re.IGNORECASE)
+        if match:
+            val = next((g for g in match.groups() if g is not None), None)
 
         if val:
             val = val.strip()
-            # Case 1: Standard "1h 20m 30s"
-            if 'h' in val or 'm' in val or 's' in val:
-                h, m, s = 0, 0, 0
+            if 'd' in val or 'h' in val or 'm' in val or 's' in val:
+                d, h, m, s = 0, 0, 0, 0
                 try:
-                    h_match = re.search(r'(\d+)h', val)
+                    d_match = re.search(r'(\d+)\s*d', val)
+                    if d_match: d = int(d_match.group(1))
+
+                    h_match = re.search(r'(\d+)\s*h', val)
                     if h_match: h = int(h_match.group(1))
                     
-                    m_match = re.search(r'(\d+)m', val)
+                    m_match = re.search(r'(\d+)\s*m', val)
                     if m_match: m = int(m_match.group(1))
                     
-                    s_match = re.search(r'(\d+)s', val)
+                    s_match = re.search(r'(\d+)\s*s', val)
                     if s_match: s = int(s_match.group(1))
                     
-                    stats.time_minutes = h * 60 + m + (1 if s > 30 else 0)
+                    stats.time_minutes = (d * 1440) + (h * 60) + m + (1 if s > 30 else 0)
                 except:
                     pass
-            # Case 2: HH:MM:SS
             elif ':' in val:
                 try:
                     parts = [int(p) for p in val.split(':')]
-                    if len(parts) == 3: # HH:MM:SS
+                    if len(parts) == 3:
                         stats.time_minutes = parts[0] * 60 + parts[1] + (1 if parts[2] > 30 else 0)
-                    elif len(parts) == 2: 
+                    elif len(parts) == 2:
                         stats.time_minutes = parts[0] + (1 if parts[1] > 30 else 0)
                 except:
                     pass
-            # Case 3: Pure Seconds (integer/float)
             else:
                 try:
                     seconds = float(val)

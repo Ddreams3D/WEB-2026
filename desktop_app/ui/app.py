@@ -1,3 +1,4 @@
+import math
 import customtkinter as ctk
 import tkinter as tk
 from tkinter import messagebox
@@ -86,7 +87,7 @@ class MainWindow:
                 last_thumb = s.thumbnail_b64
 
         # Update aggregated object
-        self.stats.grams = total_grams
+        self.stats.grams = math.ceil(total_grams)
         self.stats.time_minutes = total_time
         self.stats.filament_length_m = total_meters
         self.stats.total_layers = total_layers
@@ -217,7 +218,7 @@ class MainWindow:
             grs = int(self.stats.grams % 1000)
             weight_str = f"{kgs} kgs y {grs} gr"
         else:
-            weight_str = f"{self.stats.grams:.2f}g"
+            weight_str = f"{int(self.stats.grams)}g"
 
         add_total_row("Peso Total", weight_str, self.total_frame)
         add_total_row("Longitud Total", f"{self.stats.filament_length_m:.2f}m", self.total_frame)
@@ -241,8 +242,13 @@ class MainWindow:
             details = ctk.CTkFrame(plate_frame, fg_color="transparent")
             details.pack(fill="x", padx=5, pady=2)
             
-            ph, pm = divmod(s.time_minutes, 60)
-            p_time = f"{ph}h {pm}m"
+            pd, prem = divmod(s.time_minutes, 1440)
+            ph, pm = divmod(prem, 60)
+            
+            if pd > 0:
+                p_time = f"{int(pd)}d {int(ph)}h {int(pm)}m"
+            else:
+                p_time = f"{int(ph)}h {int(pm)}m"
             
             ctk.CTkLabel(details, text=f"⏳ {p_time}", font=("Arial", 10)).pack(side="left", padx=(0, 10))
             ctk.CTkLabel(details, text=f"⚖️ {s.grams:.1f}g", font=("Arial", 10)).pack(side="left", padx=(0, 10))
