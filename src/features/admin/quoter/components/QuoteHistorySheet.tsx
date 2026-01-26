@@ -8,7 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { QuoteToSaleModal, SaleDetails } from './QuoteToSaleModal';
-import { Loader2, ArrowRight, CheckCircle2, FileText, DollarSign, Trash2 } from 'lucide-react';
+import ConfirmationModal from '../../components/ConfirmationModal';
+import { Loader2, ArrowRight, CheckCircle2, FileText, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface QuoteHistorySheetProps {
@@ -22,6 +23,10 @@ export function QuoteHistorySheet({ isOpen, onClose }: QuoteHistorySheetProps) {
     const [processingId, setProcessingId] = useState<string | null>(null);
     const [saleModalOpen, setSaleModalOpen] = useState(false);
     const [selectedQuoteForSale, setSelectedQuoteForSale] = useState<Quote | null>(null);
+    const [confirmState, setConfirmState] = useState<{
+        isOpen: boolean;
+        quoteId: string | null;
+    }>({ isOpen: false, quoteId: null });
 
     useEffect(() => {
         if (isOpen) {
@@ -65,9 +70,17 @@ export function QuoteHistorySheet({ isOpen, onClose }: QuoteHistorySheetProps) {
         }
     };
 
-    const handleDelete = async (quoteId: string) => {
-        if (!confirm('¿Estás seguro de eliminar esta cotización? Esta acción no se puede deshacer.')) return;
+    const handleDelete = (quoteId: string) => {
+        setConfirmState({
+            isOpen: true,
+            quoteId
+        });
+    };
 
+    const confirmDelete = async () => {
+        if (!confirmState.quoteId) return;
+
+        const quoteId = confirmState.quoteId;
         setProcessingId(quoteId);
         try {
             await QuotesService.deleteQuote(quoteId);
@@ -78,6 +91,7 @@ export function QuoteHistorySheet({ isOpen, onClose }: QuoteHistorySheetProps) {
             toast.error("Error al eliminar cotización");
         } finally {
             setProcessingId(null);
+            setConfirmState({ isOpen: false, quoteId: null });
         }
     };
 
@@ -150,9 +164,9 @@ export function QuoteHistorySheet({ isOpen, onClose }: QuoteHistorySheetProps) {
                                                     {processingId === quote.id ? (
                                                         <Loader2 className="w-3 h-3 animate-spin mr-2" />
                                                     ) : (
-                                                        <DollarSign className="w-3 h-3 mr-2" />
+                                                        <span className="text-xs font-bold mr-2">S/.</span>
                                                     )}
-                                                    Vender
+                                                    Registrar Venta
                                                 </Button>
                                                 <Button
                                                     size="sm"
@@ -187,6 +201,17 @@ export function QuoteHistorySheet({ isOpen, onClose }: QuoteHistorySheetProps) {
                 }}
                 quote={selectedQuoteForSale}
                 onConfirm={handleConfirmSale}
+            />
+
+            <ConfirmationModal
+                isOpen={confirmState.isOpen}
+                onClose={() => setConfirmState({ isOpen: false, quoteId: null })}
+                onConfirm={confirmDelete}
+                title="Eliminar Cotización"
+                message="¿Estás seguro de que deseas eliminar esta cotización? Esta acción no se puede deshacer."
+                variant="danger"
+                confirmText="Eliminar"
+                isLoading={!!processingId}
             />
         </Sheet>
     );

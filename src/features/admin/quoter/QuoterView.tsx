@@ -5,7 +5,7 @@ import { QuoterForm } from './components/QuoterForm';
 import { QuoterResults } from './components/QuoterResults';
 import { useFinanceSettings } from '../finances/hooks/useFinanceSettings';
 import { Button } from '@/components/ui/button';
-import { History } from 'lucide-react';
+import { History as HistoryIcon } from 'lucide-react';
 import { QuoteHistorySheet } from './components/QuoteHistorySheet';
 
 export function QuoterView() {
@@ -20,9 +20,14 @@ export function QuoterView() {
             <h2 className="text-2xl font-bold tracking-tight">Cotizador 3D</h2>
             <p className="text-muted-foreground text-sm">Calcula costos y precios de venta</p>
          </div>
-         <Button variant="outline" onClick={() => setIsHistoryOpen(true)}>
-            <History className="mr-2 h-4 w-4" />
-            Historial
+         <Button 
+            variant="outline" 
+            size="sm" 
+            className="gap-2"
+            onClick={() => setIsHistoryOpen(true)}
+         >
+            <HistoryIcon className="w-4 h-4" />
+            <span className="hidden sm:inline">Historial</span>
          </Button>
       </div>
 
@@ -35,7 +40,6 @@ export function QuoterView() {
             <QuoterResults 
               data={quoteData} 
               settings={settings} 
-              onOpenHistory={() => setIsHistoryOpen(true)}
             />
           ) : (
             <div className="h-[400px] flex flex-col items-center justify-center border-2 border-dashed rounded-xl bg-muted/30 text-muted-foreground text-sm gap-2 animate-in fade-in-50">

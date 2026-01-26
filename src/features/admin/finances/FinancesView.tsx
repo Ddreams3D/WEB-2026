@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Plus, List, BarChart3, TrendingUp, TrendingDown, Landmark, PieChart, Inbox, Settings, Calculator, Receipt } from 'lucide-react';
+import { Plus, List, BarChart3, TrendingUp, TrendingDown, Landmark, PieChart, Inbox, Settings, Calculator, Receipt, History as HistoryIcon } from 'lucide-react';
 import { useFinances } from './hooks/useFinances';
 import { FinanceTable } from './components/FinanceTable';
 import { FinanceStats } from './components/FinanceStats';
@@ -18,6 +18,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useFinanceSettings } from './hooks/useFinanceSettings';
 import { QuoterForm } from '../quoter/components/QuoterForm';
 import { QuoterResults } from '../quoter/components/QuoterResults';
+import { QuoteHistorySheet } from '../quoter/components/QuoteHistorySheet';
 import { SlicingInboxService } from '../production/services/slicing-inbox.service';
 import { toast } from 'sonner';
 
@@ -27,6 +28,7 @@ export function FinancesView() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isInboxOpen, setIsInboxOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [editingRecord, setEditingRecord] = useState<FinanceRecord | null>(null);
   
   // Quoter state
@@ -200,10 +202,21 @@ export function FinancesView() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-in fade-in slide-in-from-left-4 duration-300">
             <div className="lg:col-span-5 space-y-6">
                 <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
-                    <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                        <Receipt className="w-5 h-5 text-muted-foreground" />
-                        Parámetros del Trabajo
-                    </h2>
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-lg font-semibold flex items-center gap-2">
+                            <Receipt className="w-5 h-5 text-muted-foreground" />
+                            Parámetros del Trabajo
+                        </h2>
+                        <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="gap-2 text-muted-foreground hover:text-primary"
+                            onClick={() => setIsHistoryOpen(true)}
+                        >
+                            <HistoryIcon className="w-4 h-4" />
+                            <span className="hidden sm:inline">Historial</span>
+                        </Button>
+                    </div>
                     <QuoterForm onCalculate={handleCalculateQuote} settings={settings} initialData={quoterInitialData} />
                 </div>
             </div>
@@ -294,6 +307,8 @@ export function FinancesView() {
         onSave={handleSaveFromInbox}
         mode="business"
       />
+      
+      <QuoteHistorySheet isOpen={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} />
     </div>
   );
 }

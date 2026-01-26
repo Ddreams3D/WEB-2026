@@ -49,10 +49,9 @@ interface QuoterResultsProps {
     projectName?: string;
   };
   settings: FinanceSettings;
-  onOpenHistory?: () => void;
 }
 
-export function QuoterResults({ data, settings, onOpenHistory }: QuoterResultsProps) {
+export function QuoterResults({ data, settings }: QuoterResultsProps) {
   const [desiredMargin, setDesiredMargin] = useState(40); // 40% default
   const [customPrice, setCustomPrice] = useState<string>('');
   const [includeIgv, setIncludeIgv] = useState(false);
@@ -355,15 +354,6 @@ export function QuoterResults({ data, settings, onOpenHistory }: QuoterResultsPr
                         <Wallet className="w-5 h-5 text-primary" />
                         <span className="text-xl">Precio de Venta</span>
                     </CardTitle>
-                    <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-8 w-8 text-muted-foreground hover:text-primary"
-                        onClick={onOpenHistory}
-                        title="Ver Historial"
-                    >
-                        <History className="w-4 h-4" />
-                    </Button>
                 </div>
                 
                 <div className="flex items-center gap-2 bg-background p-1 rounded-full border shadow-sm">

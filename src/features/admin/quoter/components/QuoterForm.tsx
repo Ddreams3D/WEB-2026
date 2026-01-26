@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { FinanceSettings } from '../../finances/types';
-import { Clock, Scale, User, DollarSign, AlertCircle, Plus, Trash2, Printer, Palette, Box, Wrench, Settings2, Phone, Mail, ChevronDown, ChevronUp, Layers, Package } from 'lucide-react';
+import { Clock, Scale, User, DollarSign, AlertCircle, Plus, Trash2, Printer, Palette, Box, Wrench, Settings2, Phone, Mail, ChevronDown, ChevronUp, Layers, Package, History } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
@@ -18,6 +18,7 @@ interface QuoterFormProps {
   onCalculate: (data: any) => void;
   settings: FinanceSettings;
   initialData?: any;
+  onOpenHistory?: () => void;
 }
 
 interface MachineEntry {
@@ -235,13 +236,17 @@ export function QuoterForm({ onCalculate, settings, initialData }: QuoterFormPro
   return (
     <Card className="h-full border-0 shadow-none sm:border sm:shadow-sm">
       <CardHeader className="px-4 py-4 sm:px-6 sm:pb-4">
-        <CardTitle className="text-xl font-bold flex items-center gap-2">
-           <Settings2 className="w-5 h-5 text-primary" />
-           Configurador
-        </CardTitle>
-        <CardDescription>
-           Ingresa los parámetros del proyecto
-        </CardDescription>
+        <div className="flex justify-between items-start">
+            <div>
+                <CardTitle className="text-xl font-bold flex items-center gap-2">
+                <Settings2 className="w-5 h-5 text-primary" />
+                Configurador
+                </CardTitle>
+                <CardDescription>
+                Ingresa los parámetros del proyecto
+                </CardDescription>
+            </div>
+        </div>
       </CardHeader>
       <CardContent className="px-4 pb-4 sm:px-6 space-y-6">
         
