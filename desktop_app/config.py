@@ -22,5 +22,10 @@ API_BASE = f"{WEB_URL}/api/production"
 API_URL = f"{API_BASE}/slicer-hook"
 API_PRODUCTS_URL = f"{API_BASE}/products-list"
 
+# Machine Link
+# Pega aquí el ID de la máquina de la web (ej: "123-abc-...")
+# Si se deja vacío, la web intentará adivinar por el nombre del modelo.
+MACHINE_ID = ""
+
 SECRET_TOKEN = "tu_secreto_super_seguro" 
 VERSION = "13.3-Cloud"

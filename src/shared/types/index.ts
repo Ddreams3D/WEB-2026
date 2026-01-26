@@ -151,6 +151,7 @@ export interface Product {
     filamentType?: string;
     fileName?: string;
     printerModel?: string;
+    machineId?: string;
     nozzleDiameter?: string;
     totalLayers?: number;
     filamentLengthMeters?: number;

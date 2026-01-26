@@ -94,9 +94,14 @@ export const QuotesService = {
         // 2. Prepare Production Snapshot
         const costs = quote.data.calculatedCosts || {};
         const machineDetails = quote.data.machineDetails || [];
+        
+        // Determine composite type
+        const componentTypes = machineDetails.map((m: any) => m.type === 'resin' ? 'resin' : 'fdm');
+        const uniqueTypes = new Set(componentTypes);
+        const mainType = uniqueTypes.size === 1 ? Array.from(uniqueTypes)[0] : 'mixed';
 
         const productionSnapshot = {
-             type: 'mixed' as const,
+             type: mainType as any,
              machineTimeMinutes: quote.data.totalMinutes || 0,
              humanTimeMinutes: quote.data.humanMinutes || 0,
              materialWeightG: quote.data.materialWeight || 0,

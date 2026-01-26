@@ -17,6 +17,7 @@ const HookSchema = z.object({
   fileTimestamp: z.number().optional(),
   scriptVersion: z.string().optional(),
   printerModel: z.string().optional(),
+  machineId: z.string().optional(),
   nozzleDiameter: z.string().optional(),
   totalLayers: z.number().optional(),
   filamentLengthMeters: z.number().optional(), // New
@@ -100,6 +101,7 @@ export async function POST(req: NextRequest) {
                     fileName: data.fileName,
                     qualityProfile: data.qualityProfile,
                     printerModel: data.printerModel,
+                    machineId: data.machineId,
                     nozzleDiameter: data.nozzleDiameter,
                     totalLayers: data.totalLayers,
                     filamentLengthMeters: data.filamentLengthMeters,

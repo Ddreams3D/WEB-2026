@@ -4,7 +4,7 @@ import urllib.error
 from typing import List, Optional
 from domain.models import Product, GCodeStats
 from utils.logger import Logger
-from config import API_URL, API_PRODUCTS_URL, SECRET_TOKEN
+from config import API_URL, API_PRODUCTS_URL, SECRET_TOKEN, MACHINE_ID
 
 class ProductionService:
     def __init__(self, logger: Logger):
@@ -34,6 +34,9 @@ class ProductionService:
         
         if product_id:
             payload['linkedProductId'] = product_id
+            
+        if MACHINE_ID:
+            payload['machineId'] = MACHINE_ID
 
         try:
             req = urllib.request.Request(API_URL)
