@@ -212,6 +212,11 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   const markAsRead = async (id: string) => {
     // Optimistic update
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+    
+    // Si es una notificación del inbox (virtual), no hacemos nada en backend
+    // ya que su estado de lectura no se persiste (siempre son "nuevas" hasta que se procesan)
+    if (id.startsWith('inbox-')) return;
+
     await NotificationService.markAsRead(id);
   };
 
@@ -227,6 +232,28 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   const deleteNotification = async (id: string) => {
     // Optimistic update
     setNotifications(prev => prev.filter(n => n.id !== id));
+
+    // Si es una notificación del Inbox (Bot de Telegram)
+    if (id.startsWith('inbox-')) {
+      try {
+        const realId = id.replace('inbox-', '');
+        const { InboxService } = await import('@/features/admin/finances/services/InboxService');
+        // Eliminar del JSON en Storage (acción destructiva/rechazo)
+        await InboxService.removeFromInbox([realId]);
+        
+        // Actualizar también el estado local de inboxNotifications para que no reaparezca
+        // en el siguiente intervalo de checkInbox
+        setInboxNotifications(prev => prev.filter(n => n.id !== id));
+      } catch (error) {
+        console.error('Error removing inbox item:', error);
+        // Revertir optimistic update si falla (opcional, pero buena práctica)
+        // En este caso es complejo revertir sin re-fetch, así que lo dejamos así
+        // pero mostramos un error en consola.
+      }
+      return;
+    }
+
+    // Notificación estándar de Firestore
     await NotificationService.deleteNotification(id);
   };
 

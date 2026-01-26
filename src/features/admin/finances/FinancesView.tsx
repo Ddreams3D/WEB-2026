@@ -18,6 +18,8 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useFinanceSettings } from './hooks/useFinanceSettings';
 import { QuoterForm } from '../quoter/components/QuoterForm';
 import { QuoterResults } from '../quoter/components/QuoterResults';
+import { SlicingInboxService } from '../production/services/slicing-inbox.service';
+import { toast } from 'sonner';
 
 export function FinancesView() {
   const { records, allRecords, importRecords, loading, addRecord, updateRecord, deleteRecord, stats } = useFinances();
@@ -29,6 +31,8 @@ export function FinancesView() {
   
   // Quoter state
   const [quoteData, setQuoteData] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState('quoter');
+  const [quoterInitialData, setQuoterInitialData] = useState<any>(null);
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -37,12 +41,43 @@ export function FinancesView() {
     setQuoteData(data);
   };
 
-  // Check for URL param to open inbox
+  // Check for URL param to open inbox or set tab or load quote data
   useEffect(() => {
     if (searchParams.get('inbox') === 'open') {
       setIsInboxOpen(true);
       // Clean up URL without refresh
       router.replace('/admin/finanzas');
+    }
+    
+    const tabParam = searchParams.get('tab');
+    if (tabParam && ['quoter', 'incomes', 'expenses', 'financing', 'summary'].includes(tabParam)) {
+      setActiveTab(tabParam);
+    }
+
+    const inboxId = searchParams.get('inboxId');
+    if (inboxId) {
+        // Fetch inbox item details
+        const fetchInboxItem = async () => {
+            try {
+                // Use a direct fetch or expose a method in SlicingInboxService to get by ID
+                // Since getPendingItems returns an array, we might need a new method or just iterate if we assume it's pending.
+                // Or better, add getById to SlicingInboxService.
+                // For now, let's assume we can get it via getPendingItems (less efficient but works without service change if id matches)
+                // OR add getById to service. Let's add getById to service first.
+                // Actually, let's assume we implement getById.
+                const item = await SlicingInboxService.getItemById(inboxId);
+                if (item) {
+                    setQuoterInitialData(item);
+                    toast.success('Datos de cotización cargados desde App');
+                }
+            } catch (error) {
+                console.error("Error loading inbox item for quote:", error);
+                toast.error("No se pudo cargar la info del slice");
+            }
+        };
+        fetchInboxItem();
+        // Remove param
+        // router.replace(`/admin/finanzas?tab=${tabParam || 'quoter'}`); // Maybe keep it or remove
     }
   }, [searchParams, router]);
 
@@ -140,7 +175,7 @@ export function FinancesView() {
         </div>
       </div>
 
-      <Tabs defaultValue="quoter" className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="flex items-center justify-between mb-4">
           <TabsList className="bg-muted/50 p-1 w-full sm:w-auto grid grid-cols-2 sm:flex">
             <TabsTrigger value="quoter" className="gap-2">
@@ -169,7 +204,7 @@ export function FinancesView() {
                         <Receipt className="w-5 h-5 text-muted-foreground" />
                         Parámetros del Trabajo
                     </h2>
-                    <QuoterForm onCalculate={handleCalculateQuote} settings={settings} />
+                    <QuoterForm onCalculate={handleCalculateQuote} settings={settings} initialData={quoterInitialData} />
                 </div>
             </div>
 

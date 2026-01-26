@@ -1,5 +1,6 @@
-API_BASE = "http://localhost:3000/api/production"
+WEB_URL = "http://localhost:3000"
+API_BASE = f"{WEB_URL}/api/production"
 API_URL = f"{API_BASE}/slicer-hook"
 API_PRODUCTS_URL = f"{API_BASE}/products-list"
 SECRET_TOKEN = "tu_secreto_super_seguro" 
-VERSION = "13.1-Sanity-Check"
+VERSION = "13.2-AutoOpen"

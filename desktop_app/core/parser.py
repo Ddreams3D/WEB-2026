@@ -98,7 +98,9 @@ class GCodeParser:
                         # Remove quotes and surrounding whitespace
                         stats.filament_type = val.replace('"', '').replace("'", "").strip()
                     elif key == 'total_layers': 
-                        stats.total_layers = self._extract_int(val)
+                        stats.total_layers = int(self._extract_float(val))
+                    elif key == 'printer_model':
+                        stats.printer_model = val.replace('"', '').replace("'", "").strip()
                     elif key == 'printer_model': 
                         stats.printer_model = val.strip()
 

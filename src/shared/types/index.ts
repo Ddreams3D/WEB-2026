@@ -138,6 +138,29 @@ export interface Product {
   dimensions?: ProductDimensions;
   materials?: string[];
   printTime?: number; // en horas
+  nozzleDiameter?: string; // e.g. "0.4mm"
+  totalLayers?: number;
+  filamentLengthMeters?: number;
+  
+  // Production Data (Aligned with StoreProduct in domain.ts)
+  productionData?: {
+    lastSliced?: string;
+    grams?: number;
+    printTimeMinutes?: number;
+    machineType?: string;
+    filamentType?: string;
+    fileName?: string;
+    printerModel?: string;
+    nozzleDiameter?: string;
+    totalLayers?: number;
+    filamentLengthMeters?: number;
+    additionalCosts?: number;
+    customMargin?: number;
+  };
+
+  // Legacy Financials (can be removed later if unused)
+  // additionalCosts?: number; 
+  // customMargin?: number;
   complexity?: 'low' | 'medium' | 'high';
   format?: string;
   fileSize?: string;

@@ -22,14 +22,14 @@ class ProductionService:
             return []
         return []
 
-    def send_data(self, stats: GCodeStats, filename: str, product_id: Optional[str], name: str, version: str) -> bool:
+    def send_data(self, stats: GCodeStats, filename: str, product_id: Optional[str], name: str, version: str, target: str = 'product') -> str:
         payload = stats.to_dict()
         payload.update({
             "secret_token": SECRET_TOKEN,
             "name": name,
             "fileName": filename,
             "scriptVersion": version,
-            # Additional metadata could be added here
+            "target": target
         })
         
         if product_id:
@@ -42,7 +42,23 @@ class ProductionService:
             req.add_header('Content-Length', len(jsondata))
             
             with urllib.request.urlopen(req, data=jsondata, timeout=10) as response:
-                return response.getcode() == 200
+                if response.getcode() == 200:
+                    resp_body = json.loads(response.read())
+                    return resp_body.get('id', '')
+                else:
+                    raise Exception(f"HTTP {response.getcode()}")
+        except urllib.error.HTTPError as e:
+            error_msg = f"HTTP {e.code}"
+            try:
+                body = e.read().decode('utf-8')
+                error_msg += f": {body}"
+            except:
+                pass
+            self.logger.error(f"API Error: {error_msg}")
+            raise Exception(error_msg)
+        except urllib.error.URLError as e:
+            self.logger.error(f"Connection Error: {e.reason}")
+            raise Exception(f"Connection Error: {e.reason}")
         except Exception as e:
             self.logger.error(f"Error sending data: {e}")
-            return False
+            raise Exception(f"Error: {e}")

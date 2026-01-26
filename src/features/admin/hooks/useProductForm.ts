@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 import { Product, ProductImage, ProductTab } from '@/shared/types';
 import { Service } from '@/shared/types/domain';
 import { generateSlug } from '@/lib/utils';
@@ -72,6 +74,40 @@ export function useProductForm({ product, forcedType, onSave, onClose }: UseProd
     const sid = sessionId || 'session';
     return `${base}_${sid}_${type}`;
   }, [product?.id, formData.kind, forcedType, sessionId]);
+
+  // Real-time updates for Production Data (Slicer Hook)
+    useEffect(() => {
+    if (!product?.id || !db) return;
+
+    // Determine collection based on forcedType or product.kind
+    // Default to 'products' if unsure, but usually safe to assume 'products' for slicing data
+    const collectionName = (forcedType === 'service' || (product as any).kind === 'service') ? 'services' : 'products';
+
+    const unsubscribe = onSnapshot(doc(db, collectionName, product.id), (docSnap) => {
+        if (docSnap.exists()) {
+            const serverData = docSnap.data();
+            const serverProdData = serverData.productionData;
+
+            // Only update if productionData has changed significantly
+            // This prevents overwriting user edits in other fields
+            setFormData(current => {
+                const currentProdData = (current as any).productionData;
+                
+                // Simple equality check (JSON stringify is enough for this data structure)
+                if (JSON.stringify(serverProdData) !== JSON.stringify(currentProdData)) {
+                    // console.log('[useProductForm] Production data updated externally');
+                    return {
+                        ...current,
+                        productionData: serverProdData
+                    };
+                }
+                return current;
+            });
+        }
+    });
+
+    return () => unsubscribe();
+  }, [product?.id, forcedType]);
 
   // Initialization
   useEffect(() => {

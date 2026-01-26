@@ -17,6 +17,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 interface QuoterFormProps {
   onCalculate: (data: any) => void;
   settings: FinanceSettings;
+  initialData?: any;
 }
 
 interface MachineEntry {
@@ -28,7 +29,7 @@ interface MachineEntry {
   weight: string;
 }
 
-export function QuoterForm({ onCalculate, settings }: QuoterFormProps) {
+export function QuoterForm({ onCalculate, settings, initialData }: QuoterFormProps) {
   // Production Mode State
   const [isProductionMode, setIsProductionMode] = useState(false);
   const [quantity, setQuantity] = useState('1');
@@ -45,6 +46,54 @@ export function QuoterForm({ onCalculate, settings }: QuoterFormProps) {
   const [machines, setMachines] = useState<MachineEntry[]>([
     { id: '1', machineId: 'default', days: '', hours: '', minutes: '', weight: '' }
   ]);
+
+  // Load Initial Data
+  useEffect(() => {
+    if (initialData) {
+      if (initialData.name) setProjectName(initialData.name);
+      
+      // Configurar máquina principal con los datos recibidos
+      // Asumimos que viene grams y time (minutos)
+      if (initialData.grams || initialData.time) {
+        const timeMinutes = initialData.time || 0;
+        const d = Math.floor(timeMinutes / (24 * 60));
+        const h = Math.floor((timeMinutes % (24 * 60)) / 60);
+        const m = Math.round(timeMinutes % 60);
+
+        // Auto-detect Machine Logic
+        let selectedMachineId = 'default';
+        if (settings.machines && initialData.printerModel) {
+            // 1. Try exact match
+            const exact = settings.machines.find(m => 
+                m.name.toLowerCase() === initialData.printerModel.toLowerCase()
+            );
+            if (exact) selectedMachineId = exact.id;
+            else {
+                // 2. Try partial match
+                const partial = settings.machines.find(m => 
+                    initialData.printerModel.toLowerCase().includes(m.name.toLowerCase()) ||
+                    m.name.toLowerCase().includes(initialData.printerModel.toLowerCase())
+                );
+                if (partial) selectedMachineId = partial.id;
+            }
+        }
+        
+        // Fallback to resin default if type matches and no specific machine found
+        if (selectedMachineId === 'default' && initialData.machineType === 'RESIN') {
+             selectedMachineId = 'resin-default';
+        }
+
+        setMachines([{
+            id: '1',
+            machineId: selectedMachineId,
+            days: d > 0 ? d.toString() : '',
+            hours: h > 0 ? h.toString() : '',
+            minutes: m > 0 ? m.toString() : '',
+            weight: initialData.grams ? initialData.grams.toString() : ''
+        }]);
+      }
+    }
+  }, [initialData]);
 
   // Collapsible states
   const [isClientOpen, setIsClientOpen] = useState(true);

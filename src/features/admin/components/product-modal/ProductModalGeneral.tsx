@@ -2,7 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Info, Layers, Check, Trash2, Star, ImageIcon, FileText, Globe, ExternalLink, Wand2, Lock, Unlock, RefreshCw } from 'lucide-react';
+import { Plus, Info, Layers, Check, Trash2, Star, ImageIcon, FileText, Globe, ExternalLink, Wand2, Lock, Unlock, RefreshCw, Calculator, Download, Settings2 } from 'lucide-react';
 import { EditableBlock } from '../EditableBlock';
 import ImageUpload from '../ImageUpload';
 import { StringListEditor } from '../AdminEditors';
@@ -18,11 +18,19 @@ import { ServiceLandingsService } from '@/services/service-landings.service';
 import { ServiceLandingConfig } from '@/shared/types/service-landing';
 import { fetchThemesFromFirestore } from '@/services/seasonal.service';
 import { SeasonalThemeConfig } from '@/shared/types/seasonal';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Settings2 } from 'lucide-react';
+import { useFinanceSettings } from '@/features/admin/finances/hooks/useFinanceSettings';
+import { SlicingInboxService } from '@/features/admin/production/services/slicing-inbox.service';
+import { SlicingInboxItem } from '@/features/admin/production/types';
+import { calculateQuoteCosts, calculateSuggestedPrice } from '@/features/admin/quoter/utils/calculations';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Badge } from '@/components/ui/badge';
+import { formatDistanceToNow } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { toast } from 'sonner';
 
 interface ProductModalGeneralProps {
   formData: Partial<Product | Service>;
@@ -71,6 +79,77 @@ export const ProductModalGeneral: React.FC<ProductModalGeneralProps> = ({
   const [loadingLandings, setLoadingLandings] = useState(false);
   const [isAdvancedSeo, setIsAdvancedSeo] = useState(false);
 
+  // Production & Pricing Logic
+  const { settings } = useFinanceSettings();
+  const [pendingSlices, setPendingSlices] = useState<SlicingInboxItem[]>([]);
+  const [isSliceModalOpen, setIsSliceModalOpen] = useState(false);
+  const [loadingSlices, setLoadingSlices] = useState(false);
+
+  const handleFetchSlices = async () => {
+    setLoadingSlices(true);
+    try {
+        const items = await SlicingInboxService.getPendingItems();
+        setPendingSlices(items);
+        setIsSliceModalOpen(true);
+    } catch (error) {
+        toast.error('Error al cargar inbox de slicing');
+    } finally {
+        setLoadingSlices(false);
+    }
+  };
+
+  const handleImportSlice = (item: SlicingInboxItem) => {
+    setFormData(prev => ({
+        ...prev,
+        productionData: {
+            ...(prev as any).productionData, // Keep existing fields if any
+            lastSliced: new Date().toISOString(),
+            grams: item.grams,
+            printTimeMinutes: item.time,
+            machineType: item.machineType,
+            filamentType: item.filamentType,
+            fileName: item.fileName,
+            qualityProfile: item.qualityProfile,
+            printerModel: item.printerModel,
+            nozzleDiameter: item.nozzleDiameter,
+            totalLayers: item.totalLayers,
+            filamentLengthMeters: item.filamentLengthMeters,
+        }
+    }));
+    toast.success('Datos de slicing importados');
+    setIsSliceModalOpen(false);
+  };
+
+  const pricing = useMemo(() => {
+    if (!(formData as any).productionData) return null;
+    
+    // Check if we have minimal data to calculate
+    const { grams, printTimeMinutes, machineType, additionalCosts, customMargin } = (formData as any).productionData;
+    if (!grams && !printTimeMinutes) return null;
+
+    const costData = {
+        totalMinutes: printTimeMinutes || 0,
+        materialWeight: grams || 0,
+        humanMinutes: 0,
+        extraCost: additionalCosts || 0,
+        failureRate: 0,
+        machineDetails: [{
+            machineId: 'temp',
+            machineName: (formData as any).productionData.printerModel || 'Generic',
+            type: (machineType?.toLowerCase() === 'resin' ? 'resin' : 'fdm') as 'fdm' | 'resin',
+            duration: printTimeMinutes || 0,
+            weight: grams || 0
+        }]
+    };
+
+    const costs = calculateQuoteCosts(costData, settings);
+    const marginToUse = customMargin !== undefined ? customMargin : (settings.profitMargin || 50);
+    // Round up the suggested price to favor the company (no weird decimals)
+    const suggested = Math.ceil(calculateSuggestedPrice(costs, marginToUse));
+
+    return { costs, suggested, marginToUse };
+  }, [(formData as any).productionData, settings]);
+
   useEffect(() => {
     const fetchData = async () => {
         try {
@@ -113,6 +192,34 @@ export const ProductModalGeneral: React.FC<ProductModalGeneralProps> = ({
     }
     
     return tag;
+  };
+
+  const formatProductionTime = (minutes: number) => {
+    if (!minutes) return '0m';
+    const d = Math.floor(minutes / 1440);
+    const h = Math.floor((minutes % 1440) / 60);
+    const m = Math.floor(minutes % 60);
+    
+    if (d > 0) return `${d}d ${h}h ${m}m`;
+    if (h > 0) return `${h}h ${m}m`;
+    return `${m}m`;
+  };
+
+  const formatWeight = (grams: number) => {
+    if (!grams) return '0g';
+    if (grams >= 1000) {
+      const kgs = Math.floor(grams / 1000);
+      const grs = Math.round(grams % 1000);
+      return `${kgs} kgs y ${grs} gr`;
+    }
+    return `${grams}g`;
+  };
+
+  const calculateKwh = (minutes: number, type?: string) => {
+     if (!minutes) return '0.00';
+     const hours = minutes / 60;
+     const power = type?.toLowerCase() === 'resin' ? 0.1 : 0.2;
+     return (hours * power).toFixed(2);
   };
 
   return (
@@ -221,7 +328,168 @@ export const ProductModalGeneral: React.FC<ProductModalGeneralProps> = ({
             />
         </EditableBlock>
 
-         {/* Organization Block */}
+        {/* Production & Pricing Block */}
+        <div className="bg-card rounded-xl border p-4 shadow-sm space-y-4">
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <Calculator className="w-4 h-4 text-primary" />
+                    <span className="text-sm font-medium">Producción & Precio Sugerido</span>
+                </div>
+                <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={handleFetchSlices}
+                    className="h-8 text-xs"
+                    disabled={loadingSlices}
+                >
+                    <Download className={`w-3 h-3 mr-2 ${loadingSlices ? 'animate-bounce' : ''}`} />
+                    Importar Slicer
+                </Button>
+            </div>
+
+            {/* Production Data Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-muted/30 p-3 rounded-lg border border-dashed">
+                <div>
+                    <Label className="text-[10px] text-muted-foreground uppercase">Peso</Label>
+                    <div className="font-mono text-sm font-medium">
+                        {formatWeight((formData as any).productionData?.grams || 0)}
+                    </div>
+                </div>
+                <div>
+                    <Label className="text-[10px] text-muted-foreground uppercase">Tiempo</Label>
+                    <div className="font-mono text-sm font-medium">
+                        {formatProductionTime((formData as any).productionData?.printTimeMinutes || 0)}
+                    </div>
+                </div>
+                <div>
+                    <Label className="text-[10px] text-muted-foreground uppercase">Material (Soles)</Label>
+                    <div className="font-mono text-sm font-medium">
+                        {pricing?.costs.material.toFixed(2) || '0.00'}
+                    </div>
+                </div>
+                 <div>
+                    <Label className="text-[10px] text-muted-foreground uppercase">Energía (kWh)</Label>
+                    <div className="font-mono text-sm font-medium">
+                        {calculateKwh((formData as any).productionData?.printTimeMinutes, (formData as any).productionData?.machineType)}
+                    </div>
+                </div>
+            </div>
+
+            {/* Extra Costs & Margin Inputs */}
+            <div className="grid grid-cols-2 gap-4 border-t pt-4 border-dashed">
+                <div className="space-y-1">
+                    <Label className="text-xs text-muted-foreground">Costos Extra (Pintura/Mano de obra)</Label>
+                    <div className="relative">
+                        <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">S/.</span>
+                        <input 
+                            type="number" 
+                            min="0"
+                            step="0.10"
+                            value={(formData as any).productionData?.additionalCosts || ''}
+                            onChange={(e) => setFormData(prev => ({
+                                ...prev,
+                                productionData: {
+                                    ...(prev as any).productionData,
+                                    additionalCosts: parseFloat(e.target.value) || 0
+                                }
+                            }))}
+                            className="w-full pl-8 pr-2 py-1.5 text-sm border rounded-md bg-background focus:ring-1 focus:ring-primary"
+                            placeholder="0.00"
+                        />
+                    </div>
+                </div>
+                <div className="space-y-1">
+                    <Label className="text-xs text-muted-foreground">Margen de Ganancia (%)</Label>
+                    <div className="relative">
+                        <input 
+                            type="number" 
+                            min="0"
+                            max="1000"
+                            value={(formData as any).productionData?.customMargin ?? settings.profitMargin ?? 50}
+                            onChange={(e) => setFormData(prev => ({
+                                ...prev,
+                                productionData: {
+                                    ...(prev as any).productionData,
+                                    customMargin: parseFloat(e.target.value) || 0
+                                }
+                            }))}
+                            className="w-full pl-3 pr-8 py-1.5 text-sm border rounded-md bg-background focus:ring-1 focus:ring-primary"
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">%</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Pricing Result */}
+            {pricing && (
+                <div className="flex items-center justify-between bg-primary/5 p-3 rounded-lg border border-primary/20">
+                    <div>
+                        <div className="text-xs text-muted-foreground">Costo Base Total</div>
+                        <div className="text-sm font-bold text-foreground">
+                             S/. {pricing.costs.totalDirect.toFixed(2)}
+                        </div>
+                    </div>
+                    <div className="text-right">
+                        <div className="text-xs text-muted-foreground">Precio Sugerido ({pricing.marginToUse}%)</div>
+                        <div className="text-lg font-bold text-primary">
+                             S/. {pricing.suggested.toFixed(2)}
+                        </div>
+                    </div>
+                    <Button 
+                        size="sm" 
+                        onClick={() => setFormData(prev => ({ ...prev, price: Math.ceil(pricing.suggested) }))}
+                        title="Aplicar precio sugerido (redondeado)"
+                        className="ml-4"
+                    >
+                        Aplicar
+                    </Button>
+                </div>
+            )}
+            
+            {/* Fallback Message */}
+            {!pricing && (
+                 <p className="text-xs text-muted-foreground text-center py-2">
+                    Importa datos del slicer para ver costos y sugerencias.
+                </p>
+            )}
+        </div>
+
+        {/* Slicing Import Modal */}
+        <Dialog open={isSliceModalOpen} onOpenChange={setIsSliceModalOpen}>
+            <DialogContent className="max-w-md">
+                <DialogHeader>
+                    <DialogTitle>Importar desde Slicer</DialogTitle>
+                    <DialogDescription>Selecciona un archivo reciente</DialogDescription>
+                </DialogHeader>
+                <div className="max-h-[300px] overflow-y-auto space-y-2">
+                    {pendingSlices.length === 0 ? (
+                        <p className="text-center text-sm text-muted-foreground py-4">No hay items pendientes.</p>
+                    ) : (
+                        pendingSlices.map(item => (
+                            <div 
+                                key={item.id} 
+                                onClick={() => handleImportSlice(item)}
+                                className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted cursor-pointer transition-colors"
+                            >
+                                <div className="space-y-1">
+                                    <div className="font-medium text-sm">{item.fileName}</div>
+                                    <div className="flex gap-2 text-xs text-muted-foreground">
+                                        <span>{item.grams}g</span>
+                                        <span>{item.time}m</span>
+                                        <Badge variant="outline" className="text-[10px] h-4">{item.machineType}</Badge>
+                                    </div>
+                                </div>
+                                <div className="text-[10px] text-muted-foreground">
+                                    {formatDistanceToNow(new Date(item.createdAt), { locale: es })}
+                                </div>
+                            </div>
+                        ))
+                    )}
+                </div>
+            </DialogContent>
+        </Dialog>
+
+        {/* Organization Block */}
         <EditableBlock
             id="organization"
             title="Organización"

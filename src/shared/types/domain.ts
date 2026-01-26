@@ -132,6 +132,9 @@ export interface StoreProduct {
     nozzleDiameter?: string; // e.g. "0.4mm"
     totalLayers?: number;
     filamentLengthMeters?: number;
+    // Financials
+    additionalCosts?: number; // Costos extra manuales (pintura, lijado, etc.)
+    customMargin?: number; // Margen de ganancia personalizado para este producto
   };
 
   complexity?: 'low' | 'medium' | 'high';

@@ -8,6 +8,7 @@ import {
   orderBy, 
   limit, 
   doc, 
+  getDoc,
   updateDoc,
   deleteField
 } from 'firebase/firestore';
@@ -16,6 +17,28 @@ import { SlicingInboxItem, SlicingInboxCreateDTO } from '../types';
 const COLLECTION = 'slicing_inbox';
 
 export const SlicingInboxService = {
+  /**
+   * Obtiene un item por ID
+   */
+  async getItemById(id: string): Promise<SlicingInboxItem | null> {
+    if (!db) throw new Error('Database not initialized');
+    try {
+      const docRef = doc(db, COLLECTION, id);
+      const docSnap = await getDoc(docRef);
+      
+      if (docSnap.exists()) {
+        return {
+          id: docSnap.id,
+          ...docSnap.data()
+        } as SlicingInboxItem;
+      }
+      return null;
+    } catch (error) {
+      console.error('[SlicingInbox] Error getting item:', error);
+      return null;
+    }
+  },
+
   /**
    * Crea una nueva entrada en el inbox.
    * Es idempotente: usa un fingerprint (hash) para evitar duplicados exactos en estado pendiente.

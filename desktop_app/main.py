@@ -15,6 +15,7 @@ from utils.logger import Logger
 from core.parser import GCodeParser
 from services.api import ProductionService
 from ui.app import MainWindow
+from core.ipc import SingleInstanceManager
 
 def main():
     logger = Logger()
@@ -74,6 +75,20 @@ def main():
         sys.argv.remove("--worker")
         file_path = sys.argv[1]
 
+    # --- SINGLE INSTANCE CHECK ---
+    # Try to become the main instance
+    ipc = SingleInstanceManager(logger=logger)
+    if not ipc.is_main_instance():
+        logger.info("Another instance is running. Sending file and exiting.")
+        if ipc.send_to_main(file_path):
+            sys.exit(0)
+        else:
+            logger.error("Failed to communicate with main instance.")
+            # Fallback: Run standalone if IPC fails? 
+            # Better to exit or the user gets confused with multiple windows that don't sync.
+            # But if IPC fails, maybe the port is stuck. Let's run standalone as fallback.
+            pass 
+
     # 4. Dependency Injection
     parser = GCodeParser(logger)
     service = ProductionService(logger)
@@ -82,11 +97,27 @@ def main():
     root = ctk.CTk()
     app = MainWindow(root, file_path, parser, service)
     
+    # Start IPC Server to listen for more files
+    def on_new_file(new_path):
+        # Schedule UI update on main thread
+        root.after(0, lambda: app.add_plate(new_path))
+
+    ipc.start_server(on_new_file)
+    
     def on_close():
+        ipc.stop()
         root.destroy()
         try:
+            # Only delete if it's a temp file we created
             if "ddreams_temp" in file_path:
-                os.remove(file_path)
+                # Note: With multiple files, we might need to track all temp files to delete.
+                # For now, we only delete the initial one or rely on OS temp cleanup.
+                # The app.plates list will have other paths too.
+                # We can iterate app.plates and delete if they are temp.
+                for plate in app.plates:
+                     if "ddreams_temp" in plate['path']:
+                         try: os.remove(plate['path'])
+                         except: pass
         except: pass
     
     root.protocol("WM_DELETE_WINDOW", on_close)
