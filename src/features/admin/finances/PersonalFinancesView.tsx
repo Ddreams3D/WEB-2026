@@ -628,8 +628,8 @@ export function PersonalFinancesView() {
         </TabsContent>
 
         <TabsContent value="summary" className="mt-0 space-y-6">
-          <FinanceStats stats={stats} />
-          <FinanceSummary records={records} />
+          <FinanceStats stats={stats} mode="personal" />
+          <FinanceSummary records={allRecords} mode="personal" />
         </TabsContent>
       </Tabs>
 
@@ -638,6 +638,7 @@ export function PersonalFinancesView() {
         onClose={() => setIsModalOpen(false)}
         record={editingRecord}
         onSave={handleSave}
+        categoryStorageKey="personal_finance_categories_config_v1"
       />
       <InboxModal
         isOpen={isInboxOpen}

@@ -77,10 +77,7 @@ export function LinkProductModal({ isOpen, onClose, inboxItem, onSuccess }: Link
     setIsLinking(true);
     try {
       // 1. Actualizar Producto con nuevos datos de producción
-      // Asumimos que 'weight' está en gramos y 'printTime' en minutos en el modelo de producto
-      // Si no existen esos campos exactos, los agregamos como metadata o custom fields.
-      // Basado en StoreProduct, suele tener weight (kg o g). Asumiremos gramos por contexto 3D.
-      
+      // Actualizamos productionData con los valores del slicing
       const updatedData: Partial<StoreProduct> = {
         productionData: {
             ...selectedProduct.productionData,
@@ -92,10 +89,6 @@ export function LinkProductModal({ isOpen, onClose, inboxItem, onSuccess }: Link
             fileName: inboxItem.fileName
         }
       };
-
-      // Si el producto tiene campos root de peso/tiempo, actualizarlos también
-      // TODO: Verificar si StoreProduct tiene estos campos nativos. 
-      // Por seguridad, guardamos en un objeto productionData que es flexible.
 
       await ProductService.updateProduct(selectedProduct.id, updatedData);
 

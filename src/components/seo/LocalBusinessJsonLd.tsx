@@ -41,7 +41,7 @@ export function LocalBusinessJsonLd() {
     geo: {
       '@type': 'GeoCoordinates',
       latitude: -16.39899, // Coordenadas aproximadas de Miraflores, Arequipa
-      longitude: -71.53747 // TODO: Ajustar con GPS exacto del taller
+      longitude: -71.53747 // NOTA: Ajustar con GPS exacto del taller cuando esté disponible
     },
     openingHoursSpecification: [
       {

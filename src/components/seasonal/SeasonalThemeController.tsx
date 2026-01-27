@@ -26,7 +26,12 @@ export function SeasonalThemeController() {
           if (theme !== 'standard') {
              console.log(`[Seasonal] Aislamiento de servicio detectado. Restaurando tema base en: ${pathname}`);
              setTheme('standard'); 
-             // Restaurar colores CSS base
+             
+             // 1. Remove Server-Side Injected Style if exists (The "Purist" Cleanup)
+             const serverStyle = document.getElementById('server-theme-style');
+             if (serverStyle) serverStyle.remove();
+
+             // 2. Restaurar colores CSS base (Cleaning inline styles)
              document.documentElement.style.removeProperty('--primary');
              document.documentElement.style.removeProperty('--primary-500');
              document.documentElement.style.removeProperty('--primary-600');

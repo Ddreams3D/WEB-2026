@@ -10,6 +10,7 @@ import { getAppUrl } from '@/lib/url-utils';
 import { CookieBanner } from '@/components/ui';
 import { LocalBusinessJsonLd } from '@/components/seo/LocalBusinessJsonLd';
 import { AnalyticsTracker } from '@/components/analytics/AnalyticsTracker';
+import { ServerThemeStyle } from '@/components/seasonal/ServerThemeStyle';
 import type { Viewport } from 'next';
 
 const inter = Inter({
@@ -118,6 +119,7 @@ export default function RootLayout({
         className="antialiased text-foreground dark:text-white"
         suppressHydrationWarning
       >
+        <ServerThemeStyle />
         <script
           dangerouslySetInnerHTML={{
             __html: `

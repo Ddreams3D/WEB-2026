@@ -86,6 +86,7 @@ export interface FinanceModalProps {
   record?: Partial<FinanceRecord> | null;
   onSave: (record: Partial<FinanceRecord>) => void;
   settings?: FinanceSettings;
+  categoryStorageKey?: string;
 }
 
 interface TimeInputProps {
@@ -154,7 +155,14 @@ const TimeInput = ({ totalMinutes, onChange, label, className }: TimeInputProps)
   );
 };
 
-export function FinanceModal({ isOpen, onClose, record, onSave, settings }: FinanceModalProps) {
+export function FinanceModal({ 
+  isOpen, 
+  onClose, 
+  record, 
+  onSave, 
+  settings,
+  categoryStorageKey = CATEGORIES_STORAGE_KEY
+}: FinanceModalProps) {
   const { formData, updateField, addItem, updateItem, removeItem } = useFinanceForm(record);
   // const { settings } = useFinanceSettings();
   const [showDetails, setShowDetails] = React.useState(false);
@@ -368,27 +376,41 @@ export function FinanceModal({ isOpen, onClose, record, onSave, settings }: Fina
       if (typeof window === 'undefined') {
         return;
       }
-      const stored = localStorage.getItem(CATEGORIES_STORAGE_KEY);
+      const stored = localStorage.getItem(categoryStorageKey);
       if (stored) {
         const parsed = JSON.parse(stored);
         const merged = mergeCategoriesWithDefaults(parsed);
         setCategoriesConfig(merged);
       } else {
-        const initial = ensureReservedCategories(FINANCE_CATEGORIES);
+        // Migration/Clone Logic: If new key is empty, try to clone from default company key
+        const defaultStored = localStorage.getItem(CATEGORIES_STORAGE_KEY);
+        let initial: CategoriesConfig;
+
+        if (defaultStored && categoryStorageKey !== CATEGORIES_STORAGE_KEY) {
+           try {
+             const parsedDefault = JSON.parse(defaultStored);
+             initial = mergeCategoriesWithDefaults(parsedDefault);
+           } catch {
+             initial = ensureReservedCategories(FINANCE_CATEGORIES);
+           }
+        } else {
+           initial = ensureReservedCategories(FINANCE_CATEGORIES);
+        }
+
         setCategoriesConfig(initial);
-        localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(initial));
+        localStorage.setItem(categoryStorageKey, JSON.stringify(initial));
       }
     } catch {
       const fallback = ensureReservedCategories(FINANCE_CATEGORIES);
       setCategoriesConfig(fallback);
     }
-  }, []);
+  }, [categoryStorageKey]);
 
   const saveCategories = (next: CategoriesConfig) => {
     setCategoriesConfig(next);
     try {
       if (typeof window !== 'undefined') {
-        localStorage.setItem(CATEGORIES_STORAGE_KEY, JSON.stringify(next));
+        localStorage.setItem(categoryStorageKey, JSON.stringify(next));
       }
     } catch {
     }

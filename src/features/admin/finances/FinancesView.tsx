@@ -252,7 +252,7 @@ export function FinancesView() {
 
         <TabsContent value="incomes" className="mt-0">
           <div className="grid gap-6">
-            <FinanceStats stats={stats} />
+            <FinanceStats stats={stats} mode="business" />
             <FinanceTable 
               records={incomeRecords} 
               onEdit={handleEdit} 
@@ -264,7 +264,7 @@ export function FinancesView() {
         
         <TabsContent value="expenses" className="mt-0">
           <div className="grid gap-6">
-            <FinanceStats stats={stats} />
+            <FinanceStats stats={stats} mode="business" />
             <FinanceTable 
               records={expenseRecords} 
               onEdit={handleEdit} 
@@ -295,7 +295,7 @@ export function FinancesView() {
         </TabsContent>
 
         <TabsContent value="summary" className="mt-0">
-          <FinanceSummary records={allRecords} />
+          <FinanceSummary records={allRecords} mode="business" />
         </TabsContent>
       </Tabs>
 
@@ -305,6 +305,7 @@ export function FinancesView() {
         record={editingRecord}
         onSave={handleSave}
         settings={settings}
+        categoryStorageKey="finance_categories_config_v1"
       />
       
       <FinanceSettingsModal 
