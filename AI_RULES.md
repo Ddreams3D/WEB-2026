@@ -128,6 +128,13 @@
 - **Problema:** Datos no validados entrando a la BD.
 - **Solución:** Validación Zod obligatoria en todos los Server Actions.
 
+### 8. Fix de Atribución GA4 y Estabilidad Desktop App [IMPLEMENTADO - Enero 2026]
+- **Problema:** GA4 reportaba tráfico anónimo por leer key incorrecta (`ddreams_user` vs `ddreams_auth_user`). App de escritorio perdía configuración al reiniciar.
+- **Solución:**
+  - Se corrigió `analytics.ts` para leer la identidad de `AuthContext`.
+  - Se implementó fusión (merge) de JSON en `PatternManager.py` para no sobrescribir configuraciones.
+  - Se añadió botón "Limpiar Datos" en Desktop UI para resetear sesión sin cerrar app.
+
 ### 7. Integración Bot de Finanzas (Inbox Telegram) [NUEVO - Enero 2026]
 - **Contexto:** Se conectó un bot de Telegram para registrar movimientos financieros con comandos cortos (`g 50 taxi`, `i 100 adelanto`).
 - **Decisión Arquitectónica:** El bot NUNCA escribe directamente en el libro mayor de finanzas. Solo crea elementos `InboxItem` en `finances/bot_inbox.json` (Firebase Storage).

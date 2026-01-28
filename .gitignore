@@ -74,5 +74,6 @@ build.log
 # Desktop App Artifacts (Too large for GitHub)
 desktop_app/build/
 desktop_app/dist/
-desktop_app/__pycache__/
+**/__pycache__/
 *.spec
+*.log

@@ -31,9 +31,27 @@ class PatternManager:
         return self.default_patterns.copy()
 
     def save_pattern(self, key: str, regex: str):
+        # Update in-memory
         self.patterns[key] = regex
-        with open(self.config_file, 'w') as f:
-            json.dump(self.patterns, f, indent=2)
+        
+        # Load existing file first to preserve other keys if they exist
+        existing = {}
+        if os.path.exists(self.config_file):
+            try:
+                with open(self.config_file, 'r') as f:
+                    existing = json.load(f)
+            except:
+                pass
+        
+        # Update with new pattern
+        existing[key] = regex
+        
+        # Save merged dictionary
+        try:
+            with open(self.config_file, 'w') as f:
+                json.dump(existing, f, indent=2)
+        except Exception as e:
+            print(f"Error saving pattern: {e}")
 
     def reset_defaults(self):
         self.patterns = self.default_patterns.copy()

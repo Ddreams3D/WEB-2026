@@ -443,6 +443,23 @@ export const trackEvent = (
       : undefined;
     const segment = params.segment || inferSegment(currentPath, params.page_type);
 
+    // Get User ID from localStorage (AuthContext persistence) if available
+    // Note: We use 'ddreams_auth_user' which matches AuthContext definition
+    let userId = undefined;
+    try {
+      const storedUser = localStorage.getItem('ddreams_auth_user');
+      if (storedUser) {
+        const userObj = JSON.parse(storedUser);
+        if (userObj && userObj.uid) {
+          userId = userObj.uid;
+        } else if (userObj && userObj.id) {
+           userId = userObj.id;
+        }
+      }
+    } catch (e) {
+      // Ignore parsing errors
+    }
+
     const rawParams = {
       ...params,
       ...(meta && {
@@ -458,6 +475,8 @@ export const trackEvent = (
       path: currentPath,
       segment,
       timestamp: new Date().toISOString(),
+      // Explicitly set user_id if logged in, otherwise let GA4 handle client_id
+      ...(userId && { user_id: userId }), 
     };
     
     // 2. Validation

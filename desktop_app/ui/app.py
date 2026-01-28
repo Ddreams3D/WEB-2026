@@ -170,9 +170,27 @@ class MainWindow:
 
         # Action Buttons
         self.btn_send = ctk.CTkButton(self.form_frame, text="ENVIAR A PRODUCCIÓN", command=self._send, height=50, font=("Arial", 16, "bold"), fg_color="#2E7D32", hover_color="#1B5E20")
-        self.btn_send.pack(side="bottom", fill="x", padx=15, pady=20)
+        self.btn_send.pack(side="bottom", fill="x", padx=15, pady=(10, 20))
+        
+        # Clear Data Button
+        ctk.CTkButton(self.form_frame, text="🗑️ Limpiar Datos", command=self._clear_data, fg_color="#C62828", hover_color="#B71C1C").pack(side="bottom", fill="x", padx=15, pady=(0, 5))
         
         ctk.CTkButton(self.form_frame, text="Cancelar", command=self.root.destroy, fg_color="transparent", border_width=1, text_color=("gray10", "#DCE4EE")).pack(side="bottom", fill="x", padx=15, pady=(0, 5))
+
+    def _clear_data(self):
+        """Clears all loaded plates and resets the session."""
+        if not self.plates:
+            return
+            
+        if messagebox.askyesno("Confirmar", "¿Estás seguro de que quieres limpiar todos los datos?"):
+            self.plates = []
+            self.stats = GCodeStats()
+            self.name_var.set("")
+            self.preview_label.configure(image=None, text="No Preview")
+            self._recalculate_totals()
+            self._update_stats_ui()
+            messagebox.showinfo("Limpieza", "Datos eliminados correctamente.")
+
 
     def _fetch_products(self):
         try:
