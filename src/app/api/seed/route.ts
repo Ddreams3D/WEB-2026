@@ -68,6 +68,13 @@ export async function GET() {
       count++;
     });
 
+    // Projects
+    projects.forEach((item) => {
+      const ref = doc(collection(firestore, 'projects'), item.id);
+      batch.set(ref, deepClean(item));
+      count++;
+    });
+
     await batch.commit();
 
     return NextResponse.json({ 
@@ -77,7 +84,8 @@ export async function GET() {
         categories: categories.length,
         products: products.length,
         users: users.length,
-        reviews: reviews.length
+        reviews: reviews.length,
+        projects: projects.length
       }
     });
   } catch (error) {
