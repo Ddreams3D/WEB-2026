@@ -206,6 +206,11 @@ export function useProductDetail(initialProduct: Product | Service) {
       // Override de mensajes de WhatsApp para servicios específicos (ej. modelado orgánico)
       let overrideWhatsappMessage = currentTab?.whatsappMessage;
 
+      // Si no hay mensaje específico pero la acción es WhatsApp/Cotizar, generar mensaje default
+      if (!overrideWhatsappMessage && (currentTab?.ctaAction === 'whatsapp' || currentTab?.ctaAction === 'quote')) {
+        overrideWhatsappMessage = `Hola Ddreams 3D, estoy viendo el producto "${product.name}" (Opción: ${currentTab.label}) y me gustaría solicitar una cotización o más información.`;
+      }
+
       if (product.kind === 'service' && product.slug === 'modelado-3d-personalizado' && currentTab) {
         if (currentTab.id === 'b2c') {
           overrideWhatsappMessage =
@@ -239,7 +244,7 @@ export function useProductDetail(initialProduct: Product | Service) {
         }
       }
 
-      if (currentTab?.ctaAction === 'whatsapp' && overrideWhatsappMessage) {
+      if ((currentTab?.ctaAction === 'whatsapp' || currentTab?.ctaAction === 'quote') && overrideWhatsappMessage) {
          trackEvent(AnalyticsEvents.WHATSAPP_CLICK, {
           location: product.kind === 'service' ? AnalyticsLocations.SERVICE_PAGE : AnalyticsLocations.PRODUCT_PAGE,
           name: product.name,
