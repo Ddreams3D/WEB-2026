@@ -14,8 +14,18 @@ service firebase.storage {
     // CONSISTENCIA: Usamos firestore.get() para verificar el rol desde la misma fuente de verdad
     // que firestore.rules, evitando discrepancias con custom claims desincronizados.
     function isAdmin() {
-      return isSignedIn() && 
-             firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      return isSignedIn() && (
+        isSuperAdminEmail() ||
+        (firestore.exists(/databases/(default)/documents/users/$(request.auth.uid)) &&
+         firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin')
+      );
+    }
+
+    function isSuperAdminEmail() {
+      return request.auth.token.email == 'dreamings.desings.3d@gmail.com' || 
+             request.auth.token.email == 'dreamings.designs.3d@gmail.com' ||
+             request.auth.token.email == 'dreamings.desings.3@gmail.com' ||
+             request.auth.token.email == 'danielanthonychaina@gmail.com';
     }
 
     function isOwner(userId) {
