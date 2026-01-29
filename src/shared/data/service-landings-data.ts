@@ -159,8 +159,7 @@ export const SERVICE_LANDINGS_DATA: ServiceLandingConfig[] = [
             content: `Desarrollo de un modelo anatómico corporativo personalizado para Drag Pharma, producido en un lote de 100 piezas con acabado y pintura a mano, diseñado como pieza demostrativa para uso educativo y promocional.
 
 El modelado 3D se realizó en colaboración con un veterinario, asegurando fidelidad anatómica del modelo. Las piezas fueron usadas como merchandising corporativo estratégico, entregadas como regalo promocional junto a la venta de productos para el tratamiento de la otitis canina, integrando impresión 3D, branding institucional y control de calidad por unidad bajo estándares corporativos.`,
-            image: '',
-            images: []
+            image: `/${StoragePathBuilder.services('merchandising-corporativo-3d')}/modelo-anatomico-drag-pharma.jpg`
           }
         ]
       }

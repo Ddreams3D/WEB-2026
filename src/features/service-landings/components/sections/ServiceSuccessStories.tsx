@@ -136,55 +136,57 @@ export function ServiceSuccessStories({ section, primaryColor }: ServiceSuccessS
             </div>
 
             {/* Right Column: Content */}
-            <div className="relative p-8 lg:p-12 flex flex-col justify-start pt-32 lg:pt-40">
-              <div 
-                   className="absolute top-8 left-8 lg:left-12 inline-block px-3 py-1 rounded-full border text-[10px] font-bold tracking-[0.2em] uppercase shadow-sm bg-background/50 backdrop-blur-sm w-fit"
+            <div className="relative p-8 lg:p-12 flex flex-col justify-between min-h-[400px]">
+              <div>
+                 <div 
+                   className="inline-block px-3 py-1 rounded-full border text-[10px] font-bold tracking-[0.2em] uppercase shadow-sm bg-background/50 backdrop-blur-sm w-fit mb-6"
                    style={{ borderColor: primaryColor, color: primaryColor }}
                  >
                    Caso de Éxito {currentIndex + 1} / {section.items.length}
                  </div>
               
-              <div className="space-y-4">
-                 <div className="space-y-2">
-                   <h3 className="text-2xl md:text-3xl font-bold text-foreground leading-tight">
-                      {currentItem.title}
-                   </h3>
-                   {location && (
-                      <div className="flex items-center gap-2 text-primary font-medium text-sm">
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                        {location}
+                 <div className="space-y-4">
+                   <div className="space-y-2">
+                     <h3 className="text-2xl md:text-3xl font-bold text-foreground leading-tight">
+                        {currentItem.title}
+                     </h3>
+                     {location && (
+                        <div className="flex items-center gap-2 text-primary font-medium text-sm">
+                          <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                          {location}
+                        </div>
+                     )}
+                   </div>
+                   
+                   <p className="text-lg font-medium text-foreground/80 leading-snug">
+                      {currentItem.description}
+                   </p>
+
+                   {content && (
+                      <div className="text-sm md:text-base text-muted-foreground leading-relaxed whitespace-pre-line pt-4 border-t border-border/40">
+                          {content}
                       </div>
                    )}
                  </div>
-                 
-                 <p className="text-lg font-medium text-foreground/80 leading-snug">
-                    {currentItem.description}
-                 </p>
-
-                 {content && (
-                    <div className="text-sm md:text-base text-muted-foreground leading-relaxed whitespace-pre-line pt-4 border-t border-border/40">
-                        {content}
-                    </div>
-                 )}
               </div>
 
-              {/* Navigation Button (Floating or Bottom Right) */}
+              {/* Navigation Button (Bottom Right) */}
               {section.items.length > 1 && (
-                  <div className="mt-12 flex items-center gap-4">
+                  <div className="mt-8 flex justify-end gap-2">
                       <Button
                         variant="outline"
                         size="icon"
                         onClick={handlePrev}
-                        className="rounded-full w-12 h-12 hover:bg-muted"
+                        className="rounded-full w-10 h-10 hover:bg-muted"
                       >
-                        <ChevronLeft className="w-5 h-5" />
+                        <ChevronLeft className="w-4 h-4" />
                       </Button>
                       <Button 
                         onClick={handleNext}
-                        className="rounded-full w-12 h-12"
+                        className="rounded-full w-10 h-10"
                         style={{ backgroundColor: primaryColor }}
                       >
-                        <ChevronRight className="w-5 h-5 text-white" />
+                        <ChevronRight className="w-4 h-4 text-white" />
                       </Button>
                   </div>
               )}

@@ -66,14 +66,25 @@ export interface StorageProgress {
     message?: string;
 }
 
-export function useStorageManager() {
+export function useStorageManager(initialPath?: string) {
+    // Default to 'images/' if no initialPath provided, to avoid Root permission issues
+    const defaultSection = SECTIONS.find(s => s.id === 'images') || SECTIONS[1];
+    const defaultPath = initialPath || defaultSection.path;
+    
+    // Determine active section from initialPath if possible
+    const determineSection = (path: string) => {
+        if (!path) return SECTIONS[0].id;
+        const found = SECTIONS.find(s => path.startsWith(s.path) && s.path !== '');
+        return found ? found.id : 'images';
+    };
+
     const [items, setItems] = useState<StorageItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [progress, setProgress] = useState<StorageProgress | null>(null);
     const [viewMode, setViewMode] = useState<ViewMode>('grid');
     const [selectedItem, setSelectedItem] = useState<StorageItem | null>(null);
-    const [activeSection, setActiveSection] = useState(SECTIONS[0].id);
-    const [currentPath, setCurrentPath] = useState(SECTIONS[0].path);
+    const [activeSection, setActiveSection] = useState(determineSection(defaultPath));
+    const [currentPath, setCurrentPath] = useState(defaultPath);
     const [nextPageToken, setNextPageToken] = useState<string | undefined>(undefined);
     const [usedUrls, setUsedUrls] = useState<Set<string>>(new Set());
     const { showSuccess, showError, showInfo } = useToast();
@@ -160,9 +171,15 @@ export function useStorageManager() {
             } else {
                 setItems([...folderItems, ...loadedFiles]);
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error loading files:', error);
-            showError('Error al cargar los archivos');
+            const msg = error.code ? `Error (${error.code})` : 'Error al cargar los archivos';
+            // Specific handling for permission denied
+            if (error.code === 'storage/unauthorized') {
+                showError('Acceso denegado', 'No tienes permisos para ver esta carpeta.');
+            } else {
+                showError(msg);
+            }
         } finally {
             setLoading(false);
         }

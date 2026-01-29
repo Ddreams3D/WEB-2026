@@ -12,9 +12,10 @@ interface StoragePickerModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSelect: (url: string) => void;
+    initialPath?: string;
 }
 
-export function StoragePickerModal({ isOpen, onClose, onSelect }: StoragePickerModalProps) {
+export function StoragePickerModal({ isOpen, onClose, onSelect, initialPath }: StoragePickerModalProps) {
     const {
         items,
         loading,
@@ -33,7 +34,7 @@ export function StoragePickerModal({ isOpen, onClose, onSelect }: StoragePickerM
         uploadFile,
         loadMore,
         hasMore
-    } = useStorageManager();
+    } = useStorageManager(initialPath);
 
     // Reset selection when modal opens/closes
     useEffect(() => {

@@ -329,11 +329,14 @@ export default function ImageUpload({ value, onChange, onRemove, onUploadStatusC
         </div>
       )}
 
-      <StoragePickerModal 
-         isOpen={isPickerOpen}
-         onClose={() => setIsPickerOpen(false)}
-         onSelect={handlePickerSelect}
-      />
+      {isPickerOpen && (
+        <StoragePickerModal 
+            isOpen={isPickerOpen}
+            onClose={() => setIsPickerOpen(false)}
+            onSelect={handlePickerSelect}
+            initialPath={storagePath}
+        />
+      )}
     </div>
   );
 }
