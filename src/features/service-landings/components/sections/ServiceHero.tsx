@@ -16,8 +16,8 @@ interface ServiceHeroProps {
 }
 
 export function ServiceHero({ config, heroSection, primaryColor, isEditable = false, onChangeField }: ServiceHeroProps) {
-  // SPECIAL LAYOUT: Soportes Personalizados (Full Width + Centered)
-  if (config.slug === 'soportes-personalizados') {
+  // SPECIAL LAYOUT: Soportes Personalizados & Merchandising (Full Width + Centered)
+  if (config.slug === 'soportes-personalizados' || config.slug === 'merchandising-corporativo-3d') {
     return (
       <section className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-background">
         {/* Full Background Image */}
