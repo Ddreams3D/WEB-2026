@@ -16,8 +16,16 @@ interface ServiceHeroProps {
 }
 
 export function ServiceHero({ config, heroSection, primaryColor, isEditable = false, onChangeField }: ServiceHeroProps) {
-  // SPECIAL LAYOUT: Soportes Personalizados & Merchandising (Full Width + Centered)
-  if (config.slug === 'soportes-personalizados' || config.slug === 'merchandising-corporativo-3d') {
+  // SPECIAL LAYOUT: Soportes Personalizados, Merchandising & Others (Full Width + Centered)
+  const isOverlayLayout = [
+    'soportes-personalizados',
+    'merchandising-corporativo-3d',
+    'maquetas-3d',
+    'modelos-anatomicos-3d',
+    'prototipado-tecnico-impresion-3d'
+  ].includes(config.slug);
+
+  if (isOverlayLayout) {
     return (
       <section className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-background">
         {/* Full Background Image */}

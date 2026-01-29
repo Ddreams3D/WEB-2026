@@ -127,22 +127,40 @@ export const SERVICE_LANDINGS_DATA: ServiceLandingConfig[] = [
       {
         id: 'features',
         type: 'features',
-        title: '',
+        title: 'Nuestra Propuesta de Valor',
         items: [
           {
-            title: '',
-            description: '',
-            icon: ''
+            title: 'Merchandising que representa tu marca',
+            description: 'Diseñamos y fabricamos piezas corporativas personalizadas que refuerzan la identidad de tu empresa. No es un regalo genérico, es una extensión de tu marca.',
+            icon: 'Target'
           },
           {
-            title: '',
-            description: '',
-            icon: ''
+            title: 'Producción por volumen y a medida',
+            description: 'Trabajamos pedidos por lote, optimizando costos y tiempos sin sacrificar calidad. Ideal para campañas, ferias, eventos y reconocimientos empresariales.',
+            icon: 'Factory'
           },
           {
-            title: '',
-            description: '',
-            icon: ''
+            title: 'Acompañamiento de principio a fin',
+            description: 'Te asesoramos desde la idea hasta la entrega final. Prototipado, ajustes y fabricación bajo pedido para asegurar un resultado profesional y alineado a tus objetivos.',
+            icon: 'Handshake'
+          }
+        ]
+      },
+      {
+        id: 'success-stories',
+        type: 'gallery',
+        title: 'Casos de Éxito',
+        subtitle: 'Proyectos a gran escala que marcan la diferencia.',
+        items: [
+          {
+            title: 'Proyecto corporativo: Modelo anatómico personalizado para la empresa Drag Pharma-Lima',
+            location: 'Cliente corporativo en Lima',
+            description: 'Merchandising corporativo técnico con branding integrado.',
+            content: `Desarrollo de un modelo anatómico corporativo personalizado para Drag Pharma, producido en un lote de 100 piezas con acabado y pintura a mano, diseñado como pieza demostrativa para uso educativo y promocional.
+
+El modelado 3D se realizó en colaboración con un veterinario, asegurando fidelidad anatómica del modelo. Las piezas fueron usadas como merchandising corporativo estratégico, entregadas como regalo promocional junto a la venta de productos para el tratamiento de la otitis canina, integrando impresión 3D, branding institucional y control de calidad por unidad bajo estándares corporativos.`,
+            image: '',
+            images: []
           }
         ]
       }

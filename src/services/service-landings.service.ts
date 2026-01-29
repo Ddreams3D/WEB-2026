@@ -5,17 +5,38 @@ import { SERVICE_LANDINGS_DATA } from '@/shared/data/service-landings-data';
 
 const COLLECTION = 'service_landings';
 
-function mergeSections(localSections: ServiceLandingSection[] = [], dbSections: ServiceLandingSection[] = []): ServiceLandingSection[] {
-  const result: ServiceLandingSection[] = [...dbSections];
+function smartMergeSections(dbSections: ServiceLandingSection[] = [], localSections: ServiceLandingSection[] = []): ServiceLandingSection[] {
+  let finalSections = [...(dbSections || [])];
+  
+  if (!localSections || localSections.length === 0) return finalSections;
 
-  localSections.forEach(localSection => {
-    const exists = dbSections.some(dbSection => dbSection.id === localSection.id);
-    if (!exists) {
-      result.push(localSection);
-    }
+  // 1. Add missing sections
+  const dbSectionIds = new Set(finalSections.map(s => s.id));
+  const newLocalSections = localSections.filter(s => !dbSectionIds.has(s.id));
+  if (newLocalSections.length > 0) {
+     finalSections = [...finalSections, ...newLocalSections];
+  }
+
+  // 2. Hydrate empty sections
+  finalSections = finalSections.map(section => {
+     const localSection = localSections.find(s => s.id === section.id);
+     if (!localSection) return section;
+
+     // Check if DB section is "empty"
+     const isDbEmpty = (section.items?.length === 0) || (section.items && section.items.length > 0 && section.items.every(i => !i.title && !i.description));
+
+     if (isDbEmpty && localSection.items && localSection.items.length > 0) {
+        return { 
+          ...section, 
+          items: localSection.items,
+          title: (section.title === '' && localSection.title) ? localSection.title : section.title
+        };
+     }
+     
+     return section;
   });
 
-  return result;
+  return finalSections;
 }
 
 export const ServiceLandingsService = {
@@ -43,7 +64,8 @@ export const ServiceLandingsService = {
             name: dbLanding.name || localData.name, 
             slug: dbLanding.slug || localData.slug,
             primaryColor: dbLanding.primaryColor ?? localData.primaryColor,
-            sections: dbLanding.sections && dbLanding.sections.length > 0 ? dbLanding.sections : localData.sections,
+            // Use smart merge for sections to ensure new code-added sections appear in Admin
+            sections: smartMergeSections(dbLanding.sections, localData.sections),
           };
         } else {
           mergedLandings.push(dbLanding);
@@ -77,19 +99,25 @@ export const ServiceLandingsService = {
           
           // Apply local overrides ONLY as fallback
           const localData = SERVICE_LANDINGS_DATA.find(l => l.id === data.id);
-          const finalData = localData ? {
-             ...data,
-             name: data.name || localData.name,
-             slug: data.slug || localData.slug,
-             primaryColor: data.primaryColor ?? localData.primaryColor,
-             sections: (data.sections && data.sections.length > 0) ? data.sections : localData.sections
-          } : data;
-
-          // Filter soft-deleted in memory
-          if (!finalData.isDeleted) {
-            return finalData;
+          
+          let finalSections = data.sections || [];
+          
+          if (localData && localData.sections) {
+             finalSections = smartMergeSections(finalSections, localData.sections);
           }
+
+          const finalData = localData ? {
+            ...data,
+            name: data.name || localData.name,
+            slug: data.slug || localData.slug,
+            primaryColor: data.primaryColor ?? localData.primaryColor,
+            sections: finalSections
+          } : { ...data, sections: finalSections };
+
+          return finalData;
         }
+        
+        console.log(`Landing not found in DB: ${slug}, checking static data`);
       } catch (error: any) {
         if (error?.code === 'permission-denied') {
            console.warn(`Firestore permission denied (getBySlug: ${slug}). Falling back to static data.`);

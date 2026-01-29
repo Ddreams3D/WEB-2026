@@ -5,6 +5,7 @@ import { categories } from '@/data/categories.data';
 import { products } from '@/data/products.data';
 import { users } from '@/data/users.data';
 import { reviews } from '@/data/reviews.data';
+import { projects } from '@/data/projects.data';
 
 export const dynamic = 'force-dynamic';
 

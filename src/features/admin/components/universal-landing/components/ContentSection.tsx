@@ -1,10 +1,11 @@
 import React from 'react';
+import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Box, Plus, Trash2, GripVertical, ChevronDown, ChevronUp, Layers, Sparkles } from 'lucide-react';
+import { Box, Plus, Trash2, GripVertical, ChevronDown, ChevronUp, Layers, Sparkles, X } from 'lucide-react';
 import { UnifiedLandingData } from '../types';
 import { ServiceLandingSection } from '@/shared/types/service-landing';
 import { cn } from '@/lib/utils';
@@ -250,19 +251,66 @@ export function ContentSection({ data, updateField, disableFeaturesText = false 
                                         return (
                                             <div key={itemIndex} className="flex gap-3 items-start p-3 bg-muted/20 rounded-lg border">
                                                 <div className="w-40">
-                                                    <Label className="text-xs">Imagen</Label>
+                                                    <Label className="text-xs mb-2 block">Imágenes</Label>
+                                                    
+                                                    {/* Existing Images Grid */}
+                                                    {(item.images && item.images.length > 0) || item.image ? (
+                                                        <div className="grid grid-cols-2 gap-2 mb-2">
+                                                            {/* Render array images */}
+                                                            {item.images?.map((imgUrl, imgIdx) => (
+                                                                <div key={`arr-${imgIdx}`} className="relative aspect-square rounded-md overflow-hidden border bg-muted group">
+                                                                    <Image src={imgUrl} alt={`Img ${imgIdx}`} fill className="object-cover" />
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => {
+                                                                            const newItems = [...(section.items || [])];
+                                                                            const currentImages = [...(item.images || [])];
+                                                                            currentImages.splice(imgIdx, 1);
+                                                                            newItems[itemIndex] = { ...item, images: currentImages };
+                                                                            updateSection(index, { items: newItems });
+                                                                        }}
+                                                                        className="absolute top-1 right-1 bg-red-500/80 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                                                                    >
+                                                                        <X className="w-3 h-3" />
+                                                                    </button>
+                                                                </div>
+                                                            ))}
+                                                            
+                                                            {/* Render legacy image if no array or mixed (though we migrate on upload) */}
+                                                            {(!item.images || item.images.length === 0) && item.image && (
+                                                                <div className="relative aspect-square rounded-md overflow-hidden border bg-muted group">
+                                                                    <Image src={item.image} alt="Legacy" fill className="object-cover" />
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => {
+                                                                            const newItems = [...(section.items || [])];
+                                                                            newItems[itemIndex] = { ...item, image: '' };
+                                                                            updateSection(index, { items: newItems });
+                                                                        }}
+                                                                        className="absolute top-1 right-1 bg-red-500/80 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                                                                    >
+                                                                        <X className="w-3 h-3" />
+                                                                    </button>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    ) : null}
+
                                                     <ImageUpload
-                                                        value={item.image || ''}
+                                                        value="" // Always empty to show uploader state
                                                         onChange={(url, _viewType) => {
                                                             const newItems = [...(section.items || [])];
-                                                            newItems[itemIndex] = { ...item, image: url };
+                                                            // Migrate legacy image to array if needed
+                                                            const currentImages = item.images ? [...item.images] : (item.image ? [item.image] : []);
+                                                            
+                                                            newItems[itemIndex] = { 
+                                                                ...item, 
+                                                                images: [...currentImages, url],
+                                                                image: '' // Clear legacy to prefer array
+                                                            };
                                                             updateSection(index, { items: newItems });
                                                         }}
-                                                        onRemove={() => {
-                                                            const newItems = [...(section.items || [])];
-                                                            newItems[itemIndex] = { ...item, image: '' };
-                                                            updateSection(index, { items: newItems });
-                                                        }}
+                                                        onRemove={() => {}} 
                                                         defaultName={`${data.slug || 'service'}-gallery-${itemIndex + 1}`}
                                                         existingImages={[]}
                                                         storagePath={StoragePathBuilder.services(data.slug || 'service', 'gallery')}
@@ -277,7 +325,17 @@ export function ContentSection({ data, updateField, disableFeaturesText = false 
                                                             updateSection(index, { items: newItems });
                                                         }}
                                                         placeholder="Título del item"
-                                                        className="h-8"
+                                                        className="font-medium"
+                                                    />
+                                                    <Input 
+                                                        value={item.location || ''} 
+                                                        onChange={(e) => {
+                                                            const newItems = [...(section.items || [])];
+                                                            newItems[itemIndex] = { ...item, location: e.target.value };
+                                                            updateSection(index, { items: newItems });
+                                                        }}
+                                                        placeholder="Ubicación / Etiqueta (Ej: Cliente corporativo en Lima)"
+                                                        className="text-xs h-8"
                                                     />
                                                     <Textarea 
                                                         value={item.description} 
@@ -286,8 +344,18 @@ export function ContentSection({ data, updateField, disableFeaturesText = false 
                                                             newItems[itemIndex] = { ...item, description: e.target.value };
                                                             updateSection(index, { items: newItems });
                                                         }}
-                                                        placeholder="Descripción del item"
-                                                        className="min-h-[60px] text-sm"
+                                                        placeholder="Descripción corta (subtítulo)"
+                                                        className="min-h-[40px] text-sm"
+                                                    />
+                                                    <Textarea 
+                                                        value={item.content || ''} 
+                                                        onChange={(e) => {
+                                                            const newItems = [...(section.items || [])];
+                                                            newItems[itemIndex] = { ...item, content: e.target.value };
+                                                            updateSection(index, { items: newItems });
+                                                        }}
+                                                        placeholder="Descripción detallada (contenido largo)"
+                                                        className="min-h-[80px] text-sm font-mono bg-muted/30"
                                                     />
                                                 </div>
                                                 <Button 

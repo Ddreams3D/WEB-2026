@@ -13,6 +13,9 @@ export interface ServiceLandingSection {
     description: string;
     icon?: string;
     image?: string;
+    images?: string[]; // Support for multiple images (e.g. Success Stories grid)
+    content?: string; // Long description for success stories
+    location?: string; // e.g. "Cliente corporativo en Lima"
   }>;
 }
 

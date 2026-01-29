@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Heart, Ghost, Smile, Printer, Layout, Box } from 'lucide-react';
+import { Sparkles, Heart, Ghost, Smile, Printer, Layout, Box, Target, Factory, Handshake } from 'lucide-react';
 
 // Map icon names to components
 const ICON_MAP: Record<string, any> = {
@@ -9,7 +9,10 @@ const ICON_MAP: Record<string, any> = {
     Layout,
     Box,
     Sparkles,
-    Heart
+    Heart,
+    Target,
+    Factory,
+    Handshake
 };
 
 interface ServiceFeaturesProps {
@@ -27,10 +30,16 @@ export function ServiceFeatures({ featuresSection, primaryColor, isEditable = fa
   return (
     <section className="py-24 bg-background relative overflow-hidden">
          <div className="container mx-auto px-4 relative z-10">
-            <div className="text-center mb-16">
+            <div className="text-left mb-16">
+                <div 
+                  className="inline-block px-3 py-1 rounded-full border text-xs font-bold tracking-[0.2em] uppercase mb-2 shadow-[0_0_10px_-3px_rgba(0,0,0,0.2)] bg-background"
+                  style={{ borderColor: primaryColor, color: primaryColor }}
+                >
+                  Propuesta de Valor
+                </div>
                 {isEditable && onChangeTitle ? (
                   <input
-                    className="w-full max-w-2xl mx-auto text-3xl md:text-4xl font-bold mb-4 bg-transparent border-b border-dashed border-muted focus:outline-none focus:border-primary text-center"
+                    className="w-full max-w-2xl text-3xl md:text-4xl font-bold mb-4 bg-transparent border-b border-dashed border-muted focus:outline-none focus:border-primary"
                     value={featuresSection.title || ''}
                     onChange={e => onChangeTitle(e.target.value)}
                   />
@@ -39,13 +48,13 @@ export function ServiceFeatures({ featuresSection, primaryColor, isEditable = fa
                 )}
                 {isEditable && onChangeSubtitle ? (
                   <textarea
-                    className="w-full text-muted-foreground max-w-2xl mx-auto bg-transparent border border-dashed border-muted rounded-md p-2 focus:outline-none focus:border-primary"
+                    className="w-full text-muted-foreground max-w-2xl bg-transparent border border-dashed border-muted rounded-md p-2 focus:outline-none focus:border-primary"
                     value={featuresSection.subtitle || ''}
                     onChange={e => onChangeSubtitle(e.target.value)}
                     rows={2}
                   />
                 ) : (
-                  <p className="text-muted-foreground max-w-2xl mx-auto">
+                  <p className="text-muted-foreground max-w-2xl">
                     {featuresSection.subtitle}
                   </p>
                 )}

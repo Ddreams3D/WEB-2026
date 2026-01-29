@@ -29,6 +29,13 @@ export function ServiceShowcase({ config, featuredProducts, gallerySection, isPr
       backgroundColor: 'transparent' // Or a very light tint if preferred
   } as React.CSSProperties;
 
+  // Logic: Prioritize Gallery if it exists (manual override), otherwise show Products
+  // const showGallery = gallerySection && gallerySection.items && gallerySection.items.length > 0;
+  
+  // Title & Subtitle logic
+  const title = "Proyectos Destacados";
+  const subtitle = `Una selección de nuestros mejores trabajos en ${config.name}.`;
+
   return (
     <section id="coleccion" className="py-32 relative bg-muted/5" style={{ '--primary-color': accentColor } as React.CSSProperties}>
       <div className="container mx-auto px-4 relative z-10">
@@ -41,10 +48,10 @@ export function ServiceShowcase({ config, featuredProducts, gallerySection, isPr
                       Portafolio Relacionado
                   </div>
                   <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground drop-shadow-sm">
-                      Proyectos Destacados
+                      {title}
                   </h2>
                   <p className="text-lg max-w-xl font-light text-muted-foreground">
-                      Una selección de nuestros mejores trabajos en {config.name}.
+                      {subtitle}
                   </p>
               </div>
               
@@ -63,68 +70,12 @@ export function ServiceShowcase({ config, featuredProducts, gallerySection, isPr
               )}
           </div>
 
-          {isOrganicLanding && gallerySection && gallerySection.items && gallerySection.items.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
-                  {gallerySection.items.map((item, index) => (
-                      <div
-                          key={index}
-                          className="group rounded-3xl overflow-hidden border border-border bg-background/60 shadow-sm hover:shadow-lg transition-all duration-300"
-                      >
-                          {item.image && (
-                              <div className="relative aspect-[4/3] bg-muted/40 overflow-hidden">
-                                  <DefaultImage
-                                      src={item.image}
-                                      alt={item.title}
-                                      fill
-                                      className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                                  />
-                              </div>
-                          )}
-                          <div className="p-5 space-y-2 text-left">
-                              <h3 className="font-semibold text-foreground">
-                                  {item.title}
-                              </h3>
-                              <p className="text-sm text-muted-foreground">
-                                  {item.description}
-                              </p>
-                          </div>
-                      </div>
-                  ))}
-              </div>
-          ) : featuredProducts.length > 0 ? (
+          {featuredProducts.length > 0 ? (
               <ProductGrid 
                   products={featuredProducts}
                   emptyMessage="Pronto agregaremos productos a esta colección."
                   className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12 relative z-10"
               />
-          ) : gallerySection && gallerySection.items && gallerySection.items.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
-                  {gallerySection.items.map((item, index) => (
-                      <div
-                          key={index}
-                          className="group rounded-3xl overflow-hidden border border-border bg-background/60 shadow-sm hover:shadow-lg transition-all duration-300"
-                      >
-                          {item.image && (
-                              <div className="relative aspect-[4/3] bg-muted/40 overflow-hidden">
-                                  <DefaultImage
-                                      src={item.image}
-                                      alt={item.title}
-                                      fill
-                                      className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                                  />
-                              </div>
-                          )}
-                          <div className="p-5 space-y-2 text-left">
-                              <h3 className="font-semibold text-foreground">
-                                  {item.title}
-                              </h3>
-                              <p className="text-sm text-muted-foreground">
-                                  {item.description}
-                              </p>
-                          </div>
-                      </div>
-                  ))}
-              </div>
           ) : (
               <div className="border-2 border-dashed rounded-3xl p-12 text-center bg-muted/10 border-muted">
                   <Sparkles className="w-12 h-12 mx-auto mb-4 text-muted-foreground/40" />

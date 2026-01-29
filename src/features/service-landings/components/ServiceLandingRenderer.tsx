@@ -9,6 +9,8 @@ import { ServiceFeatures } from './sections/ServiceFeatures';
 import { ServiceFocus } from './sections/ServiceFocus';
 import { ServiceProcess } from './sections/ServiceProcess';
 import { ServiceShowcase } from './sections/ServiceShowcase';
+import { ServiceGallery } from './sections/ServiceGallery';
+import { ServiceSuccessStories } from './sections/ServiceSuccessStories';
 import { ServiceCTA } from './sections/ServiceCTA';
 import { ServiceFooter } from './sections/ServiceFooter';
 import { trackEvent, AnalyticsEvents, AnalyticsLocations } from '@/lib/analytics';
@@ -246,10 +248,27 @@ export default function ServiceLandingRenderer({ config, isPreview = false }: Se
           onChangeItemField={updateFeatureItemField}
         />
 
+        {/* Special Render for Success Stories (Carousel) */}
+        {renderConfig.id === 'merchandising' && gallerySection ? (
+            <ServiceSuccessStories 
+                section={gallerySection} 
+                primaryColor={primaryColor} 
+            />
+        ) : (
+            gallerySection && (
+              <ServiceGallery
+                config={renderConfig}
+                gallerySection={gallerySection}
+                primaryColor={primaryColor}
+                isPreview={isPreview}
+              />
+            )
+        )}
+
         <ServiceShowcase 
           config={renderConfig} 
           featuredProducts={featuredProducts} 
-          gallerySection={gallerySection}
+          gallerySection={undefined} // Handled above now
           isPreview={isPreview} 
           primaryColor={primaryColor}
         />
