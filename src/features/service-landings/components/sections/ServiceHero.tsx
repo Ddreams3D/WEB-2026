@@ -375,7 +375,7 @@ export function ServiceHero({ config, heroSection, primaryColor, isEditable = fa
       </div>
 
       {/* Right Column: Hero Image / Slider (Full Bleed) */}
-      <div className="relative h-[50vh] lg:h-full w-full order-1 lg:order-2 group">
+      <div className="relative h-[50vh] lg:h-full w-full order-2 lg:order-2 group">
           {config.id === 'trophies' ? (
                 // 🏆 CUSTOM PODIUM SCENE FOR TROPHIES LANDING
                 <div className="w-full h-full flex items-center justify-center relative overflow-hidden">

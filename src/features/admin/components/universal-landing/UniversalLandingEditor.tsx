@@ -72,7 +72,7 @@ export function UniversalLandingEditor({
   const isThemeOnly = mode === 'theme_only';
 
   // Calculate dynamic styles for the editor container to reflect landing colors
-    const editorStyle = useMemo(() => {
+  const editorStyle = useMemo(() => {
     const primaryColor = data.primaryColor;
     // Default base styles (Light Mode forced for readability)
     const baseStyles = {
@@ -92,26 +92,58 @@ export function UniversalLandingEditor({
       '--input': '214.3 31.8% 91.4%',
     };
 
-    if (!primaryColor) return baseStyles as React.CSSProperties;
+    const styles: Record<string, string> = { ...baseStyles };
 
-    const hexToRgb = (hex: string): string | null => {
-      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-      return result ? 
-        `${parseInt(result[1], 16)} ${parseInt(result[2], 16)} ${parseInt(result[3], 16)}` 
-        : null;
-    };
+    // --- Colors ---
+    if (primaryColor) {
+      const hexToRgb = (hex: string): string | null => {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? 
+          `${parseInt(result[1], 16)} ${parseInt(result[2], 16)} ${parseInt(result[3], 16)}` 
+          : null;
+      };
 
-    const rgb = hexToRgb(primaryColor);
-    if (!rgb) return baseStyles as React.CSSProperties;
+      const rgb = hexToRgb(primaryColor);
+      if (rgb) {
+        styles['--primary'] = rgb;
+        styles['--primary-500'] = rgb;
+        styles['--primary-600'] = rgb;
+        styles['--ring'] = rgb;
+      }
+    }
 
-    return {
-      ...baseStyles,
-      '--primary': rgb,
-      '--primary-500': rgb,
-      '--primary-600': rgb,
-      '--ring': rgb,
-    } as React.CSSProperties;
-  }, [data.primaryColor]);
+    // --- Radius ---
+    if (data.buttonStyle === 'pill') styles['--radius'] = '9999px';
+    else if (data.buttonStyle === 'square') styles['--radius'] = '0rem';
+    else styles['--radius'] = '0.5rem';
+
+    // --- Fonts ---
+    if (data.fontFamilyHeading === 'playfair') styles['--font-heading'] = 'var(--font-playfair), serif';
+    else if (data.fontFamilyHeading === 'oswald') styles['--font-heading'] = 'var(--font-oswald), sans-serif';
+    else if (data.fontFamilyHeading === 'montserrat') styles['--font-heading'] = 'var(--font-montserrat), sans-serif';
+    else styles['--font-heading'] = 'var(--font-inter), sans-serif';
+
+    if (data.fontFamilyBody === 'roboto') styles['--font-body'] = 'var(--font-roboto), sans-serif';
+    else if (data.fontFamilyBody === 'open-sans') styles['--font-body'] = 'var(--font-open-sans), sans-serif';
+    else styles['--font-body'] = 'var(--font-inter), sans-serif';
+
+    // --- Pattern ---
+    if (data.patternOverlay === 'dots') {
+      styles['--pattern-style'] = 'radial-gradient(currentColor 1px, transparent 1px)';
+      styles['--pattern-size'] = '20px 20px';
+    } else if (data.patternOverlay === 'grid') {
+      styles['--pattern-style'] = 'linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)';
+      styles['--pattern-size'] = '40px 40px';
+    } else if (data.patternOverlay === 'noise') {
+      styles['--pattern-style'] = 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.65\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\' opacity=\'0.05\'/%3E%3C/svg%3E")';
+      styles['--pattern-size'] = 'auto';
+    } else {
+      styles['--pattern-style'] = 'none';
+      styles['--pattern-size'] = 'auto';
+    }
+
+    return styles as React.CSSProperties;
+  }, [data.primaryColor, data.buttonStyle, data.fontFamilyHeading, data.fontFamilyBody, data.patternOverlay]);
 
   return (
     <Sheet

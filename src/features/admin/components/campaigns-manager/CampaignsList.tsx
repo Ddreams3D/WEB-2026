@@ -61,116 +61,123 @@ export function CampaignsList({ themes, setEditingId, updateTheme, onSave, autom
 
   return (
     <>
-      <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {themes.map(theme => (
           <div 
             key={theme.id} 
-            className="group relative flex flex-col rounded-xl border bg-card text-card-foreground shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+            className="group relative flex flex-col rounded-xl border bg-card text-card-foreground shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden"
           >
-            {/* Browser Mockup Frame */}
-            <div className="relative w-full aspect-[16/10] overflow-hidden rounded-t-xl bg-muted border-b">
-                {/* Browser Header */}
-                <div className="absolute top-0 left-0 right-0 h-7 bg-muted/90 backdrop-blur-sm border-b flex items-center px-3 gap-1.5 z-20">
-                    <div className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-400/80" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-green-400/80" />
-                    <div className="ml-2 flex-1 h-4 bg-background/50 rounded text-[9px] flex items-center px-2 text-muted-foreground/60">
-                        {theme.id === 'standard' ? 'ddreams3d.com' : `ddreams3d.com/campanas/${theme.id}`}
-                    </div>
-                </div>
+            {/* Theme Preview Header */}
+            <div 
+              className="relative w-full aspect-[3/2] bg-muted cursor-pointer overflow-hidden"
+              onClick={() => {
+                if (theme.id === 'standard') {
+                  setEditingId(theme.id);
+                  return;
+                }
+                // Open preview or edit? Typically click on card opens edit in this context, 
+                // but original code opened preview on image click. 
+                // Let's keep consistency: Image click -> Preview, but maybe add an edit button.
+                // Actually, the original code had: "if standard -> edit", "if other -> preview".
+                // Let's stick to that but maybe make it clearer.
+                if (typeof window !== 'undefined') {
+                   const url = `/campanas/${theme.id}?preview=true`;
+                   window.open(url, '_blank');
+                }
+              }}
+            >
+                <DefaultImage
+                  src={theme.landing.heroImage || theme.landing.heroImages?.[0]}
+                  alt={theme.name}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                
+                {/* Gradient Overlay for Text Readability */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90" />
 
-                {/* Content Preview (clickable area) */}
-                <div
-                  className="absolute top-7 left-0 right-0 bottom-0 bg-background cursor-pointer"
-                  onClick={() => {
-                    if (theme.id === 'standard') {
-                      setEditingId(theme.id);
-                      return;
-                    }
-                    if (typeof window !== 'undefined') {
-                      const url = `/campanas/${theme.id}?preview=true`;
-                      window.open(url, '_blank');
-                    }
-                  }}
-                >
-                  <DefaultImage
-                    src={theme.landing.heroImage || theme.landing.heroImages?.[0]}
-                    alt={theme.landing.heroTitle || theme.name}
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1536px) 50vw, 25vw"
-                    className="h-full w-full object-cover group-hover:scale-[1.03] transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                  <div className="absolute inset-x-0 bottom-0 p-4">
-                    <div className="flex items-end justify-between gap-3">
-                      <div className="min-w-0">
-                        <div className="text-[10px] text-white/80 font-semibold uppercase tracking-wider truncate">
-                          {theme.landing.heroSubtitle || theme.name}
-                        </div>
-                        <div className="text-white font-bold text-sm leading-snug line-clamp-2">
-                          {theme.landing.heroTitle || theme.name}
-                        </div>
-                      </div>
-                      <Badge className="bg-white/15 text-white border-white/20 backdrop-blur-sm">
-                        {theme.landing.featuredTag || 'Campaña'}
+                {/* Theme Identity on Image */}
+                <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                   <div className="flex items-center justify-between mb-1">
+                      <Badge className="bg-white/20 hover:bg-white/30 text-white border-none backdrop-blur-md text-[10px]">
+                        {theme.landing.featuredTag || 'Tema'}
                       </Badge>
-                    </div>
-                  </div>
+                      
+                      {/* Color Palette Preview */}
+                      <div className="flex -space-x-1.5">
+                          {theme.landing.primaryColor && (
+                             <div className="w-4 h-4 rounded-full border border-white/50 shadow-sm" style={{ backgroundColor: theme.landing.primaryColor }} />
+                          )}
+                          {theme.landing.secondaryColor && (
+                             <div className="w-4 h-4 rounded-full border border-white/50 shadow-sm" style={{ backgroundColor: theme.landing.secondaryColor }} />
+                          )}
+                           {theme.landing.backgroundColor && (
+                             <div className="w-4 h-4 rounded-full border border-white/50 shadow-sm" style={{ backgroundColor: theme.landing.backgroundColor }} />
+                          )}
+                      </div>
+                   </div>
+                   
+                   <h3 className="font-bold text-lg leading-tight mb-0.5">{theme.name}</h3>
+                   <p className="text-xs text-white/70 line-clamp-1">{theme.landing.heroTitle || 'Sin título'}</p>
                 </div>
 
-                {/* Status Badge */}
+                {/* Status Badge (Top Right) */}
                 {theme.isActive && (
-                    <div className="absolute top-10 right-3 z-[10]">
-                        <span className="relative flex h-3 w-3">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-                        </span>
+                    <div className="absolute top-3 right-3 z-[10]">
+                        <Badge variant="default" className="bg-green-500 hover:bg-green-600 text-white border-none shadow-md gap-1.5 pl-1.5 pr-2.5">
+                           <span className="relative flex h-2 w-2">
+                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                             <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+                           </span>
+                           ACTIVO
+                        </Badge>
                     </div>
                 )}
             </div>
 
-            {/* Card Content (no click handler) */}
-            <div className="p-5 flex flex-col flex-1 gap-3">
-              <div>
-                  <div className="flex justify-between items-start mb-1">
-                      <h3 className="font-bold text-lg leading-tight group-hover:text-primary transition-colors">{theme.name}</h3>
-                      {(() => {
-                        const status = getThemeStatus(theme);
-                        if (status === 'manual') return <Badge variant="default" className="bg-green-500 hover:bg-green-600 text-[10px] px-1.5 h-5">ACTIVO (M)</Badge>;
-                        if (status === 'auto') return <Badge variant="default" className="bg-blue-500 hover:bg-blue-600 text-[10px] px-1.5 h-5">VIGENTE</Badge>;
-                        return <Badge variant="outline" className="text-[10px] px-1.5 h-5 text-muted-foreground">INACTIVO</Badge>;
-                      })()}
-                  </div>
-                  <p className="text-sm text-muted-foreground line-clamp-1">{theme.landing.heroTitle}</p>
-              </div>
-
-              {/* Manual Toggle Row */}
-              <div className="flex items-center justify-between py-2 border-t border-b bg-muted/10 -mx-5 px-5">
-                <span className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-                  Activación Manual
-                  {automationEnabled && (
-                    <span title="Desactivado porque el modo automático está encendido" className="cursor-help text-amber-500">*</span>
-                  )}
-                </span>
-                <Switch 
-                  checked={theme.isActive || false}
-                  onCheckedChange={() => handleToggle(theme)}
-                  className="scale-75 origin-right"
-                  disabled={automationEnabled}
-                />
-              </div>
-
-              <div className="mt-auto pt-3 flex justify-between items-center text-xs text-muted-foreground">
-                  <div className="flex items-center gap-1.5">
+            {/* Card Actions & Details */}
+            <div className="p-4 flex flex-col gap-4 flex-1">
+               {/* Date & Automation Info */}
+               <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <div className="flex items-center gap-1.5 bg-muted/50 px-2 py-1 rounded-md">
                     <CalendarIcon className="w-3.5 h-3.5" />
                     <span>
                       {theme.dateRanges.length > 0 
                         ? `${theme.dateRanges[0].start.day}/${theme.dateRanges[0].start.month} - ${theme.dateRanges[0].end.day}/${theme.dateRanges[0].end.month}`
-                        : 'Sin fecha'}
+                        : 'Sin fecha programada'}
                     </span>
                   </div>
-                  <Badge variant="secondary" className="font-normal text-[10px]">{theme.landing.featuredTag || 'Campaña'}</Badge>
-              </div>
+                  
+                  {getThemeStatus(theme) === 'auto' && (
+                     <Badge variant="outline" className="text-[10px] border-blue-200 text-blue-600 bg-blue-50">Auto</Badge>
+                  )}
+               </div>
+
+               {/* Controls */}
+               <div className="mt-auto pt-3 border-t flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-2">
+                     <Switch 
+                        id={`switch-${theme.id}`}
+                        checked={theme.isActive || false}
+                        onCheckedChange={() => handleToggle(theme)}
+                        disabled={automationEnabled}
+                        className="scale-90"
+                     />
+                     <label htmlFor={`switch-${theme.id}`} className="text-xs font-medium cursor-pointer">
+                        {theme.isActive ? 'Activado' : 'Desactivado'}
+                     </label>
+                  </div>
+                  
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-8 text-xs hover:bg-primary/10 hover:text-primary"
+                    onClick={() => setEditingId(theme.id)}
+                  >
+                    Editar Tema
+                  </Button>
+               </div>
             </div>
           </div>
         ))}

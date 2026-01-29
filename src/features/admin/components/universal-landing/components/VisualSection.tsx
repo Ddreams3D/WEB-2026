@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Palette, ImageIcon, Moon, Sun, Monitor, Megaphone, Type, MousePointerClick, Layers, Box } from 'lucide-react';
+import { Palette, ImageIcon, Moon, Sun, Monitor, Megaphone, Type, MousePointerClick, Layers, Box, Sparkles } from 'lucide-react';
 import { UnifiedLandingData } from '../types';
 import { cn } from '@/lib/utils';
 import ImageUpload from '@/features/admin/components/ImageUpload';
@@ -297,6 +297,8 @@ export function VisualSection({ data, updateField, inheritedPrimaryColor }: Visu
                   <p className="text-[11px] text-muted-foreground">Sobrescribe el fondo por defecto.</p>
                </div>
             </div>
+
+
           </div>
 
           {/* --- TYPOGRAPHY & UI --- */}

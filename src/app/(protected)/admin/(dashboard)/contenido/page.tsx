@@ -22,7 +22,7 @@ export default function ContentManagerPage() {
         </p>
       </div>
 
-      <Tabs defaultValue="independent" className="space-y-6">
+      <Tabs defaultValue="campaigns" className="space-y-6">
         <TabsList className="grid w-full grid-cols-4 lg:w-[800px]">
           <TabsTrigger value="campaigns" className="flex items-center gap-2">
             <CalendarRange className="w-4 h-4" />

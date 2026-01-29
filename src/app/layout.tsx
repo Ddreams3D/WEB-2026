@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import React from 'react';
-import { Inter, Montserrat, Montserrat_Alternates } from 'next/font/google';
+import { Inter, Montserrat, Montserrat_Alternates, Playfair_Display, Oswald, Roboto, Open_Sans } from 'next/font/google';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import Script from 'next/script';
 import './globals.css';
@@ -29,6 +29,31 @@ const montserratAlternates = Montserrat_Alternates({
   subsets: ['latin'],
   weight: ['300', '600'],
   variable: '--font-montserrat-alternates',
+  display: 'swap',
+});
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-playfair',
+  display: 'swap',
+});
+
+const oswald = Oswald({
+  subsets: ['latin'],
+  variable: '--font-oswald',
+  display: 'swap',
+});
+
+const roboto = Roboto({
+  subsets: ['latin'],
+  weight: ['400', '500', '700'],
+  variable: '--font-roboto',
+  display: 'swap',
+});
+
+const openSans = Open_Sans({
+  subsets: ['latin'],
+  variable: '--font-open-sans',
   display: 'swap',
 });
 
@@ -114,7 +139,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={`${inter.variable} ${montserrat.variable} ${montserratAlternates.variable}`} suppressHydrationWarning data-scroll-behavior="smooth">
+    <html lang="es" className={`${inter.variable} ${montserrat.variable} ${montserratAlternates.variable} ${playfair.variable} ${oswald.variable} ${roboto.variable} ${openSans.variable}`} suppressHydrationWarning data-scroll-behavior="smooth">
       <body 
         className="antialiased text-foreground dark:text-white"
         suppressHydrationWarning

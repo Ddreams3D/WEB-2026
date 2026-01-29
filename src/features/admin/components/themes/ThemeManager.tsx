@@ -41,6 +41,12 @@ export default function ThemeManager() {
       isActive: theme.isActive,
       themeMode: theme.landing.themeMode || 'light',
       primaryColor: theme.landing.primaryColor,
+      secondaryColor: theme.landing.secondaryColor,
+      backgroundColor: theme.landing.backgroundColor,
+      patternOverlay: theme.landing.patternOverlay,
+      buttonStyle: theme.landing.buttonStyle,
+      fontFamilyHeading: theme.landing.fontFamilyHeading,
+      fontFamilyBody: theme.landing.fontFamilyBody,
       // Pass necessary but hidden props
       heroTitle: theme.landing.heroTitle,
       heroSubtitle: theme.landing.heroSubtitle,
@@ -62,7 +68,13 @@ export default function ThemeManager() {
       landing: {
         ...data._originalCampaign.landing,
         primaryColor: data.primaryColor,
+        secondaryColor: data.secondaryColor,
+        backgroundColor: data.backgroundColor,
         themeMode: data.themeMode,
+        patternOverlay: data.patternOverlay,
+        buttonStyle: data.buttonStyle,
+        fontFamilyHeading: data.fontFamilyHeading,
+        fontFamilyBody: data.fontFamilyBody,
         // Ensure other fields are preserved
       },
       applyThemeToGlobal: data.applyThemeToGlobal
@@ -116,93 +128,106 @@ export default function ThemeManager() {
       </div>
 
       {/* Themes Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {themes.map((theme) => {
           const isActive = theme.isActive;
           const isStandard = theme.id === 'standard';
           
           return (
-            <Card key={theme.id} className={`overflow-hidden transition-all duration-300 ${isActive ? 'ring-2 ring-primary shadow-lg scale-[1.02]' : 'hover:shadow-md'}`}>
-              {/* Preview Header */}
-              <div 
-                className="h-32 relative flex items-center justify-center"
-                style={{ 
-                  backgroundColor: theme.landing.primaryColor || (isStandard ? '#000000' : '#888888'),
-                  color: '#ffffff'
-                }}
-              >
-                {/* Pattern Overlay */}
-                <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-                
-                <div className="relative z-10 text-center p-4">
-                  <h3 className="font-bold text-xl drop-shadow-md">{theme.name}</h3>
-                  {isStandard && <Badge variant="secondary" className="mt-2 bg-white/20 text-white border-none">Por defecto</Badge>}
-                </div>
-
-                {/* Status Badge */}
-                <div className="absolute top-3 right-3">
-                  {isActive ? (
-                    <Badge className="bg-green-500 hover:bg-green-600 gap-1 pl-1.5">
-                      <Check className="w-3 h-3" /> Activo
-                    </Badge>
-                  ) : (
-                    theme.applyThemeToGlobal === false && (
-                      <Badge variant="outline" className="bg-background/50 backdrop-blur border-white/40 text-white gap-1">
-                        <Lock className="w-3 h-3" /> Solo Landing
-                      </Badge>
-                    )
-                  )}
-                </div>
-              </div>
-
-              {/* Content */}
-              <div className="p-5 space-y-4">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-muted-foreground">ID: {theme.themeId}</span>
-                  {theme.landing.primaryColor && (
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 rounded-full border shadow-sm" style={{ backgroundColor: theme.landing.primaryColor }} />
-                      <span className="font-mono text-xs opacity-70">{theme.landing.primaryColor}</span>
+            <Card key={theme.id} className={`group overflow-hidden transition-all duration-300 border-2 ${isActive ? 'border-primary shadow-lg scale-[1.01]' : 'border-transparent hover:border-border hover:shadow-md'}`}>
+              
+              {/* Theme Preview Body */}
+              <div className="relative aspect-[4/3] w-full bg-muted/20 flex flex-col">
+                 {/* Mini UI Mockup */}
+                 <div className="absolute inset-0 p-4 flex flex-col gap-3" style={{ backgroundColor: theme.landing.backgroundColor || '#ffffff' }}>
+                    {/* Fake Header */}
+                    <div className="h-2 w-1/3 rounded-full opacity-20 bg-current" />
+                    
+                    {/* Hero Area Mock */}
+                    <div className="flex-1 rounded-lg flex items-center justify-center p-4 text-center relative overflow-hidden" 
+                         style={{ 
+                           backgroundColor: theme.landing.primaryColor || '#000',
+                           color: '#ffffff'
+                         }}>
+                       <div className="relative z-10 space-y-2">
+                          <div className="h-2 w-16 mx-auto rounded-full bg-white/40" />
+                          <div className="h-6 w-24 mx-auto rounded-md bg-white/20 backdrop-blur-sm flex items-center justify-center text-[10px] font-bold">
+                             {theme.name}
+                          </div>
+                       </div>
+                       {/* Decorative Circle */}
+                       <div className="absolute -bottom-4 -right-4 w-20 h-20 rounded-full opacity-20" style={{ backgroundColor: theme.landing.secondaryColor || 'transparent' }} />
                     </div>
-                  )}
+
+                    {/* Content Mock */}
+                    <div className="space-y-2">
+                       <div className="flex gap-2">
+                          <div className="h-8 w-full rounded-md opacity-10 bg-current" />
+                          <div className="h-8 w-8 rounded-md" style={{ backgroundColor: theme.landing.secondaryColor || '#888' }} />
+                       </div>
+                    </div>
+                 </div>
+
+                 {/* Overlay Actions (Visible on Hover) */}
+                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 backdrop-blur-[2px]">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="bg-transparent text-white border-white hover:bg-white hover:text-black"
+                      onClick={() => setEditingId(theme.id)}
+                    >
+                      <Palette className="w-4 h-4 mr-2" />
+                      Personalizar
+                    </Button>
+                 </div>
+
+                 {/* Active Badge */}
+                 {isActive && (
+                    <div className="absolute top-3 right-3 z-20">
+                      <Badge className="bg-green-500 hover:bg-green-600 text-white border-none shadow-sm gap-1">
+                        <Check className="w-3 h-3" /> Activo
+                      </Badge>
+                    </div>
+                 )}
+              </div>
+
+              {/* Theme Info Footer */}
+              <div className="p-4 bg-card">
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <h3 className="font-bold text-sm">{theme.name}</h3>
+                    <p className="text-xs text-muted-foreground">{isStandard ? 'Tema Base' : 'Campaña Estacional'}</p>
+                  </div>
+                  
+                  {/* Color Palette Dots */}
+                  <div className="flex -space-x-2">
+                    {[theme.landing.primaryColor, theme.landing.secondaryColor, theme.landing.backgroundColor].filter(Boolean).map((color, i) => (
+                      <div key={i} className="w-6 h-6 rounded-full border-2 border-card shadow-sm" style={{ backgroundColor: color }} title={color} />
+                    ))}
+                  </div>
                 </div>
 
-                {/* Actions */}
-                <div className="flex gap-2 pt-2">
-                  <Button 
-                    variant={isActive ? "default" : "outline"} 
-                    className="flex-1"
-                    onClick={() => {
-                      if (isActive && !isStandard) {
-                        // Deactivate
-                        updateTheme(theme.id, { isActive: false });
-                        handleSave({ ...theme, isActive: false });
-                      } else {
-                        // Activate
-                        updateTheme(theme.id, { isActive: true });
-                        handleSave({ ...theme, isActive: true });
-                      }
-                    }}
-                    disabled={saving || (isStandard && isActive) || automationEnabled}
-                  >
-                    {isActive ? 'Desactivar' : 'Activar Manualmente'}
-                  </Button>
-                  
-                  <Button 
-                    variant="ghost" 
-                    size="icon"
-                    onClick={() => setEditingId(theme.id)}
-                  >
-                    <Palette className="w-4 h-4" />
-                  </Button>
+                <div className="flex gap-2">
+                   <Button 
+                      variant={isActive ? "secondary" : "outline"} 
+                      size="sm"
+                      className="w-full text-xs"
+                      onClick={() => {
+                        if (isActive && !isStandard) {
+                           updateTheme(theme.id, { isActive: false });
+                           handleSave({ ...theme, isActive: false });
+                        } else {
+                           updateTheme(theme.id, { isActive: true });
+                           handleSave({ ...theme, isActive: true });
+                        }
+                      }}
+                      disabled={saving || (isStandard && isActive) || automationEnabled}
+                   >
+                      {isActive ? 'Desactivar' : 'Activar'}
+                   </Button>
                 </div>
-                
-                {automationEnabled && !isStandard && (
-                  <p className="text-xs text-center text-muted-foreground italic">
-                    Gestionado automáticamente por fecha
-                  </p>
-                )}
               </div>
+
             </Card>
           );
         })}

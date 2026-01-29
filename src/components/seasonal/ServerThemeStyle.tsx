@@ -6,6 +6,7 @@ export async function ServerThemeStyle() {
   // 1. Resolve the active theme on the server (based on Date and Configuration)
   // This uses the same logic as the client, but runs before HTML is sent.
   const activeSeasonalConfig = await resolveActiveTheme();
+  console.log('[ServerThemeStyle] Resolved Theme:', activeSeasonalConfig.id);
 
   // 2. Check if we should apply global styles
   const shouldApplyGlobal = activeSeasonalConfig.applyThemeToGlobal !== false;
@@ -24,7 +25,7 @@ export async function ServerThemeStyle() {
 
   // Helper to push variable if value exists
   const pushVar = (name: string, value: string | null) => {
-    if (value) cssVariables.push(`${name}: ${value};`);
+    if (value) cssVariables.push(`${name}: ${value} !important;`);
   };
 
   // --- Primary Color ---
@@ -74,18 +75,40 @@ export async function ServerThemeStyle() {
 
   // --- Typography ---
   if (landing.fontFamilyHeading) {
-    const font = landing.fontFamilyHeading === 'playfair' ? '"Playfair Display", serif' 
-      : landing.fontFamilyHeading === 'oswald' ? '"Oswald", sans-serif'
-      : landing.fontFamilyHeading === 'montserrat' ? '"Montserrat", sans-serif'
-      : 'var(--font-sans)';
+    const font = landing.fontFamilyHeading === 'playfair' ? 'var(--font-playfair), serif' 
+      : landing.fontFamilyHeading === 'oswald' ? 'var(--font-oswald), sans-serif'
+      : landing.fontFamilyHeading === 'montserrat' ? 'var(--font-montserrat), sans-serif'
+      : 'var(--font-inter), sans-serif';
     pushVar('--font-heading', font);
   }
 
   if (landing.fontFamilyBody) {
-    const font = landing.fontFamilyBody === 'roboto' ? '"Roboto", sans-serif'
-      : landing.fontFamilyBody === 'open-sans' ? '"Open Sans", sans-serif'
-      : 'var(--font-sans)';
+    const font = landing.fontFamilyBody === 'roboto' ? 'var(--font-roboto), sans-serif'
+      : landing.fontFamilyBody === 'open-sans' ? 'var(--font-open-sans), sans-serif'
+      : 'var(--font-inter), sans-serif';
     pushVar('--font-body', font);
+  }
+
+  // --- Pattern Overlay ---
+  if (landing.patternOverlay && landing.patternOverlay !== 'none') {
+     let patternValue = 'none';
+     let patternSize = 'auto';
+
+     if (landing.patternOverlay === 'dots') {
+        patternValue = 'radial-gradient(currentColor 1px, transparent 1px)';
+        patternSize = '20px 20px';
+     } else if (landing.patternOverlay === 'grid') {
+        patternValue = 'linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)';
+        patternSize = '40px 40px';
+     } else if (landing.patternOverlay === 'noise') {
+        patternValue = 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.65\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\' opacity=\'0.05\'/%3E%3C/svg%3E")';
+        patternSize = 'auto';
+     }
+     
+     if (patternValue !== 'none') {
+        pushVar('--pattern-style', patternValue);
+        pushVar('--pattern-size', patternSize);
+     }
   }
 
   // If no variables to inject, return null

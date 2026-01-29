@@ -47,7 +47,13 @@ export function GeneralSection({ data, updateField, automationEnabled }: General
                 onChange={(e) => updateField('internalName', e.target.value)}
                 placeholder="Ej: Campaña Navidad 2026"
                 className="bg-background/50 text-lg"
+                disabled={data.id === 'standard'}
               />
+              {data.id === 'standard' && (
+                <p className="text-xs text-amber-600 font-medium">
+                  El nombre del tema estándar no se puede modificar.
+                </p>
+              )}
               <p className="text-xs text-muted-foreground">
                 Este nombre es solo para uso administrativo.
               </p>
