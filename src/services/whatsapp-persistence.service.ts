@@ -26,7 +26,7 @@ export class WhatsAppPersistenceService {
         } as Record<WhatsAppTemplateId, WhatsAppTemplate>;
       }
     } catch (error) {
-      console.error('Error loading WhatsApp templates:', error);
+      console.warn('Warning: Could not load WhatsApp templates from Firestore (using defaults).', error);
     }
 
     return WHATSAPP_TEMPLATES;

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { Button, IsotypeLogo } from '@/components/ui';
 import { ServiceLandingConfig } from '@/shared/types/service-landing';
+import { PHONE_BUSINESS } from '@/shared/constants/contactInfo';
 
 import Image from 'next/image';
 import { ImageComparison } from '@/components/ui/ImageComparison';
@@ -16,6 +17,10 @@ interface ServiceHeroProps {
 }
 
 export function ServiceHero({ config, heroSection, primaryColor, isEditable = false, onChangeField }: ServiceHeroProps) {
+  // WhatsApp Logic
+  const whatsappMessage = encodeURIComponent(`Hola, estoy viendo su servicio de *${config.name}* y me gustaría cotizar un proyecto.`);
+  const whatsappUrl = `https://wa.me/${PHONE_BUSINESS}?text=${whatsappMessage}`;
+
   // SPECIAL LAYOUT: Soportes Personalizados, Merchandising & Others (Full Width + Centered)
   const isOverlayLayout = [
     'soportes-personalizados',
@@ -373,9 +378,9 @@ export function ServiceHero({ config, heroSection, primaryColor, isEditable = fa
                       className="h-12 px-8 text-base rounded-full w-full sm:w-auto"
                       asChild
                     >
-                      <Link href="/contacto">
+                      <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
                           Solicitar Presupuesto
-                      </Link>
+                      </a>
                     </Button>
                   )}
               </div>

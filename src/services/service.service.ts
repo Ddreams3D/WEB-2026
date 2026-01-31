@@ -188,8 +188,8 @@ export const ServiceService = {
            // await this.seedServices();
            services = servicesFallbackData.map(mapToService);
         }
-      } catch (error) {
-        console.error('Error fetching services from Firestore:', error);
+      } catch (error: any) {
+        console.warn('Warning: Firestore fetch issue (services). Falling back to local/static data.', error?.message || error);
         fetchFailed = true;
       }
     }

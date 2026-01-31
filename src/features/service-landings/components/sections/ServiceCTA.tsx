@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui';
 import { ServiceLandingConfig } from '@/shared/types/service-landing';
+import { PHONE_BUSINESS } from '@/shared/constants/contactInfo';
 
 interface ServiceCTAProps {
   primaryColor: string;
@@ -15,9 +16,9 @@ export function ServiceCTA({ primaryColor, config, isPreview = false }: ServiceC
   const isOrganicModeling =
     config.slug === 'modelado-3d-personalizado' || config.id === 'organic-modeling';
 
-  const primaryHref = isOrganicModeling
-    ? '/services/modelado-3d-personalizado#cotizar'
-    : '/cotizar';
+  // WhatsApp Logic
+  const whatsappMessage = encodeURIComponent(`Hola, estoy viendo su servicio de *${config.name}* y me gustaría cotizar un proyecto.`);
+  const whatsappUrl = `https://wa.me/${PHONE_BUSINESS}?text=${whatsappMessage}`;
 
   return (
     <section className="py-24 relative bg-card text-center overflow-hidden">
@@ -34,15 +35,15 @@ export function ServiceCTA({ primaryColor, config, isPreview = false }: ServiceC
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4">
                   <Button size="lg" className="h-12 px-8 text-lg border-0 shadow-lg text-white hover:opacity-90" style={{ backgroundColor: primaryColor }} asChild>
-                      <Link href={primaryHref}>
+                      <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
                           Solicitar Cotización
-                      </Link>
+                      </a>
                   </Button>
                   {!isOrganicModeling && (
                     <Button variant="outline" size="lg" className="h-12 px-8 text-lg" asChild>
-                        <Link href="/contacto">
+                        <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
                             Hablar con un asesor
-                        </Link>
+                        </a>
                     </Button>
                   )}
               </div>

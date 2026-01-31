@@ -20,19 +20,22 @@ import { TestimonialsSection } from './components/TestimonialsSection';
 import { FAQSection } from './components/FAQSection';
 import { CallToActionSection } from './components/CallToActionSection';
 import { LandingFooter } from './components/LandingFooter';
+import WhatsAppFloatingButton from '@/shared/components/layout/WhatsAppFloatingButton';
 
 interface LandingMainPageClientProps {
   initialConfig: LandingMainConfig | null;
   featuredProducts: CatalogItem[];
   services: CatalogItem[];
   bubbleImages: string[];
+  whatsappMessage?: string;
 }
 
 export default function LandingMainPageClient({
   initialConfig,
   featuredProducts,
   services,
-  bubbleImages
+  bubbleImages,
+  whatsappMessage
 }: LandingMainPageClientProps) {
   const [config, setConfig] = useState<LandingMainConfig | null>(initialConfig);
   const [isEditing, setIsEditing] = useState(false);
@@ -136,6 +139,7 @@ export default function LandingMainPageClient({
           </Button>
         </div>
       )}
+      <WhatsAppFloatingButton message={whatsappMessage} />
     </>
   );
 }

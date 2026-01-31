@@ -3,9 +3,16 @@
 import React from 'react';
 import { trackEvent, AnalyticsEvents, AnalyticsLocations } from '@/lib/analytics';
 import { WhatsAppService } from '@/services/whatsapp.service';
+import { PHONE_BUSINESS } from '@/shared/constants/contactInfo';
 
-export default function WhatsAppFloatingButton() {
-  const whatsappUrl = WhatsAppService.getLink('general_contact');
+interface WhatsAppFloatingButtonProps {
+  message?: string;
+}
+
+export default function WhatsAppFloatingButton({ message }: WhatsAppFloatingButtonProps) {
+  const whatsappUrl = message 
+    ? `https://wa.me/${PHONE_BUSINESS}?text=${encodeURIComponent(message)}`
+    : WhatsAppService.getLink('general_contact');
 
   return (
     <a

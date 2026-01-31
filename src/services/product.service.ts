@@ -138,8 +138,8 @@ export const ProductService = {
            // await this.seedProducts();
            products = productsFallbackData.map(mapToProduct);
         }
-      } catch (error) {
-        console.error('Error fetching products from Firestore:', error);
+      } catch (error: any) {
+        console.warn('Warning: Firestore fetch issue (products). Falling back to local/static data.', error?.message || error);
         fetchFailed = true;
         // If Firestore fails, we fall through to LocalStorage/Fallback
       }

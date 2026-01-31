@@ -1,5 +1,4 @@
 import { AnalyticsTracker } from '@/components/analytics/AnalyticsTracker';
-import WhatsAppFloatingButton from '@/shared/components/layout/WhatsAppFloatingButton';
 
 export default function SupportsLayout({
   children,
@@ -20,8 +19,6 @@ export default function SupportsLayout({
           <p>&copy; {new Date().getFullYear()} Ddreams 3D · Soportes personalizados para setups y dispositivos.</p>
         </div>
       </footer>
-
-      <WhatsAppFloatingButton />
     </div>
   );
 }

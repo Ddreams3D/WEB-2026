@@ -74,8 +74,8 @@ export const ServiceLandingsService = {
 
       return mergedLandings;
     } catch (error: any) {
-      if (error?.code === 'permission-denied') {
-        console.warn('Firestore permission denied (getAll). Falling back to static data.');
+      if (error?.code === 'permission-denied' || error?.code === 'unavailable' || error?.message?.includes('timeout')) {
+        console.warn('Firestore access issue (getAll). Falling back to static data.', error?.message || error);
       } else {
         console.error('Error fetching service landings from Firebase:', error);
       }
@@ -119,8 +119,8 @@ export const ServiceLandingsService = {
         
         console.log(`Landing not found in DB: ${slug}, checking static data`);
       } catch (error: any) {
-        if (error?.code === 'permission-denied') {
-           console.warn(`Firestore permission denied (getBySlug: ${slug}). Falling back to static data.`);
+        if (error?.code === 'permission-denied' || error?.code === 'unavailable' || error?.message?.includes('timeout')) {
+           console.warn(`Firestore access issue (getBySlug: ${slug}). Falling back to static data.`, error?.message || error);
         } else {
            console.error('Error fetching landing by slug from Firebase:', error);
            // Fallback to static if DB fails (unless it was a not found)

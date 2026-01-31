@@ -78,7 +78,7 @@ export const ProjectService = {
       // Sort in memory to avoid index issues
       return projects.sort((a, b) => b.projectDate.getTime() - a.projectDate.getTime());
     } catch (error) {
-      console.error('Error fetching projects:', error);
+      console.warn('Warning: Firestore fetch issue (projects). Falling back to static data.', error);
       // Fallback to static data on error
       return staticProjects as unknown as PortfolioItem[];
     }
@@ -183,7 +183,7 @@ export const ProjectService = {
       // Fallback to static
       return (staticProjects as unknown as PortfolioItem[]).find(p => p.id === idOrSlug || p.slug === idOrSlug);
     } catch (error) {
-      console.error('Error fetching project by ID:', error);
+      console.warn('Warning: Firestore fetch issue (project by ID). Falling back to static data.', error);
       return (staticProjects as unknown as PortfolioItem[]).find(p => p.id === idOrSlug || p.slug === idOrSlug);
     }
   },
@@ -223,7 +223,7 @@ export const ProjectService = {
       return results;
 
     } catch (error) {
-      console.error('Error fetching featured projects:', error);
+      console.warn('Warning: Firestore fetch issue (featured projects). Falling back to static data.', error);
       let results = (staticProjects as unknown as PortfolioItem[]).filter(p => p.isFeatured);
       if (limitCount) {
         results = results.slice(0, limitCount);
@@ -265,7 +265,7 @@ export const ProjectService = {
       }
       return results;
     } catch (error) {
-      console.error('Error fetching projects by category:', error);
+      console.warn('Warning: Firestore fetch issue (projects by category). Falling back to static data.', error);
       let results = (staticProjects as unknown as PortfolioItem[]).filter(p => p.category === category);
       if (limitCount) {
         results = results.slice(0, limitCount);

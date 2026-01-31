@@ -23,6 +23,7 @@ import { SupportCategory, SupportItem } from './data';
 import Link from 'next/link';
 import Image from 'next/image';
 import { StoragePathBuilder } from '@/shared/constants/storage-paths';
+import WhatsAppFloatingButton from '@/shared/components/layout/WhatsAppFloatingButton';
 
 interface SupportsLandingRendererProps {
   config: ServiceLandingConfig;
@@ -391,6 +392,7 @@ export default function SupportsLandingRenderer({ config, categories, isPreview 
             />
         )}
       </div>
+      <WhatsAppFloatingButton message="Hola, estoy interesado en sus soportes personalizados." />
     </>
   );
 }

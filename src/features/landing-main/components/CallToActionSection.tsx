@@ -1,8 +1,11 @@
 import React from 'react';
-import Link from 'next/link';
 import { Button } from '@/components/ui';
+import { PHONE_BUSINESS } from '@/shared/constants/contactInfo';
 
 export const CallToActionSection = () => {
+  const whatsappMessage = encodeURIComponent("Hola, estoy interesado en sus servicios de impresión 3D en Arequipa.");
+  const whatsappUrl = `https://wa.me/${PHONE_BUSINESS}?text=${whatsappMessage}`;
+
   return (
     <section className="py-32 relative overflow-hidden bg-slate-200 text-slate-900">
       <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-[0.05]" />
@@ -14,9 +17,9 @@ export const CallToActionSection = () => {
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-4">
            <Button size="lg" className="h-14 px-8 text-lg font-bold rounded-full shadow-xl hover:scale-105 transition-transform bg-slate-900 text-white hover:bg-slate-800" asChild>
-            <Link href="/services">
-              Descubre como podemos ayudarte.
-            </Link>
+            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+              Descubre como podemos ayudarte
+            </a>
           </Button>
         </div>
       </div>

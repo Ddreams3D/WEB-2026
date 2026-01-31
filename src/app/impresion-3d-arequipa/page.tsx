@@ -76,6 +76,7 @@ export default async function LandingImpresion3DArequipaPage() {
       featuredProducts={featuredProducts as CatalogItem[]}
       services={services as CatalogItem[]}
       bubbleImages={bubbleImages}
+      whatsappMessage="Hola, estoy interesado en sus servicios de impresión 3D en Arequipa."
     />
   );
 }

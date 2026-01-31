@@ -22,6 +22,7 @@ import { ServiceLandingsService } from '@/services/service-landings.service';
 import { fetchLandingMain } from '@/services/landing.service';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import WhatsAppFloatingButton from '@/shared/components/layout/WhatsAppFloatingButton';
 
 interface ServiceLandingRendererProps {
   config: ServiceLandingConfig;
@@ -354,6 +355,10 @@ export default function ServiceLandingRenderer({ config, isPreview = false }: Se
           isSaving={isSaving}
         />
       )}
+
+      <WhatsAppFloatingButton 
+        message={`Hola, estoy viendo su servicio de *${currentConfig.name}* y me gustaría cotizar un proyecto.`} 
+      />
     </>
   );
 }
