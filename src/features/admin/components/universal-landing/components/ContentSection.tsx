@@ -5,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Box, Plus, Trash2, GripVertical, ChevronDown, ChevronUp, Layers, Sparkles, X } from 'lucide-react';
+import { Box, Plus, Trash2, GripVertical, ChevronDown, ChevronUp, Layers, Sparkles, X, Star } from 'lucide-react';
 import { UnifiedLandingData } from '../types';
 import { ServiceLandingSection } from '@/shared/types/service-landing';
 import { cn } from '@/lib/utils';
@@ -249,94 +249,52 @@ export function ContentSection({ data, updateField, disableFeaturesText = false 
                                 {section.items?.map((item, itemIndex) => {
                                     if (isGallerySection) {
                                         return (
-                                            <div key={itemIndex} className="flex gap-3 items-start p-3 bg-muted/20 rounded-lg border">
-                                                <div className="w-40">
-                                                    <Label className="text-xs mb-2 block">Imágenes</Label>
-                                                    
-                                                    {/* Existing Images Grid */}
-                                                    {(item.images && item.images.length > 0) || item.image ? (
-                                                        <div className="grid grid-cols-2 gap-2 mb-2">
-                                                            {/* Render array images */}
-                                                            {item.images?.map((imgUrl, imgIdx) => (
-                                                                <div key={`arr-${imgIdx}`} className="relative aspect-square rounded-md overflow-hidden border bg-muted group">
-                                                                    <Image src={imgUrl} alt={`Img ${imgIdx}`} fill className="object-cover" />
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={() => {
-                                                                            const newItems = [...(section.items || [])];
-                                                                            const currentImages = [...(item.images || [])];
-                                                                            currentImages.splice(imgIdx, 1);
-                                                                            newItems[itemIndex] = { ...item, images: currentImages };
-                                                                            updateSection(index, { items: newItems });
-                                                                        }}
-                                                                        className="absolute top-1 right-1 bg-red-500/80 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity z-10"
-                                                                    >
-                                                                        <X className="w-3 h-3" />
-                                                                    </button>
-                                                                </div>
-                                                            ))}
-                                                            
-                                                            {/* Render legacy image if no array or mixed (though we migrate on upload) */}
-                                                            {(!item.images || item.images.length === 0) && item.image && (
-                                                                <div className="relative aspect-square rounded-md overflow-hidden border bg-muted group">
-                                                                    <Image src={item.image} alt="Legacy" fill className="object-cover" />
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={() => {
-                                                                            const newItems = [...(section.items || [])];
-                                                                            newItems[itemIndex] = { ...item, image: '' };
-                                                                            updateSection(index, { items: newItems });
-                                                                        }}
-                                                                        className="absolute top-1 right-1 bg-red-500/80 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity z-10"
-                                                                    >
-                                                                        <X className="w-3 h-3" />
-                                                                    </button>
-                                                                </div>
-                                                            )}
+                                            <div key={itemIndex} className="p-4 bg-card rounded-xl border shadow-sm space-y-4">
+                                                {/* Header: Title & Actions */}
+                                                <div className="flex items-start gap-4 justify-between">
+                                                    <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                        <div className="space-y-2">
+                                                            <Label className="text-xs font-medium text-muted-foreground">Título del Proyecto</Label>
+                                                            <Input 
+                                                                value={item.title} 
+                                                                onChange={(e) => {
+                                                                    const newItems = [...(section.items || [])];
+                                                                    newItems[itemIndex] = { ...item, title: e.target.value };
+                                                                    updateSection(index, { items: newItems });
+                                                                }}
+                                                                placeholder="Ej: Colección Verano 2025"
+                                                                className="font-medium"
+                                                            />
                                                         </div>
-                                                    ) : null}
-
-                                                    <ImageUpload
-                                                        value="" // Always empty to show uploader state
-                                                        onChange={(url, _viewType) => {
+                                                        <div className="space-y-2">
+                                                            <Label className="text-xs font-medium text-muted-foreground">Ubicación / Etiqueta</Label>
+                                                            <Input 
+                                                                value={item.location || ''} 
+                                                                onChange={(e) => {
+                                                                    const newItems = [...(section.items || [])];
+                                                                    newItems[itemIndex] = { ...item, location: e.target.value };
+                                                                    updateSection(index, { items: newItems });
+                                                                }}
+                                                                placeholder="Ej: Lima, Perú"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <Button 
+                                                        variant="ghost" 
+                                                        size="icon" 
+                                                        className="text-muted-foreground hover:text-destructive -mt-1"
+                                                        onClick={() => {
                                                             const newItems = [...(section.items || [])];
-                                                            // Migrate legacy image to array if needed
-                                                            const currentImages = item.images ? [...item.images] : (item.image ? [item.image] : []);
-                                                            
-                                                            newItems[itemIndex] = { 
-                                                                ...item, 
-                                                                images: [...currentImages, url],
-                                                                image: '' // Clear legacy to prefer array
-                                                            };
+                                                            newItems.splice(itemIndex, 1);
                                                             updateSection(index, { items: newItems });
                                                         }}
-                                                        onRemove={() => {}} 
-                                                        defaultName={`${data.slug || 'service'}-gallery-${itemIndex + 1}`}
-                                                        existingImages={[]}
-                                                        storagePath={StoragePathBuilder.services(data.slug || 'service', 'gallery')}
-                                                    />
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </Button>
                                                 </div>
-                                                <div className="flex-1 space-y-2">
-                                                    <Input 
-                                                        value={item.title} 
-                                                        onChange={(e) => {
-                                                            const newItems = [...(section.items || [])];
-                                                            newItems[itemIndex] = { ...item, title: e.target.value };
-                                                            updateSection(index, { items: newItems });
-                                                        }}
-                                                        placeholder="Título del item"
-                                                        className="font-medium"
-                                                    />
-                                                    <Input 
-                                                        value={item.location || ''} 
-                                                        onChange={(e) => {
-                                                            const newItems = [...(section.items || [])];
-                                                            newItems[itemIndex] = { ...item, location: e.target.value };
-                                                            updateSection(index, { items: newItems });
-                                                        }}
-                                                        placeholder="Ubicación / Etiqueta (Ej: Cliente corporativo en Lima)"
-                                                        className="text-xs h-8"
-                                                    />
+
+                                                {/* Descriptions */}
+                                                <div className="grid grid-cols-1 gap-4">
                                                     <Textarea 
                                                         value={item.description} 
                                                         onChange={(e) => {
@@ -344,8 +302,8 @@ export function ContentSection({ data, updateField, disableFeaturesText = false 
                                                             newItems[itemIndex] = { ...item, description: e.target.value };
                                                             updateSection(index, { items: newItems });
                                                         }}
-                                                        placeholder="Descripción corta (subtítulo)"
-                                                        className="min-h-[40px] text-sm"
+                                                        placeholder="Descripción corta (se muestra en la tarjeta)"
+                                                        className="min-h-[60px] text-sm resize-none"
                                                     />
                                                     <Textarea 
                                                         value={item.content || ''} 
@@ -358,18 +316,84 @@ export function ContentSection({ data, updateField, disableFeaturesText = false 
                                                         className="min-h-[80px] text-sm font-mono bg-muted/30"
                                                     />
                                                 </div>
-                                                <Button 
-                                                    variant="ghost" 
-                                                    size="icon" 
-                                                    className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                                                    onClick={() => {
-                                                        const newItems = [...(section.items || [])];
-                                                        newItems.splice(itemIndex, 1);
-                                                        updateSection(index, { items: newItems });
-                                                    }}
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </Button>
+
+                                                {/* Image Manager (Product Style) */}
+                                                <div className="space-y-3 pt-2 border-t">
+                                                    <Label className="text-sm font-medium flex items-center gap-2">
+                                                        <Sparkles className="w-4 h-4 text-amber-500" />
+                                                        Galería de Imágenes ({item.images?.length || (item.image ? 1 : 0)})
+                                                    </Label>
+                                                    
+                                                    <ImageUpload
+                                                        value="" 
+                                                        onChange={(url, _viewType) => {
+                                                            const newItems = [...(section.items || [])];
+                                                            const currentImages = item.images ? [...item.images] : (item.image ? [item.image] : []);
+                                                            newItems[itemIndex] = { 
+                                                                ...item, 
+                                                                images: [...currentImages, url],
+                                                                image: '' 
+                                                            };
+                                                            updateSection(index, { items: newItems });
+                                                        }}
+                                                        onRemove={() => {}} 
+                                                        defaultName={`${data.slug || 'service'}-gallery-${itemIndex + 1}-${Date.now()}`}
+                                                        storagePath={StoragePathBuilder.services(data.slug || 'service', 'gallery')}
+                                                    />
+
+                                                    {/* Product-Style Image Grid */}
+                                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                                                        {(item.images?.length ? item.images : (item.image ? [item.image] : [])).map((imgUrl, imgIdx) => (
+                                                            <div key={`g-${imgIdx}`} className="relative group aspect-square rounded-xl overflow-hidden border bg-muted shadow-sm hover:shadow-md transition-all">
+                                                                <Image src={imgUrl} alt={`Gallery ${imgIdx}`} fill className="object-cover" />
+                                                                
+                                                                {/* Hover Overlay Actions */}
+                                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                                                    <Button
+                                                                        size="icon"
+                                                                        variant="destructive"
+                                                                        className="rounded-full w-8 h-8 shadow-sm"
+                                                                        onClick={() => {
+                                                                            const newItems = [...(section.items || [])];
+                                                                            const currentImages = item.images ? [...item.images] : (item.image ? [item.image] : []);
+                                                                            currentImages.splice(imgIdx, 1);
+                                                                            newItems[itemIndex] = { ...item, images: currentImages, image: '' };
+                                                                            updateSection(index, { items: newItems });
+                                                                        }}
+                                                                    >
+                                                                        <Trash2 className="w-4 h-4" />
+                                                                    </Button>
+                                                                    
+                                                                    {imgIdx !== 0 && (
+                                                                        <Button
+                                                                            size="icon"
+                                                                            variant="secondary"
+                                                                            className="rounded-full w-8 h-8 shadow-sm"
+                                                                            onClick={() => {
+                                                                                const newItems = [...(section.items || [])];
+                                                                                const currentImages = item.images ? [...item.images] : (item.image ? [item.image] : []);
+                                                                                const [moved] = currentImages.splice(imgIdx, 1);
+                                                                                currentImages.unshift(moved);
+                                                                                newItems[itemIndex] = { ...item, images: currentImages, image: '' };
+                                                                                updateSection(index, { items: newItems });
+                                                                            }}
+                                                                            title="Mover al inicio (Principal)"
+                                                                        >
+                                                                            <Star className="w-4 h-4" />
+                                                                        </Button>
+                                                                    )}
+                                                                </div>
+                                                                
+                                                                {/* Principal Badge */}
+                                                                {imgIdx === 0 && (
+                                                                    <div className="absolute top-2 left-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-sm pointer-events-none">
+                                                                        Principal
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
                                             </div>
                                         );
                                     }

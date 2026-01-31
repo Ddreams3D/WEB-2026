@@ -30,6 +30,9 @@ export function VisualSection({ data, updateField, inheritedPrimaryColor }: Visu
   const displayColor = data.primaryColor || '#e11d48';
   const isInherited = false; // Disabled inheritance from main web per user request
 
+  // Helper to identify if comparison is needed (e.g. Organic Modeling)
+  const isOrganicService = data.type === 'service' && (data.id === 'organic-modeling' || data._originalService?.id === 'organic-modeling');
+
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
       {/* Header */}
@@ -139,7 +142,7 @@ export function VisualSection({ data, updateField, inheritedPrimaryColor }: Visu
                 <div className="w-full relative z-10 space-y-5">
                   <div className="space-y-2">
                     <Label className="text-xs text-muted-foreground uppercase tracking-wider">
-                      Imagen 1 (Escultura Real)
+                      Imagen Principal
                     </Label>
                     <ImageUpload
                       value={data.heroImage}
@@ -150,18 +153,20 @@ export function VisualSection({ data, updateField, inheritedPrimaryColor }: Visu
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label className="text-xs text-muted-foreground uppercase tracking-wider">
-                      Imagen 2 (Modelo 3D)
-                    </Label>
-                    <ImageUpload
-                      value={data.heroImageComparison}
-                      onChange={(url) => updateField('heroImageComparison', url)}
-                      onRemove={() => updateField('heroImageComparison', '')}
-                      defaultName={`hero-3d-${data.slug || 'service'}`}
-                      storagePath={`${StoragePathBuilder.services(data.slug || 'service')}/hero`}
-                    />
-                  </div>
+                  {(isOrganicService || data.heroImageComparison) && (
+                    <div className="space-y-2">
+                      <Label className="text-xs text-muted-foreground uppercase tracking-wider">
+                        Imagen 2 (Comparación 3D)
+                      </Label>
+                      <ImageUpload
+                        value={data.heroImageComparison}
+                        onChange={(url) => updateField('heroImageComparison', url)}
+                        onRemove={() => updateField('heroImageComparison', '')}
+                        defaultName={`hero-3d-${data.slug || 'service'}`}
+                        storagePath={`${StoragePathBuilder.services(data.slug || 'service')}/hero`}
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <div className="text-center space-y-1">
