@@ -89,7 +89,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     // Configurar persistencia
-    setPersistence(auth, browserLocalPersistence).catch(console.error);
+    // setPersistence(auth, browserLocalPersistence).catch(console.error);
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       console.log('[AuthContext] Auth state changed:', firebaseUser ? `User: ${firebaseUser.email}` : 'No user');

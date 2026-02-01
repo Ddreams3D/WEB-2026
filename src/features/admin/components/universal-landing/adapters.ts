@@ -85,10 +85,10 @@ export function mainToUnified(main: LandingMainConfig): UnifiedLandingData {
     
     const visualDefaults = {
       title: 'Tu imaginación\nno tiene límites.\nNosotros\nle damos forma.',
-      subtitle: 'Impresión 3D en Arequipa',
-      description: 'Impresión 3D personalizada en Arequipa. Diseñamos y fabricamos piezas únicas a partir de tu idea.',
+      subtitle: 'Impresión 3D Profesional',
+      description: 'Impresión 3D personalizada. Diseñamos y fabricamos piezas únicas a partir de tu idea.',
       cta: 'Cotiza tu idea',
-      link: '/cotizaciones'
+      link: '/contact'
     };
 
     // Si el título guardado es el badge ("Impresión 3D en Arequipa"), lo movemos a subtítulo y restauramos el título real.
@@ -100,11 +100,12 @@ export function mainToUnified(main: LandingMainConfig): UnifiedLandingData {
     
     return {
       type: 'main',
+      slug: main.heroTitle?.toLowerCase().includes('lima') ? 'lima' : 'arequipa',
       // Si hay datos legacy o no hay título, usar el default visual. Si hay otro dato (edición usuario), respetarlo.
       heroTitle: shouldUseDefaults ? visualDefaults.title : main.heroTitle,
       
       // Si era legacy, el título antiguo pasa a ser subtítulo/gancho. Si no, usar lo que haya o el default.
-      heroSubtitle: hasLegacyTitle ? visualDefaults.subtitle : (main.heroSubtitle || visualDefaults.subtitle),
+      heroSubtitle: hasLegacyTitle ? 'Impresión 3D en Arequipa' : (main.heroSubtitle || visualDefaults.subtitle),
       
       heroDescription: main.heroDescription || visualDefaults.description,
     heroImage: main.heroImage,

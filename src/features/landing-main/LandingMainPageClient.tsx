@@ -9,7 +9,7 @@ import { useAdminPermissions } from '@/features/admin/hooks/useAdminProtection';
 import { UniversalLandingEditor } from '@/features/admin/components/universal-landing/UniversalLandingEditor';
 import { mainToUnified, unifiedToMain } from '@/features/admin/components/universal-landing/adapters';
 import { UnifiedLandingData } from '@/features/admin/components/universal-landing/types';
-import { saveLandingMain } from '@/services/landing.service';
+import { saveCityLanding } from '@/services/landing.service';
 import { toast } from 'sonner';
 
 import { HeroSection } from './components/HeroSection';
@@ -28,6 +28,7 @@ interface LandingMainPageClientProps {
   services: CatalogItem[];
   bubbleImages: string[];
   whatsappMessage?: string;
+  cityId?: string;
 }
 
 export default function LandingMainPageClient({
@@ -35,7 +36,8 @@ export default function LandingMainPageClient({
   featuredProducts,
   services,
   bubbleImages,
-  whatsappMessage
+  whatsappMessage,
+  cityId = 'main'
 }: LandingMainPageClientProps) {
   const [config, setConfig] = useState<LandingMainConfig | null>(initialConfig);
   const [isEditing, setIsEditing] = useState(false);
@@ -79,18 +81,19 @@ export default function LandingMainPageClient({
   const initialData: UnifiedLandingData | null = useMemo(() => {
     if (!config) return null;
     const unified = mainToUnified(config);
+    unified.slug = cityId; // Explicitly set slug from prop
     unified.bubbles = effectiveBubbleImages;
     return unified;
-  }, [config, effectiveBubbleImages]);
+  }, [config, effectiveBubbleImages, cityId]);
 
   const handleSave = async (data: UnifiedLandingData) => {
     if (!config) return;
     try {
       setIsSaving(true);
       const newConfig = unifiedToMain(data);
-      await saveLandingMain(newConfig);
+      await saveCityLanding(cityId, newConfig);
       setConfig(newConfig);
-      toast.success('Landing principal actualizada correctamente');
+      toast.success(`Landing ${cityId === 'main' ? 'Principal' : cityId} actualizada correctamente`);
       setIsEditing(false);
     } catch (error: any) {
       const message = error?.message || 'No se pudo guardar la landing principal';
@@ -113,8 +116,8 @@ export default function LandingMainPageClient({
         <ServicesPreviewSection services={services} />
         <TestimonialsSection />
         <FAQSection />
-        <CallToActionSection />
-        <LandingFooter />
+        <CallToActionSection whatsappMessage={whatsappMessage} />
+        <LandingFooter cityId={cityId} />
       </div>
 
       {isAdmin && initialData && (

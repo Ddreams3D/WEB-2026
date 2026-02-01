@@ -240,17 +240,14 @@ export default function ProductDetailClient({ product: initialProduct, relatedPr
         </div>
 
         <div className="space-y-8">
-          <ProductInfo
-            product={product as any}
-            onShare={handleShare}
-          />
+          <ProductInfo product={product as any} onShare={handleShare} />
 
           <ProductPrice
             product={product as any}
             currentPrice={currentPrice}
           />
 
-          {product.tabs ? (
+          {product.tabs && product.tabs.length > 0 ? (
             <ProductTabs
               product={product as any}
               activeTab={activeTab}

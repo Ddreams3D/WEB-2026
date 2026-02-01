@@ -1,7 +1,7 @@
 import React from 'react';
 import { Metadata } from 'next';
 import LandingMainPageClient from '@/features/landing-main/LandingMainPageClient';
-import { fetchLandingMain } from '@/services/landing.service';
+import { fetchCityLanding } from '@/services/landing.service';
 import { ProductService } from '@/services/product.service';
 import { ServiceService } from '@/services/service.service';
 import { CatalogItem } from '@/shared/types/catalog';
@@ -14,33 +14,33 @@ export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: {
-    absolute: 'Impresión 3D en Arequipa | Servicio Profesional a Medida',
+    absolute: 'Impresión 3D en Lima | Servicio Profesional a Medida',
   },
-  description: 'Convierte tus ideas en realidad con Ddreams 3D. Servicio de impresión 3D en Arequipa, diseño CAD, prototipado y regalos personalizados. Calidad y rapidez garantizada.',
-  keywords: ['impresión 3d arequipa', 'servicio impresión 3d', 'regalos personalizados arequipa', 'diseño 3d', 'prototipado rápido', 'maquetas arquitectura', 'trofeos personalizados', 'ddreams 3d'],
+  description: 'Convierte tus ideas en realidad con Ddreams 3D. Servicio de impresión 3D en Lima. Atención en Miraflores, San Isidro, La Molina y todo Lima Metropolitana. Diseño CAD y prototipado.',
+  keywords: ['impresión 3d lima', 'servicio impresión 3d', 'regalos personalizados lima', 'diseño 3d', 'prototipado rápido', 'impresión 3d miraflores', 'impresión 3d san isidro', 'impresión 3d la molina', 'impresión 3d surco', 'maquetas arquitectura', 'trofeos personalizados', 'ddreams 3d'],
   alternates: {
-    canonical: 'https://ddreams3d.com/impresion-3d-arequipa',
+    canonical: 'https://ddreams3d.com/impresion-3d-lima',
   },
   openGraph: {
-    title: 'Impresión 3D en Arequipa | Calidad y Rapidez',
-    description: 'Servicio líder de impresión 3D y diseño en Arequipa. Cotiza tu proyecto hoy mismo.',
-    url: 'https://ddreams3d.com/impresion-3d-arequipa',
+    title: 'Impresión 3D en Lima | Calidad y Rapidez',
+    description: 'Servicio líder de impresión 3D en Lima. Atendemos Miraflores, San Isidro, La Molina y todo Lima. Cotiza tu proyecto hoy mismo.',
+    url: 'https://ddreams3d.com/impresion-3d-lima',
     siteName: 'Ddreams 3D',
     locale: 'es_PE',
     type: 'website',
     images: [
       {
-        url: `/${StoragePathBuilder.ui.brand()}/impresion-3d-arequipa-ddreams-v2.png`,
+        url: `/${StoragePathBuilder.ui.brand()}/impresion-3d-arequipa-ddreams-v2.png`, // Fallback to existing image
         width: 1200,
         height: 630,
-        alt: 'Servicio de Impresión 3D en Arequipa - Ddreams 3D',
+        alt: 'Servicio de Impresión 3D en Lima - Ddreams 3D',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Impresión 3D en Arequipa | Servicio Profesional a Medida',
-    description: 'Servicio profesional de impresión 3D. Calidad, rapidez y atención personalizada.',
+    title: 'Impresión 3D en Lima | Servicio Profesional a Medida',
+    description: 'Servicio profesional de impresión 3D en Lima. Atendemos Miraflores, San Isidro, La Molina. Calidad y rapidez.',
     images: [`/${StoragePathBuilder.ui.brand()}/impresion-3d-arequipa-ddreams-v2.png`],
   },
   robots: {
@@ -56,11 +56,11 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function LandingImpresion3DArequipaPage() {
+export default async function LandingImpresion3DLimaPage() {
   // 1. Fetch data on the server
   const [initialConfig, featuredProducts, services] = await Promise.all([
-    fetchLandingMain(),
-    ProductService.getFeaturedProducts(['arequipa']),
+    fetchCityLanding('lima'),
+    ProductService.getFeaturedProducts(['lima']),
     ServiceService.getFeaturedServices()
   ]);
 
@@ -76,7 +76,8 @@ export default async function LandingImpresion3DArequipaPage() {
       featuredProducts={featuredProducts as CatalogItem[]}
       services={services as CatalogItem[]}
       bubbleImages={bubbleImages}
-      whatsappMessage="Hola, estoy interesado en sus servicios de impresión 3D en Arequipa."
+      whatsappMessage="Hola, estoy interesado en sus servicios de impresión 3D en Lima."
+      cityId="lima"
     />
   );
 }

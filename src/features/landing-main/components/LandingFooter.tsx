@@ -1,7 +1,13 @@
 import React from 'react';
 import { MainLogo } from '@/components/ui';
 
-export const LandingFooter = () => {
+interface LandingFooterProps {
+  cityId?: string;
+}
+
+export const LandingFooter = ({ cityId = 'main' }: LandingFooterProps) => {
+  const city = cityId === 'lima' ? 'Lima' : 'Arequipa';
+  
   return (
     <footer className="py-12 bg-[#020617] text-center relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-30">
@@ -9,7 +15,7 @@ export const LandingFooter = () => {
           <MainLogo variant="white" className="w-[200px] sm:w-[280px] h-auto" ignoreTheme />
         </div>
         <p className="text-slate-400 text-sm mb-6 max-w-md mx-auto font-medium">
-          Diseñamos emociones, imprimimos futuro en Arequipa.
+          Diseñamos emociones, imprimimos futuro en {city}.
         </p>
         <div className="flex justify-center gap-6 mb-8 text-sm font-medium">
           <a href="https://www.instagram.com/ddreams3d" className="text-slate-400 hover:text-white transition-colors">Instagram</a>

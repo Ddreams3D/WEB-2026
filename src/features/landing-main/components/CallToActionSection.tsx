@@ -2,9 +2,14 @@ import React from 'react';
 import { Button } from '@/components/ui';
 import { PHONE_BUSINESS } from '@/shared/constants/contactInfo';
 
-export const CallToActionSection = () => {
-  const whatsappMessage = encodeURIComponent("Hola, estoy interesado en sus servicios de impresión 3D en Arequipa.");
-  const whatsappUrl = `https://wa.me/${PHONE_BUSINESS}?text=${whatsappMessage}`;
+interface CallToActionSectionProps {
+  whatsappMessage?: string;
+}
+
+export const CallToActionSection = ({ whatsappMessage }: CallToActionSectionProps) => {
+  const defaultMessage = "Hola, estoy interesado en sus servicios de impresión 3D en Arequipa.";
+  const message = encodeURIComponent(whatsappMessage || defaultMessage);
+  const whatsappUrl = `https://wa.me/${PHONE_BUSINESS}?text=${message}`;
 
   return (
     <section className="py-32 relative overflow-hidden bg-slate-200 text-slate-900">

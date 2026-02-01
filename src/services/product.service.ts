@@ -241,9 +241,32 @@ export const ProductService = {
   },
 
   // Get featured products
-  async getFeaturedProducts(): Promise<StoreProduct[]> {
+  async getFeaturedProducts(requiredTags?: string[]): Promise<StoreProduct[]> {
     const allProducts = await this.getAllProducts();
-    return allProducts.filter((p: StoreProduct) => p.isFeatured);
+    let featured = allProducts.filter((p: StoreProduct) => p.isFeatured);
+
+    if (requiredTags && requiredTags.length > 0) {
+      const CITY_TAGS = ['lima', 'arequipa'];
+      
+      featured = featured.filter(p => {
+        // Normalize tags to lowercase for comparison
+        const productTags = p.tags?.map(t => t.toLowerCase()) || [];
+        const productCityTags = productTags.filter(t => CITY_TAGS.includes(t));
+        
+        // Strategy:
+        // 1. If product has NO city tags -> Global product (Show everywhere)
+        // 2. If product HAS city tags -> Must match the requested city
+        
+        if (productCityTags.length === 0) return true;
+        
+        // Check if any of the required tags match the product's city tags
+        return productCityTags.some(cityTag => 
+          requiredTags.some(req => req.toLowerCase() === cityTag)
+        );
+      });
+    }
+
+    return featured;
   },
 
   // Get all categories

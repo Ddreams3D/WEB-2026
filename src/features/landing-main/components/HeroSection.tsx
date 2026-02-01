@@ -4,6 +4,7 @@ import { Button, MainLogo } from '@/components/ui';
 import { LandingMainConfig } from '@/shared/types/landing';
 import { ArrowRight, ShieldCheck, MapPin, Truck } from 'lucide-react';
 import { RealisticBubbles } from './RealisticBubbles';
+import { PHONE_BUSINESS } from '@/shared/constants/contactInfo';
 
 interface HeroSectionProps {
   initialConfig: LandingMainConfig | null;
@@ -13,17 +14,16 @@ interface HeroSectionProps {
 export const HeroSection = ({ initialConfig, bubbleImages }: HeroSectionProps) => {
   const visualDefaults = {
     title: 'Tu imaginación\nno tiene límites.\nNosotros\nle damos forma.',
-    subtitle: 'Impresión 3D en Arequipa',
-    description: 'Impresión 3D personalizada en Arequipa. Diseñamos y fabricamos piezas únicas a partir de tu idea.',
+    subtitle: 'Impresión 3D Profesional',
+    description: 'Impresión 3D personalizada. Diseñamos y fabricamos piezas únicas a partir de tu idea.',
     cta: 'Cotiza tu idea',
-    link: '/cotizaciones'
+    link: '/contact'
   };
 
   let heroTitle = initialConfig?.heroTitle;
   let heroSubtitle = initialConfig?.heroSubtitle;
   
   // Detección de datos legacy (Título antiguo en lugar del nuevo formato)
-  // Esto asegura que la web pública coincida con la corrección del editor
   const isLegacyTitle = heroTitle === 'Impresión 3D en Arequipa';
   const hasOldMultilineFormat = heroTitle?.includes('Tu imaginación') && !heroTitle?.includes('Nosotros\nle damos forma');
   
@@ -34,7 +34,7 @@ export const HeroSection = ({ initialConfig, bubbleImages }: HeroSectionProps) =
   
   // Si es legacy, el título antiguo pasa a ser subtítulo
   if (isLegacyTitle) {
-    heroSubtitle = visualDefaults.subtitle;
+    heroSubtitle = 'Impresión 3D en Arequipa';
   } else {
     heroSubtitle = heroSubtitle || visualDefaults.subtitle;
   }
@@ -42,6 +42,16 @@ export const HeroSection = ({ initialConfig, bubbleImages }: HeroSectionProps) =
   const heroDescription = initialConfig?.heroDescription || visualDefaults.description;
   const ctaText = initialConfig?.ctaText || visualDefaults.cta;
   const ctaLink = initialConfig?.ctaLink || visualDefaults.link;
+
+  // Lógica para el botón de WhatsApp contextual
+  const isLima = heroSubtitle?.toLowerCase().includes('lima') || heroTitle?.toLowerCase().includes('lima');
+  const contextCity = isLima ? 'Lima' : 'Arequipa';
+  
+  // Si el link es interno (/contact, /cotizaciones) o vacío, usamos WhatsApp
+  const isInternalLink = !ctaLink?.startsWith('http');
+  const finalCtaLink = isInternalLink 
+    ? `https://wa.me/${PHONE_BUSINESS}?text=${encodeURIComponent(`Hola, me gustaría cotizar una impresión 3D en ${contextCity}.`)}`
+    : ctaLink;
 
   // Función para procesar saltos de línea en el título y mantener el estilo visual
   const renderTitle = (text: string) => {
@@ -114,7 +124,7 @@ export const HeroSection = ({ initialConfig, bubbleImages }: HeroSectionProps) =
 
           <div className="flex flex-col sm:flex-row items-center justify-start gap-4 pt-2">
             <Button size="lg" className="h-14 px-8 text-base font-bold tracking-wide rounded-full shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all hover:scale-105" asChild>
-              <a href={ctaLink}>
+              <a href={finalCtaLink} target={isInternalLink ? '_blank' : undefined} rel={isInternalLink ? 'noopener noreferrer' : undefined}>
                 {ctaText}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </a>
@@ -134,11 +144,11 @@ export const HeroSection = ({ initialConfig, bubbleImages }: HeroSectionProps) =
             </div>
             <div className="flex items-center gap-2">
               <MapPin className="w-4 h-4 text-primary" />
-              <span>Atención en Arequipa</span>
+              <span>{heroSubtitle?.includes('Lima') ? 'Atención a Lima' : (heroSubtitle?.includes('Arequipa') ? 'Atención a Arequipa' : 'Envíos a todo el Perú')}</span>
             </div>
             <div className="flex items-center gap-2">
               <Truck className="w-4 h-4 text-primary" />
-              <span>Envíos a todo el Perú</span>
+              <span>Envíos rápidos</span>
             </div>
           </div>
         </div>

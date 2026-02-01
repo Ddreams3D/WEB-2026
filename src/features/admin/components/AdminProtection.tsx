@@ -52,11 +52,29 @@ export default function AdminProtection({ children, requiredRole = 'admin' }: Ad
 
   // 2. REDIRECCIÓN SI NO HAY USUARIO (Anon)
   if (!user) {
-    // Si no hay usuario, redirigimos al login
-    if (typeof window !== 'undefined') {
-       router.replace('/login');
-    }
-    return null;
+    // En lugar de redirigir inmediatamente, mostramos una pantalla de "Sesión no detectada"
+    // Esto ayuda a evitar bucles si la sesión se recupera o si es un error transitorio.
+    return (
+      <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 flex flex-col items-center justify-center p-4">
+        <div className="text-center max-w-md">
+          <ShieldAlert className="h-16 w-16 text-amber-500 mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-neutral-900 dark:text-white mb-2">
+            Sesión no detectada
+          </h2>
+          <p className="text-neutral-600 dark:text-neutral-400 mb-6">
+            No pudimos verificar tu sesión. Si acabas de recargar, espera un momento.
+          </p>
+          <div className="flex gap-4 justify-center">
+            <Button variant="outline" onClick={() => window.location.reload()}>
+              Recargar Página
+            </Button>
+            <Button onClick={() => router.push('/login')}>
+              Ir al Login
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   // 3. CHECKING DE PERMISOS (Firestore / Custom Claims)
@@ -78,11 +96,28 @@ export default function AdminProtection({ children, requiredRole = 'admin' }: Ad
   // 4. ACCESO DENEGADO (Final state)
   // Terminó checking y hasAccess es false.
   if (!hasAccess) {
-    // Si el usuario está logueado pero NO es admin, redirigimos al home.
-    if (typeof window !== 'undefined') {
-       router.replace('/');
-    }
-    return null;
+    return (
+      <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 flex flex-col items-center justify-center p-4">
+        <div className="text-center max-w-md">
+          <ShieldAlert className="h-16 w-16 text-red-600 mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-neutral-900 dark:text-white mb-2">
+            Acceso Restringido
+          </h2>
+          <p className="text-neutral-600 dark:text-neutral-400 mb-6">
+            Tu cuenta ({user?.email}) no tiene permisos de administrador.
+            Si esto es un error, verifica tu conexión o contacta al desarrollador.
+          </p>
+          <div className="flex gap-4 justify-center">
+            <Button variant="outline" onClick={() => window.location.reload()}>
+              Reintentar
+            </Button>
+            <Button onClick={() => router.push('/')}>
+              Volver al Inicio
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   // 5. ACCESO PERMITIDO

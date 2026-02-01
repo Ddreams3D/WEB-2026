@@ -184,8 +184,8 @@
       }
     ],
     "specifications": [
-      { "name": "Tecnologías", "value": "FDM (Filamento), SLA/DLP (Resina)" },
-      { "name": "Materiales", "value": "PLA, PETG, ABS, TPU, Resina Standard" },
+      { "name": "Tecnologías", "value": "FDM (Filamento)" },
+      { "name": "Materiales", "value": "PLA, PETG, ABS, TPU" },
       { "name": "Volumen Máx", "value": "300 × 300 × 400 mm" }
     ],
     "tabsTitle": "ESTE SERVICIO SE ADAPTA SEGÚN EL TIPO DE CLIENTE",

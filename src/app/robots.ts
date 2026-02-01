@@ -15,7 +15,6 @@ export default function robots(): MetadataRoute.Robots {
         '/protegido/',
         '/profile/',
         '/settings/',
-        '/cotizaciones/',
         '/pedidos/',
         '/checkout/',
         '/order-confirmation/',

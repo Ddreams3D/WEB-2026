@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { LandingMainConfig } from '@/shared/types/landing';
-import { fetchLandingMain, saveLandingMain } from '@/services/landing.service';
+import { fetchCityLanding, saveCityLanding } from '@/services/landing.service';
 import { useToast } from '@/components/ui/ToastManager';
 
-export function useLandingMainForm() {
+export function useLandingMainForm(cityId: string = 'main') {
   const { showSuccess, showError } = useToast();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -16,7 +16,7 @@ export function useLandingMainForm() {
     heroDescription: 'Calidad profesional con entrega rápida y asesoría experta.',
     heroImage: '',
     ctaText: 'Cotiza tu proyecto',
-    ctaLink: '/cotizaciones',
+    ctaLink: '/contact',
     bubbleImages: [],
     announcement: {
         enabled: false,
@@ -29,9 +29,25 @@ export function useLandingMainForm() {
 
   useEffect(() => {
     async function load() {
+      setLoading(true);
       try {
-        const cfg = await fetchLandingMain();
-        if (cfg) setForm(cfg);
+        const cfg = await fetchCityLanding(cityId);
+        if (cfg) {
+          setForm(cfg);
+        } else {
+          // If no config found (e.g. new city), reset to defaults appropriate for the city?
+          // For now, keep the initial state but maybe adjust the title if it's Lima
+          if (cityId === 'lima') {
+            setForm(prev => ({
+              ...prev,
+              heroTitle: 'Impresión 3D en Lima',
+              heroSubtitle: 'Prototipos y producción a escala',
+            }));
+          } else if (cityId === 'main') {
+             // Reset to defaults if somehow main is missing, but usually it exists
+             // Or keep current form state
+          }
+        }
       } catch {
         // Silent error
       } finally {
@@ -39,7 +55,7 @@ export function useLandingMainForm() {
       }
     }
     load();
-  }, []);
+  }, [cityId]);
 
   const updateField = (key: keyof LandingMainConfig, value: any) => {
     setForm(prev => ({ ...prev, [key]: value }));
@@ -84,12 +100,12 @@ export function useLandingMainForm() {
     try {
       setSaving(true);
       const targetConfig = configToSave || form;
-      await saveLandingMain(targetConfig);
+      await saveCityLanding(cityId, targetConfig);
       // Update local state if we saved a passed config
       if (configToSave) {
         setForm(configToSave);
       }
-      showSuccess('Landing principal guardada correctamente');
+      showSuccess(`Landing ${cityId === 'main' ? 'Arequipa' : 'Lima'} guardada correctamente`);
       setIsEditing(false);
     } catch (error: any) {
       showError(error.message || 'Error al guardar');

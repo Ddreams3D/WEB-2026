@@ -8,9 +8,12 @@ interface LandingMainPreviewProps {
     form: LandingMainConfig;
     previewMode: 'desktop' | 'mobile';
     setPreviewMode: (mode: 'desktop' | 'mobile') => void;
+    cityId?: string;
 }
 
-export function LandingMainPreview({ form, previewMode, setPreviewMode }: LandingMainPreviewProps) {
+export function LandingMainPreview({ form, previewMode, setPreviewMode, cityId = 'main' }: LandingMainPreviewProps) {
+  const currentCity = cityId === 'lima' ? 'lima' : 'arequipa';
+  
   return (
     <div className="xl:col-span-2 space-y-4">
         <div className="flex items-center justify-between">
@@ -49,7 +52,7 @@ export function LandingMainPreview({ form, previewMode, setPreviewMode }: Landin
                     <div className="w-3 h-3 rounded-full bg-green-400/80" />
                 </div>
                 <div className="ml-4 flex-1 max-w-xl h-6 bg-background/50 rounded-md text-[10px] flex items-center px-3 text-muted-foreground/60 select-none">
-                    ddreams3d.com/impresion-3d-arequipa
+                    ddreams3d.com/impresion-3d-{currentCity}
                 </div>
             </div>
             
@@ -60,7 +63,7 @@ export function LandingMainPreview({ form, previewMode, setPreviewMode }: Landin
             )}>
                 <iframe
                     title="Vista en vivo - Landing Principal"
-                    src="/impresion-3d-arequipa"
+                    src={`/impresion-3d-${currentCity}`}
                     className="origin-top-left absolute top-0 left-0 w-[200%] h-[200%] scale-[0.5] bg-background"
                 />
             </div>
@@ -70,7 +73,7 @@ export function LandingMainPreview({ form, previewMode, setPreviewMode }: Landin
                 className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center cursor-pointer backdrop-blur-[1px]"
                 onClick={() => {
                     if (typeof window !== 'undefined') {
-                        window.open('/impresion-3d-arequipa', '_blank');
+                        window.open(`/impresion-3d-${currentCity}`, '_blank');
                     }
                 }}
             >

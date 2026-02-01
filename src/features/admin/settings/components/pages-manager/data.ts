@@ -242,8 +242,6 @@ export const SITE_ROUTES: RouteItem[] = [
   { path: '/profile', name: 'Perfil de Usuario', type: 'Protected', category: 'Usuario', status: 'active', seo: { robots: 'noindex, nofollow' } },
   { path: '/pedidos', name: 'Mis Pedidos', type: 'Protected', category: 'Usuario', status: 'active', seo: { robots: 'noindex, nofollow' } },
   { path: '/pedidos/[id]', name: 'Detalle de Pedido', type: 'Protected', category: 'Usuario', status: 'active', seo: { robots: 'noindex, nofollow' } },
-  { path: '/cotizaciones', name: 'Mis Cotizaciones', type: 'Protected', category: 'Usuario', status: 'active', seo: { robots: 'noindex, nofollow' } },
-  { path: '/cotizaciones/[id]', name: 'Detalle de Cotización', type: 'Protected', category: 'Usuario', status: 'active', seo: { robots: 'noindex, nofollow' } },
   { path: '/settings', name: 'Configuración de Cuenta', type: 'Protected', category: 'Usuario', status: 'active', seo: { robots: 'noindex, nofollow' } },
 
   // Admin (Sistema)

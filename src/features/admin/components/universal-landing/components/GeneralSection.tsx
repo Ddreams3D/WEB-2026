@@ -161,13 +161,13 @@ export function GeneralSection({ data, updateField, automationEnabled }: General
               <Globe className="w-8 h-8" />
             </div>
             <div className="space-y-2">
-              <h3 className="text-lg font-semibold">Landing Principal de Impresión 3D</h3>
+              <h3 className="text-lg font-semibold">Landing Local (SEO Ciudad)</h3>
               <p className="text-muted-foreground max-w-md mx-auto">
-                Esta es la landing principal para el servicio de impresión 3D. Es independiente de la Web Principal (Home, catálogo, servicios) y está enfocada solo en este servicio.
+                Esta es la configuración para la landing específica de una ciudad (Arequipa o Lima).
               </p>
             </div>
             <div className="text-sm bg-muted/50 px-4 py-2 rounded-lg font-mono text-muted-foreground">
-              https://ddreams3d.com/impresion-3d-arequipa
+              https://ddreams3d.com/impresion-3d-{data.slug || 'arequipa'}
             </div>
           </div>
         )}

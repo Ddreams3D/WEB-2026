@@ -99,14 +99,6 @@ export default async function ServicesPage() {
           '@type': 'Offer',
           'itemOffered': {
             '@type': 'Service',
-            'name': 'Impresión 3D Resina',
-            'description': 'Alta precisión para joyería, dental y miniaturas.'
-          }
-        },
-        {
-          '@type': 'Offer',
-          'itemOffered': {
-            '@type': 'Service',
             'name': 'Modelado 3D CAD',
             'description': 'Diseño técnico y artístico para impresión 3D.'
           }

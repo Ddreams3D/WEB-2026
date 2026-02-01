@@ -14,7 +14,7 @@ Es una plataforma híbrida que funciona como:
 2.  **Sistema de Gestión (Privado):** Permite a los administradores gestionar pedidos, contenido y configuraciones, y a los clientes ver sus compras.
 
 ### Problema que resuelve
-Centraliza la presencia digital del negocio, eliminando la dependencia de redes sociales para mostrar el catálogo y profesionalizando la toma de pedidos y cotizaciones.
+Centraliza la presencia digital del negocio, eliminando la dependencia de redes sociales para mostrar el catálogo y profesionalizando la toma de pedidos.
 
 ---
 

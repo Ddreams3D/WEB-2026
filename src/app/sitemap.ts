@@ -27,6 +27,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/about', // Nosotros
     '/process', // Nuestro Proceso
     '/impresion-3d-arequipa', // Landing SEO Local
+    '/impresion-3d-lima', // Landing SEO Local Lima
   ].map((route) => ({
     url: getUrlWithSlash(route),
     lastModified: currentDate,

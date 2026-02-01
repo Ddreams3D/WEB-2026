@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import CampaignsManager from '@/features/admin/components/CampaignsManager';
 import LandingMainManager from '@/features/admin/components/LandingMainManager';
 import ServiceLandingsManager from '@/features/admin/components/ServiceLandingsManager';
-import { Sparkles, LayoutTemplate, CalendarRange, Package, Rocket, Settings, ExternalLink } from 'lucide-react';
+import { Sparkles, LayoutTemplate, CalendarRange, Package, Rocket, Settings, ExternalLink, MapPin } from 'lucide-react';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -29,8 +29,8 @@ export default function ContentManagerPage() {
             Campañas
           </TabsTrigger>
           <TabsTrigger value="landing" className="flex items-center gap-2">
-            <LayoutTemplate className="w-4 h-4" />
-            Landing Principal
+            <MapPin className="w-4 h-4" />
+            Landings Ciudad
           </TabsTrigger>
           <TabsTrigger value="services" className="flex items-center gap-2">
             <Package className="w-4 h-4" />
@@ -62,10 +62,10 @@ export default function ContentManagerPage() {
             <div className="mb-6 border-b pb-4">
                <h2 className="text-xl font-semibold flex items-center gap-2">
                  <LayoutTemplate className="w-5 h-5 text-primary" />
-                 Configuración General
+                 Landings por Ciudad (SEO Local)
                </h2>
                <p className="text-sm text-muted-foreground mt-1">
-                 Edita los textos de la página de inicio y la barra de anuncios de emergencia (Global).
+                 Gestiona las landings específicas para Arequipa y Lima.
                </p>
             </div>
             <LandingMainManager />

@@ -13,8 +13,8 @@ const defaultMetadata: Metadata = {
   title: {
     absolute: 'Ddreams 3D | Estudio de Diseño e Impresión 3D en Arequipa',
   },
-  description: 'Especialistas en impresión 3D y regalos personalizados en Arequipa. Creamos trofeos, prototipos y maquetas con envíos a todo el Perú.',
-  keywords: 'impresión 3D arequipa, regalos personalizados, trofeos 3d, maquetas, prototipado rápido, diseño 3D, regalos corporativos, envíos a todo el perú',
+  description: 'Especialistas en impresión 3D y regalos personalizados en Arequipa y Lima. Creamos trofeos, prototipos y maquetas con envíos a todo el Perú.',
+  keywords: 'impresión 3D arequipa, impresión 3D lima, regalos personalizados, trofeos 3d, maquetas, prototipado rápido, diseño 3D, regalos corporativos, envíos a todo el perú',
   authors: [{ name: 'Ddreams 3D' }],
   creator: 'Ddreams 3D',
   publisher: 'Ddreams 3D',

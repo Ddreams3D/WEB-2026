@@ -5,7 +5,6 @@ import { ThemeProvider } from './ThemeContext';
 import { AuthProvider } from './AuthContext';
 import { CartProvider } from './CartContext';
 import { OrderTrackingProvider } from './OrderTrackingContext';
-import { QuoteProvider } from './QuoteContext';
 import { FavoritesProvider } from './FavoritesContext';
 import { NotificationProvider } from './NotificationContext';
 import { ToastProvider } from '../components/ui/ToastManager';
@@ -21,7 +20,6 @@ export function CoreProviders({ children }: ProvidersProps) {
     <ToastProvider>
       <AuthProvider>
         <OrderTrackingProvider>
-          <QuoteProvider>
               <FavoritesProvider>
                 <CartProvider>
                   <NotificationProvider>
@@ -29,7 +27,6 @@ export function CoreProviders({ children }: ProvidersProps) {
                   </NotificationProvider>
                 </CartProvider>
               </FavoritesProvider>
-            </QuoteProvider>
         </OrderTrackingProvider>
       </AuthProvider>
     </ToastProvider>
