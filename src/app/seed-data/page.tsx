@@ -9,6 +9,7 @@ import { users } from '@/data/users.data';
 import { reviews } from '@/data/reviews.data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import AdminProtection from '@/features/admin/components/AdminProtection';
 
 // Helper to remove undefined values
 const deepClean = (obj: unknown): unknown => {
@@ -94,44 +95,39 @@ export default function SeedPage() {
   };
 
   return (
-    <div className="container mx-auto p-8 max-w-2xl">
-      <Card>
-        <CardHeader>
-          <CardTitle>Migración de Datos a Firebase</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="bg-yellow-50 p-4 rounded-md border border-yellow-200 text-sm text-yellow-800">
-            Asegúrate de haber creado la base de datos Firestore en modo de prueba (Test Mode) antes de continuar.
-          </div>
-          
-          <Button 
-            onClick={handleSeed} 
-            disabled={status === 'loading'}
-            className="w-full"
-          >
-            {status === 'loading' ? 'Migrando...' : 'Iniciar Migración'}
-          </Button>
-
-          {status === 'error' && (
-            <div className="p-4 bg-red-50 text-red-600 rounded-md border border-red-200">
-              Error: {message}
+    <AdminProtection>
+      <div className="container mx-auto py-10">
+        <Card>
+          <CardHeader>
+            <CardTitle>Inicialización de Datos (Seed)</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center gap-4">
+              <Button 
+                onClick={handleSeed} 
+                disabled={status === 'loading'}
+              >
+                {status === 'loading' ? 'Procesando...' : 'Iniciar Migración'}
+              </Button>
+              {status === 'loading' && <span className="text-muted-foreground animate-pulse">Escribiendo en Firestore...</span>}
             </div>
-          )}
 
-          {status === 'success' && (
-            <div className="p-4 bg-green-50 text-green-600 rounded-md border border-green-200">
-              {message}
+            {message && (
+              <div className={`p-4 rounded-md ${status === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                {message}
+              </div>
+            )}
+
+            <div className="bg-slate-950 text-slate-50 p-4 rounded-md h-[400px] overflow-y-auto font-mono text-xs">
+              {logs.length === 0 ? (
+                <span className="text-slate-500">Esperando inicio...</span>
+              ) : (
+                logs.map((log, i) => <div key={i}>{log}</div>)
+              )}
             </div>
-          )}
-
-          <div className="mt-4 p-4 bg-gray-100 rounded-md h-64 overflow-y-auto font-mono text-xs">
-            {logs.map((log, i) => (
-              <div key={i}>{log}</div>
-            ))}
-            {logs.length === 0 && <div className="text-gray-400">Los logs aparecerán aquí...</div>}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+          </CardContent>
+        </Card>
+      </div>
+    </AdminProtection>
   );
 }

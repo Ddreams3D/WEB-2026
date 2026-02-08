@@ -8,8 +8,9 @@ import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { QuoteToSaleModal, SaleDetails } from './QuoteToSaleModal';
+import { QuotePreviewModal } from './QuotePreviewModal';
 import ConfirmationModal from '../../components/ConfirmationModal';
-import { Loader2, ArrowRight, CheckCircle2, FileText, Trash2 } from 'lucide-react';
+import { Loader2, ArrowRight, CheckCircle2, FileText, Trash2, RotateCcw, Download } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface QuoteHistorySheetProps {
@@ -23,10 +24,12 @@ export function QuoteHistorySheet({ isOpen, onClose }: QuoteHistorySheetProps) {
     const [processingId, setProcessingId] = useState<string | null>(null);
     const [saleModalOpen, setSaleModalOpen] = useState(false);
     const [selectedQuoteForSale, setSelectedQuoteForSale] = useState<Quote | null>(null);
+    const [previewQuote, setPreviewQuote] = useState<Quote | null>(null);
     const [confirmState, setConfirmState] = useState<{
         isOpen: boolean;
         quoteId: string | null;
-    }>({ isOpen: false, quoteId: null });
+        action: 'delete' | 'revert';
+    }>({ isOpen: false, quoteId: null, action: 'delete' });
 
     useEffect(() => {
         if (isOpen) {
@@ -73,25 +76,39 @@ export function QuoteHistorySheet({ isOpen, onClose }: QuoteHistorySheetProps) {
     const handleDelete = (quoteId: string) => {
         setConfirmState({
             isOpen: true,
-            quoteId
+            quoteId,
+            action: 'delete'
         });
     };
 
-    const confirmDelete = async () => {
+    const handleRevert = (quoteId: string) => {
+        setConfirmState({
+            isOpen: true,
+            quoteId,
+            action: 'revert'
+        });
+    };
+
+    const handleConfirmAction = async () => {
         if (!confirmState.quoteId) return;
 
-        const quoteId = confirmState.quoteId;
+        const { quoteId, action } = confirmState;
         setProcessingId(quoteId);
         try {
-            await QuotesService.deleteQuote(quoteId);
-            toast.success("Cotización eliminada");
+            if (action === 'delete') {
+                await QuotesService.deleteQuote(quoteId);
+                toast.success("Cotización eliminada");
+            } else {
+                await QuotesService.updateStatus(quoteId, 'draft');
+                toast.success("Estado revertido a Borrador");
+            }
             await loadQuotes();
         } catch (error) {
             console.error(error);
-            toast.error("Error al eliminar cotización");
+            toast.error(action === 'delete' ? "Error al eliminar" : "Error al revertir");
         } finally {
             setProcessingId(null);
-            setConfirmState({ isOpen: false, quoteId: null });
+            setConfirmState({ isOpen: false, quoteId: null, action: 'delete' });
         }
     };
 
@@ -152,6 +169,18 @@ export function QuoteHistorySheet({ isOpen, onClose }: QuoteHistorySheetProps) {
                                         </div>
                                     </div>
 
+                                    <div className="flex justify-end pt-1">
+                                        <Button
+                                            size="sm"
+                                            variant="ghost"
+                                            className="h-6 text-xs text-muted-foreground hover:text-primary"
+                                            onClick={() => setPreviewQuote(quote)}
+                                        >
+                                            <FileText className="w-3 h-3 mr-1" />
+                                            Ver PDF
+                                        </Button>
+                                    </div>
+
                                     <div className="pt-2 flex gap-2">
                                         {quote.status !== 'accepted' ? (
                                             <>
@@ -180,10 +209,21 @@ export function QuoteHistorySheet({ isOpen, onClose }: QuoteHistorySheetProps) {
                                                 </Button>
                                             </>
                                         ) : (
-                                            <Button size="sm" variant="outline" className="w-full" disabled>
-                                                <CheckCircle2 className="w-3 h-3 mr-2 text-emerald-500" />
-                                                Venta Registrada
-                                            </Button>
+                                            <div className="flex gap-2 w-full">
+                                                <Button size="sm" variant="outline" className="flex-1 opacity-70 cursor-not-allowed">
+                                                    <CheckCircle2 className="w-3 h-3 mr-2 text-emerald-500" />
+                                                    Venta Registrada
+                                                </Button>
+                                                <Button 
+                                                    size="sm" 
+                                                    variant="ghost" 
+                                                    className="text-amber-600 hover:text-amber-700 hover:bg-amber-50 px-2"
+                                                    onClick={() => quote.id && handleRevert(quote.id)}
+                                                    title="Revertir a borrador para procesar nuevamente"
+                                                >
+                                                    <RotateCcw className="w-4 h-4" />
+                                                </Button>
+                                            </div>
                                         )}
                                     </div>
                                 </div>
@@ -203,14 +243,46 @@ export function QuoteHistorySheet({ isOpen, onClose }: QuoteHistorySheetProps) {
                 onConfirm={handleConfirmSale}
             />
 
+            {previewQuote && (
+                <QuotePreviewModal 
+                    isOpen={!!previewQuote}
+                    onClose={() => setPreviewQuote(null)}
+                    data={previewQuote.data || {}}
+                    settings={previewQuote.settingsSnapshot || {}}
+                    clientInfo={{
+                        name: previewQuote.clientName || '',
+                        phone: previewQuote.clientPhone || '',
+                        email: previewQuote.clientEmail || ''
+                    }}
+                    projectName={previewQuote.projectName || 'Cotización'}
+                    pricing={{
+                        subtotal: previewQuote.netPrice || 0,
+                        igv: previewQuote.taxAmount || 0,
+                        total: previewQuote.totalBilled || 0,
+                        includeIgv: (previewQuote.taxAmount || 0) > 0
+                    }}
+                    onSendWhatsApp={() => {
+                        const phone = previewQuote.clientPhone?.replace(/\D/g, '') || '';
+                        if (phone) {
+                            const text = `Hola ${previewQuote.clientName}, adjunto la cotización para ${previewQuote.projectName}.`;
+                            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, '_blank');
+                        } else {
+                            toast.error("El cliente no tiene un número de teléfono válido");
+                        }
+                    }}
+                />
+            )}
+
             <ConfirmationModal
                 isOpen={confirmState.isOpen}
-                onClose={() => setConfirmState({ isOpen: false, quoteId: null })}
-                onConfirm={confirmDelete}
-                title="Eliminar Cotización"
-                message="¿Estás seguro de que deseas eliminar esta cotización? Esta acción no se puede deshacer."
-                variant="danger"
-                confirmText="Eliminar"
+                onClose={() => setConfirmState(prev => ({ ...prev, isOpen: false }))}
+                onConfirm={handleConfirmAction}
+                title={confirmState.action === 'delete' ? "Eliminar Cotización" : "Revertir Estado"}
+                message={confirmState.action === 'delete' 
+                    ? "¿Estás seguro de que deseas eliminar esta cotización? Esta acción no se puede deshacer." 
+                    : "¿La venta fue eliminada o cancelada? Esto volverá la cotización a estado 'Borrador' para que puedas registrarla nuevamente."}
+                confirmText={confirmState.action === 'delete' ? "Eliminar" : "Revertir"}
+                variant={confirmState.action === 'delete' ? "danger" : "warning"}
                 isLoading={!!processingId}
             />
         </Sheet>

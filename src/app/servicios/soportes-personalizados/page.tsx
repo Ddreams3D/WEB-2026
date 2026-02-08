@@ -9,6 +9,8 @@ export const metadata: Metadata = {
   title: 'Soportes Personalizados | Ddreams 3D',
   description: 'Colección exclusiva de soportes personalizados para Alexa, Nintendo Switch, celulares y más.',
   robots: {
+    // HIDDEN due to copyright content (e.g. Nintendo/Alexa trademarks)
+    // DO NOT CHANGE to index: true without resolving copyright issues first.
     index: false,
     follow: false,
     googleBot: {

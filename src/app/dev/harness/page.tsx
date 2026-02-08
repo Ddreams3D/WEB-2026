@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
+import AdminProtection from '@/features/admin/components/AdminProtection';
 
 // --- Constants & Types ---
 
@@ -266,87 +267,89 @@ export default function TestHarnessPage() {
   };
 
   return (
-    <div className="container max-w-5xl py-10 space-y-8">
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div>
-           <h1 className="text-3xl font-bold flex items-center gap-2">
-             <Bug className="h-8 w-8 text-primary" />
-             System Diagnostic Suite
-           </h1>
-           <p className="text-muted-foreground">End-to-end testing, health checks, and stress tests.</p>
+    <AdminProtection>
+      <div className="container max-w-5xl py-10 space-y-8">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+             <h1 className="text-3xl font-bold flex items-center gap-2">
+               <Bug className="h-8 w-8 text-primary" />
+               System Diagnostic Suite
+             </h1>
+             <p className="text-muted-foreground">End-to-end testing, health checks, and stress tests.</p>
+          </div>
+          <div className="flex items-center gap-2">
+              <Badge variant={user ? 'default' : 'secondary'} className="h-8 px-3">
+                  <Lock className="w-3 h-3 mr-2" />
+                  {user ? `Auth: ${user?.role || 'User'}` : 'Auth: Guest'}
+              </Badge>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-            <Badge variant={user ? 'default' : 'secondary'} className="h-8 px-3">
-                <Lock className="w-3 h-3 mr-2" />
-                {user ? `Auth: ${user?.role || 'User'}` : 'Auth: Guest'}
-            </Badge>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          {/* Left Column: Controls */}
+          <div className="lg:col-span-1 space-y-6">
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                  <TabsList className="grid w-full grid-cols-3">
+                      <TabsTrigger value="health">Health</TabsTrigger>
+                      <TabsTrigger value="flows">Flows</TabsTrigger>
+                      <TabsTrigger value="orders">Orders</TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="health" className="space-y-4 mt-4">
+                      <Card>
+                          <CardHeader>
+                              <CardTitle className="flex items-center gap-2"><Activity className="w-5 h-5"/> Route Health</CardTitle>
+                              <CardDescription>Scans all public and critical API routes for 404/500 errors.</CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                              <Button className="w-full" onClick={runRouteHealthCheck} disabled={isRunning}>
+                                  {isRunning ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Play className="mr-2 h-4 w-4"/>}
+                                  Run Scan
+                              </Button>
+                          </CardContent>
+                      </Card>
+                  </TabsContent>
+
+                  <TabsContent value="flows" className="space-y-4 mt-4">
+                       <Card>
+                          <CardHeader>
+                              <CardTitle className="flex items-center gap-2"><ShoppingCart className="w-5 h-5"/> Cart & Checkout</CardTitle>
+                              <CardDescription>Simulates a user journey: Add to cart, calculate total, clear.</CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                              <Button className="w-full" onClick={runCartFlowCheck} disabled={isRunning}>
+                                  {isRunning ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Play className="mr-2 h-4 w-4"/>}
+                                  Test Cart Flow
+                              </Button>
+                          </CardContent>
+                      </Card>
+                  </TabsContent>
+
+                  <TabsContent value="orders" className="space-y-4 mt-4">
+                       <Card>
+                          <CardHeader>
+                              <CardTitle className="flex items-center gap-2"><Bug className="w-5 h-5"/> Order Logic</CardTitle>
+                              <CardDescription>Deep testing of OrderService, Status transitions, and Stress tests.</CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                              <Button className="w-full" onClick={runOrderSystemTests} disabled={isRunning}>
+                                  {isRunning ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Play className="mr-2 h-4 w-4"/>}
+                                  Run Logic Tests
+                              </Button>
+                          </CardContent>
+                      </Card>
+                  </TabsContent>
+              </Tabs>
+          </div>
+
+          {/* Right Column: Logs */}
+          <div className="lg:col-span-2">
+              <LogViewer logs={logs} />
+          </div>
+
         </div>
       </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* Left Column: Controls */}
-        <div className="lg:col-span-1 space-y-6">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-3">
-                    <TabsTrigger value="health">Health</TabsTrigger>
-                    <TabsTrigger value="flows">Flows</TabsTrigger>
-                    <TabsTrigger value="orders">Orders</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="health" className="space-y-4 mt-4">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2"><Activity className="w-5 h-5"/> Route Health</CardTitle>
-                            <CardDescription>Scans all public and critical API routes for 404/500 errors.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <Button className="w-full" onClick={runRouteHealthCheck} disabled={isRunning}>
-                                {isRunning ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Play className="mr-2 h-4 w-4"/>}
-                                Run Scan
-                            </Button>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-
-                <TabsContent value="flows" className="space-y-4 mt-4">
-                     <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2"><ShoppingCart className="w-5 h-5"/> Cart & Checkout</CardTitle>
-                            <CardDescription>Simulates a user journey: Add to cart, calculate total, clear.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <Button className="w-full" onClick={runCartFlowCheck} disabled={isRunning}>
-                                {isRunning ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Play className="mr-2 h-4 w-4"/>}
-                                Test Cart Flow
-                            </Button>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-
-                <TabsContent value="orders" className="space-y-4 mt-4">
-                     <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2"><Bug className="w-5 h-5"/> Order Logic</CardTitle>
-                            <CardDescription>Deep testing of OrderService, Status transitions, and Stress tests.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <Button className="w-full" onClick={runOrderSystemTests} disabled={isRunning}>
-                                {isRunning ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Play className="mr-2 h-4 w-4"/>}
-                                Run Logic Tests
-                            </Button>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-            </Tabs>
-        </div>
-
-        {/* Right Column: Logs */}
-        <div className="lg:col-span-2">
-            <LogViewer logs={logs} />
-        </div>
-
-      </div>
-    </div>
+    </AdminProtection>
   );
 }

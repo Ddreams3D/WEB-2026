@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/ToastManager';
 import { Button } from '@/components/ui';
@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 import GoogleLoginButton from '@/components/auth/GoogleLoginButton';
 import { isSuperAdmin } from '@/config/roles';
 
-export default function LoginPage() {
+function LoginForm() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLogin, setIsLogin] = useState(true);
@@ -19,15 +19,17 @@ export default function LoginPage() {
   const { login, register, isAuthenticated, isLoading, user, logout } = useAuth();
   const { showSuccess, showError } = useToast();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl') || '/';
 
   // Redirigir si ya está autenticado
   useEffect(() => {
     // Solo redirigir si ya estamos seguros del estado (isLoading = false)
     if (!isLoading && isAuthenticated) {
-       router.replace('/');
+       router.replace(callbackUrl);
       return;
     }
-  }, [isAuthenticated, isLoading, router]);
+  }, [isAuthenticated, isLoading, router, callbackUrl]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,7 +43,7 @@ export default function LoginPage() {
         
         if (success) {
           showSuccess('¡Bienvenido!', 'Has iniciado sesión correctamente');
-          router.push('/');
+          router.push(callbackUrl);
         } else {
           setError('Credenciales incorrectas.');
           showError('Error de autenticación', 'Las credenciales proporcionadas no son válidas');
@@ -187,5 +189,20 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Cargando...</p>
+        </div>
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   );
 }

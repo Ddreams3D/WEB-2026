@@ -174,13 +174,17 @@ export function QuoterResults({ data, settings }: QuoterResultsProps) {
         totalBilled = val * (1 + IGV_RATE);
     }
   } else {
-    // Auto-calc: Always calculate purely based on FINAL TOTAL rounded up
-    // This ensures the client always pays a round number (e.g. S/. 83.00)
-    const rawTotal = suggestedNetPrice * (1 + IGV_RATE);
-    totalBilled = Math.ceil(rawTotal);
-    
-    // Back-calculate Net
-    netPrice = totalBilled / (1 + IGV_RATE);
+    // Auto-calc
+    if (includeIgv) {
+        // Target a round Total
+        const rawTotal = suggestedNetPrice * (1 + IGV_RATE);
+        totalBilled = Math.ceil(rawTotal);
+        netPrice = totalBilled / (1 + IGV_RATE);
+    } else {
+        // Target a round Net
+        netPrice = Math.ceil(suggestedNetPrice);
+        totalBilled = netPrice * (1 + IGV_RATE);
+    }
   }
 
   const taxAmount = totalBilled - netPrice;
@@ -387,7 +391,7 @@ export function QuoterResults({ data, settings }: QuoterResultsProps) {
                 <div className="flex items-end justify-between">
                     <div>
                         <div className="text-3xl font-bold tracking-tight text-primary">
-                            {formatMoney(totalBilled)}
+                            {formatMoney(includeIgv ? totalBilled : netPrice)}
                         </div>
                         <div className="text-xs text-muted-foreground mt-1">
                             {includeIgv ? 'Incluido IGV (18%)' : 'Más IGV (18%)'}
@@ -411,7 +415,7 @@ export function QuoterResults({ data, settings }: QuoterResultsProps) {
                     type="range"
                     min="0"
                     max="80"
-                    step="5"
+                    step="1"
                     value={desiredMargin}
                     onChange={(e) => {
                         setDesiredMargin(Number(e.target.value));
