@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { ADMIN_EMAILS } from '@/config/roles';
 import { ShieldAlert } from '@/lib/icons';
@@ -14,12 +14,26 @@ interface AdminProtectionProps {
 
 export default function AdminProtection({ children, requiredRole = 'admin' }: AdminProtectionProps) {
   const router = useRouter();
+  const pathname = usePathname();
 
   // Desactivamos la redirección automática para evitar bucles infinitos y mostrar la pantalla de error/debug
   const { checking, hasAccess, user, isAuthReady } = useAdminProtection({ 
     requiredRole,
     redirectOnFail: false 
   });
+
+  // [DEBUG] Log de ciclo de vida
+  React.useEffect(() => {
+    console.log('[AdminProtection] State Update:', { 
+      checking, 
+      hasAccess, 
+      userId: user?.id, 
+      email: user?.email,
+      isAuthReady,
+      currentPath: pathname,
+      windowPath: typeof window !== 'undefined' ? window.location.pathname : 'N/A'
+    });
+  }, [checking, hasAccess, user, isAuthReady, pathname]);
 
   // [SUPER ADMIN FAST-TRACK]
   // Verificación directa de emails hardcodeados para evitar latencia o fallos de Firestore/Service
@@ -37,7 +51,8 @@ export default function AdminProtection({ children, requiredRole = 'admin' }: Ad
 
   // 1. ESPERA DE AUTH (Solo Firebase Auth, no Firestore)
   // isAuthReady indica que onAuthStateChanged ya disparó.
-  if (!isAuthReady) {
+  // MEJORA: Si ya tenemos user, no bloqueamos con "Cargando sesión" aunque isAuthReady parpadee.
+  if (!isAuthReady && !user) {
     return (
       <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center">
         <div className="text-center">

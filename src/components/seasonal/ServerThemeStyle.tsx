@@ -6,7 +6,9 @@ export async function ServerThemeStyle() {
   // 1. Resolve the active theme on the server (based on Date and Configuration)
   // This uses the same logic as the client, but runs before HTML is sent.
   const activeSeasonalConfig = await resolveActiveTheme();
-  console.log('[ServerThemeStyle] Resolved Theme:', activeSeasonalConfig.id);
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[ServerThemeStyle] Resolved Theme:', activeSeasonalConfig.id);
+  }
 
   // 2. Check if we should apply global styles
   const shouldApplyGlobal = activeSeasonalConfig.applyThemeToGlobal !== false;

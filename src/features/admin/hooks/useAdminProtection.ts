@@ -36,8 +36,6 @@ export function useAdminProtection({
 
       // 2. Auth is Ready. Check User.
       if (!user) {
-        // No user => No access.
-        // Component will decide whether to redirect to login or show debug.
         console.log('[useAdminProtection] No user found. Access denied.');
         if (mounted) {
           setHasAccess(false);
@@ -48,13 +46,35 @@ export function useAdminProtection({
 
       // 3. User exists. Check Admin Status (Client Side).
       try {
+        // Optimization: Check Session Storage first
+        const cacheKey = `admin_access_${user.id}`;
+        const cached = sessionStorage.getItem(cacheKey);
+        
+        if (cached === 'true') {
+           if (mounted) {
+             setHasAccess(true);
+             setChecking(false);
+           }
+           // Verify in background to update cache if needed
+           AdminService.checkIsAdmin(user.id, user.email).then(isValid => {
+             if (!isValid) {
+               sessionStorage.removeItem(cacheKey);
+               if (mounted) setHasAccess(false);
+             }
+           });
+           return;
+        }
+
         console.log('[useAdminProtection] Checking admin access for:', user.email);
-        // "unknown" state while checking
         if (mounted) setChecking(true);
 
         const isAdmin = await AdminService.checkIsAdmin(user.id, user.email);
         console.log('[useAdminProtection] Access result:', isAdmin);
         
+        if (isAdmin) {
+          sessionStorage.setItem(cacheKey, 'true');
+        }
+
         if (mounted) {
           setHasAccess(isAdmin);
           setChecking(false);

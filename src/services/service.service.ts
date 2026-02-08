@@ -471,7 +471,9 @@ export const ServiceService = {
    * Internally calls saveService.
    */
   async updateService(id: string, updates: Partial<Service>): Promise<Service | null> {
-    console.log(`[ServiceService] updateService called for ID: ${id}`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[ServiceService] updateService called for ID: ${id}`);
+    }
     let service = await this.getServiceById(id);
 
     // Recovery Logic for Services

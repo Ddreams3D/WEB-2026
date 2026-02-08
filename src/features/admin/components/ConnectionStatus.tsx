@@ -8,7 +8,7 @@ export default function ConnectionStatus() {
 
   // Debug logging for production issues
   React.useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
       const isConfigured = isFirebaseConfigured;
       console.log('[Firebase Status] Configured:', isConfigured);
       if (!isConfigured) {

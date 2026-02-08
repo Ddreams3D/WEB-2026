@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { FinanceParser } from '@/features/admin/finances/utils/parser';
-import { InboxService } from '@/features/admin/finances/services/InboxService';
+import { ServerInboxService } from '@/features/admin/finances/services/ServerInboxService';
 
 // Telegram API base URL
 const TELEGRAM_API = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}`;
@@ -123,7 +123,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 7. Save to Inbox
-    const success = await InboxService.appendItem(inboxItem);
+    const success = await ServerInboxService.appendItem(inboxItem);
 
     if (success) {
       const contextEmoji = inboxItem.context === 'personal' ? '👤' : '🏢';

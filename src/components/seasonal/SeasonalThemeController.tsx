@@ -24,7 +24,9 @@ export function SeasonalThemeController() {
           // Si estamos en contexto de servicio, forzamos "standard" (sin tema estacional)
           // Esto limpia cualquier tema residual si el usuario viene de la Home
           if (theme !== 'standard') {
-             console.log(`[Seasonal] Aislamiento de servicio detectado. Restaurando tema base en: ${pathname}`);
+             if (process.env.NODE_ENV === 'development') {
+                console.log(`[Seasonal] Aislamiento de servicio detectado. Restaurando tema base en: ${pathname}`);
+             }
              setTheme('standard'); 
              
              // 1. Remove Server-Side Injected Style if exists (The "Purist" Cleanup)
@@ -56,7 +58,9 @@ export function SeasonalThemeController() {
         if (shouldApplyGlobal) {
            // Always apply the resolved theme if allowed
            if (theme !== activeSeasonalConfig.themeId) {
-              console.log(`[Seasonal] Cambiando tema a: ${activeSeasonalConfig.themeId} en ruta: ${pathname}`);
+              if (process.env.NODE_ENV === 'development') {
+                 console.log(`[Seasonal] Cambiando tema a: ${activeSeasonalConfig.themeId} en ruta: ${pathname}`);
+              }
               setTheme(activeSeasonalConfig.themeId);
            }
            

@@ -4,10 +4,11 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 });
 
 /** @type {import('next').NextConfig} */
+// Force restart
 const nextConfig = {
   // Configuración para despliegue en Netlify
   // output: 'export', // Deshabilitado para permitir rutas dinámicas y autenticación
-  trailingSlash: true,
+  trailingSlash: false,
   skipTrailingSlashRedirect: true,
   images: {
     unoptimized: false, // Optimización de imágenes habilitada

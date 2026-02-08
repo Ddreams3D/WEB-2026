@@ -157,7 +157,9 @@ export const ProductService = {
 
     // 3. Fallback to static JSON if everything else failed
     if (products.length === 0) {
-      console.log('Using static fallback data');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Using static fallback data');
+      }
       products = productsFallbackData.map(mapToProduct);
       // Initialize LocalStorage with fallback if it was empty
       LocalStorageService.saveProducts(products);

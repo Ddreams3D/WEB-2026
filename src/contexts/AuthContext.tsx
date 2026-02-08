@@ -92,7 +92,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // setPersistence(auth, browserLocalPersistence).catch(console.error);
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      console.log('[AuthContext] Auth state changed:', firebaseUser ? `User: ${firebaseUser.email}` : 'No user');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[AuthContext] Auth state changed:', firebaseUser ? `User: ${firebaseUser.email}` : 'No user');
+      }
       
       try {
         if (firebaseUser) {
@@ -121,8 +123,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const hasAdminClaim = !!tokenResult.claims.admin;
           
           if (hasAdminClaim) {
-             console.log('[AuthContext] 🛡️ Acceso Admin validado vía Custom Claims (Top Tier Security)');
-          }
+                if (process.env.NODE_ENV === 'development') {
+                  console.log('[AuthContext] 🛡️ Acceso Admin validado vía Custom Claims (Top Tier Security)');
+                }
+              }
 
           // 1. Intentar obtener datos del usuario desde Firestore (Background Sync)
           // Esto sucede en segundo plano sin bloquear la UI
