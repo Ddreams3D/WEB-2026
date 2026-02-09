@@ -23,6 +23,21 @@ import { SlicingInboxService } from '../production/services/slicing-inbox.servic
 import { QuotesService } from '../quoter/services/quotes.service';
 import { toast } from 'sonner';
 
+const MONTH_LABELS = [
+  'Enero',
+  'Febrero',
+  'Marzo',
+  'Abril',
+  'Mayo',
+  'Junio',
+  'Julio',
+  'Agosto',
+  'Septiembre',
+  'Octubre',
+  'Noviembre',
+  'Diciembre',
+];
+
 export function FinancesView() {
   const { records, allRecords, importRecords, loading, addRecord, updateRecord, deleteRecord, stats } = useFinances();
   const { settings, updateSettings, importSettings } = useFinanceSettings();
@@ -31,6 +46,8 @@ export function FinancesView() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [editingRecord, setEditingRecord] = useState<FinanceRecord | null>(null);
+  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
+  const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth());
   
   // Quoter state
   const [quoteData, setQuoteData] = useState<any>(null);
@@ -86,19 +103,66 @@ export function FinancesView() {
 
   // Filter records for each tab
   const incomeRecords = useMemo(() => 
-    records.filter(r => r.type === 'income' && r.category !== 'Préstamos'),
-  [records]);
+    records.filter(r => {
+      if (r.type !== 'income' || r.category === 'Préstamos') return false;
+      const d = new Date(r.date);
+      return d.getFullYear() === selectedYear && d.getMonth() === selectedMonth;
+    }),
+  [records, selectedYear, selectedMonth]);
 
   const expenseRecords = useMemo(() => 
-    records.filter(r => r.type === 'expense' && r.category !== 'Préstamos / Deudas'),
-  [records]);
+    records.filter(r => {
+      if (r.type !== 'expense' || r.category === 'Préstamos / Deudas') return false;
+      const d = new Date(r.date);
+      return d.getFullYear() === selectedYear && d.getMonth() === selectedMonth;
+    }),
+  [records, selectedYear, selectedMonth]);
 
   const financingRecords = useMemo(() => 
-    records.filter(r => 
-      (r.type === 'income' && r.category === 'Préstamos') ||
-      (r.type === 'expense' && r.category === 'Préstamos / Deudas')
-    ),
-  [records]);
+    records.filter(r => {
+      const isFinancing = (r.type === 'income' && r.category === 'Préstamos') ||
+                          (r.type === 'expense' && r.category === 'Préstamos / Deudas');
+      if (!isFinancing) return false;
+      const d = new Date(r.date);
+      return d.getFullYear() === selectedYear && d.getMonth() === selectedMonth;
+    }),
+  [records, selectedYear, selectedMonth]);
+
+  const filteredStats = useMemo(() => {
+    const activeRecords = records.filter(r => {
+      const d = new Date(r.date);
+      return d.getFullYear() === selectedYear && d.getMonth() === selectedMonth;
+    });
+    
+    const totalIncome = activeRecords
+      .filter(r => r.type === 'income' && r.status === 'paid')
+      .reduce((sum, r) => sum + r.amount, 0);
+      
+    const totalExpense = activeRecords
+      .filter(r => r.type === 'expense' && r.status === 'paid')
+      .reduce((sum, r) => sum + r.amount, 0);
+
+    const pendingIncome = activeRecords
+      .filter(r => r.type === 'income' && r.status === 'pending')
+      .reduce((sum, r) => sum + r.amount, 0);
+
+    const pendingExpense = activeRecords
+      .filter(r => r.type === 'expense' && r.status === 'pending')
+      .reduce((sum, r) => sum + r.amount, 0);
+
+    const totalLabor = activeRecords
+      .filter(r => r.type === 'income' && r.status === 'paid')
+      .reduce((sum, r) => sum + (r.productionSnapshot?.computedLaborCost || 0), 0);
+
+    return {
+      totalIncome,
+      totalExpense,
+      netProfit: totalIncome - totalExpense,
+      pendingIncome,
+      pendingExpense,
+      totalLabor
+    };
+  }, [records, selectedYear, selectedMonth]);
 
   const handleCreate = () => {
     setEditingRecord(null);
@@ -190,6 +254,39 @@ export function FinancesView() {
         </div>
       </div>
 
+      <div className="flex flex-wrap items-center justify-between gap-4 bg-muted/30 p-4 rounded-lg border border-border">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-muted-foreground">Mes:</span>
+            <select
+              className="h-9 rounded-md border bg-background px-3 text-sm"
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(Number(e.target.value))}
+            >
+              {MONTH_LABELS.map((label, index) => (
+                <option key={label} value={index}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-muted-foreground">Año:</span>
+            <input
+              type="number"
+              className="h-9 w-24 rounded-md border bg-background px-3 text-sm"
+              value={selectedYear}
+              onChange={(e) => {
+                const value = Number(e.target.value) || new Date().getFullYear();
+                setSelectedYear(value);
+              }}
+              min={2000}
+              max={2100}
+            />
+          </div>
+        </div>
+      </div>
+
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="flex items-center justify-between mb-4">
           <TabsList className="bg-muted/50 p-1 w-full sm:w-auto grid grid-cols-2 sm:flex">
@@ -252,7 +349,7 @@ export function FinancesView() {
 
         <TabsContent value="incomes" className="mt-0">
           <div className="grid gap-6">
-            <FinanceStats stats={stats} mode="business" />
+            <FinanceStats stats={filteredStats} mode="business" />
             <FinanceTable 
               records={incomeRecords} 
               onEdit={handleEdit} 
@@ -264,7 +361,7 @@ export function FinancesView() {
         
         <TabsContent value="expenses" className="mt-0">
           <div className="grid gap-6">
-            <FinanceStats stats={stats} mode="business" />
+            <FinanceStats stats={filteredStats} mode="business" />
             <FinanceTable 
               records={expenseRecords} 
               onEdit={handleEdit} 

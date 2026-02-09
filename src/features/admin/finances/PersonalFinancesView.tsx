@@ -128,23 +128,36 @@ export function PersonalFinancesView() {
   }, [budgets]);
 
   const incomeRecords = useMemo(
-    () => records.filter((r) => r.type === 'income' && r.category !== 'Préstamos'),
-    [records],
+    () =>
+      records.filter((r) => {
+        if (r.type !== 'income' || r.category === 'Préstamos') return false;
+        const d = new Date(r.date);
+        return d.getFullYear() === selectedYear && d.getMonth() === selectedMonth;
+      }),
+    [records, selectedYear, selectedMonth],
   );
 
   const expenseRecords = useMemo(
-    () => records.filter((r) => r.type === 'expense' && r.category !== 'Préstamos / Deudas'),
-    [records],
+    () =>
+      records.filter((r) => {
+        if (r.type !== 'expense' || r.category === 'Préstamos / Deudas') return false;
+        const d = new Date(r.date);
+        return d.getFullYear() === selectedYear && d.getMonth() === selectedMonth;
+      }),
+    [records, selectedYear, selectedMonth],
   );
 
   const financingRecords = useMemo(
     () =>
-      records.filter(
-        (r) =>
+      records.filter((r) => {
+        const isFinancing =
           (r.type === 'income' && r.category === 'Préstamos') ||
-          (r.type === 'expense' && r.category === 'Préstamos / Deudas'),
-      ),
-    [records],
+          (r.type === 'expense' && r.category === 'Préstamos / Deudas');
+        if (!isFinancing) return false;
+        const d = new Date(r.date);
+        return d.getFullYear() === selectedYear && d.getMonth() === selectedMonth;
+      }),
+    [records, selectedYear, selectedMonth],
   );
 
   const formatCurrency = (amount: number) => {
@@ -196,6 +209,38 @@ export function PersonalFinancesView() {
       monthlyExpenseByCategory: byCategory,
     };
   }, [records, selectedYear, selectedMonth]);
+
+  const filteredStats = useMemo(() => {
+    let totalIncome = 0;
+    let totalExpense = 0;
+    let pendingIncome = 0;
+    let pendingExpense = 0;
+
+    incomeRecords.forEach((r) => {
+      if (r.status === 'paid') {
+        totalIncome += r.amount;
+      } else {
+        pendingIncome += r.amount;
+      }
+    });
+
+    expenseRecords.forEach((r) => {
+      if (r.status === 'paid') {
+        totalExpense += r.amount;
+      } else {
+        pendingExpense += r.amount;
+      }
+    });
+
+    return {
+      totalIncome,
+      totalExpense,
+      netProfit: totalIncome - totalExpense,
+      pendingIncome,
+      pendingExpense,
+      totalLabor: 0,
+    };
+  }, [incomeRecords, expenseRecords]);
 
   const remaining = currentBudget - monthlyExpense;
   const usedPercentage = currentBudget > 0 ? Math.min((monthlyExpense / currentBudget) * 100, 140) : 0;
@@ -277,6 +322,32 @@ export function PersonalFinancesView() {
         ),
       };
     });
+  };
+
+  const handleCopyBudgetFromPreviousMonth = () => {
+    let prevMonth = selectedMonth - 1;
+    let prevYear = selectedYear;
+    if (prevMonth < 0) {
+      prevMonth = 11;
+      prevYear = selectedYear - 1;
+    }
+    const prevKey = `${prevYear}-${String(prevMonth + 1).padStart(2, '0')}`;
+    const prevItems = budgets[prevKey] ?? [];
+
+    if (prevItems.length === 0) {
+      alert('No hay presupuesto en el mes anterior para copiar.');
+      return;
+    }
+
+    const newItems = prevItems.map((item) => ({
+      ...item,
+      id: uuidv4(),
+    }));
+
+    setBudgets((prev) => ({
+      ...prev,
+      [selectedKey]: newItems,
+    }));
   };
 
   const handleCreateExpenseFromBudget = (item: MonthlyBudgetItem) => {
@@ -370,6 +441,39 @@ export function PersonalFinancesView() {
         </div>
       </div>
 
+      <div className="flex flex-wrap items-center justify-between gap-4 bg-muted/30 p-4 rounded-lg border border-border">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-muted-foreground">Mes:</span>
+            <select
+              className="h-9 rounded-md border bg-background px-3 text-sm"
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(Number(e.target.value))}
+            >
+              {MONTH_LABELS.map((label, index) => (
+                <option key={label} value={index}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-muted-foreground">Año:</span>
+            <input
+              type="number"
+              className="h-9 w-24 rounded-md border bg-background px-3 text-sm"
+              value={selectedYear}
+              onChange={(e) => {
+                const value = Number(e.target.value) || new Date().getFullYear();
+                setSelectedYear(value);
+              }}
+              min={2000}
+              max={2100}
+            />
+          </div>
+        </div>
+      </div>
+
       <Tabs defaultValue="incomes" className="w-full">
         <div className="flex items-center justify-between mb-4">
           <TabsList className="bg-muted/50 p-1 w-full sm:w-auto grid grid-cols-2 sm:flex">
@@ -401,34 +505,16 @@ export function PersonalFinancesView() {
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-3">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground">Mes:</span>
-                  <select
-                    className="h-9 rounded-md border bg-background px-2 text-xs"
-                    value={selectedMonth}
-                    onChange={(e) => setSelectedMonth(Number(e.target.value))}
+                {budgetItems.length === 0 && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleCopyBudgetFromPreviousMonth}
+                    className="mr-2"
                   >
-                    {MONTH_LABELS.map((label, index) => (
-                      <option key={label} value={index}>
-                        {label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground">Año:</span>
-                  <input
-                    type="number"
-                    className="h-9 w-24 rounded-md border bg-background px-2 text-xs"
-                    value={selectedYear}
-                    onChange={(e) => {
-                      const value = Number(e.target.value) || new Date().getFullYear();
-                      setSelectedYear(value);
-                    }}
-                    min={2000}
-                    max={2100}
-                  />
-                </div>
+                    Copiar del mes anterior
+                  </Button>
+                )}
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-muted-foreground">Nuevo ítem:</span>
                   <input
@@ -628,7 +714,7 @@ export function PersonalFinancesView() {
         </TabsContent>
 
         <TabsContent value="summary" className="mt-0 space-y-6">
-          <FinanceStats stats={stats} mode="personal" />
+          <FinanceStats stats={filteredStats} mode="personal" />
           <FinanceSummary records={allRecords} mode="personal" />
         </TabsContent>
       </Tabs>
